@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuantiChef — Escandallo inteligente</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#F7F5F0;--surface:#FFFFFF;--surface2:#F2EFE9;--border:#E0DDD6;--text:#1A1916;--text2:#6B6860;--text3:#A8A59E;--accent:#2D5A3D;--accent-light:#E8F2EC;--accent-text:#1E3D2A;--gold:#C4943A;--warn:#8B4A00;--warn-light:#FFF3E0;--danger:#8B1A1A;--danger-light:#FDEAEA}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:4rem}
+  header{background:var(--accent);padding:1.4rem 2rem;display:flex;align-items:center;justify-content:space-between}
+  .logo{font-family:'DM Serif Display',serif;font-size:21px;color:#fff;letter-spacing:-.02em}
+  .logo span{color:#A8D5B5;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:300;display:block;letter-spacing:.08em;text-transform:uppercase;margin-top:-2px}
+  .badge{background:rgba(255,255,255,.15);color:#fff;font-size:11px;padding:4px 12px;border-radius:20px;letter-spacing:.05em;font-weight:500}
+  .container{max-width:820px;margin:0 auto;padding:2rem 1.5rem}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1rem}
+  .card-title{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+  .card-title::after{content:'';flex:1;height:1px;background:var(--border)}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .field{position:relative}
+  .field-label{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+  .field-label label{font-size:12px;font-weight:500;color:var(--text2)}
+  .help-btn{width:16px;height:16px;border-radius:50%;border:1px solid var(--text3);background:none;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-family:'DM Sans',sans-serif;padding:0}
+  .help-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+  .tooltip{display:none;position:absolute;top:calc(100% + 6px);left:0;background:var(--text);color:#fff;font-size:12px;line-height:1.5;padding:8px 12px;border-radius:8px;width:240px;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+  .tooltip::before{content:'';position:absolute;top:-5px;left:14px;width:10px;height:10px;background:var(--text);transform:rotate(45deg);border-radius:2px}
+  .tooltip.visible{display:block}
+  input,select{width:100%;padding:9px 12px;font-size:14px;font-family:'DM Sans',sans-serif;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s;-webkit-appearance:none}
+  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,90,61,.08)}
+  input[type=number]{-moz-appearance:textfield}
+  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+  .ai-row{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+  .btn-ai{display:flex;align-items:center;gap:7px;padding:9px 16px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .15s;white-space:nowrap}
+  .btn-ai:hover{background:var(--accent-text)}
+  .btn-ai:disabled{background:var(--text3);cursor:not-allowed}
+  .ai-hint{font-size:12px;color:var(--text3);line-height:1.4}
+  .ai-box{display:none;background:var(--accent-light);border:1px solid var(--accent);border-radius:10px;padding:1rem;margin-top:10px;animation:fadeIn .2s ease}
+  .ai-box.visible{display:block}
+  .ai-box-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .sug-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+  .sug-item{display:flex;align-items:center;gap:8px;background:white;border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:13px}
+  .sug-item.selected{border-color:var(--accent);background:var(--accent-light)}
+  .sug-item input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;flex-shrink:0;cursor:pointer}
+  .sug-name{font-weight:500;color:var(--text);flex:1}
+  .sug-qty{font-size:12px;color:var(--text2);background:var(--surface2);padding:2px 7px;border-radius:4px;white-space:nowrap}
+  .sug-price{font-size:12px;color:var(--accent-text);background:var(--accent-light);border:1px solid rgba(45,90,61,.2);padding:2px 7px;border-radius:4px;white-space:nowrap;font-weight:500}
+  .btn-add-sel{padding:8px 16px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer}
+  .ai-loading{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--accent-text);padding:4px 0}
+  .spinner{width:18px;height:18px;border:2px solid var(--accent-light);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .ai-error{font-size:12px;color:var(--danger);padding:6px 0}
+  .ai-note{font-size:11px;color:var(--accent-text);margin-top:8px;padding:6px 10px;background:white;border-radius:6px;border:1px solid rgba(45,90,61,.15)}
+  .ing-header{display:grid;grid-template-columns:2.5fr .8fr .8fr 90px 30px;gap:8px;margin-bottom:6px}
+  .ing-header span{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+  .ing-row{display:grid;grid-template-columns:2.5fr .8fr .8fr 90px 30px;gap:8px;align-items:center;margin-bottom:8px;animation:fadeIn .2s ease}
+  .btn-del{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;flex-shrink:0}
+  .btn-del:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+  .btn-add-manual{width:100%;padding:9px;border:1px dashed var(--border);border-radius:8px;background:none;color:var(--text2);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;margin-top:4px}
+  .btn-add-manual:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem}
+  .metric{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 12px;text-align:center}
+  .metric-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+  .metric-value{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text)}
+  .metric-value.good{color:var(--accent)}.metric-value.warn{color:var(--warn)}.metric-value.bad{color:var(--danger)}
+  .margen-wrap{display:flex;align-items:center;gap:14px}
+  input[type=range]{flex:1;height:4px;padding:0;border:none;background:none;box-shadow:none;-webkit-appearance:none;cursor:pointer}
+  input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--border);border-radius:2px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);margin-top:-7px;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+  input[type=range]:focus{box-shadow:none;border:none}
+  .margen-val{font-size:16px;font-weight:600;color:var(--accent);min-width:40px;text-align:right}
+  .alergenos{display:flex;flex-wrap:wrap;gap:7px}
+  .alg{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer;padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);user-select:none;transition:all .15s}
+  .alg:hover{border-color:var(--gold);color:var(--warn)}
+  .alg.active{background:var(--warn-light);border-color:var(--gold);color:var(--warn);font-weight:600}
+  .alg input{display:none}
+  .alg-dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:none}
+  .alg.active .alg-dot{display:inline-block}
+  .alg-list{margin-top:10px;padding:9px 13px;background:var(--warn-light);border-radius:8px;border:1px solid rgba(196,148,58,.3);display:none}
+  .alg-list.visible{display:block}
+  .alg-list p{font-size:12px;font-weight:600;color:var(--warn)}
+  .hint{font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5}
+  .btn-print{display:flex;align-items:center;gap:8px;margin:0 auto;padding:11px 28px;background:var(--accent);color:white;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;border:none;border-radius:8px;cursor:pointer}
+  .btn-print:hover{background:var(--accent-text)}
+  @media(max-width:600px){header{padding:1rem 1.2rem}.container{padding:1rem}.grid-3{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.ing-header{display:none}.ing-row{grid-template-columns:1fr 1fr;gap:6px}.ing-row input:first-child{grid-column:1 / -1}.btn-del{justify-self:end}}
+  @media print{body{background:white}header{background:var(--accent)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.btn-add-manual,.btn-del,.btn-print,.btn-ai,.ai-box,.ai-row,.help-btn,.tooltip{display:none!important}.alg.active{background:#fff3e0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">QuantiChef<span>Escandallo inteligente con IA</span></div>
+  <div class="badge">v1.0</div>
+</header>
+<div class="container">
+  <div class="card">
+    <div class="card-title">Datos del plato</div>
+    <div class="grid-3">
+      <div class="field">
+        <div class="field-label"><label>Nombre del plato</label><button class="help-btn" onclick="toggleTooltip('tt-nombre')">?</button><div class="tooltip" id="tt-nombre">Escribe el nombre tal como aparece en tu carta. Cuanto más específico, mejor sugerencia de la IA.</div></div>
+        <input type="text" id="nombre" placeholder="Ej: Pizza Margarita" oninput="calcular()">
+      </div>
+      <div class="field">
+        <div class="field-label"><label>Categoría</label><button class="help-btn" onclick="toggleTooltip('tt-cat')">?</button><div class="tooltip" id="tt-cat">Clasifica el plato. Ayuda a la IA a sugerir ingredientes más precisos.</div></div>
+        <select id="categoria" onchange="calcular()"><option value="">Seleccionar...</option><option>Entrante</option><option>Principal</option><option>Postre</option><option>Bebida</option><option>Menú del día</option></select>
+      </div>
+      <div class="field">
+        <div class="field-label"><label>Nº de raciones</label><button class="help-btn" onclick="toggleTooltip('tt-rac')">?</button><div class="tooltip" id="tt-rac">Para cuántas raciones calculas los ingredientes. El coste se divide automáticamente.</div></div>
+        <input type="number" id="raciones" value="1" min="1" oninput="calcular()">
+      </div>
+    </div>
+    <div class="ai-row">
+      <button class="btn-ai" onclick="sugerir()" id="btn-ia">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Sugerir ingredientes y precios con IA
+      </button>
+      <span class="ai-hint">La IA sugiere ingredientes con cantidades y precios aproximados. Tú los ajustas.</span>
+    </div>
+    <div class="ai-box" id="ai-box">
+      <div class="ai-box-title"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Sugerencia IA — selecciona los que quieres añadir</div>
+      <div id="ai-loading" class="ai-loading" style="display:none"><div class="spinner"></div>Analizando plato y consultando precios de mercado...</div>
+      <div id="ai-error" class="ai-error" style="display:none"></div>
+      <div class="sug-list" id="sug-list"></div>
+      <button class="btn-add-sel" id="btn-add-sel" onclick="addSugeridos()" style="display:none">Añadir seleccionados a la ficha</button>
+      <p class="ai-note" id="ai-note" style="display:none">Los precios son aproximados. Ajústalos con los precios reales de tu proveedor.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Ingredientes</div>
+    <div class="ing-header"><span>Ingrediente</span><span>Cantidad</span><span>Unidad</span><div style="display:flex;align-items:center;gap:4px;position:relative"><span>€ / unidad</span><button class="help-btn" onclick="toggleTooltip('tt-precio')">?</button><div class="tooltip" id="tt-precio" style="left:auto;right:0">Precio al proveedor por kg, litro o unidad. La IA sugiere precios aproximados.</div></div><span></span></div>
+    <div id="ingredientes"></div>
+    <button class="btn-add-manual" onclick="addIng()">+ Añadir ingrediente manualmente</button>
+    <p class="hint">Usa la IA o añade manualmente. Edita los precios con los de tu proveedor real.</p>
+  </div>
+  <div class="metrics">
+    <div class="metric"><div class="metric-label">Coste total</div><div class="metric-value" id="m-coste">0,00 €</div></div>
+    <div class="metric"><div class="metric-label">Coste por ración</div><div class="metric-value" id="m-racion">0,00 €</div></div>
+    <div class="metric"><div class="metric-label">Precio de venta</div><div class="metric-value good" id="m-pvp">0,00 €</div></div>
+    <div class="metric"><div class="metric-label">Margen real</div><div class="metric-value" id="m-margen">—</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Margen objetivo</div>
+    <div class="margen-wrap">
+      <div style="position:relative;display:flex;align-items:center;gap:5px"><label style="font-size:12px;font-weight:500;color:var(--text2);white-space:nowrap">Food cost %</label><button class="help-btn" onclick="toggleTooltip('tt-margen')">?</button><div class="tooltip" id="tt-margen">% del precio de venta que se va en ingredientes. En hostelería lo normal es 28-35%.</div></div>
+      <input type="range" id="margen" min="20" max="50" value="30" step="1" oninput="calcular()">
+      <span class="margen-val" id="margen-val">30%</span>
+    </div>
+    <p class="hint">Rango recomendado en hostelería: 28-35%. A menor porcentaje, mayor precio de venta.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Alérgenos<button class="help-btn" onclick="toggleTooltip('tt-alg')" style="margin-top:0;margin-left:-4px">?</button><div class="tooltip" id="tt-alg">Obligatorio por ley (Reglamento EU 1169/2011). Marca todos los alérgenos presentes.</div></div>
+    <div class="alergenos" id="alergenos"></div>
+    <div class="alg-list" id="alg-list"><p>Alérgenos presentes: <span id="alg-resumen"></span></p></div>
+    <p class="hint">Marca todos los alérgenos del plato. Requerido por normativa europea.</p>
+  </div>
+  <button class="btn-print" onclick="window.print()">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+    Imprimir / Guardar PDF
+  </button>
+  <p class="hint" style="text-align:center;margin-top:1rem">QuantiChef · Escandallo inteligente con IA · v1.0</p>
+</div>
+<script>
+const ALGS=["Gluten","Crustáceos","Huevos","Pescado","Cacahuetes","Soja","Lácteos","Frutos secos","Apio","Mostaza","Sésamo","Sulfitos","Altramuces","Moluscos"];
+const UNITS=["g","kg","ml","l","ud","ración"];
+let ings=[],_sugs=[];
+function toggleTooltip(id){document.querySelectorAll('.tooltip').forEach(t=>{if(t.id!==id)t.classList.remove('visible');});document.getElementById(id).classList.toggle('visible');}
+document.addEventListener('click',e=>{if(!e.target.classList.contains('help-btn'))document.querySelectorAll('.tooltip').forEach(t=>t.classList.remove('visible'));});
+function initAlergenos(){const c=document.getElementById('alergenos');ALGS.forEach(a=>{const l=document.createElement('label');l.className='alg';l.innerHTML=`<input type="checkbox" onchange="calcular()"><span class="alg-dot"></span>${a}`;l.addEventListener('click',function(){setTimeout(()=>{this.classList.toggle('active',this.querySelector('input').checked);calcular();},0);});c.appendChild(l);});}
+function addIng(n='',q='',u='g',p=''){const id=Date.now()+Math.random();ings.push({id,n,q,u,p});renderIngs();}
+function removeIng(id){ings=ings.filter(i=>i.id!==id);renderIngs();}
+function renderIngs(){const c=document.getElementById('ingredientes');const v={};ings.forEach(i=>{v[i.id]={n:document.getElementById('n'+i.id)?.value??i.n,q:document.getElementById('q'+i.id)?.value??i.q,u:document.getElementById('u'+i.id)?.value??i.u,p:document.getElementById('p'+i.id)?.value??i.p};});c.innerHTML='';ings.forEach(i=>{const x=v[i.id]||{n:i.n,q:i.q,u:i.u,p:i.p};const d=document.createElement('div');d.className='ing-row';d.innerHTML=`<input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()"><input type="number" placeholder="0" min="0" step="0.001" id="q${i.id}" value="${x.q}" oninput="calcular()"><select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><input type="number" placeholder="0,00" min="0" step="0.01" id="p${i.id}" value="${x.p}" oninput="calcular()"><button class="btn-del" onclick="removeIng(${i.id})">×</button>`;c.appendChild(d);});calcular();}
+function fmt(n){return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
+function calcular(){const rac=Math.max(parseFloat(document.getElementById('raciones').value)||1,1);const mg=parseFloat(document.getElementById('margen').value)||30;document.getElementById('margen-val').textContent=mg+'%';let tot=0;ings.forEach(i=>{const q=parseFloat(document.getElementById('q'+i.id)?.value)||0;const p=parseFloat(document.getElementById('p'+i.id)?.value)||0;tot+=q*p;});const por=tot/rac,pvp=mg>0?por/(mg/100):0,mreal=pvp>0?((pvp-por)/pvp*100):0;document.getElementById('m-coste').textContent=fmt(tot);document.getElementById('m-racion').textContent=fmt(por);document.getElementById('m-pvp').textContent=fmt(pvp);const mm=document.getElementById('m-margen');if(pvp>0){mm.textContent=mreal.toFixed(1)+'%';mm.className='metric-value '+(mreal>=65?'good':mreal>=50?'warn':'bad');}else{mm.textContent='—';mm.className='metric-value';}const act=Array.from(document.querySelectorAll('.alg input:checked')).map(i=>i.closest('.alg').textContent.trim());document.getElementById('alg-resumen').textContent=act.join(', ');document.getElementById('alg-list').classList.toggle('visible',act.length>0);}
+async function sugerir(){const nombre=document.getElementById('nombre').value.trim();const raciones=parseInt(document.getElementById('raciones').value)||1;const categoria=document.getElementById('categoria').value||'plato';if(!nombre){alert('Escribe primero el nombre del plato.');return;}const btn=document.getElementById('btn-ia'),box=document.getElementById('ai-box');const loading=document.getElementById('ai-loading'),errorEl=document.getElementById('ai-error');const list=document.getElementById('sug-list'),addBtn=document.getElementById('btn-add-sel');const note=document.getElementById('ai-note');btn.disabled=true;btn.textContent='Consultando IA...';box.classList.add('visible');loading.style.display='flex';errorEl.style.display='none';list.innerHTML='';addBtn.style.display='none';note.style.display='none';const prompt=`Eres un chef profesional experto en costes de cocina en España. Para el plato "${nombre}" (categoría: ${categoria}, ${raciones} raciones), dame ingredientes típicos con cantidades y precios aproximados de mercado en España. Responde SOLO con un array JSON válido, sin texto adicional, sin markdown. Formato: [{"nombre":"Pasta spaghetti","cantidad":320,"unidad":"g","precio_kg":1.80}]. Unidades: g, kg, ml, l, ud. precio_kg = precio por kg o litro. Para ud, precio_kg es precio por unidad. Máximo 10 ingredientes, cantidades para ${raciones} raciones. Precios realistas proveedor hostelería España 2024.`;try{const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:900,messages:[{role:'user',content:prompt}]})});const data=await res.json();if(!res.ok)throw new Error(data.error?.message||'Error API');const text=data.content[0].text.trim().replace(/```json|```/g,'').trim();const sugs=JSON.parse(text);loading.style.display='none';list.innerHTML='';sugs.forEach((s,i)=>{const precioMostrar=s.unidad==='ud'?`~${s.precio_kg.toFixed(2)}€/ud`:`~${s.precio_kg.toFixed(2)}€/kg`;const item=document.createElement('div');item.className='sug-item selected';item.innerHTML=`<input type="checkbox" id="sc${i}" checked onchange="this.closest('.sug-item').classList.toggle('selected',this.checked)"><label for="sc${i}" style="display:flex;align-items:center;gap:6px;flex:1;cursor:pointer;margin:0"><span class="sug-name">${s.nombre}</span><span class="sug-qty">${s.cantidad} ${s.unidad}</span><span class="sug-price">${precioMostrar}</span></label>`;list.appendChild(item);});_sugs=sugs;addBtn.style.display='inline-block';note.style.display='block';}catch(err){loading.style.display='none';errorEl.style.display='block';errorEl.textContent='No se pudo conectar con la IA. Añade los ingredientes manualmente. ('+err.message+')';}btn.disabled=false;btn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Sugerir ingredientes y precios con IA`;}
+function addSugeridos(){document.querySelectorAll('#sug-list input[type=checkbox]').forEach((cb,i)=>{if(cb.checked&&_sugs[i]){const s=_sugs[i];let p=s.precio_kg;if(s.unidad==='g')p=s.precio_kg/1000;else if(s.unidad==='ml')p=s.precio_kg/1000;addIng(s.nombre,s.cantidad,s.unidad,p.toFixed(4));}});document.getElementById('ai-box').classList.remove('visible');document.getElementById('btn-add-sel').style.display='none';document.getElementById('ai-note').style.display='none';}
+initAlergenos();addIng();addIng();addIng();
+</script>
+</body>
+</html>
