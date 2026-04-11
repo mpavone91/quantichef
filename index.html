@@ -175,5 +175,12 @@ async function sugerir(){const nombre=document.getElementById('nombre').value.tr
 function addSugeridos(){document.querySelectorAll('#sug-list input[type=checkbox]').forEach((cb,i)=>{if(cb.checked&&_sugs[i]){const s=_sugs[i];let p=s.precio_kg;if(s.unidad==='g')p=s.precio_kg/1000;else if(s.unidad==='ml')p=s.precio_kg/1000;addIng(s.nombre,s.cantidad,s.unidad,p.toFixed(4));}});document.getElementById('ai-box').classList.remove('visible');document.getElementById('btn-add-sel').style.display='none';document.getElementById('ai-note').style.display='none';}
 initAlergenos();addIng();addIng();addIng();
 </script>
+
+<!-- Vercel Speed Insights -->
+<script>
+  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+
 </body>
 </html>
