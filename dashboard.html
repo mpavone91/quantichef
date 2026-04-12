@@ -202,12 +202,22 @@ async function init(){
 async function cargarDatos(session){
 
   // Cargar restaurante
-  const {data:rest}=await sb.from('restaurantes').select('*').eq('user_id',session.user.id).single();
+  const {data:rest}=await sb.from('restaurantes').select('id,nombre,plan').eq('user_id',session.user.id).single();
   if(!rest){window.location.href='/login';return;}
 
   restauranteId=rest.id;
   document.getElementById('nav-restaurante').textContent=rest.nombre;
   document.getElementById('welcome-nombre').textContent=rest.nombre;
+
+  // Comprobar plan desde Supabase
+  const esPro = rest.plan === 'pro';
+  if(esPro){
+    document.getElementById('plan-banner').style.display='none';
+    localStorage.setItem('qc_premium','true');
+  } else {
+    document.getElementById('plan-banner').style.display='flex';
+    localStorage.removeItem('qc_premium');
+  }
 
   // Cargar escandallos
   const {data:escandallos}=await sb.from('escandallos').select('*').eq('restaurante_id',rest.id).order('updated_at',{ascending:false});
