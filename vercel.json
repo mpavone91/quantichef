@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/escandallo", "destination": "/escandallo.html" }
+    { "source": "/escandallo", "destination": "/escandallo.html" },
+    { "source": "/login", "destination": "/auth.html" }
   ]
 }
