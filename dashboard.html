@@ -170,6 +170,17 @@ const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let restauranteId=null;
 
+  // Mostrar mensaje si viene de pago exitoso
+const _params = new URLSearchParams(window.location.search);
+if(_params.get('pago') === 'ok'){
+  localStorage.setItem('qc_premium', 'true');
+  const banner = document.createElement('div');
+  banner.style.cssText = 'background:#E8F2EC;border:1px solid #C8E6D0;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:10px;font-size:14px;color:#1E4D2B;font-weight:500';
+  banner.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> ¡Pago completado! Tu plan Pro está activo. Bienvenido a QuantiChef Pro 🎉';
+  document.querySelector('.container')?.prepend(banner);
+  // Limpiar URL
+  window.history.replaceState({}, '', '/dashboard');
+}
 async function init(){
   // Esperar INITIAL_SESSION — es el único evento fiable al arrancar
   sb.auth.onAuthStateChange(async (event, session) => {
