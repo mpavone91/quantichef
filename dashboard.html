@@ -171,7 +171,13 @@ const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 let restauranteId=null;
 
 async function init(){
-  // Usar onAuthStateChange para esperar correctamente la sesión
+  // Intentar getSession primero (más rápido)
+  const {data:{session}}=await sb.auth.getSession();
+  if(session){
+    await cargarDatos(session);
+    return;
+  }
+  // Si no hay sesión inmediata, esperar onAuthStateChange
   sb.auth.onAuthStateChange(async (event, session) => {
     if(event==='SIGNED_OUT'||(event==='INITIAL_SESSION'&&!session)){
       window.location.href='/login';
