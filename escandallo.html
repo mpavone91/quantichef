@@ -115,7 +115,7 @@
   .ai-error{font-size:12px;color:var(--danger);padding:6px 0}
   .ai-note{font-size:11px;color:var(--accent);margin-top:8px;padding:6px 10px;background:white;border-radius:6px;border:1px solid rgba(30,77,43,.15)}
 
-  /* Métricas */
+  /* Métricas — ahora 5 con la nueva */
   .metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:.875rem}
   .metric{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center}
   .metric.premium-metric{border-color:rgba(196,148,58,.3);background:var(--gold-light)}
@@ -200,6 +200,7 @@
   </div>
 </header>
 
+<!-- Modal -->
 <div class="modal-overlay" id="modal-overlay" onclick="hideModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-icon">
@@ -233,6 +234,7 @@
     <button class="btn-limit" onclick="showModal()">Activar plan</button>
   </div>
 
+  <!-- DATOS DEL PLATO -->
   <div class="card">
     <div class="card-title">Datos del plato</div>
     <div class="grid-3">
@@ -266,6 +268,7 @@
     </div>
   </div>
 
+  <!-- INGREDIENTES -->
   <div class="card">
     <div class="card-title">Ingredientes</div>
     <div class="toggle-row" id="merma-row">
@@ -290,6 +293,7 @@
     <p class="hint">Usa la IA o añade manualmente. Edita los precios con los de tu proveedor real.</p>
   </div>
 
+  <!-- MÉTRICAS -->
   <div class="metrics">
     <div class="metric"><div class="metric-label">Coste total</div><div class="metric-value" id="m-coste">0,00 €</div></div>
     <div class="metric"><div class="metric-label">Coste por ración</div><div class="metric-value" id="m-racion">0,00 €</div></div>
@@ -302,9 +306,12 @@
     </div>
   </div>
 
+  <!-- MÁRGENES -->
   <div class="card">
     <div class="card-title">Márgenes y precio de venta</div>
     <div class="sliders-wrap">
+
+      <!-- Slider 1 — Food cost (gratis) -->
       <div>
         <div class="slider-row">
           <div class="slider-label-wrap">
@@ -316,18 +323,23 @@
           <span class="slider-val green" id="val-fc">30%</span>
         </div>
       </div>
+
       <div class="slider-divider"></div>
+
+      <!-- Slider 2 — Margen neto (premium) -->
       <div class="toggle-row" id="neto-row" style="flex-direction:column;align-items:stretch;gap:.75rem">
         <div style="display:flex;align-items:center;gap:10px">
           <div class="toggle-label">Margen neto objetivo<small>Incluye costes fijos y beneficio — para conocer el precio de venta real</small></div>
           <span class="premium-tag">Premium</span>
           <button class="help-btn" onclick="tt('tt-neto')">?</button>
-          <div class="tooltip" id="tt-neto" style="left:auto;right:0">El margen neto es lo que queda después de cubrir ingredientes, alquiler, personal y todos los costes del negocio.</div>
+          <div class="tooltip" id="tt-neto" style="left:auto;right:0">El margen neto es lo que queda después de cubrir ingredientes, alquiler, personal y todos los costes del negocio. Si quieres ganar un 20% neto y tu food cost es el 30%, tu precio de venta debe cubrir ambos. QuantiChef lo calcula solo.</div>
           <label class="toggle"><input type="checkbox" id="toggle-neto" onchange="handleNetoToggle()"><span class="toggle-slider"></span></label>
         </div>
         <div id="neto-slider-wrap" style="display:none">
           <div class="slider-row">
-            <div class="slider-label-wrap"><span class="slider-label" style="color:var(--warn)">Beneficio neto %</span></div>
+            <div class="slider-label-wrap">
+              <span class="slider-label" style="color:var(--warn)">Beneficio neto %</span>
+            </div>
             <input type="range" class="gold-track" id="margen-neto" min="5" max="40" value="20" step="1" oninput="calcular()">
             <span class="slider-val gold" id="val-neto">20%</span>
           </div>
@@ -337,12 +349,17 @@
           <span>Función Premium — Activar plan</span>
         </div>
       </div>
+
       <div id="precio-explicacion" class="margen-hint" style="display:none"></div>
     </div>
   </div>
 
+  <!-- ALÉRGENOS -->
   <div class="card">
-    <div class="card-title">Alérgenos</div>
+    <div class="card-title">Alérgenos
+      <button class="help-btn" onclick="tt('tt-alg')" style="margin-top:0;margin-left:-4px">?</button>
+      <div class="tooltip" id="tt-alg">Obligatorio por ley (Reglamento EU 1169/2011). Marca todos los alérgenos presentes.</div>
+    </div>
     <div class="alergenos" id="alergenos"></div>
     <div class="alg-list" id="alg-list"><p>⚠ Alérgenos presentes: <span id="alg-resumen"></span></p></div>
     <p class="hint">Marca todos los alérgenos del plato. Requerido por normativa europea.</p>
@@ -356,6 +373,7 @@
 </div>
 
 <script>
+// ── TRIAL ────────────────────────────────────────────────────
 const MAX_FREE=5;
 let usados=parseInt(localStorage.getItem('qc_escandallos')||'0');
 let esPremium=localStorage.getItem('qc_premium')==='true';
@@ -374,13 +392,14 @@ function registrarEscandallo(){
 
 function showModal(tipo){
   const titles={merma:'Cálculo de mermas — Premium',neto:'Margen neto — Premium',limite:'Has usado tus 5 escandallos gratis'};
-  const descs={merma:'Calcula el coste real considerando la pérdida de cada ingrediente.',neto:'Conoce el precio de venta real que cubre costes fijos y beneficio.',limite:'Activa tu plan para escandallos ilimitados.'};
+  const descs={merma:'Calcula el coste real considerando la pérdida de cada ingrediente al limpiar o cocinar.',neto:'Conoce el precio de venta real que cubre ingredientes, costes fijos y beneficio. Lo más potente de QuantiChef.',limite:'Activa tu plan para crear escandallos ilimitados y desbloquear mermas y margen neto.'};
   document.getElementById('modal-title').textContent=titles[tipo]||'Activa tu plan';
   document.getElementById('modal-desc').textContent=descs[tipo]||'Desbloquea todas las funciones premium.';
   document.getElementById('modal-overlay').classList.add('visible');
 }
 function hideModal(e){if(!e||e.target===document.getElementById('modal-overlay'))document.getElementById('modal-overlay').classList.remove('visible');}
 
+// ── PREMIUM: MERMAS ──────────────────────────────────────────
 let mermasOn=false;
 function handleMermaToggle(){
   const t=document.getElementById('toggle-merma');
@@ -388,12 +407,13 @@ function handleMermaToggle(){
   mermasOn=t.checked;
   const hdr=document.getElementById('ing-header');
   hdr.className='ing-header '+(mermasOn?'con-merma':'sin-merma');
-  if(mermasOn){hdr.innerHTML='<span>Ingrediente</span><span>Cant. Útil</span><span>Unidad</span><div><span>€/unidad</span></div><span style="text-align:center">Merma %</span><span></span>';}
-  else{hdr.innerHTML='<span>Ingrediente</span><span>Cantidad</span><span>Unidad</span><div><span>€/unidad</span></div><span></span>';}
+  if(mermasOn){hdr.innerHTML='<span>Ingrediente</span><span>Cantidad útil</span><span>Unidad</span><div style="display:flex;align-items:center;gap:4px"><span>€/unidad</span></div><span style="text-align:center">Merma %</span><span></span>';}
+  else{hdr.innerHTML='<span>Ingrediente</span><span>Cantidad</span><span>Unidad</span><div style="display:flex;align-items:center;gap:4px;position:relative"><span>€/unidad</span></div><span></span>';}
   document.getElementById('merma-hint').style.display=mermasOn?'block':'none';
   renderIngs();
 }
 
+// ── PREMIUM: MARGEN NETO ─────────────────────────────────────
 let netoOn=false;
 function handleNetoToggle(){
   const t=document.getElementById('toggle-neto');
@@ -403,19 +423,15 @@ function handleNetoToggle(){
   calcular();
 }
 
+// ── TOOLTIPS ─────────────────────────────────────────────────
 function tt(id){document.querySelectorAll('.tooltip').forEach(t=>{if(t.id!==id)t.classList.remove('visible');});document.getElementById(id).classList.toggle('visible');}
 document.addEventListener('click',e=>{if(!e.target.classList.contains('help-btn'))document.querySelectorAll('.tooltip').forEach(t=>t.classList.remove('visible'));});
 
+// ── ALÉRGENOS ────────────────────────────────────────────────
 const ALGS=["Gluten","Crustáceos","Huevos","Pescado","Cacahuetes","Soja","Lácteos","Frutos secos","Apio","Mostaza","Sésamo","Sulfitos","Altramuces","Moluscos"];
-function initAlergenos(){
-  const c=document.getElementById('alergenos');
-  ALGS.forEach(a=>{
-    const l=document.createElement('label');l.className='alg';l.innerHTML=`<input type="checkbox" onchange="calcular()"><span class="alg-dot"></span>${a}`;
-    l.addEventListener('click',function(){setTimeout(()=>{this.classList.toggle('active',this.querySelector('input').checked);calcular();},0);});
-    c.appendChild(l);
-  });
-}
+function initAlergenos(){const c=document.getElementById('alergenos');ALGS.forEach(a=>{const l=document.createElement('label');l.className='alg';l.innerHTML=`<input type="checkbox" onchange="calcular()"><span class="alg-dot"></span>${a}`;l.addEventListener('click',function(){setTimeout(()=>{this.classList.toggle('active',this.querySelector('input').checked);calcular();},0);});c.appendChild(l);});}
 
+// ── INGREDIENTES ─────────────────────────────────────────────
 const UNITS=["g","kg","ml","l","ud","ración"];
 let ings=[],_sugs=[];
 function addIng(n='',q='',u='g',p='',m=''){const id=Date.now()+Math.random();ings.push({id,n,q,u,p,m});renderIngs();}
@@ -427,14 +443,14 @@ function renderIngs(){
   ings.forEach(i=>{
     const x=v[i.id]||{n:i.n,q:i.q,u:i.u,p:i.p,m:i.m};
     const d=document.createElement('div');d.className='ing-row '+(mermasOn?'con-merma':'sin-merma');
-    const mc=mermasOn?`<div class="merma-cell"><input type="number" class="merma-input" id="m${i.id}" value="${x.m}" oninput="calcular()"><span class="merma-pct">%</span></div>`:'';
-    d.innerHTML=`<input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()"><input type="number" id="q${i.id}" value="${x.q}" oninput="calcular()"><select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><input type="number" id="p${i.id}" value="${x.p}" oninput="calcular()">${mc}<button class="btn-del" onclick="removeIng(${i.id})">×</button>`;
+    const mc=mermasOn?`<div class="merma-cell"><input type="number" class="merma-input" placeholder="0" min="0" max="99" step="1" id="m${i.id}" value="${x.m}" oninput="calcular()"><span class="merma-pct">%</span></div>`:'';
+    d.innerHTML=`<input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()"><input type="number" placeholder="0" min="0" step="0.001" id="q${i.id}" value="${x.q}" oninput="calcular()"><select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><input type="number" placeholder="0,00" min="0" step="0.01" id="p${i.id}" value="${x.p}" oninput="calcular()">${mc}<button class="btn-del" onclick="removeIng(${i.id})">×</button>`;
     c.appendChild(d);
   });calcular();
 }
 
+// ── CÁLCULO ──────────────────────────────────────────────────
 function fmt(n){return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
-
 function calcular(){
   const rac=Math.max(parseFloat(document.getElementById('raciones').value)||1,1);
   const fc=parseFloat(document.getElementById('margen-fc').value)||30;
@@ -442,6 +458,7 @@ function calcular(){
   document.getElementById('val-fc').textContent=fc+'%';
   document.getElementById('val-neto').textContent=neto+'%';
 
+  // Coste total con mermas
   let tot=0;
   ings.forEach(i=>{
     const q=parseFloat(document.getElementById('q'+i.id)?.value)||0;
@@ -452,82 +469,135 @@ function calcular(){
   });
 
   const por=tot/rac;
+
+  // Precio mínimo (solo food cost)
   const pvpMin=fc>0?por/(fc/100):0;
-  
-  // NUEVA FÓRMULA PROFESIONAL
-  const pvpRecomendado = (fc + neto) < 100 ? por / (1 - (fc + neto) / 100) : 0;
+  // Food cost real
+  const fcReal=pvpMin>0?(por/pvpMin*100):0;
+
+  // Precio recomendado (food cost + margen neto)
+  // Precio recomendado = coste ingredientes / (1 - fc% - neto%)
+  const totalPct=(fc+neto)/100;
+  const pvpRec=totalPct<1&&totalPct>0?por/(1-neto/100-fc/100*(1-neto/100)):0;
+  // Simplificado: pvpRec = por / (fc/100) / (1 - neto/100)
+  const pvpRecomendado=fc>0&&neto<100?por/(fc/100)/(1-neto/100):0;
 
   document.getElementById('m-coste').textContent=fmt(tot);
   document.getElementById('m-racion').textContent=fmt(por);
   document.getElementById('m-pvp').textContent=fmt(pvpMin);
+  document.getElementById('m-pvp-sub').textContent='cubre ingredientes ('+fc+'% FC)';
 
   const mm=document.getElementById('m-fc');
-  if(pvpMin>0){mm.textContent=fc.toFixed(0)+'%';mm.className='metric-value good';}
-  else{mm.textContent='—';}
+  if(pvpMin>0){mm.textContent=fcReal.toFixed(1)+'%';mm.className='metric-value '+(fcReal<=35?'good':fcReal<=45?'warn':'bad');}
+  else{mm.textContent='—';mm.className='metric-value';}
 
+  // Métrica precio recomendado
   const mNeto=document.getElementById('m-pvp-neto');
-  if(netoOn && pvpRecomendado > 0){
+  const mNetoSub=document.getElementById('m-neto-sub');
+  if(netoOn&&pvpRecomendado>0){
     mNeto.textContent=fmt(pvpRecomendado);
-    document.getElementById('precio-explicacion').style.display='block';
-    document.getElementById('precio-explicacion').innerHTML=`<strong>Precio recomendado:</strong> Cubre ingredientes (${fc}%) y deja un beneficio neto del ${neto}%.`;
-  } else {
-    mNeto.textContent='—';
+    mNeto.className='metric-value gold';
+    mNetoSub.textContent='+'+neto+'% beneficio neto';
+    // Explicación
+    const expl=document.getElementById('precio-explicacion');
+    expl.style.display='block';
+    expl.innerHTML=`<strong>Cómo se calcula el precio recomendado:</strong> Tu coste por ración es ${fmt(por)}. Con un food cost del ${fc}% el precio mínimo es ${fmt(pvpMin)}. Añadiendo un ${neto}% de beneficio neto sobre el precio de venta, el precio recomendado es <strong>${fmt(pvpRecomendado)}</strong> — que te deja ${fmt(pvpRecomendado-por)} de beneficio bruto por ración tras cubrir todos los costes.`;
+  } else if(!netoOn){
+    mNeto.textContent='—';mNeto.className='metric-value gold';
+    mNetoSub.textContent='activa margen neto';
     document.getElementById('precio-explicacion').style.display='none';
   }
+
+  const act=Array.from(document.querySelectorAll('.alg input:checked')).map(i=>i.closest('.alg').textContent.trim());
+  document.getElementById('alg-resumen').textContent=act.join(', ');
+  document.getElementById('alg-list').classList.toggle('visible',act.length>0);
 }
 
+// ── IA ───────────────────────────────────────────────────────
 async function sugerir(){
   const nombre=document.getElementById('nombre').value.trim();
-  const raciones=document.getElementById('raciones').value;
-  if(!nombre){alert('Escribe el plato.');return;}
-  
-  const btn=document.getElementById('btn-ia');
-  btn.disabled=true;
-  document.getElementById('ai-box').classList.add('visible');
-  document.getElementById('ai-loading').style.display='flex';
-
-  const prompt = `Actúa como Chef Ejecutivo. Genera un escandallo para: "${nombre}" para ${raciones} raciones. 
-  Responde ÚNICAMENTE con un array JSON. Formato: [{"nombre":"nombre","cantidad":0,"unidad":"g","precio_kg":0,"merma":0}] 
-  Usa precios de España 2026. Unidades permitidas: g, kg, ml, l, ud.`;
-
+  const raciones=parseInt(document.getElementById('raciones').value)||1;
+  const categoria=document.getElementById('categoria').value||'plato';
+  if(!nombre){alert('Escribe primero el nombre del plato.');return;}
+  const btn=document.getElementById('btn-ia'),box=document.getElementById('ai-box');
+  const loading=document.getElementById('ai-loading'),errorEl=document.getElementById('ai-error');
+  const list=document.getElementById('sug-list'),addBtn=document.getElementById('btn-add-sel');
+  btn.disabled=true;btn.textContent='Consultando IA...';
+  box.classList.add('visible');loading.style.display='flex';
+  errorEl.style.display='none';list.innerHTML='';addBtn.style.display='none';
+  document.getElementById('ai-note').style.display='none';
+  const prompt=`Eres un chef profesional experto en costes de cocina en España. Para el plato "${nombre}" (categoría: ${categoria}, ${raciones} raciones), dame ingredientes típicos con cantidades, precios y merma. Responde SOLO con un array JSON válido, sin texto adicional, sin markdown. Formato: [{"nombre":"Merluza fresca","cantidad":200,"unidad":"g","precio_kg":8.50,"merma":30}]. Unidades: g, kg, ml, l, ud. precio_kg = precio por kg o litro. merma = % pérdida al limpiar (0 si no hay). Máximo 10 ingredientes, cantidades útiles para ${raciones} raciones. Precios hostelería España 2024.`;
   try{
-    const res=await fetch('/api/claude',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messages:[{role:'user',content:prompt}]})
-    });
+    const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:900,messages:[{role:'user',content:prompt}]})});
     const data=await res.json();
-    const sugs=JSON.parse(data.content[0].text.trim().replace(/```json|```/g,''));
-    
-    document.getElementById('ai-loading').style.display='none';
-    const list=document.getElementById('sug-list');
-    list.innerHTML='';
-    _sugs=sugs;
-
+    if(!res.ok)throw new Error(data.error?.message||'Error API');
+    const sugs=JSON.parse(data.content[0].text.trim().replace(/```json|```/g,'').trim());
+    loading.style.display='none';
     sugs.forEach((s,i)=>{
       const item=document.createElement('div');item.className='sug-item selected';
-      item.innerHTML=`<span class="sug-name">${s.nombre}</span><span class="sug-qty">${s.cantidad}${s.unidad}</span><span class="sug-price">~${s.precio_kg}€</span>`;
+      const pc=s.unidad==='ud'?`~${s.precio_kg.toFixed(2)}€/ud`:`~${s.precio_kg.toFixed(2)}€/kg`;
+      const mt=s.merma>0?`<span class="sug-merma">Merma ${s.merma}%</span>`:'';
+      item.innerHTML=`<input type="checkbox" id="sc${i}" checked style="display:none"><div class="sug-check" onclick="toggleSug(this,${i})"><svg class="sug-check-icon" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div><label for="sc${i}" style="display:flex;align-items:center;gap:6px;flex:1;cursor:pointer;margin:0;flex-wrap:wrap" onclick="toggleSug(this.previousElementSibling,${i})"><span class="sug-name">${s.nombre}</span><span class="sug-qty">${s.cantidad} ${s.unidad}</span><span class="sug-price">${pc}</span>${mt}</label>`;
       list.appendChild(item);
     });
-    document.getElementById('btn-add-sel').style.display='block';
+    _sugs=sugs;addBtn.style.display='inline-block';document.getElementById('ai-note').style.display='block';
   }catch(err){
-    document.getElementById('ai-loading').style.display='none';
-    alert('Error con la IA. Asegúrate de configurar la API KEY en Vercel.');
+    loading.style.display='none';errorEl.style.display='block';
+    errorEl.textContent='No se pudo conectar con la IA. Añade manualmente. ('+err.message+')';
   }
   btn.disabled=false;
+  btn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Sugerir ingredientes y precios con IA`;
 }
-
+function toggleSug(checkEl,i){
+  const item=checkEl.closest('.sug-item');
+  const cb=item.querySelector('input[type=checkbox]');
+  cb.checked=!cb.checked;
+  item.classList.toggle('selected',cb.checked);
+}
 function addSugeridos(){
   if(!registrarEscandallo())return;
-  _sugs.forEach(s=>{
-    let p=s.precio_kg;
-    if(s.unidad==='g' || s.unidad==='ml') p=p/1000;
-    addIng(s.nombre, s.cantidad, s.unidad, p.toFixed(3), s.merma);
+  const seleccionados=[];
+  document.querySelectorAll('#sug-list input[type=checkbox]').forEach((cb,i)=>{
+    if(cb.checked&&_sugs[i]){
+      const s=_sugs[i];let p=s.precio_kg;
+      if(s.unidad==='g')p/=1000;else if(s.unidad==='ml')p/=1000;
+      seleccionados.push({n:s.nombre,q:s.cantidad,u:s.unidad,p:p.toFixed(4),m:s.merma||0});
+    }
   });
+  // Rellenar primero los campos vacíos existentes, luego añadir nuevos
+  let si=0;
+  for(let i=0;i<ings.length&&si<seleccionados.length;i++){
+    const ing=ings[i];
+    const nombre=document.getElementById('n'+ing.id)?.value||'';
+    const cantidad=document.getElementById('q'+ing.id)?.value||'';
+    if(!nombre&&(!cantidad||cantidad==='0')){
+      const s=seleccionados[si];
+      document.getElementById('n'+ing.id).value=s.n;
+      document.getElementById('q'+ing.id).value=s.q;
+      document.getElementById('u'+ing.id).value=s.u;
+      document.getElementById('p'+ing.id).value=s.p;
+      if(mermasOn&&document.getElementById('m'+ing.id))document.getElementById('m'+ing.id).value=s.m;
+      si++;
+    }
+  }
+  // Los que no cupieron en campos vacíos, añadirlos como nuevos
+  for(;si<seleccionados.length;si++){
+    const s=seleccionados[si];
+    addIng(s.n,s.q,s.u,s.p,s.m);
+  }
+  calcular();
   document.getElementById('ai-box').classList.remove('visible');
+  document.getElementById('btn-add-sel').style.display='none';
+  document.getElementById('ai-note').style.display='none';
 }
 
-initAlergenos();addIng();updateTrialBadge();
+// ── INIT ─────────────────────────────────────────────────────
+initAlergenos();addIng();addIng();addIng();
+updateTrialBadge();
+if(esPremium){
+  document.getElementById('merma-lock').style.display='none';
+  document.getElementById('neto-lock').style.display='none';
+}
 </script>
 </body>
 </html>
