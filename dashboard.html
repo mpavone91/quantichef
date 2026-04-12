@@ -171,8 +171,19 @@ const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 let restauranteId=null;
 
 async function init(){
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='/login';return;}
+  // Usar onAuthStateChange para esperar correctamente la sesión
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if(event==='SIGNED_OUT'||(event==='INITIAL_SESSION'&&!session)){
+      window.location.href='/login';
+      return;
+    }
+    if(session && !restauranteId){
+      await cargarDatos(session);
+    }
+  });
+}
+
+async function cargarDatos(session){
 
   // Cargar restaurante
   const {data:rest}=await sb.from('restaurantes').select('*').eq('user_id',session.user.id).single();
