@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+  // Configuración de permisos para que la web pueda consultar la API
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -8,7 +9,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Método no permitido' });
   }
 
   try {
@@ -19,7 +20,11 @@ export default async function handler(req, res) {
         'x-api-key': process.env.ANTHROPIC_API_KEY,
         'anthropic-version': '2023-06-01'
       },
-      body: JSON.stringify(req.body)
+      body: JSON.stringify({
+        model: 'claude-3-haiku-20240307', // El modelo más rápido y barato para escandallos
+        max_tokens: 1000,
+        messages: req.body.messages // Aquí recibimos lo que envía el formulario
+      })
     });
 
     const data = await response.json();
