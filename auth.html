@@ -152,7 +152,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Si ya hay sesión activa, redirigir al escandallo
 sb.auth.getSession().then(({ data: { session } }) => {
-  if (session) window.location.href = '/escandallo';
+  if (session) window.location.href = '/dashboard';
 });
 
 function switchTab(tab) {
@@ -196,7 +196,7 @@ async function login() {
     return;
   }
 
-  window.location.href = '/escandallo';
+  window.location.href = '/dashboard';
 }
 
 async function registro() {
