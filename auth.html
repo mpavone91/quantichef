@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuantiChef — Acceder</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{--bg:#F9F7F2;--surface:#FFFFFF;--border:#E0DDD6;--text:#1A1916;--text2:#4A4845;--text3:#8A8784;--accent:#1E4D2B;--accent-mid:#2D5A3D;--accent-light:#E8F2EC;--accent-mint:#C8E6D0;--gold:#C4943A;--gold-light:#FFF4E0;--danger:#8B1A1A;--danger-light:#FDEAEA}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+  
+  /* Nav */
+  nav{background:var(--accent);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+  .nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+  .nav-logo-icon{width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center}
+  .nav-logo-icon svg{width:15px;height:15px}
+  .nav-logo-text{font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:600}
+  .nav-back{font-size:13px;color:rgba(255,255,255,.7);text-decoration:none;display:flex;align-items:center;gap:5px}
+  .nav-back:hover{color:#fff}
+
+  /* Main */
+  main{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem 1rem}
+  .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2.5rem;width:100%;max-width:420px;box-shadow:0 8px 32px rgba(30,77,43,.06)}
+
+  /* Logo centrado */
+  .card-logo{text-align:center;margin-bottom:2rem}
+  .card-logo-icon{width:52px;height:52px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem}
+  .card-logo-icon svg{width:26px;height:26px}
+  .card-logo-name{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--accent)}
+
+  /* Tabs */
+  .tabs{display:flex;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:1.75rem;gap:3px}
+  .tab{flex:1;padding:9px;border:none;background:none;border-radius:7px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text3);cursor:pointer;transition:all .2s}
+  .tab.active{background:var(--surface);color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+
+  /* Form */
+  .form-group{margin-bottom:1rem}
+  .form-label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px}
+  .form-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s}
+  .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,43,.08)}
+  .form-input.error{border-color:var(--danger);background:var(--danger-light)}
+
+  /* Botón */
+  .btn-primary{width:100%;padding:13px;background:var(--accent);color:white;border:none;border-radius:9px;font-size:15px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:background .2s;margin-top:.5rem}
+  .btn-primary:hover{background:var(--accent-mid)}
+  .btn-primary:disabled{background:var(--text3);cursor:not-allowed}
+
+  /* Mensajes */
+  .msg{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:1rem;display:none}
+  .msg.error{background:var(--danger-light);color:var(--danger);border:1px solid rgba(139,26,26,.2);display:block}
+  .msg.success{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-mint);display:block}
+
+  /* Divider */
+  .divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;color:var(--text3);font-size:12px}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+  /* Trial info */
+  .trial-info{background:var(--gold-light);border:1px solid rgba(196,148,58,.25);border-radius:9px;padding:.875rem 1rem;margin-top:1.25rem;font-size:12px;color:var(--text2);line-height:1.5;display:flex;gap:10px;align-items:flex-start}
+  .trial-info svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;margin-top:1px}
+
+  /* Footer */
+  footer{text-align:center;padding:1.5rem;font-size:12px;color:var(--text3)}
+  footer a{color:var(--text3);text-decoration:none}
+  footer a:hover{color:var(--accent)}
+
+  /* Loading spinner */
+  .spinner-sm{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;margin-right:6px;vertical-align:middle}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M12 2l2.4 4.9L20 8l-4 3.9.9 5.5L12 15l-4.9 2.4.9-5.5L4 8l5.6-1.1z"/></svg>
+    </div>
+    <span class="nav-logo-text">QuantiChef</span>
+  </a>
+  <a href="/" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Volver al inicio
+  </a>
+</nav>
+
+<main>
+  <div class="auth-card">
+    <div class="card-logo">
+      <div class="card-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M12 2l2.4 4.9L20 8l-4 3.9.9 5.5L12 15l-4.9 2.4.9-5.5L4 8l5.6-1.1z"/></svg>
+      </div>
+      <div class="card-logo-name">QuantiChef</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')" id="tab-login">Iniciar sesión</button>
+      <button class="tab" onclick="switchTab('registro')" id="tab-registro">Crear cuenta</button>
+    </div>
+
+    <div id="msg" class="msg"></div>
+
+    <!-- LOGIN -->
+    <div id="form-login">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="login-email" placeholder="tu@restaurante.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input type="password" class="form-input" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn-primary" onclick="login()" id="btn-login">Entrar</button>
+      <div class="divider">o</div>
+      <p style="text-align:center;font-size:13px;color:var(--text3)">¿No tienes cuenta? <a href="#" onclick="switchTab('registro');return false;" style="color:var(--accent);font-weight:600">Créala gratis</a></p>
+    </div>
+
+    <!-- REGISTRO -->
+    <div id="form-registro" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Nombre del restaurante</label>
+        <input type="text" class="form-input" id="reg-nombre" placeholder="Restaurante Casa Pepe">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="reg-email" placeholder="tu@restaurante.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input type="password" class="form-input" id="reg-pass" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+      </div>
+      <button class="btn-primary" onclick="registro()" id="btn-registro">Crear cuenta gratis</button>
+      <div class="trial-info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span><strong>7 días gratis · 5 escandallos</strong> — sin tarjeta de crédito. Acceso inmediato tras el registro.</span>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <a href="/">QuantiChef</a> · <a href="/">Inicio</a> · <a href="mailto:hola@quantichef.com">Contacto</a>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://ilzntryzijdfnntwuthp.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_qXyYLpM1403nu66tczLNCA_0s5EE3Re';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Si ya hay sesión activa, redirigir al escandallo
+sb.auth.getSession().then(({ data: { session } }) => {
+  if (session) window.location.href = '/escandallo';
+});
+
+function switchTab(tab) {
+  document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('form-registro').style.display = tab === 'registro' ? 'block' : 'none';
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-registro').classList.toggle('active', tab === 'registro');
+  hideMsg();
+}
+
+function showMsg(txt, tipo='error') {
+  const el = document.getElementById('msg');
+  el.textContent = txt;
+  el.className = 'msg ' + tipo;
+}
+function hideMsg() {
+  document.getElementById('msg').className = 'msg';
+}
+
+function setLoading(btnId, loading, textoOriginal, textoLoading) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  btn.innerHTML = loading ? `<span class="spinner-sm"></span>${textoLoading}` : textoOriginal;
+}
+
+async function login() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if (!email || !pass) { showMsg('Rellena email y contraseña.'); return; }
+
+  setLoading('btn-login', true, 'Entrar', 'Entrando...');
+  hideMsg();
+
+  const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+
+  if (error) {
+    showMsg(error.message === 'Invalid login credentials'
+      ? 'Email o contraseña incorrectos.'
+      : 'Error al iniciar sesión. Inténtalo de nuevo.');
+    setLoading('btn-login', false, 'Entrar', '');
+    return;
+  }
+
+  window.location.href = '/escandallo';
+}
+
+async function registro() {
+  const nombre = document.getElementById('reg-nombre').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+
+  if (!nombre) { showMsg('Escribe el nombre de tu restaurante.'); return; }
+  if (!email) { showMsg('Escribe tu email.'); return; }
+  if (pass.length < 8) { showMsg('La contraseña debe tener al menos 8 caracteres.'); return; }
+
+  setLoading('btn-registro', true, 'Crear cuenta gratis', 'Creando cuenta...');
+  hideMsg();
+
+  // Crear usuario en Supabase Auth
+  const { data, error } = await sb.auth.signUp({ email, password: pass });
+
+  if (error) {
+    showMsg(error.message === 'User already registered'
+      ? 'Ya existe una cuenta con ese email. Inicia sesión.'
+      : 'Error al crear la cuenta. Inténtalo de nuevo.');
+    setLoading('btn-registro', false, 'Crear cuenta gratis', '');
+    return;
+  }
+
+  // Crear el restaurante vinculado al usuario
+  if (data.user) {
+    await sb.from('restaurantes').insert({
+      user_id: data.user.id,
+      nombre: nombre
+    });
+  }
+
+  showMsg('¡Cuenta creada! Redirigiendo...', 'success');
+  setTimeout(() => window.location.href = '/escandallo', 1500);
+}
+
+// Enter key en inputs
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const loginVisible = document.getElementById('form-login').style.display !== 'none';
+    if (loginVisible) login(); else registro();
+  }
+});
+</script>
+</body>
+</html>
