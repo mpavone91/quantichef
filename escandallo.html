@@ -608,20 +608,16 @@ const SUPABASE_KEY='sb_publishable_qXyYLpM1403nu66tczLNCA_0s5EE3Re';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 async function initAuth(){
-  // getSession primero para carga rápida
-  const {data:{session}}=await sb.auth.getSession();
-  if(session){
-    await cargarApp(session);
-    return;
-  }
-  // Fallback con onAuthStateChange
   sb.auth.onAuthStateChange(async (event, session) => {
-    if(event==='SIGNED_OUT'||(event==='INITIAL_SESSION'&&!session)){
-      window.location.href='/login';
-      return;
+    if(event==='INITIAL_SESSION'){
+      if(!session){
+        window.location.href='/login';
+      } else if(document.getElementById('auth-loading').style.display!=='none'){
+        await cargarApp(session);
+      }
     }
-    if(session && document.getElementById('auth-loading').style.display!=='none'){
-      await cargarApp(session);
+    if(event==='SIGNED_OUT'){
+      window.location.href='/login';
     }
   });
 }
