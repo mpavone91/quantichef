@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuantiChef — Planes y precios</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{--bg:#F9F7F2;--surface:#FFFFFF;--border:#E0DDD6;--text:#1A1916;--text2:#4A4845;--text3:#8A8784;--accent:#1E4D2B;--accent-mid:#2D5A3D;--accent-light:#E8F2EC;--accent-mint:#C8E6D0;--gold:#C4943A;--gold-light:#FFF4E0}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  nav{background:var(--accent);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+  .nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+  .nav-logo-icon{width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center}
+  .nav-logo-icon svg{width:15px;height:15px}
+  .nav-logo-text{font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:600}
+  .nav-back{font-size:13px;color:rgba(255,255,255,.7);text-decoration:none;display:flex;align-items:center;gap:5px}
+  .nav-back:hover{color:#fff}
+  .container{max-width:760px;margin:0 auto;padding:3rem 1.5rem}
+  .page-tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.75rem;text-align:center}
+  .page-title{font-family:'Fraunces',serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:300;letter-spacing:-.02em;color:var(--text);text-align:center;margin-bottom:.75rem}
+  .page-title em{font-style:italic;color:var(--accent)}
+  .page-sub{font-size:1rem;color:var(--text2);text-align:center;margin-bottom:3rem;line-height:1.6}
+
+  /* Cards */
+  .plans{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:2rem}
+  .plan-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:1.75rem;transition:all .2s}
+  .plan-card.destacado{border-color:var(--accent);background:var(--accent-light)}
+  .plan-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);background:var(--gold-light);padding:3px 9px;border-radius:4px;display:inline-block;margin-bottom:.875rem}
+  .plan-name{font-size:13px;font-weight:600;color:var(--text3);margin-bottom:.4rem}
+  .plan-card.destacado .plan-name{color:var(--accent-mid)}
+  .plan-price{font-family:'Fraunces',serif;font-size:3rem;font-weight:300;color:var(--text);line-height:1;margin-bottom:.25rem}
+  .plan-card.destacado .plan-price{color:var(--accent)}
+  .plan-period{font-size:13px;color:var(--text3);margin-bottom:1.5rem}
+  .plan-features{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.75rem}
+  .plan-feature{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)}
+  .plan-feature svg{width:15px;height:15px;color:var(--accent);flex-shrink:0}
+  .btn-plan{display:block;width:100%;padding:13px;border-radius:9px;font-size:14px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;border:none;cursor:pointer;transition:all .2s;text-align:center}
+  .btn-plan.secondary{background:var(--accent-light);color:var(--accent)}
+  .btn-plan.secondary:hover{background:var(--accent-mint)}
+  .btn-plan.primary{background:var(--accent);color:white}
+  .btn-plan.primary:hover{background:var(--accent-mid);transform:translateY(-1px);box-shadow:0 6px 20px rgba(30,77,43,.2)}
+  .btn-plan:disabled{background:var(--text3);cursor:not-allowed;transform:none;box-shadow:none}
+
+  .guarantee{text-align:center;font-size:13px;color:var(--text3);display:flex;align-items:center;justify-content:center;gap:8px}
+  .guarantee svg{width:16px;height:16px;color:var(--accent)}
+
+  /* Spinner */
+  .spinner-sm{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;margin-right:6px;vertical-align:middle}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* Banner pago ok */
+  .pago-ok{background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.5rem;display:none;align-items:center;gap:10px;font-size:14px;color:var(--accent)}
+  .pago-ok.visible{display:flex}
+
+  @media(max-width:560px){.plans{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/dashboard" class="nav-logo">
+    <div class="nav-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M12 2l2.4 4.9L20 8l-4 3.9.9 5.5L12 15l-4.9 2.4.9-5.5L4 8l5.6-1.1z"/></svg></div>
+    <span class="nav-logo-text">QuantiChef</span>
+  </a>
+  <a href="/dashboard" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Mi cocina
+  </a>
+</nav>
+
+<div class="container">
+  <div class="pago-ok" id="pago-ok">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    ¡Pago completado! Tu plan está activo. Bienvenido a QuantiChef Pro.
+  </div>
+
+  <p class="page-tag">Planes y precios</p>
+  <h1 class="page-title">Simple y <em>sin sorpresas</em></h1>
+  <p class="page-sub">Una licencia por restaurante. Sin contratos. Cancela cuando quieras.</p>
+
+  <div class="plans">
+    <div class="plan-card">
+      <div class="plan-name">Plan Mensual</div>
+      <div class="plan-price">29<span style="font-size:1.2rem">€</span></div>
+      <div class="plan-period">al mes · por restaurante</div>
+      <ul class="plan-features">
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Escandallos ilimitados</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>IA con precios y mermas</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Margen neto objetivo</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>14 alérgenos EU</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Exportar PDF</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Chat de soporte</li>
+      </ul>
+      <button class="btn-plan secondary" onclick="checkout('price_1TLOnTLqdcaWvQLUIwYVCoVa', this)" id="btn-mensual">Activar plan mensual</button>
+    </div>
+
+    <div class="plan-card destacado">
+      <div class="plan-label">Ahorra 99€</div>
+      <div class="plan-name">Plan Anual</div>
+      <div class="plan-price">249<span style="font-size:1.2rem">€</span></div>
+      <div class="plan-period">al año · por restaurante</div>
+      <ul class="plan-features">
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Todo del plan mensual</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Módulo Stock (próximo)</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Costes fijos (próximo)</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Acceso prioritario novedades</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Soporte prioritario</li>
+      </ul>
+      <button class="btn-plan primary" onclick="checkout('price_1TLOpALqdcaWvQLUjO63Fm3H', this)" id="btn-anual">Activar plan anual</button>
+    </div>
+  </div>
+
+  <p class="guarantee">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Pago seguro con Stripe · Sin permanencia · Cancela cuando quieras
+  </p>
+</div>
+
+<script>
+const SUPABASE_URL='https://ilzntryzijdfnntwuthp.supabase.co';
+const SUPABASE_KEY='sb_publishable_qXyYLpM1403nu66tczLNCA_0s5EE3Re';
+const {createClient}=supabase;
+const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let currentUser=null, currentRestaurante=null;
+
+// Mostrar banner si volvemos de pago exitoso
+const params=new URLSearchParams(window.location.search);
+if(params.get('pago')==='ok'){
+  document.getElementById('pago-ok').classList.add('visible');
+  // Marcar como premium en localStorage
+  localStorage.setItem('qc_premium','true');
+}
+
+sb.auth.onAuthStateChange(async (event,session)=>{
+  if(event==='INITIAL_SESSION'){
+    if(!session){window.location.href='/login';return;}
+    currentUser=session.user;
+    const {data:rest}=await sb.from('restaurantes').select('id').eq('user_id',session.user.id).single();
+    if(rest)currentRestaurante=rest.id;
+  }
+});
+
+async function checkout(priceId, btn){
+  if(!currentUser){window.location.href='/login';return;}
+  const originalText=btn.textContent;
+  btn.disabled=true;
+  btn.innerHTML=`<span class="spinner-sm"></span>Redirigiendo a pago...`;
+
+  try{
+    const res=await fetch('/api/stripe-checkout',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        priceId,
+        userId:currentUser.id,
+        restauranteId:currentRestaurante
+      })
+    });
+    const data=await res.json();
+    if(data.url){
+      window.location.href=data.url;
+    } else {
+      throw new Error(data.error||'Error al crear sesión de pago');
+    }
+  }catch(err){
+    alert('Error al conectar con el sistema de pago. Inténtalo de nuevo.');
+    btn.disabled=false;
+    btn.textContent=originalText;
+  }
+}
+</script>
+</body>
+</html>
