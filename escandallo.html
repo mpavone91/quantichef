@@ -18,175 +18,586 @@
   .header-right{display:flex;align-items:center;gap:12px}
   .trial-badge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:12px;padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:6px}
   .trial-badge strong{color:#ffd700}
-  .btn-upgrade{background:var(--gold);color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:7px;text-decoration:none}
-  
+  .trial-badge.agotado{background:rgba(139,26,26,.3);border-color:rgba(255,100,100,.3)}
+  .btn-upgrade{background:var(--gold);color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:7px;text-decoration:none;white-space:nowrap}
+
+  /* Modal */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem}
+  .modal-overlay.visible{display:flex}
+  .modal{background:var(--surface);border-radius:16px;padding:2rem;max-width:420px;width:100%;text-align:center;animation:fadeIn .2s ease}
+  .modal-icon{width:56px;height:56px;background:var(--gold-light);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem}
+  .modal-icon svg{width:28px;height:28px;color:var(--gold)}
+  .modal h3{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:var(--text);margin-bottom:.5rem}
+  .modal p{font-size:.92rem;color:var(--text2);line-height:1.6;margin-bottom:1.5rem}
+  .modal-plans{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.2rem}
+  .modal-plan{border:1.5px solid var(--border);border-radius:10px;padding:1rem;text-align:left}
+  .modal-plan.best{border-color:var(--accent);background:var(--accent-light)}
+  .modal-plan-name{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem}
+  .modal-plan.best .modal-plan-name{color:var(--accent)}
+  .modal-plan-price{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:300;color:var(--text);line-height:1}
+  .modal-plan-period{font-size:11px;color:var(--text3)}
+  .modal-plan-save{font-size:11px;font-weight:700;color:var(--gold);margin-top:.25rem}
+  .btn-modal-cta{display:block;background:var(--accent);color:white;padding:12px;border-radius:9px;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:.75rem}
+  .modal-close{font-size:13px;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline}
+
+  /* Layout */
   .container{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
   .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:.875rem}
   .card-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
   .card-title::after{content:'';flex:1;height:1px;background:var(--border)}
-  
   .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-  input, select{width:100%;padding:9px 12px;font-size:14px;border:1px solid var(--border);border-radius:8px;outline:none}
-  
-  .btn-ai{display:flex;align-items:center;gap:7px;padding:10px 18px;background:var(--accent);color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;margin-top:12px}
-  .btn-ai:disabled{opacity:0.6;cursor:not-allowed}
-  
-  .ai-box{display:none;background:var(--accent-light);border:1px solid var(--accent);border-radius:10px;padding:1rem;margin-top:10px}
-  .ai-box.visible{display:block}
-  .spinner{width:18px;height:18px;border:2px solid var(--accent-light);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
+  .field{position:relative}
+  .field-label{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+  .field-label label{font-size:12px;font-weight:600;color:var(--text2)}
+  .help-btn{width:16px;height:16px;border-radius:50%;border:1px solid var(--text3);background:none;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif;padding:0}
+  .help-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+  .tooltip{display:none;position:absolute;top:calc(100% + 6px);left:0;background:var(--text);color:#fff;font-size:12px;line-height:1.5;padding:8px 12px;border-radius:8px;width:260px;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+  .tooltip::before{content:'';position:absolute;top:-5px;left:14px;width:10px;height:10px;background:var(--text);transform:rotate(45deg);border-radius:2px}
+  .tooltip.visible{display:block}
+  input,select{width:100%;padding:9px 12px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s;-webkit-appearance:none}
+  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,43,.08)}
+  input[type=number]{-moz-appearance:textfield}
+  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 
-  .ing-header{display:grid;grid-template-columns:2.5fr .7fr .7fr 80px 28px;gap:6px;margin-bottom:6px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase}
-  .ing-row{display:grid;grid-template-columns:2.5fr .7fr .7fr 80px 28px;gap:6px;margin-bottom:6px}
-  .btn-del{border:1px solid var(--border);background:none;border-radius:50%;cursor:pointer;color:var(--text3)}
-  
-  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
-  .metric{background:white;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
-  .metric-label{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase}
-  .metric-value{font-family:'Fraunces',serif;font-size:20px}
+  /* Toggle */
+  .toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding:10px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);position:relative}
+  .toggle-label{font-size:13px;font-weight:600;color:var(--text2);flex:1}
+  .toggle-label small{display:block;font-size:11px;font-weight:400;color:var(--text3);margin-top:1px}
+  .toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+  .toggle input{opacity:0;width:0;height:0}
+  .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--border);border-radius:20px;transition:.2s}
+  .toggle-slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}
+  .toggle input:checked+.toggle-slider{background:var(--accent)}
+  .toggle input:checked+.toggle-slider:before{transform:translateX(16px)}
+  .premium-tag{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);background:var(--gold-light);padding:2px 7px;border-radius:4px;flex-shrink:0}
+  .lock-overlay{position:absolute;inset:0;background:rgba(249,247,242,.92);border-radius:8px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;z-index:10}
+  .lock-overlay svg{width:14px;height:14px;color:var(--gold);flex-shrink:0}
+  .lock-overlay span{font-size:12px;font-weight:600;color:var(--gold)}
+
+  /* Ingredientes */
+  .ing-header{display:grid;gap:6px;margin-bottom:6px}
+  .ing-header.sin-merma{grid-template-columns:2.5fr .7fr .7fr 80px 28px}
+  .ing-header.con-merma{grid-template-columns:2.2fr .6fr .6fr 70px 60px 28px}
+  .ing-header span{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+  .ing-row{display:grid;gap:6px;align-items:center;margin-bottom:6px;animation:fadeIn .2s ease}
+  .ing-row.sin-merma{grid-template-columns:2.5fr .7fr .7fr 80px 28px}
+  .ing-row.con-merma{grid-template-columns:2.2fr .6fr .6fr 70px 60px 28px}
+  .merma-cell{position:relative}
+  .merma-input{padding-right:22px!important}
+  .merma-pct{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
+  .btn-del{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;flex-shrink:0}
+  .btn-del:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+  .btn-add-manual{width:100%;padding:9px;border:1px dashed var(--border);border-radius:8px;background:none;color:var(--text2);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .15s;margin-top:4px}
+  .btn-add-manual:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+
+  /* AI */
+  .ai-row{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+  .btn-ai{display:flex;align-items:center;gap:7px;padding:9px 16px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:background .15s;white-space:nowrap}
+  .btn-ai:hover{background:var(--accent-mid)}
+  .btn-ai:disabled{background:var(--text3);cursor:not-allowed}
+  .ai-hint{font-size:12px;color:var(--text3);line-height:1.4}
+  .ai-box{display:none;background:var(--accent-light);border:1px solid var(--accent);border-radius:10px;padding:1rem;margin-top:10px;animation:fadeIn .2s ease}
+  .ai-box.visible{display:block}
+  .ai-box-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .sug-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+  .sug-item{display:flex;align-items:center;gap:8px;background:white;border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:13px}
+  .sug-item.selected{border-color:var(--accent);background:var(--accent-light)}
+  .sug-check{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);background:white;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}.sug-item.selected .sug-check{background:var(--accent);border-color:var(--accent)}.sug-check-icon{display:none;width:10px;height:10px}.sug-item.selected .sug-check-icon{display:block}.sug-item input[type=checkbox]{display:none}
+  .sug-name{font-weight:600;color:var(--text);flex:1}
+  .sug-qty{font-size:12px;color:var(--text2);background:var(--surface2);padding:2px 7px;border-radius:4px;white-space:nowrap}
+  .sug-price{font-size:12px;color:var(--accent);background:var(--accent-light);border:1px solid rgba(30,77,43,.15);padding:2px 7px;border-radius:4px;white-space:nowrap;font-weight:600}
+  .sug-merma{font-size:12px;color:var(--warn);background:var(--warn-light);padding:2px 7px;border-radius:4px;white-space:nowrap;font-weight:600}
+  .btn-add-sel{padding:8px 16px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer}
+  .ai-loading{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--accent);padding:4px 0}
+  .spinner{width:18px;height:18px;border:2px solid var(--accent-light);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .ai-error{font-size:12px;color:var(--danger);padding:6px 0}
+  .ai-note{font-size:11px;color:var(--accent);margin-top:8px;padding:6px 10px;background:white;border-radius:6px;border:1px solid rgba(30,77,43,.15)}
+
+  /* Métricas — ahora 5 con la nueva */
+  .metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:.875rem}
+  .metric{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center}
+  .metric.premium-metric{border-color:rgba(196,148,58,.3);background:var(--gold-light)}
+  .metric-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;line-height:1.3}
+  .metric.premium-metric .metric-label{color:var(--warn)}
+  .metric-value{font-family:'Fraunces',serif;font-size:20px;color:var(--text);font-weight:300}
+  .metric-value.good{color:var(--accent)}.metric-value.warn{color:var(--warn)}.metric-value.bad{color:var(--danger)}
+  .metric-value.gold{color:var(--gold)}
+  .metric-sub{font-size:10px;color:var(--text3);margin-top:2px}
+
+  /* Sliders */
+  .sliders-wrap{display:flex;flex-direction:column;gap:1rem}
+  .slider-row{display:flex;align-items:center;gap:14px}
+  .slider-label-wrap{display:flex;align-items:center;gap:5px;position:relative;white-space:nowrap}
+  .slider-label{font-size:12px;font-weight:600;color:var(--text2)}
+  .slider-val{font-size:15px;font-weight:700;min-width:40px;text-align:right}
+  .slider-val.green{color:var(--accent)}
+  .slider-val.gold{color:var(--gold)}
+  input[type=range]{flex:1;height:4px;padding:0;border:none;background:none;box-shadow:none;-webkit-appearance:none;cursor:pointer}
+  input[type=range].green-track::-webkit-slider-runnable-track{height:4px;background:var(--border);border-radius:2px}
+  input[type=range].green-track::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);margin-top:-7px;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+  input[type=range].gold-track::-webkit-slider-runnable-track{height:4px;background:rgba(196,148,58,.2);border-radius:2px}
+  input[type=range].gold-track::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);margin-top:-7px;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+  input[type=range]:focus{box-shadow:none;border:none}
+  .slider-divider{height:1px;background:var(--border);margin:.25rem 0}
+  .margen-hint{font-size:11px;color:var(--text3);margin-top:.5rem;line-height:1.5;padding:8px 10px;background:var(--surface2);border-radius:6px}
+  .margen-hint strong{color:var(--text2)}
+
+  /* Alérgenos */
+  .alergenos{display:flex;flex-wrap:wrap;gap:7px}
+  .alg{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer;padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);user-select:none;transition:all .15s}
+  .alg:hover{border-color:var(--gold);color:var(--warn)}
+  .alg.active{background:var(--warn-light);border-color:var(--gold);color:var(--warn)}
+  .alg input{display:none}
+  .alg-dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:none}
+  .alg.active .alg-dot{display:inline-block}
+  .alg-list{margin-top:10px;padding:9px 13px;background:var(--warn-light);border-radius:8px;border:1px solid rgba(196,148,58,.3);display:none}
+  .alg-list.visible{display:block}
+  .alg-list p{font-size:12px;font-weight:700;color:var(--warn)}
+  .hint{font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5}
+
+  .btn-print{display:flex;align-items:center;gap:8px;margin:0 auto;padding:11px 28px;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;border:none;border-radius:8px;cursor:pointer}
+  .btn-print:hover{background:var(--accent-mid)}
+
+  .limit-banner{background:var(--gold-light);border:1px solid rgba(196,148,58,.3);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;display:none;align-items:center;gap:12px}
+  .limit-banner.visible{display:flex}
+  .limit-banner p{font-size:13px;color:var(--warn);flex:1;line-height:1.5}
+  .limit-banner strong{font-weight:700}
+  .btn-limit{background:var(--gold);color:white;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif}
+
+  @media(max-width:640px){
+    header{padding:1rem 1.2rem}.container{padding:1rem}
+    .grid-3{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}
+    .metrics .metric:last-child{grid-column:1/-1}
+    .ing-header{display:none!important}.ing-row{grid-template-columns:1fr 1fr!important;gap:6px}
+    .ing-row>input:first-child{grid-column:1/-1}.btn-del{justify-self:end}
+    .trial-badge span{display:none}
+  }
+  @media print{
+    body{background:white}header{background:var(--accent)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .btn-add-manual,.btn-del,.btn-print,.btn-ai,.ai-box,.ai-row,.help-btn,.tooltip,.toggle-row,.limit-banner,.modal-overlay,.header-right{display:none!important}
+    .alg.active{background:#fff3e0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .metrics{grid-template-columns:repeat(5,1fr)!important}
+  }
 </style>
 </head>
 <body>
 
 <header>
   <a href="/" class="logo-wrap">
-    <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M12 2l2.4 4.9L20 8l-4 3.9.9 5.5L12 15l-4.9 2.4.9-5.5L4 8l5.6-1.1z"/></svg></div>
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 4.9L20 8l-4 3.9.9 5.5L12 15l-4.9 2.4.9-5.5L4 8l5.6-1.1z"/></svg>
+    </div>
     <span class="logo-text">QuantiChef<small>Escandallo inteligente con IA</small></span>
   </a>
   <div class="header-right">
-    <div class="trial-badge">Prueba · <strong id="trial-count">5 de 5</strong></div>
-    <a href="#" class="btn-upgrade">Activar plan</a>
+    <div class="trial-badge" id="trial-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <span>Prueba · <strong id="trial-count">5 de 5</strong></span>
+    </div>
+    <a href="#" class="btn-upgrade" onclick="showModal();return false;">Activar plan</a>
   </div>
 </header>
 
-<div class="container">
-  <div class="card">
-    <div class="card-title">Datos del plato</div>
-    <div class="grid-3">
-      <input type="text" id="nombre" placeholder="Nombre del plato">
-      <select id="categoria"><option>Principal</option><option>Entrante</option><option>Postre</option></select>
-      <input type="number" id="raciones" value="1" min="1">
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="hideModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
     </div>
-    <button class="btn-ai" onclick="sugerir()" id="btn-ia">Sugerir con IA</button>
-    <div class="ai-box" id="ai-box">
-      <div id="ai-loading" style="display:none;align-items:center;gap:10px"><div class="spinner"></div>Analizando...</div>
-      <div id="ai-error" style="color:red;display:none;font-size:12px;margin-top:10px"></div>
-      <div id="sug-list" style="margin:10px 0"></div>
-      <button onclick="addSugeridos()" id="btn-add" style="display:none;background:var(--accent);color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer">Añadir ingredientes</button>
+    <h3 id="modal-title">Activa tu plan</h3>
+    <p id="modal-desc">Desbloquea escandallos ilimitados, cálculo de mermas, margen neto y acceso completo.</p>
+    <div class="modal-plans">
+      <div class="modal-plan">
+        <div class="modal-plan-name">Mensual</div>
+        <div class="modal-plan-price">29<span style="font-size:1rem">€</span></div>
+        <div class="modal-plan-period">al mes</div>
+      </div>
+      <div class="modal-plan best">
+        <div class="modal-plan-name">Anual</div>
+        <div class="modal-plan-price">249<span style="font-size:1rem">€</span></div>
+        <div class="modal-plan-period">al año</div>
+        <div class="modal-plan-save">Ahorras 99€</div>
+      </div>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Ingredientes</div>
-    <div class="ing-header"><span>Ingrediente</span><span>Cantidad</span><span>Unidad</span><span>€/ud</span><span></span></div>
-    <div id="ingredientes"></div>
-    <button onclick="addIng()" style="width:100%;padding:8px;border:1px dashed var(--border);background:none;cursor:pointer;margin-top:10px">+ Añadir manual</button>
-  </div>
-
-  <div class="metrics">
-    <div class="metric"><div class="metric-label">Coste total</div><div class="metric-value" id="m-coste">0,00 €</div></div>
-    <div class="metric"><div class="metric-label">Por ración</div><div class="metric-value" id="m-racion">0,00 €</div></div>
-    <div class="metric"><div class="metric-label">P. Venta Mín.</div><div class="metric-value" id="m-pvp">0,00 €</div></div>
-    <div class="metric"><div class="metric-label">Food Cost</div><div class="metric-value" id="m-fc">30%</div></div>
+    <a href="/" class="btn-modal-cta">Activar ahora — acceso inmediato</a>
+    <button class="modal-close" onclick="hideModal()">Seguir con la prueba gratuita</button>
   </div>
 </div>
 
-<script>
-let ings = [];
-let sugsIA = [];
+<div class="container">
 
-function addIng(n='', q='', u='g', p='') {
-  const id = Date.now() + Math.random();
-  ings.push({id, n, q, u, p});
-  render();
+  <div class="limit-banner" id="limit-banner">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    <p><strong>Has usado tus 5 escandallos de prueba.</strong> Activa tu plan para escandallos ilimitados, mermas y margen neto.</p>
+    <button class="btn-limit" onclick="showModal()">Activar plan</button>
+  </div>
+
+  <!-- DATOS DEL PLATO -->
+  <div class="card">
+    <div class="card-title">Datos del plato</div>
+    <div class="grid-3">
+      <div class="field">
+        <div class="field-label"><label>Nombre del plato</label><button class="help-btn" onclick="tt('tt-nombre')">?</button><div class="tooltip" id="tt-nombre">Escribe el nombre tal como aparece en carta. Cuanto más específico, mejor sugerencia de la IA.</div></div>
+        <input type="text" id="nombre" placeholder="Ej: Merluza a la bilbaína" oninput="calcular()">
+      </div>
+      <div class="field">
+        <div class="field-label"><label>Categoría</label><button class="help-btn" onclick="tt('tt-cat')">?</button><div class="tooltip" id="tt-cat">Clasifica el plato. Ayuda a la IA a sugerir ingredientes más precisos.</div></div>
+        <select id="categoria" onchange="calcular()"><option value="">Seleccionar...</option><option>Entrante</option><option>Principal</option><option>Postre</option><option>Bebida</option><option>Menú del día</option></select>
+      </div>
+      <div class="field">
+        <div class="field-label"><label>Nº de raciones</label><button class="help-btn" onclick="tt('tt-rac')">?</button><div class="tooltip" id="tt-rac">Para cuántas raciones calculas los ingredientes. El coste se divide automáticamente.</div></div>
+        <input type="number" id="raciones" value="1" min="1" oninput="calcular()">
+      </div>
+    </div>
+    <div class="ai-row">
+      <button class="btn-ai" onclick="sugerir()" id="btn-ia">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Sugerir ingredientes y precios con IA
+      </button>
+      <span class="ai-hint">La IA sugiere ingredientes con cantidades, precios y % de merma.</span>
+    </div>
+    <div class="ai-box" id="ai-box">
+      <div class="ai-box-title"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Sugerencia IA — selecciona los que quieres añadir</div>
+      <div id="ai-loading" class="ai-loading" style="display:none"><div class="spinner"></div>Analizando plato, precios y mermas...</div>
+      <div id="ai-error" class="ai-error" style="display:none"></div>
+      <div class="sug-list" id="sug-list"></div>
+      <button class="btn-add-sel" id="btn-add-sel" onclick="addSugeridos()" style="display:none">Añadir seleccionados a la ficha</button>
+      <p class="ai-note" id="ai-note" style="display:none">Precios y mermas aproximados. Ajústalos con los valores reales de tu cocina.</p>
+    </div>
+  </div>
+
+  <!-- INGREDIENTES -->
+  <div class="card">
+    <div class="card-title">Ingredientes</div>
+    <div class="toggle-row" id="merma-row">
+      <div class="toggle-label">Activar cálculo de mermas<small>Para platos con pérdida al limpiar o cocinar</small></div>
+      <span class="premium-tag">Premium</span>
+      <button class="help-btn" onclick="tt('tt-merma')">?</button>
+      <div class="tooltip" id="tt-merma" style="left:auto;right:0">La merma es el % que se pierde al limpiar o cocinar. Ej: merluza pierde 30% al limpiar.</div>
+      <label class="toggle"><input type="checkbox" id="toggle-merma" onchange="handleMermaToggle()"><span class="toggle-slider"></span></label>
+      <div class="lock-overlay" id="merma-lock" onclick="showModal('merma')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <span>Función Premium — Activar plan</span>
+      </div>
+    </div>
+    <div class="ing-header sin-merma" id="ing-header">
+      <span>Ingrediente</span><span>Cantidad</span><span>Unidad</span>
+      <div style="display:flex;align-items:center;gap:4px;position:relative"><span>€/unidad</span><button class="help-btn" onclick="tt('tt-precio')">?</button><div class="tooltip" id="tt-precio" style="left:auto;right:0">Precio al proveedor por kg, litro o unidad.</div></div>
+      <span></span>
+    </div>
+    <div id="ingredientes"></div>
+    <button class="btn-add-manual" onclick="addIng()">+ Añadir ingrediente manualmente</button>
+    <p class="hint" id="merma-hint" style="display:none">Con mermas activas: coste = cantidad bruta real × precio (cantidad útil ÷ (1 − merma%)).</p>
+    <p class="hint">Usa la IA o añade manualmente. Edita los precios con los de tu proveedor real.</p>
+  </div>
+
+  <!-- MÉTRICAS -->
+  <div class="metrics">
+    <div class="metric"><div class="metric-label">Coste total</div><div class="metric-value" id="m-coste">0,00 €</div></div>
+    <div class="metric"><div class="metric-label">Coste por ración</div><div class="metric-value" id="m-racion">0,00 €</div></div>
+    <div class="metric"><div class="metric-label">Precio mínimo</div><div class="metric-value good" id="m-pvp">0,00 €</div><div class="metric-sub" id="m-pvp-sub">cubre ingredientes</div></div>
+    <div class="metric"><div class="metric-label">Margen food cost</div><div class="metric-value" id="m-fc">—</div></div>
+    <div class="metric premium-metric" id="m-neto-card">
+      <div class="metric-label">Precio recomendado</div>
+      <div class="metric-value gold" id="m-pvp-neto">—</div>
+      <div class="metric-sub" id="m-neto-sub">activa margen neto</div>
+    </div>
+  </div>
+
+  <!-- MÁRGENES -->
+  <div class="card">
+    <div class="card-title">Márgenes y precio de venta</div>
+    <div class="sliders-wrap">
+
+      <!-- Slider 1 — Food cost (gratis) -->
+      <div>
+        <div class="slider-row">
+          <div class="slider-label-wrap">
+            <span class="slider-label">Food cost %</span>
+            <button class="help-btn" onclick="tt('tt-fc')">?</button>
+            <div class="tooltip" id="tt-fc">% del precio de venta que representan los ingredientes. Estándar hostelería: 28–35%. A menor %, mayor precio mínimo de venta.</div>
+          </div>
+          <input type="range" class="green-track" id="margen-fc" min="15" max="55" value="30" step="1" oninput="calcular()">
+          <span class="slider-val green" id="val-fc">30%</span>
+        </div>
+      </div>
+
+      <div class="slider-divider"></div>
+
+      <!-- Slider 2 — Margen neto (premium) -->
+      <div class="toggle-row" id="neto-row" style="flex-direction:column;align-items:stretch;gap:.75rem">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="toggle-label">Margen neto objetivo<small>Incluye costes fijos y beneficio — para conocer el precio de venta real</small></div>
+          <span class="premium-tag">Premium</span>
+          <button class="help-btn" onclick="tt('tt-neto')">?</button>
+          <div class="tooltip" id="tt-neto" style="left:auto;right:0">El margen neto es lo que queda después de cubrir ingredientes, alquiler, personal y todos los costes del negocio. Si quieres ganar un 20% neto y tu food cost es el 30%, tu precio de venta debe cubrir ambos. QuantiChef lo calcula solo.</div>
+          <label class="toggle"><input type="checkbox" id="toggle-neto" onchange="handleNetoToggle()"><span class="toggle-slider"></span></label>
+        </div>
+        <div id="neto-slider-wrap" style="display:none">
+          <div class="slider-row">
+            <div class="slider-label-wrap">
+              <span class="slider-label" style="color:var(--warn)">Beneficio neto %</span>
+            </div>
+            <input type="range" class="gold-track" id="margen-neto" min="5" max="40" value="20" step="1" oninput="calcular()">
+            <span class="slider-val gold" id="val-neto">20%</span>
+          </div>
+        </div>
+        <div class="lock-overlay" id="neto-lock" onclick="showModal('neto')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <span>Función Premium — Activar plan</span>
+        </div>
+      </div>
+
+      <div id="precio-explicacion" class="margen-hint" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- ALÉRGENOS -->
+  <div class="card">
+    <div class="card-title">Alérgenos
+      <button class="help-btn" onclick="tt('tt-alg')" style="margin-top:0;margin-left:-4px">?</button>
+      <div class="tooltip" id="tt-alg">Obligatorio por ley (Reglamento EU 1169/2011). Marca todos los alérgenos presentes.</div>
+    </div>
+    <div class="alergenos" id="alergenos"></div>
+    <div class="alg-list" id="alg-list"><p>⚠ Alérgenos presentes: <span id="alg-resumen"></span></p></div>
+    <p class="hint">Marca todos los alérgenos del plato. Requerido por normativa europea.</p>
+  </div>
+
+  <button class="btn-print" onclick="window.print()">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+    Imprimir / Guardar PDF
+  </button>
+  <p class="hint" style="text-align:center;margin-top:1rem">QuantiChef · v3.0 · <a href="/" style="color:var(--text3)">Volver al inicio</a></p>
+</div>
+
+<script>
+// ── TRIAL ────────────────────────────────────────────────────
+const MAX_FREE=5;
+let usados=parseInt(localStorage.getItem('qc_escandallos')||'0');
+let esPremium=localStorage.getItem('qc_premium')==='true';
+
+function updateTrialBadge(){
+  if(esPremium){document.getElementById('trial-badge').style.display='none';return;}
+  const r=Math.max(0,MAX_FREE-usados);
+  document.getElementById('trial-count').textContent=r+' de '+MAX_FREE;
+  if(r===0){document.getElementById('trial-badge').classList.add('agotado');document.getElementById('limit-banner').classList.add('visible');}
+}
+function registrarEscandallo(){
+  if(esPremium)return true;
+  if(usados>=MAX_FREE){showModal('limite');return false;}
+  usados++;localStorage.setItem('qc_escandallos',usados);updateTrialBadge();return true;
 }
 
-function render() {
-  const container = document.getElementById('ingredientes');
-  container.innerHTML = '';
-  let total = 0;
-  
-  ings.forEach(i => {
-    const div = document.createElement('div');
-    div.className = 'ing-row';
-    div.innerHTML = `
-      <input type="text" value="${i.n}" oninput="update(${i.id}, 'n', this.value)" placeholder="Ej: Pollo">
-      <input type="number" value="${i.q}" oninput="update(${i.id}, 'q', this.value)">
-      <select onchange="update(${i.id}, 'u', this.value)"><option ${i.u==='g'?'selected':''}>g</option><option ${i.u==='kg'?'selected':''}>kg</option><option ${i.u==='ml'?'selected':''}>ml</option><option ${i.u==='l'?'selected':''}>l</option><option ${i.u==='ud'?'selected':''}>ud</option></select>
-      <input type="number" value="${i.p}" oninput="update(${i.id}, 'p', this.value)">
-      <button class="btn-del" onclick="remove(${i.id})">×</button>
-    `;
-    container.appendChild(div);
-    
-    // Cálculo básico
-    let qty = parseFloat(i.q) || 0;
-    let price = parseFloat(i.p) || 0;
-    if (i.u === 'g' || i.u === 'ml') total += (qty / 1000) * price;
-    else total += qty * price;
+function showModal(tipo){
+  const titles={merma:'Cálculo de mermas — Premium',neto:'Margen neto — Premium',limite:'Has usado tus 5 escandallos gratis'};
+  const descs={merma:'Calcula el coste real considerando la pérdida de cada ingrediente al limpiar o cocinar.',neto:'Conoce el precio de venta real que cubre ingredientes, costes fijos y beneficio. Lo más potente de QuantiChef.',limite:'Activa tu plan para crear escandallos ilimitados y desbloquear mermas y margen neto.'};
+  document.getElementById('modal-title').textContent=titles[tipo]||'Activa tu plan';
+  document.getElementById('modal-desc').textContent=descs[tipo]||'Desbloquea todas las funciones premium.';
+  document.getElementById('modal-overlay').classList.add('visible');
+}
+function hideModal(e){if(!e||e.target===document.getElementById('modal-overlay'))document.getElementById('modal-overlay').classList.remove('visible');}
+
+// ── PREMIUM: MERMAS ──────────────────────────────────────────
+let mermasOn=false;
+function handleMermaToggle(){
+  const t=document.getElementById('toggle-merma');
+  if(!esPremium){t.checked=false;showModal('merma');return;}
+  mermasOn=t.checked;
+  const hdr=document.getElementById('ing-header');
+  hdr.className='ing-header '+(mermasOn?'con-merma':'sin-merma');
+  if(mermasOn){hdr.innerHTML='<span>Ingrediente</span><span>Cantidad útil</span><span>Unidad</span><div style="display:flex;align-items:center;gap:4px"><span>€/unidad</span></div><span style="text-align:center">Merma %</span><span></span>';}
+  else{hdr.innerHTML='<span>Ingrediente</span><span>Cantidad</span><span>Unidad</span><div style="display:flex;align-items:center;gap:4px;position:relative"><span>€/unidad</span></div><span></span>';}
+  document.getElementById('merma-hint').style.display=mermasOn?'block':'none';
+  renderIngs();
+}
+
+// ── PREMIUM: MARGEN NETO ─────────────────────────────────────
+let netoOn=false;
+function handleNetoToggle(){
+  const t=document.getElementById('toggle-neto');
+  if(!esPremium){t.checked=false;showModal('neto');return;}
+  netoOn=t.checked;
+  document.getElementById('neto-slider-wrap').style.display=netoOn?'block':'none';
+  calcular();
+}
+
+// ── TOOLTIPS ─────────────────────────────────────────────────
+function tt(id){document.querySelectorAll('.tooltip').forEach(t=>{if(t.id!==id)t.classList.remove('visible');});document.getElementById(id).classList.toggle('visible');}
+document.addEventListener('click',e=>{if(!e.target.classList.contains('help-btn'))document.querySelectorAll('.tooltip').forEach(t=>t.classList.remove('visible'));});
+
+// ── ALÉRGENOS ────────────────────────────────────────────────
+const ALGS=["Gluten","Crustáceos","Huevos","Pescado","Cacahuetes","Soja","Lácteos","Frutos secos","Apio","Mostaza","Sésamo","Sulfitos","Altramuces","Moluscos"];
+function initAlergenos(){const c=document.getElementById('alergenos');ALGS.forEach(a=>{const l=document.createElement('label');l.className='alg';l.innerHTML=`<input type="checkbox" onchange="calcular()"><span class="alg-dot"></span>${a}`;l.addEventListener('click',function(){setTimeout(()=>{this.classList.toggle('active',this.querySelector('input').checked);calcular();},0);});c.appendChild(l);});}
+
+// ── INGREDIENTES ─────────────────────────────────────────────
+const UNITS=["g","kg","ml","l","ud","ración"];
+let ings=[],_sugs=[];
+function addIng(n='',q='',u='g',p='',m=''){const id=Date.now()+Math.random();ings.push({id,n,q,u,p,m});renderIngs();}
+function removeIng(id){ings=ings.filter(i=>i.id!==id);renderIngs();}
+function renderIngs(){
+  const c=document.getElementById('ingredientes');
+  const v={};ings.forEach(i=>{v[i.id]={n:document.getElementById('n'+i.id)?.value??i.n,q:document.getElementById('q'+i.id)?.value??i.q,u:document.getElementById('u'+i.id)?.value??i.u,p:document.getElementById('p'+i.id)?.value??i.p,m:document.getElementById('m'+i.id)?.value??i.m};});
+  c.innerHTML='';
+  ings.forEach(i=>{
+    const x=v[i.id]||{n:i.n,q:i.q,u:i.u,p:i.p,m:i.m};
+    const d=document.createElement('div');d.className='ing-row '+(mermasOn?'con-merma':'sin-merma');
+    const mc=mermasOn?`<div class="merma-cell"><input type="number" class="merma-input" placeholder="0" min="0" max="99" step="1" id="m${i.id}" value="${x.m}" oninput="calcular()"><span class="merma-pct">%</span></div>`:'';
+    d.innerHTML=`<input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()"><input type="number" placeholder="0" min="0" step="0.001" id="q${i.id}" value="${x.q}" oninput="calcular()"><select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><input type="number" placeholder="0,00" min="0" step="0.01" id="p${i.id}" value="${x.p}" oninput="calcular()">${mc}<button class="btn-del" onclick="removeIng(${i.id})">×</button>`;
+    c.appendChild(d);
+  });calcular();
+}
+
+// ── CÁLCULO ──────────────────────────────────────────────────
+function fmt(n){return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
+function calcular(){
+  const rac=Math.max(parseFloat(document.getElementById('raciones').value)||1,1);
+  const fc=parseFloat(document.getElementById('margen-fc').value)||30;
+  const neto=parseFloat(document.getElementById('margen-neto').value)||20;
+  document.getElementById('val-fc').textContent=fc+'%';
+  document.getElementById('val-neto').textContent=neto+'%';
+
+  // Coste total con mermas
+  let tot=0;
+  ings.forEach(i=>{
+    const q=parseFloat(document.getElementById('q'+i.id)?.value)||0;
+    const p=parseFloat(document.getElementById('p'+i.id)?.value)||0;
+    let merma=0;
+    if(mermasOn)merma=Math.min(parseFloat(document.getElementById('m'+i.id)?.value)||0,99)/100;
+    tot+=(merma>0?q/(1-merma):q)*p;
   });
 
-  const rac = parseFloat(document.getElementById('raciones').value) || 1;
-  document.getElementById('m-coste').textContent = total.toFixed(2) + ' €';
-  document.getElementById('m-racion').textContent = (total / rac).toFixed(2) + ' €';
-  document.getElementById('m-pvp').textContent = ((total / rac) / 0.3).toFixed(2) + ' €';
-}
+  const por=tot/rac;
 
-function update(id, field, val) {
-  const i = ings.find(x => x.id === id);
-  if (i) { i[field] = val; render(); }
-}
+  // Precio mínimo (solo food cost)
+  const pvpMin=fc>0?por/(fc/100):0;
+  // Food cost real
+  const fcReal=pvpMin>0?(por/pvpMin*100):0;
 
-function remove(id) {
-  ings = ings.filter(x => x.id !== id);
-  render();
-}
+  // Precio recomendado (food cost + margen neto)
+  // Precio recomendado = coste ingredientes / (1 - fc% - neto%)
+  const totalPct=(fc+neto)/100;
+  const pvpRec=totalPct<1&&totalPct>0?por/(1-neto/100-fc/100*(1-neto/100)):0;
+  // Simplificado: pvpRec = por / (fc/100) / (1 - neto/100)
+  const pvpRecomendado=fc>0&&neto<100?por/(fc/100)/(1-neto/100):0;
 
-async function sugerir() {
-  const nombre = document.getElementById('nombre').value;
-  if (!nombre) return alert('Escribe el nombre del plato');
-  
-  const btn = document.getElementById('btn-ia');
-  const box = document.getElementById('ai-box');
-  const loading = document.getElementById('ai-loading');
-  const errorEl = document.getElementById('ai-error');
-  
-  btn.disabled = true;
-  box.classList.add('visible');
-  loading.style.display = 'flex';
-  errorEl.style.display = 'none';
+  document.getElementById('m-coste').textContent=fmt(tot);
+  document.getElementById('m-racion').textContent=fmt(por);
+  document.getElementById('m-pvp').textContent=fmt(pvpMin);
+  document.getElementById('m-pvp-sub').textContent='cubre ingredientes ('+fc+'% FC)';
 
-  try {
-    const res = await fetch('/api/claude', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: [{ role: 'user', content: `Dame escandallo para ${nombre} en JSON: [{"nombre":"X","cantidad":0,"unidad":"g","precio_kg":0}]` }]
-      })
-    });
-    
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
+  const mm=document.getElementById('m-fc');
+  if(pvpMin>0){mm.textContent=fcReal.toFixed(1)+'%';mm.className='metric-value '+(fcReal<=35?'good':fcReal<=45?'warn':'bad');}
+  else{mm.textContent='—';mm.className='metric-value';}
 
-    const jsonText = data.content[0].text.replace(/```json|```/g, '');
-    sugsIA = JSON.parse(jsonText);
-    
-    document.getElementById('sug-list').innerHTML = sugsIA.map(s => `<div>• ${s.nombre} (${s.cantidad}${s.unidad})</div>`).join('');
-    document.getElementById('btn-add').style.display = 'block';
-  } catch (err) {
-    errorEl.textContent = 'Error: ' + err.message;
-    errorEl.style.display = 'block';
-  } finally {
-    loading.style.display = 'none';
-    btn.disabled = false;
+  // Métrica precio recomendado
+  const mNeto=document.getElementById('m-pvp-neto');
+  const mNetoSub=document.getElementById('m-neto-sub');
+  if(netoOn&&pvpRecomendado>0){
+    mNeto.textContent=fmt(pvpRecomendado);
+    mNeto.className='metric-value gold';
+    mNetoSub.textContent='+'+neto+'% beneficio neto';
+    // Explicación
+    const expl=document.getElementById('precio-explicacion');
+    expl.style.display='block';
+    expl.innerHTML=`<strong>Cómo se calcula el precio recomendado:</strong> Tu coste por ración es ${fmt(por)}. Con un food cost del ${fc}% el precio mínimo es ${fmt(pvpMin)}. Añadiendo un ${neto}% de beneficio neto sobre el precio de venta, el precio recomendado es <strong>${fmt(pvpRecomendado)}</strong> — que te deja ${fmt(pvpRecomendado-por)} de beneficio bruto por ración tras cubrir todos los costes.`;
+  } else if(!netoOn){
+    mNeto.textContent='—';mNeto.className='metric-value gold';
+    mNetoSub.textContent='activa margen neto';
+    document.getElementById('precio-explicacion').style.display='none';
   }
+
+  const act=Array.from(document.querySelectorAll('.alg input:checked')).map(i=>i.closest('.alg').textContent.trim());
+  document.getElementById('alg-resumen').textContent=act.join(', ');
+  document.getElementById('alg-list').classList.toggle('visible',act.length>0);
 }
 
-function addSugeridos() {
-  sugsIA.forEach(s => addIng(s.nombre, s.cantidad, s.unidad, s.precio_kg));
+// ── IA ───────────────────────────────────────────────────────
+async function sugerir(){
+  const nombre=document.getElementById('nombre').value.trim();
+  const raciones=parseInt(document.getElementById('raciones').value)||1;
+  const categoria=document.getElementById('categoria').value||'plato';
+  if(!nombre){alert('Escribe primero el nombre del plato.');return;}
+  const btn=document.getElementById('btn-ia'),box=document.getElementById('ai-box');
+  const loading=document.getElementById('ai-loading'),errorEl=document.getElementById('ai-error');
+  const list=document.getElementById('sug-list'),addBtn=document.getElementById('btn-add-sel');
+  btn.disabled=true;btn.textContent='Consultando IA...';
+  box.classList.add('visible');loading.style.display='flex';
+  errorEl.style.display='none';list.innerHTML='';addBtn.style.display='none';
+  document.getElementById('ai-note').style.display='none';
+  const prompt=`Eres un chef profesional experto en costes de cocina en España. Para el plato "${nombre}" (categoría: ${categoria}, ${raciones} raciones), dame ingredientes típicos con cantidades, precios y merma. Responde SOLO con un array JSON válido, sin texto adicional, sin markdown. Formato: [{"nombre":"Merluza fresca","cantidad":200,"unidad":"g","precio_kg":8.50,"merma":30}]. Unidades: g, kg, ml, l, ud. precio_kg = precio por kg o litro. merma = % pérdida al limpiar (0 si no hay). Máximo 10 ingredientes, cantidades útiles para ${raciones} raciones. Precios hostelería España 2024.`;
+  try{
+    const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:900,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error?.message||'Error API');
+    const sugs=JSON.parse(data.content[0].text.trim().replace(/```json|```/g,'').trim());
+    loading.style.display='none';
+    sugs.forEach((s,i)=>{
+      const item=document.createElement('div');item.className='sug-item selected';
+      const pc=s.unidad==='ud'?`~${s.precio_kg.toFixed(2)}€/ud`:`~${s.precio_kg.toFixed(2)}€/kg`;
+      const mt=s.merma>0?`<span class="sug-merma">Merma ${s.merma}%</span>`:'';
+      item.innerHTML=`<input type="checkbox" id="sc${i}" checked style="display:none"><div class="sug-check" onclick="toggleSug(this,${i})"><svg class="sug-check-icon" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div><label for="sc${i}" style="display:flex;align-items:center;gap:6px;flex:1;cursor:pointer;margin:0;flex-wrap:wrap" onclick="toggleSug(this.previousElementSibling,${i})"><span class="sug-name">${s.nombre}</span><span class="sug-qty">${s.cantidad} ${s.unidad}</span><span class="sug-price">${pc}</span>${mt}</label>`;
+      list.appendChild(item);
+    });
+    _sugs=sugs;addBtn.style.display='inline-block';document.getElementById('ai-note').style.display='block';
+  }catch(err){
+    loading.style.display='none';errorEl.style.display='block';
+    errorEl.textContent='No se pudo conectar con la IA. Añade manualmente. ('+err.message+')';
+  }
+  btn.disabled=false;
+  btn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Sugerir ingredientes y precios con IA`;
+}
+function toggleSug(checkEl,i){
+  const item=checkEl.closest('.sug-item');
+  const cb=item.querySelector('input[type=checkbox]');
+  cb.checked=!cb.checked;
+  item.classList.toggle('selected',cb.checked);
+}
+function addSugeridos(){
+  if(!registrarEscandallo())return;
+  const seleccionados=[];
+  document.querySelectorAll('#sug-list input[type=checkbox]').forEach((cb,i)=>{
+    if(cb.checked&&_sugs[i]){
+      const s=_sugs[i];let p=s.precio_kg;
+      if(s.unidad==='g')p/=1000;else if(s.unidad==='ml')p/=1000;
+      seleccionados.push({n:s.nombre,q:s.cantidad,u:s.unidad,p:p.toFixed(4),m:s.merma||0});
+    }
+  });
+  // Rellenar primero los campos vacíos existentes, luego añadir nuevos
+  let si=0;
+  for(let i=0;i<ings.length&&si<seleccionados.length;i++){
+    const ing=ings[i];
+    const nombre=document.getElementById('n'+ing.id)?.value||'';
+    const cantidad=document.getElementById('q'+ing.id)?.value||'';
+    if(!nombre&&(!cantidad||cantidad==='0')){
+      const s=seleccionados[si];
+      document.getElementById('n'+ing.id).value=s.n;
+      document.getElementById('q'+ing.id).value=s.q;
+      document.getElementById('u'+ing.id).value=s.u;
+      document.getElementById('p'+ing.id).value=s.p;
+      if(mermasOn&&document.getElementById('m'+ing.id))document.getElementById('m'+ing.id).value=s.m;
+      si++;
+    }
+  }
+  // Los que no cupieron en campos vacíos, añadirlos como nuevos
+  for(;si<seleccionados.length;si++){
+    const s=seleccionados[si];
+    addIng(s.n,s.q,s.u,s.p,s.m);
+  }
+  calcular();
   document.getElementById('ai-box').classList.remove('visible');
+  document.getElementById('btn-add-sel').style.display='none';
+  document.getElementById('ai-note').style.display='none';
 }
 
-addIng(); // Iniciar con una fila vacía
+// ── INIT ─────────────────────────────────────────────────────
+initAlergenos();addIng();addIng();addIng();
+updateTrialBadge();
+if(esPremium){
+  document.getElementById('merma-lock').style.display='none';
+  document.getElementById('neto-lock').style.display='none';
+}
 </script>
 </body>
 </html>
