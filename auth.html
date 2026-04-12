@@ -68,6 +68,13 @@
   /* Loading spinner */
   .spinner-sm{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;margin-right:6px;vertical-align:middle}
   @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* Password field */
+  .pass-wrap{position:relative}
+  .pass-wrap .form-input{padding-right:42px}
+  .eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex;align-items:center;transition:color .15s}
+  .eye-btn:hover{color:var(--accent)}
+  .eye-btn svg{width:18px;height:18px}
 </style>
 </head>
 <body>
@@ -118,17 +125,45 @@
 
     <!-- REGISTRO -->
     <div id="form-registro" style="display:none">
-      <div class="form-group">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-input" id="reg-nombre-persona" placeholder="Massimo" autocomplete="given-name">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Apellidos</label>
+          <input type="text" class="form-input" id="reg-apellidos" placeholder="Pavone" autocomplete="family-name">
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:10px">
         <label class="form-label">Nombre del restaurante</label>
-        <input type="text" class="form-input" id="reg-nombre" placeholder="Restaurante Casa Pepe">
+        <input type="text" class="form-input" id="reg-nombre" placeholder="Restaurante Casa Pepe" autocomplete="organization">
       </div>
       <div class="form-group">
         <label class="form-label">Email</label>
         <input type="email" class="form-input" id="reg-email" placeholder="tu@restaurante.com" autocomplete="email">
       </div>
       <div class="form-group">
+        <label class="form-label">Teléfono móvil</label>
+        <input type="tel" class="form-input" id="reg-telefono" placeholder="+34 600 000 000" autocomplete="tel">
+      </div>
+      <div class="form-group">
         <label class="form-label">Contraseña</label>
-        <input type="password" class="form-input" id="reg-pass" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+        <div class="pass-wrap">
+          <input type="password" class="form-input" id="reg-pass" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+          <button type="button" class="eye-btn" onclick="togglePass('reg-pass', 'eye1')">
+            <svg id="eye1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar contraseña</label>
+        <div class="pass-wrap">
+          <input type="password" class="form-input" id="reg-pass2" placeholder="Repite la contraseña" autocomplete="new-password">
+          <button type="button" class="eye-btn" onclick="togglePass('reg-pass2', 'eye2')">
+            <svg id="eye2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
       </div>
       <button class="btn-primary" onclick="registro()" id="btn-registro">Crear cuenta gratis</button>
       <div class="trial-info">
@@ -199,20 +234,47 @@ async function login() {
   window.location.href = '/dashboard';
 }
 
-async function registro() {
-  const nombre = document.getElementById('reg-nombre').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const pass = document.getElementById('reg-pass').value;
+function togglePass(inputId, eyeId) {
+  const input = document.getElementById(inputId);
+  const eye = document.getElementById(eyeId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    eye.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    input.type = 'password';
+    eye.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
 
-  if (!nombre) { showMsg('Escribe el nombre de tu restaurante.'); return; }
+async function registro() {
+  const nombrePersona = document.getElementById('reg-nombre-persona').value.trim();
+  const apellidos = document.getElementById('reg-apellidos').value.trim();
+  const nombreRestaurante = document.getElementById('reg-nombre').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const telefono = document.getElementById('reg-telefono').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+
+  if (!nombrePersona) { showMsg('Escribe tu nombre.'); return; }
+  if (!nombreRestaurante) { showMsg('Escribe el nombre de tu restaurante.'); return; }
   if (!email) { showMsg('Escribe tu email.'); return; }
   if (pass.length < 8) { showMsg('La contraseña debe tener al menos 8 caracteres.'); return; }
+  if (pass !== pass2) { showMsg('Las contraseñas no coinciden.'); return; }
 
   setLoading('btn-registro', true, 'Crear cuenta gratis', 'Creando cuenta...');
   hideMsg();
 
-  // Crear usuario en Supabase Auth
-  const { data, error } = await sb.auth.signUp({ email, password: pass });
+  const { data, error } = await sb.auth.signUp({
+    email,
+    password: pass,
+    options: {
+      data: {
+        nombre: nombrePersona,
+        apellidos: apellidos,
+        telefono: telefono
+      }
+    }
+  });
 
   if (error) {
     showMsg(error.message === 'User already registered'
@@ -222,11 +284,10 @@ async function registro() {
     return;
   }
 
-  // Crear el restaurante vinculado al usuario
   if (data.user) {
     await sb.from('restaurantes').insert({
       user_id: data.user.id,
-      nombre: nombre
+      nombre: nombreRestaurante
     });
   }
 
