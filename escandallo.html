@@ -634,6 +634,58 @@ async function cargarApp(session){
   esPremium=localStorage.getItem('qc_premium')==='true';
   updateTrialBadge();
   if(esPremium){document.getElementById('merma-lock').style.display='none';document.getElementById('neto-lock').style.display='none';}
+
+  // Cargar datos si venimos de editar un escandallo existente
+  const editData=sessionStorage.getItem('qc_escandallo_editar');
+  if(editData){
+    try{
+      const e=JSON.parse(editData);
+      cargarEscandallo(e);
+    }catch(err){console.log('Error cargando escandallo:',err);}
+  }
+}
+
+function cargarEscandallo(e){
+  // Datos básicos
+  document.getElementById('nombre').value=e.nombre_plato||'';
+  document.getElementById('categoria').value=e.categoria||'';
+  document.getElementById('raciones').value=e.raciones||1;
+
+  // Sliders
+  if(e.food_cost_pct){
+    document.getElementById('margen-fc').value=e.food_cost_pct;
+    document.getElementById('val-fc').textContent=e.food_cost_pct+'%';
+  }
+  if(e.margen_neto_pct&&e.margen_neto_pct>0&&esPremium){
+    document.getElementById('toggle-neto').checked=true;
+    netoOn=true;
+    document.getElementById('neto-slider-wrap').style.display='block';
+    document.getElementById('margen-neto').value=e.margen_neto_pct;
+    document.getElementById('val-neto').textContent=e.margen_neto_pct+'%';
+  }
+
+  // Alérgenos
+  if(e.alergenos&&e.alergenos.length>0){
+    document.querySelectorAll('.alg').forEach(label=>{
+      const nombre=label.textContent.trim();
+      if(e.alergenos.includes(nombre)){
+        label.querySelector('input').checked=true;
+        label.classList.add('active');
+      }
+    });
+  }
+
+  // Ingredientes — limpiar los vacíos y cargar los guardados
+  ings=[];
+  if(e.ingredientes&&e.ingredientes.length>0){
+    e.ingredientes.forEach(ing=>{
+      addIng(ing.nombre||'', ing.cantidad||'', ing.unidad||'g', ing.precio||'', ing.merma||0);
+    });
+  } else {
+    addIng();addIng();addIng();
+  }
+
+  calcular();
 }
 
 
@@ -708,7 +760,10 @@ async function cerrarSesion(){
 }
 
 // ── INIT ─────────────────────────────────────────────────────
-initAlergenos();addIng();addIng();addIng();
+initAlergenos();
+// Solo añadir filas vacías si no hay escandallo para editar
+const _editCheck=sessionStorage.getItem('qc_escandallo_editar');
+if(!_editCheck){addIng();addIng();addIng();}
 initAuth();
 </script>
 </div>
