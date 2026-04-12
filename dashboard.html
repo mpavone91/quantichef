@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuantiChef — Mi cocina</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{--bg:#F9F7F2;--surface:#FFFFFF;--border:#E0DDD6;--text:#1A1916;--text2:#4A4845;--text3:#8A8784;--accent:#1E4D2B;--accent-mid:#2D5A3D;--accent-light:#E8F2EC;--accent-mint:#C8E6D0;--gold:#C4943A;--gold-light:#FFF4E0;--danger:#8B1A1A;--danger-light:#FDEAEA}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+  /* Nav */
+  nav{background:var(--accent);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+  .nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+  .nav-logo-icon{width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center}
+  .nav-logo-icon svg{width:15px;height:15px}
+  .nav-logo-text{font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:600}
+  .nav-right{display:flex;align-items:center;gap:14px}
+  .nav-restaurante{font-size:13px;color:rgba(255,255,255,.65)}
+  .nav-logout{color:rgba(255,255,255,.5);cursor:pointer;background:none;border:none;display:flex;align-items:center;gap:5px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;padding:0}
+  .nav-logout:hover{color:white}
+
+  /* Loading */
+  .loading{display:flex;align-items:center;justify-content:center;min-height:80vh;gap:10px;font-size:14px;color:var(--text3)}
+  .spinner{width:20px;height:20px;border:2px solid var(--accent-light);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* Container */
+  .container{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem}
+
+  /* Bienvenida */
+  .welcome{margin-bottom:2.5rem}
+  .welcome-tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem}
+  .welcome-title{font-family:'Fraunces',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:300;letter-spacing:-.02em;color:var(--text);line-height:1.2}
+  .welcome-title em{font-style:italic;color:var(--accent)}
+  .welcome-sub{font-size:.95rem;color:var(--text2);margin-top:.5rem}
+
+  /* CTA principal */
+  .cta-nueva{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:white;padding:14px 24px;border-radius:10px;text-decoration:none;font-size:15px;font-weight:700;transition:all .2s;margin-top:1.5rem;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif}
+  .cta-nueva:hover{background:var(--accent-mid);transform:translateY(-1px);box-shadow:0 8px 24px rgba(30,77,43,.2)}
+  .cta-nueva svg{width:18px;height:18px}
+
+  /* Stats rápidas */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:2rem}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.2rem}
+  .stat-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.4rem}
+  .stat-value{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:300;color:var(--text)}
+  .stat-value.green{color:var(--accent)}
+  .stat-sub{font-size:11px;color:var(--text3);margin-top:2px}
+
+  /* Lista escandallos */
+  .section-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+  .escandallos-grid{display:flex;flex-direction:column;gap:.625rem}
+  .escandallo-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:1rem;transition:all .2s;cursor:pointer;text-decoration:none;color:inherit}
+  .escandallo-card:hover{border-color:var(--accent-mint);box-shadow:0 4px 16px rgba(30,77,43,.07);transform:translateY(-1px)}
+  .card-icon{width:40px;height:40px;border-radius:9px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .card-icon svg{width:18px;height:18px;color:var(--accent)}
+  .card-info{flex:1;min-width:0}
+  .card-nombre{font-weight:600;font-size:.95rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card-meta{font-size:12px;color:var(--text3);margin-top:2px}
+  .card-metrics{display:flex;gap:.75rem;flex-shrink:0}
+  .card-metric{text-align:right}
+  .card-metric-val{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:300;color:var(--text)}
+  .card-metric-val.green{color:var(--accent)}
+  .card-metric-label{font-size:10px;color:var(--text3);letter-spacing:.04em}
+  .card-del{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+  .card-del:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+
+  /* Estado vacío */
+  .empty-state{text-align:center;padding:4rem 2rem;background:var(--surface);border:1px dashed var(--border);border-radius:12px}
+  .empty-icon{width:56px;height:56px;border-radius:14px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem}
+  .empty-icon svg{width:26px;height:26px;color:var(--accent)}
+  .empty-title{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:300;color:var(--text);margin-bottom:.5rem}
+  .empty-sub{font-size:.9rem;color:var(--text3);margin-bottom:1.5rem;line-height:1.6}
+
+  /* Plan banner */
+  .plan-banner{background:var(--gold-light);border:1px solid rgba(196,148,58,.25);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
+  .plan-banner p{font-size:13px;color:var(--text2);flex:1;line-height:1.5}
+  .plan-banner strong{color:var(--gold)}
+  .btn-plan{background:var(--gold);color:white;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none}
+
+  @media(max-width:640px){
+    nav{padding:.875rem 1.25rem}
+    .container{padding:1.5rem 1rem}
+    .stats{grid-template-columns:1fr 1fr}
+    .stats .stat:last-child{grid-column:1/-1}
+    .card-metrics{display:none}
+    .nav-restaurante{display:none}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/dashboard" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M12 2l2.4 4.9L20 8l-4 3.9.9 5.5L12 15l-4.9 2.4.9-5.5L4 8l5.6-1.1z"/></svg>
+    </div>
+    <span class="nav-logo-text">QuantiChef</span>
+  </a>
+  <div class="nav-right">
+    <span class="nav-restaurante" id="nav-restaurante"></span>
+    <button class="nav-logout" onclick="cerrarSesion()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Salir
+    </button>
+  </div>
+</nav>
+
+<div id="loading" class="loading">
+  <div class="spinner"></div>Cargando tu cocina...
+</div>
+
+<div id="app" style="display:none">
+  <div class="container">
+
+    <!-- Bienvenida -->
+    <div class="welcome">
+      <div class="welcome-tag">Mi cocina</div>
+      <h1 class="welcome-title">Hola, <em id="welcome-nombre">chef</em> 👋</h1>
+      <p class="welcome-sub" id="welcome-sub">Gestiona los escandallos de tu restaurante.</p>
+      <button class="cta-nueva" onclick="nuevoEscandallo()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nuevo escandallo
+      </button>
+    </div>
+
+    <!-- Banner plan -->
+    <div class="plan-banner" id="plan-banner" style="display:none">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <p>Estás en la <strong>prueba gratuita</strong>. Activa tu plan para escandallos ilimitados, mermas y margen neto.</p>
+      <a href="#" class="btn-plan">Ver planes</a>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats" id="stats" style="display:none">
+      <div class="stat">
+        <div class="stat-label">Escandallos</div>
+        <div class="stat-value green" id="stat-total">0</div>
+        <div class="stat-sub">platos guardados</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Food cost medio</div>
+        <div class="stat-value" id="stat-fc">—</div>
+        <div class="stat-sub">de tu carta</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Más rentable</div>
+        <div class="stat-value green" id="stat-top">—</div>
+        <div class="stat-sub" id="stat-top-sub">mayor margen</div>
+      </div>
+    </div>
+
+    <!-- Lista -->
+    <div class="section-title">Mis escandallos</div>
+    <div id="lista-escandallos"></div>
+
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL='https://ilzntryzijdfnntwuthp.supabase.co';
+const SUPABASE_KEY='sb_publishable_qXyYLpM1403nu66tczLNCA_0s5EE3Re';
+const {createClient}=supabase;
+const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let restauranteId=null;
+
+async function init(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){window.location.href='/login';return;}
+
+  // Cargar restaurante
+  const {data:rest}=await sb.from('restaurantes').select('*').eq('user_id',session.user.id).single();
+  if(!rest){window.location.href='/login';return;}
+
+  restauranteId=rest.id;
+  document.getElementById('nav-restaurante').textContent=rest.nombre;
+  document.getElementById('welcome-nombre').textContent=rest.nombre;
+
+  // Cargar escandallos
+  const {data:escandallos}=await sb.from('escandallos').select('*').eq('restaurante_id',rest.id).order('updated_at',{ascending:false});
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('plan-banner').style.display='flex';
+
+  if(escandallos&&escandallos.length>0){
+    document.getElementById('stats').style.display='grid';
+    renderStats(escandallos);
+    renderLista(escandallos);
+    document.getElementById('welcome-sub').textContent=`Tienes ${escandallos.length} escandallo${escandallos.length>1?'s':''} guardado${escandallos.length>1?'s':''}.`;
+  } else {
+    renderVacio();
+  }
+}
+
+function fmt(n){return Number(n).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';}
+
+function renderStats(lista){
+  document.getElementById('stat-total').textContent=lista.length;
+  const fcs=lista.filter(e=>e.food_cost_pct>0).map(e=>e.food_cost_pct);
+  if(fcs.length>0)document.getElementById('stat-fc').textContent=Math.round(fcs.reduce((a,b)=>a+b,0)/fcs.length)+'%';
+  const conPrecio=lista.filter(e=>e.precio_venta>0);
+  if(conPrecio.length>0){
+    const top=conPrecio.reduce((a,b)=>((b.precio_venta-b.coste_racion)/b.precio_venta)>((a.precio_venta-a.coste_racion)/a.precio_venta)?b:a);
+    const margen=top.precio_venta>0?Math.round((top.precio_venta-top.coste_racion)/top.precio_venta*100):0;
+    document.getElementById('stat-top').textContent=margen+'%';
+    document.getElementById('stat-top-sub').textContent=top.nombre_plato;
+  }
+}
+
+function renderLista(lista){
+  const c=document.getElementById('lista-escandallos');
+  c.innerHTML='';
+  const grid=document.createElement('div');grid.className='escandallos-grid';
+  lista.forEach(e=>{
+    const margen=e.precio_venta>0?Math.round((e.precio_venta-e.coste_racion)/e.precio_venta*100):0;
+    const card=document.createElement('div');card.className='escandallo-card';
+    card.innerHTML=`
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+      <div class="card-info">
+        <div class="card-nombre">${e.nombre_plato}</div>
+        <div class="card-meta">${e.categoria||'Sin categoría'} · ${e.raciones} ración${e.raciones>1?'es':''} · FC ${e.food_cost_pct}%</div>
+      </div>
+      <div class="card-metrics">
+        <div class="card-metric">
+          <div class="card-metric-val">${e.coste_racion>0?fmt(e.coste_racion):'—'}</div>
+          <div class="card-metric-label">coste/ración</div>
+        </div>
+        <div class="card-metric">
+          <div class="card-metric-val ${margen>0?'green':''}">${e.precio_venta>0?fmt(e.precio_venta):'—'}</div>
+          <div class="card-metric-label">precio venta</div>
+        </div>
+      </div>
+      <button class="card-del" onclick="eliminar('${e.id}',event)" title="Eliminar">×</button>
+    `;
+    card.addEventListener('click',()=>editarEscandallo(e));
+    grid.appendChild(card);
+  });
+  c.appendChild(grid);
+}
+
+function renderVacio(){
+  document.getElementById('lista-escandallos').innerHTML=`
+    <div class="empty-state">
+      <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+      <div class="empty-title">Aún no tienes escandallos</div>
+      <p class="empty-sub">Crea tu primer escandallo y conoce el coste real<br>de cada plato de tu carta.</p>
+      <button class="cta-nueva" onclick="nuevoEscandallo()" style="margin-top:0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Crear primer escandallo
+      </button>
+    </div>
+  `;
+}
+
+function nuevoEscandallo(){
+  sessionStorage.removeItem('qc_escandallo_editar');
+  window.location.href='/escandallo';
+}
+
+function editarEscandallo(e){
+  sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(e));
+  window.location.href='/escandallo';
+}
+
+async function eliminar(id, evt){
+  evt.stopPropagation();
+  if(!confirm('¿Eliminar este escandallo? Esta acción no se puede deshacer.'))return;
+  await sb.from('escandallos').delete().eq('id',id);
+  init();
+}
+
+async function cerrarSesion(){
+  await sb.auth.signOut();
+  window.location.href='/login';
+}
+
+init();
+</script>
+</body>
+</html>
