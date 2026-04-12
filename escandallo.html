@@ -608,8 +608,18 @@ const SUPABASE_KEY='sb_publishable_qXyYLpM1403nu66tczLNCA_0s5EE3Re';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 async function initAuth(){
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='/login';return;}
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if(event==='SIGNED_OUT'||(event==='INITIAL_SESSION'&&!session)){
+      window.location.href='/login';
+      return;
+    }
+    if(session && document.getElementById('auth-loading').style.display!=='none'){
+      await cargarApp(session);
+    }
+  });
+}
+
+async function cargarApp(session){
   // Mostrar nombre del restaurante
   const {data:rest}=await sb.from('restaurantes').select('nombre').eq('user_id',session.user.id).single();
   if(rest){
