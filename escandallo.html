@@ -372,6 +372,10 @@
     <p class="hint">Marca todos los alérgenos del plato. Requerido por normativa europea.</p>
   </div>
 
+  <button class="btn-save" id="btn-save" onclick="guardarEscandallo()" style="display:flex;align-items:center;gap:8px;margin:0 auto 12px;padding:11px 28px;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:Plus Jakarta Sans,sans-serif;border:none;border-radius:8px;cursor:pointer">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    Guardar escandallo
+  </button>
   <button class="btn-print" onclick="window.print()">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
     Imprimir / Guardar PDF
@@ -617,6 +621,72 @@ async function initAuth(){
   esPremium=localStorage.getItem('qc_premium')==='true';
   updateTrialBadge();
   if(esPremium){document.getElementById('merma-lock').style.display='none';document.getElementById('neto-lock').style.display='none';}
+}
+
+
+async function guardarEscandallo(){
+  const nombre=document.getElementById('nombre').value.trim();
+  if(!nombre){alert('Escribe el nombre del plato antes de guardar.');return;}
+  const btn=document.getElementById('btn-save');
+  const btnOriginal=btn.innerHTML;
+  btn.disabled=true;btn.textContent='Guardando...';
+
+  const ingredientesData=ings.map(i=>({
+    nombre:document.getElementById('n'+i.id)?.value||'',
+    cantidad:parseFloat(document.getElementById('q'+i.id)?.value)||0,
+    unidad:document.getElementById('u'+i.id)?.value||'g',
+    precio:parseFloat(document.getElementById('p'+i.id)?.value)||0,
+    merma:mermasOn?(parseFloat(document.getElementById('m'+i.id)?.value)||0):0
+  })).filter(i=>i.nombre);
+
+  const alergenos=Array.from(document.querySelectorAll('.alg input:checked')).map(i=>i.closest('.alg').textContent.trim());
+  const fc=parseFloat(document.getElementById('margen-fc').value)||30;
+  const neto=netoOn?(parseFloat(document.getElementById('margen-neto').value)||0):0;
+
+  // Leer valores numéricos de las métricas
+  const mCoste=document.getElementById('m-coste').textContent.replace(/[^0-9,.]/g,'').replace(',','.');
+  const mRacion=document.getElementById('m-racion').textContent.replace(/[^0-9,.]/g,'').replace(',','.');
+  const mPvp=document.getElementById('m-pvp').textContent.replace(/[^0-9,.]/g,'').replace(',','.');
+
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){window.location.href='/login';return;}
+
+  const {data:rest}=await sb.from('restaurantes').select('id').eq('user_id',session.user.id).single();
+  if(!rest){btn.disabled=false;btn.innerHTML=btnOriginal;return;}
+
+  const editData=sessionStorage.getItem('qc_escandallo_editar');
+  const editId=editData?JSON.parse(editData).id:null;
+
+  const payload={
+    restaurante_id:rest.id,
+    nombre_plato:nombre,
+    categoria:document.getElementById('categoria').value||null,
+    raciones:parseInt(document.getElementById('raciones').value)||1,
+    food_cost_pct:fc,
+    margen_neto_pct:neto,
+    ingredientes:ingredientesData,
+    alergenos,
+    coste_total:parseFloat(mCoste)||0,
+    coste_racion:parseFloat(mRacion)||0,
+    precio_venta:parseFloat(mPvp)||0,
+    updated_at:new Date().toISOString()
+  };
+
+  let error;
+  if(editId){
+    ({error}=await sb.from('escandallos').update(payload).eq('id',editId));
+  } else {
+    ({error}=await sb.from('escandallos').insert(payload));
+  }
+
+  if(error){
+    alert('Error al guardar. Inténtalo de nuevo.');
+    btn.disabled=false;btn.innerHTML=btnOriginal;
+    return;
+  }
+
+  sessionStorage.removeItem('qc_escandallo_editar');
+  window.location.href='/dashboard';
 }
 
 async function cerrarSesion(){
