@@ -112,7 +112,7 @@
     <div id="form-login">
       <div class="form-group">
         <label class="form-label">Email</label>
-        <input type="email" class="form-input" id="login-email" placeholder="tu@restaurante.com" autocomplete="email">
+        <input type="email" class="form-input" id="login-email" placeholder="tu@restaurante.com" autocomplete="off" required>
       </div>
       <div class="form-group">
         <label class="form-label">Contraseña</label>
@@ -128,24 +128,24 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="form-group" style="margin-bottom:0">
           <label class="form-label">Nombre</label>
-          <input type="text" class="form-input" id="reg-nombre-persona" placeholder="Massimo" autocomplete="given-name">
+          <input type="text" class="form-input" id="reg-nombre-persona" placeholder="Massimo" autocomplete="off" required>
         </div>
         <div class="form-group" style="margin-bottom:0">
           <label class="form-label">Apellidos</label>
-          <input type="text" class="form-input" id="reg-apellidos" placeholder="Pavone" autocomplete="family-name">
+          <input type="text" class="form-input" id="reg-apellidos" placeholder="Pavone" autocomplete="off" required>
         </div>
       </div>
       <div class="form-group" style="margin-top:10px">
         <label class="form-label">Nombre del restaurante</label>
-        <input type="text" class="form-input" id="reg-nombre" placeholder="Restaurante Casa Pepe" autocomplete="organization">
+        <input type="text" class="form-input" id="reg-nombre" placeholder="Restaurante Casa Pepe" autocomplete="off" required>
       </div>
       <div class="form-group">
         <label class="form-label">Email</label>
-        <input type="email" class="form-input" id="reg-email" placeholder="tu@restaurante.com" autocomplete="email">
+        <input type="email" class="form-input" id="reg-email" placeholder="tu@restaurante.com" autocomplete="off" required>
       </div>
       <div class="form-group">
         <label class="form-label">Teléfono móvil</label>
-        <input type="tel" class="form-input" id="reg-telefono" placeholder="+34 600 000 000" autocomplete="tel">
+        <input type="tel" class="form-input" id="reg-telefono" placeholder="+34 600 000 000" autocomplete="off" required>
       </div>
       <div class="form-group">
         <label class="form-label">Contraseña</label>
@@ -256,8 +256,10 @@ async function registro() {
   const pass2 = document.getElementById('reg-pass2').value;
 
   if (!nombrePersona) { showMsg('Escribe tu nombre.'); return; }
+  if (!apellidos) { showMsg('Escribe tus apellidos.'); return; }
   if (!nombreRestaurante) { showMsg('Escribe el nombre de tu restaurante.'); return; }
   if (!email) { showMsg('Escribe tu email.'); return; }
+  if (!telefono) { showMsg('Escribe tu número de teléfono móvil.'); return; }
   if (pass.length < 8) { showMsg('La contraseña debe tener al menos 8 caracteres.'); return; }
   if (pass !== pass2) { showMsg('Las contraseñas no coinciden.'); return; }
 
