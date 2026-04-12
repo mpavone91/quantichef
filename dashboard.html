@@ -171,20 +171,17 @@ const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 let restauranteId=null;
 
 async function init(){
-  // Intentar getSession primero (más rápido)
-  const {data:{session}}=await sb.auth.getSession();
-  if(session){
-    await cargarDatos(session);
-    return;
-  }
-  // Si no hay sesión inmediata, esperar onAuthStateChange
+  // Esperar INITIAL_SESSION — es el único evento fiable al arrancar
   sb.auth.onAuthStateChange(async (event, session) => {
-    if(event==='SIGNED_OUT'||(event==='INITIAL_SESSION'&&!session)){
-      window.location.href='/login';
-      return;
+    if(event==='INITIAL_SESSION'){
+      if(!session){
+        window.location.href='/login';
+      } else if(!restauranteId){
+        await cargarDatos(session);
+      }
     }
-    if(session && !restauranteId){
-      await cargarDatos(session);
+    if(event==='SIGNED_OUT'){
+      window.location.href='/login';
     }
   });
 }
