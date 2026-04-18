@@ -114,6 +114,8 @@
   .sug-qty{font-size:12px;color:var(--text2);background:var(--surface2);padding:2px 7px;border-radius:4px;white-space:nowrap}
   .sug-price{font-size:12px;color:var(--accent);background:var(--accent-light);border:1px solid rgba(30,77,43,.15);padding:2px 7px;border-radius:4px;white-space:nowrap;font-weight:600}
   .sug-merma{font-size:12px;color:var(--warn);background:var(--warn-light);padding:2px 7px;border-radius:4px;white-space:nowrap;font-weight:600}
+  .sug-prov{font-size:11px;color:#1E4D2B;background:#C8E6D0;border:1px solid rgba(30,77,43,.25);padding:2px 7px;border-radius:4px;white-space:nowrap;font-weight:700}
+  .sug-est{font-size:11px;color:var(--text3);background:var(--surface2);padding:2px 7px;border-radius:4px;white-space:nowrap}
   .btn-add-sel{padding:8px 16px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer}
   .ai-loading{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--accent);padding:4px 0}
   .spinner{width:18px;height:18px;border:2px solid var(--accent-light);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
@@ -524,6 +526,7 @@ function initAlergenos(){const c=document.getElementById('alergenos');ALGS.forEa
 // ── INGREDIENTES ─────────────────────────────────────────────
 const UNITS=["g","kg","ml","l","ud","ración"];
 let ings=[],_sugs=[];
+let preciosProveedor=[];
 function addIng(n='',q='',u='g',p='',m=''){const id=Date.now()+Math.random();ings.push({id,n,q,u,p,m});renderIngs();}
 function removeIng(id){ings=ings.filter(i=>i.id!==id);renderIngs();}
 function renderIngs(){
@@ -604,6 +607,24 @@ function calcular(){
 }
 
 // ── IA ───────────────────────────────────────────────────────
+function normalizarNombre(str){
+  return (str||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim();
+}
+
+function buscarPrecioProveedor(nombreIngrediente){
+  if(!preciosProveedor||preciosProveedor.length===0) return null;
+  const norm=normalizarNombre(nombreIngrediente);
+  // Buscar coincidencia exacta primero
+  let match=preciosProveedor.find(p=>p.ingrediente_normalizado===norm);
+  if(match) return match;
+  // Buscar coincidencia parcial (el nombre del proveedor contiene el ingrediente o viceversa)
+  match=preciosProveedor.find(p=>{
+    const pn=p.ingrediente_normalizado||'';
+    return pn.includes(norm)||norm.includes(pn);
+  });
+  return match||null;
+}
+
 async function sugerir(){
   const nombre=document.getElementById('nombre').value.trim();
   const raciones=parseInt(document.getElementById('raciones').value)||1;
@@ -623,14 +644,44 @@ async function sugerir(){
     if(!res.ok)throw new Error(data.error?.message||'Error API');
     const sugs=JSON.parse(data.content[0].text.trim().replace(/```json|```/g,'').trim());
     loading.style.display='none';
+
+    // Cruzar con precios de proveedor
     sugs.forEach((s,i)=>{
+      const provMatch=buscarPrecioProveedor(s.nombre);
+      if(provMatch){
+        s._precio_original=s.precio_kg;
+        s.precio_kg=parseFloat(provMatch.precio_kg)||s.precio_kg;
+        s._es_proveedor=true;
+        s._proveedor_nombre=provMatch.proveedor||'tu proveedor';
+        // Adaptar unidad si el proveedor la tiene diferente
+        if(provMatch.unidad&&provMatch.unidad!=='kg'){
+          s._unidad_prov=provMatch.unidad;
+        }
+      } else {
+        s._es_proveedor=false;
+      }
+
       const item=document.createElement('div');item.className='sug-item selected';
-      const pc=s.unidad==='ud'?`~${s.precio_kg.toFixed(2)}€/ud`:`~${s.precio_kg.toFixed(2)}€/kg`;
+      const pc=s.unidad==='ud'?`${s.precio_kg.toFixed(2)}€/ud`:`${s.precio_kg.toFixed(2)}€/kg`;
       const mt=s.merma>0?`<span class="sug-merma">Merma ${s.merma}%</span>`:'';
-      item.innerHTML=`<input type="checkbox" id="sc${i}" checked style="display:none"><div class="sug-check" onclick="toggleSug(this,${i})"><svg class="sug-check-icon" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div><label for="sc${i}" style="display:flex;align-items:center;gap:6px;flex:1;cursor:pointer;margin:0;flex-wrap:wrap" onclick="toggleSug(this.previousElementSibling,${i})"><span class="sug-name">${s.nombre}</span><span class="sug-qty">${s.cantidad} ${s.unidad}</span><span class="sug-price">${pc}</span>${mt}</label>`;
+      const provBadge=s._es_proveedor
+        ?`<span class="sug-prov">✓ Precio proveedor</span>`
+        :`<span class="sug-est">Precio estimado</span>`;
+      item.innerHTML=`<input type="checkbox" id="sc${i}" checked style="display:none"><div class="sug-check" onclick="toggleSug(this,${i})"><svg class="sug-check-icon" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div><label for="sc${i}" style="display:flex;align-items:center;gap:6px;flex:1;cursor:pointer;margin:0;flex-wrap:wrap" onclick="toggleSug(this.previousElementSibling,${i})"><span class="sug-name">${s.nombre}</span><span class="sug-qty">${s.cantidad} ${s.unidad}</span><span class="sug-price">${pc}</span>${mt}${provBadge}</label>`;
       list.appendChild(item);
     });
     _sugs=sugs;addBtn.style.display='inline-block';document.getElementById('ai-note').style.display='block';
+
+    // Actualizar nota según si hay precios de proveedor
+    const conProv=sugs.filter(s=>s._es_proveedor).length;
+    const noteEl=document.getElementById('ai-note');
+    if(conProv>0){
+      noteEl.innerHTML=`<strong>${conProv} ingrediente${conProv>1?'s':''}</strong> con precio de tu proveedor. El resto son precios estimados — ajústalos si es necesario.`;
+    } else if(preciosProveedor.length>0){
+      noteEl.textContent='No se encontraron coincidencias con tus precios de proveedor. Precios estimados según mercado español.';
+    } else {
+      noteEl.textContent='Precios y mermas aproximados según mercado español. Sube un albarán en el dashboard para usar precios reales.';
+    }
   }catch(err){
     loading.style.display='none';errorEl.style.display='block';
     errorEl.textContent='No se pudo conectar con la IA. Añade manualmente. ('+err.message+')';
@@ -703,10 +754,13 @@ async function initAuth(){
 
 async function cargarApp(session){
   // Mostrar nombre del restaurante
-  const {data:rest}=await sb.from('restaurantes').select('nombre').eq('user_id',session.user.id).single();
+  const {data:rest}=await sb.from('restaurantes').select('id,nombre').eq('user_id',session.user.id).single();
   if(rest){
     document.getElementById('restaurante-nombre').textContent=rest.nombre;
     document.getElementById('restaurante-nombre-wrap').style.display='inline';
+    // Cargar precios de proveedor
+    const {data:precios}=await sb.from('precios_proveedor').select('*').eq('restaurante_id',rest.id);
+    if(precios) preciosProveedor=precios;
   }
   document.getElementById('auth-loading').style.display='none';
   document.getElementById('app-content').style.display='block';
