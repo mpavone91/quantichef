@@ -34,47 +34,40 @@
   --radio-lg: 16px;
 }
 
-/* RESET Y BLOQUEO DE SCROLL HORIZONTAL */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { 
-  max-width: 100%;
-  overflow-x: hidden; /* Evita el desplazamiento lateral a toda costa */
-}
+html, body { max-width: 100%; overflow-x: hidden; } /* Bloqueo de scroll horizontal */
 html { scroll-behavior: smooth; }
 body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--crema); color: var(--texto); line-height: 1.6; }
 
 /* NAV */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  padding: 0.8rem 1.5rem;
+  padding: 1rem 2rem;
   display: flex; align-items: center; justify-content: space-between;
   background: rgba(249,247,242,0.94);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(30,77,43,0.08);
-  width: 100%;
 }
-.nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; flex-shrink: 0; }
-.nav-logo-icon { width: 32px; height: 32px; background: var(--verde); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.nav-logo-icon svg { width: 16px; height: 16px; }
-.nav-logo-text { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; color: var(--verde); letter-spacing: -0.02em; }
-
-.nav-links { display: flex; align-items: center; gap: 1.5rem; }
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo-icon { width: 34px; height: 34px; background: var(--verde); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.nav-logo-text { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--verde); letter-spacing: -0.02em; }
+.nav-links { display: flex; align-items: center; gap: 2rem; }
 .nav-links a { font-size: 14px; color: var(--texto2); text-decoration: none; font-weight: 500; transition: color .2s; }
 .nav-links a:hover { color: var(--verde); }
-
-.nav-btns { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.nav-cta { background: var(--verde); color: white; padding: 9px 16px; border-radius: var(--radio); font-size: 13px; font-weight: 600; text-decoration: none; transition: all .2s; white-space: nowrap; }
+.nav-cta { background: var(--verde); color: white; padding: 9px 20px; border-radius: var(--radio); font-size: 14px; font-weight: 600; text-decoration: none; transition: all .2s; white-space: nowrap; }
 .nav-cta:hover { background: var(--verde-medio); transform: translateY(-1px); }
-.nav-login { color: var(--texto2); padding: 8px 12px; border-radius: var(--radio); font-size: 13px; font-weight: 500; text-decoration: none; transition: all .2s; white-space: nowrap; border: 1.5px solid #DDD9D0; }
+.nav-login { color: var(--texto2); padding: 9px 16px; border-radius: var(--radio); font-size: 14px; font-weight: 500; text-decoration: none; transition: all .2s; white-space: nowrap; border: 1.5px solid #DDD9D0; }
 .nav-login:hover { border-color: var(--verde-mint); color: var(--verde); background: var(--verde-suave); }
+.nav-btns { display: flex; align-items: center; gap: 8px; }
 
 /* HERO */
 .hero {
   min-height: 100vh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 8rem 1.5rem 5rem;
+  padding: 8rem 2rem 5rem;
   text-align: center;
   position: relative;
+  overflow: hidden;
 }
 .hero::before {
   content: '';
@@ -90,18 +83,20 @@ nav {
   font-size: 13px; font-weight: 600;
   margin-bottom: 2rem;
   border: 1px solid rgba(220,38,38,0.15);
+  animation: fadeUp .5s ease both;
 }
 .hero-eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rojo); }
 
 .hero h1 {
   font-family: 'Fraunces', serif;
-  font-size: clamp(2.2rem, 6vw, 5rem);
+  font-size: clamp(2.6rem, 6vw, 5rem);
   font-weight: 300;
-  line-height: 1.1;
+  line-height: 1.08;
   letter-spacing: -0.03em;
   color: var(--texto);
   margin-bottom: 1.5rem;
   max-width: 860px;
+  animation: fadeUp .5s .1s ease both;
 }
 .hero h1 em { font-style: italic; color: var(--verde); }
 .hero h1 strong { font-weight: 600; }
@@ -112,30 +107,44 @@ nav {
   max-width: 540px;
   margin: 0 auto 2.5rem;
   line-height: 1.7;
+  animation: fadeUp .5s .2s ease both;
 }
 
 .hero-cta-wrap {
-  display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
   margin-bottom: 1.2rem;
+  animation: fadeUp .5s .3s ease both;
 }
 .btn-primary {
   background: var(--verde); color: white;
-  padding: 14px 24px; border-radius: var(--radio);
+  padding: 15px 30px; border-radius: var(--radio);
   font-size: 15px; font-weight: 600;
   text-decoration: none; transition: all .2s;
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex; align-items: center; gap: 9px;
   box-shadow: 0 4px 20px rgba(30,77,43,0.2);
 }
+.btn-primary:hover { background: var(--verde-medio); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(30,77,43,0.28); }
 .btn-secondary {
   background: transparent; color: var(--texto);
-  padding: 14px 24px; border-radius: var(--radio);
+  padding: 15px 28px; border-radius: var(--radio);
   font-size: 15px; font-weight: 500;
   text-decoration: none; transition: all .2s;
   border: 1.5px solid #DDD9D0;
 }
+.btn-secondary:hover { border-color: var(--verde-mint); background: var(--verde-suave); color: var(--verde); }
 
-.hero-trust { font-size: 13px; color: var(--texto3); margin-bottom: 3rem; }
-.stars { color: #FFB800; }
+.hero-trust {
+  font-size: 13px; color: var(--texto3);
+  margin-bottom: 3.5rem;
+  animation: fadeUp .5s .35s ease both;
+}
+.stars { color: #FFB800; margin-right: 5px; }
+
+.hero-nota {
+  font-size: 12px; color: var(--texto3);
+  animation: fadeUp .5s .4s ease both;
+  margin-bottom: 4rem;
+}
 
 /* Preview app */
 .hero-preview {
@@ -143,99 +152,164 @@ nav {
   background: var(--blanco);
   border-radius: var(--radio-lg);
   border: 1px solid rgba(30,77,43,0.1);
-  box-shadow: 0 30px 70px rgba(30,77,43,0.08);
+  box-shadow: 0 40px 100px rgba(30,77,43,0.1), 0 2px 8px rgba(0,0,0,0.05);
   overflow: hidden;
+  animation: fadeUp .6s .5s ease both;
 }
-.preview-bar { background: var(--verde); padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; }
+.preview-bar {
+  background: var(--verde); padding: 13px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.preview-logo-wrap { display: flex; align-items: center; gap: 8px; }
+.preview-logo-icon { width: 24px; height: 24px; background: rgba(255,255,255,0.15); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
 .preview-logo-text { font-family: 'Fraunces', serif; font-size: 14px; color: white; font-weight: 600; text-align: left; }
-.preview-logo-text small { color: #A8D5B5; font-size: 9px; display: block; text-transform: uppercase; }
-.preview-body { padding: 15px; }
-.preview-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
-.preview-field label { font-size: 8px; font-weight: 700; text-transform: uppercase; color: var(--texto3); display: block; margin-bottom: 3px; }
-.preview-field input { width: 100%; padding: 6px; font-size: 11px; border: 1px solid #E0DDD6; border-radius: 5px; background: #FAFAF8; }
+.preview-logo-text small { color: #A8D5B5; font-size: 9px; display: block; text-transform: uppercase; margin-top: -1px; }
+.preview-badge { background: rgba(255,255,255,.15); color: white; font-size: 10px; padding: 3px 9px; border-radius: 20px; }
+.preview-body { padding: 18px; }
+.preview-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+.preview-field label { font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--texto3); display: block; margin-bottom: 4px; }
+.preview-field input { width: 100%; padding: 7px 9px; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; border: 1px solid #E0DDD6; border-radius: 6px; background: #FAFAF8; color: var(--texto); outline: none; }
 .preview-field input.filled { border-color: #3D7A54; background: var(--verde-suave); font-weight: 600; color: var(--verde); }
+.preview-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--verde); color: white; padding: 8px 14px; border-radius: 7px; font-size: 11px; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; border: none; cursor: default; margin-bottom: 10px; }
+.preview-sugs { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.preview-sug { display: flex; align-items: center; gap: 7px; background: var(--verde-suave); border: 1px solid var(--verde-mint); border-radius: 6px; padding: 6px 9px; font-size: 11px; text-align: left; }
+.preview-sug-check { width: 14px; height: 14px; border-radius: 3px; background: var(--verde); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.preview-sug-name { font-weight: 600; color: var(--texto); flex: 1; }
+.preview-sug-qty { font-size: 10px; color: var(--texto3); background: white; padding: 2px 5px; border-radius: 3px; }
+.preview-sug-price { font-size: 10px; color: var(--verde); font-weight: 600; background: white; padding: 2px 5px; border-radius: 3px; }
+.preview-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; }
+.preview-metric { background: #FAFAF8; border: 1px solid #E0DDD6; border-radius: 7px; padding: 9px; text-align: center; }
+.preview-metric-label { font-size: 8px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--texto3); margin-bottom: 3px; }
+.preview-metric-val { font-family: 'Fraunces', serif; font-size: 16px; color: var(--texto); }
+.preview-metric-val.good { color: var(--verde); }
 
-.preview-btn { display: inline-flex; align-items: center; gap: 5px; background: var(--verde); color: white; padding: 7px 12px; border-radius: 6px; font-size: 10px; font-weight: 600; border: none; margin-bottom: 10px; }
-.preview-sugs { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
-.preview-sug { display: flex; align-items: center; gap: 6px; background: var(--verde-suave); border: 1px solid var(--verde-mint); border-radius: 5px; padding: 5px 8px; font-size: 10px; text-align: left; }
-.preview-sug-check { width: 12px; height: 12px; border-radius: 3px; background: var(--verde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.preview-sug-name { font-weight: 600; flex: 1; }
-.preview-sug-price { color: var(--verde); font-weight: 700; }
-
-.preview-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
-.preview-metric { background: #FAFAF8; border: 1px solid #E0DDD6; border-radius: 6px; padding: 8px; text-align: center; }
-.preview-metric-label { font-size: 7px; font-weight: 700; color: var(--texto3); }
-.preview-metric-val { font-family: 'Fraunces', serif; font-size: 14px; }
+/* DOLOR */
+.dolor-section { padding: 5rem 2rem; background: var(--texto); }
+.dolor-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+.dolor-title { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 300; color: white; margin-bottom: 1rem; letter-spacing: -0.02em; line-height: 1.2; }
+.dolor-title em { font-style: italic; color: #A8D5B5; }
+.dolor-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 3rem; }
+.dolor-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radio-lg); padding: 1.5rem; text-align: left; }
+.dolor-card-num { font-family: 'Fraunces', serif; font-size: 2.4rem; font-weight: 300; color: rgba(255,255,255,.2); margin-bottom: .5rem; line-height: 1; }
+.dolor-card h3 { font-size: .95rem; font-weight: 600; color: white; margin-bottom: .5rem; }
+.dolor-card p { font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.6; }
 
 /* SECCIONES COMUNES */
-.dolor-section { padding: 4rem 1.5rem; background: var(--texto); text-align: center; }
-.dolor-title { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); color: white; margin-bottom: 2rem; }
-.dolor-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; max-width: 1000px; margin: 0 auto; }
-.dolor-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radio-lg); padding: 1.5rem; text-align: left; }
-
-.section { padding: 5rem 1.5rem; }
+.section { padding: 6rem 2rem; }
 .section-inner { max-width: 1100px; margin: 0 auto; }
-.section-title { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 2rem; }
+.section-tag { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--verde); margin-bottom: .875rem; }
+.section-title { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; letter-spacing: -0.02em; line-height: 1.2; color: var(--texto); margin-bottom: .875rem; }
+.section-title em { font-style: italic; color: var(--verde); }
+.section-sub { font-size: 1.05rem; color: var(--texto2); max-width: 500px; line-height: 1.7; margin-bottom: 3.5rem; }
 
-.steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
-.step-num { width: 36px; height: 36px; border-radius: 50%; background: var(--verde); color: white; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-weight: 700; }
+.steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+.step-num { width: 40px; height: 40px; border-radius: 50%; background: var(--verde); color: white; font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; display: flex; align-items: center; justify-content: center; margin-bottom: 1.1rem; }
+.step h3 { font-size: 1.05rem; font-weight: 600; color: var(--texto); margin-bottom: .5rem; line-height: 1.3; }
+.step p { font-size: .92rem; color: var(--texto2); line-height: 1.65; }
 
-/* AUDITORÍA EJEMPLO */
-.ejemplo-section { background: var(--crema-oscura); padding: 5rem 1.5rem; }
-.ejemplo-card { max-width: 600px; margin: 0 auto; background: var(--blanco); border-radius: var(--radio-lg); padding: 2rem; border: 1px solid #E0DDD6; }
-.audit-example { margin-top: 1.5rem; border-radius: 10px; padding: 1rem; display: flex; align-items: center; gap: 12px; text-align: left; }
+/* EJEMPLO REAL Y AUDITORÍA */
+.ejemplo-section { background: var(--crema-oscura); padding: 6rem 2rem; }
+.ejemplo-card { max-width: 680px; margin: 0 auto; background: var(--blanco); border-radius: var(--radio-lg); border: 1px solid #E0DDD6; padding: 2.5rem; box-shadow: 0 8px 32px rgba(0,0,0,0.05); }
+.ejemplo-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--texto3); margin-bottom: 1.25rem; }
+.ejemplo-row { display: flex; align-items: center; justify-content: space-between; padding: .75rem 0; border-bottom: 1px solid #F0EDE4; }
+.ejemplo-row:last-of-type { border-bottom: none; }
+.ejemplo-label { font-size: .92rem; color: var(--texto2); }
+.ejemplo-val { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 300; }
+.ejemplo-val.malo { color: var(--rojo); }
+
+/* Estilo Auditoría (igual que la app) */
+.audit-example { margin-top: 1.5rem; border-radius: var(--radio); padding: 1.25rem; display: flex; align-items: center; gap: 12px; text-align: left; }
 .audit-example.success { background: var(--verde-suave); border: 1px solid var(--verde-mint); color: var(--verde); }
+.audit-example p { font-size: .92rem; line-height: 1.5; color: var(--texto2); }
+.audit-example strong { color: inherit; }
+
+/* FEATURES */
+.features-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.25rem; }
+.feature-card { background: var(--blanco); border: 1px solid #E8E5DE; border-radius: var(--radio-lg); padding: 1.75rem; transition: all .2s; }
+.feature-card:hover { border-color: var(--verde-mint); box-shadow: 0 8px 32px rgba(30,77,43,0.07); transform: translateY(-2px); }
+.feature-icon { width: 42px; height: 42px; border-radius: 10px; background: var(--verde-suave); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+.feature-icon svg { width: 20px; height: 20px; color: var(--verde); }
+.feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: .4rem; color: var(--texto); }
+.feature-card p { font-size: .9rem; color: var(--texto2); line-height: 1.65; }
+.feature-badge { display: inline-block; margin-top: .625rem; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--dorado); background: var(--dorado-suave); padding: 3px 8px; border-radius: 4px; }
 
 /* PRICING */
-.pricing-section { background: var(--verde); padding: 5rem 1.5rem; color: white; text-align: center; }
-.pricing-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 700px; margin: 2rem auto; }
-.pricing-card { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 16px; padding: 2rem; text-align: left; }
-.pricing-card.destacado { background: white; color: var(--texto); }
-.pricing-price { font-family: 'Fraunces', serif; font-size: 3rem; line-height: 1; margin: 0.5rem 0; }
-.pricing-features { list-style: none; margin: 1.5rem 0; font-size: 14px; }
-.pricing-feature { margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-.pricing-btn { display: block; text-align: center; padding: 12px; border-radius: 10px; background: var(--verde); color: white; text-decoration: none; font-weight: 700; }
+.pricing-section { background: var(--verde); padding: 6rem 2rem; }
+.pricing-inner { max-width: 860px; margin: 0 auto; text-align: center; }
+.pricing-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--verde-mint); margin-bottom: .875rem; }
+.pricing-title { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 300; color: white; margin-bottom: .75rem; letter-spacing: -0.02em; line-height: 1.2; }
+.pricing-title em { font-style: italic; color: var(--verde-mint); }
+.pricing-sub { font-size: 1rem; color: rgba(255,255,255,.65); margin-bottom: 3rem; line-height: 1.6; }
+.pricing-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; max-width: 660px; margin: 0 auto 2rem; }
+.pricing-card { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: var(--radio-lg); padding: 2rem; text-align: left; transition: all .2s; }
+.pricing-card.destacado { background: white; border-color: white; }
+.pricing-card.destacado .pricing-plan { color: var(--verde-claro); }
+.pricing-card.destacado .pricing-price { color: var(--verde); }
+.pricing-card.destacado .pricing-feature { color: var(--texto2); }
+.pricing-card.destacado .pricing-feature svg { color: var(--verde); }
+.pricing-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--dorado); background: var(--dorado-suave); padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: .75rem; }
+.pricing-plan { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.55); margin-bottom: .4rem; }
+.pricing-price { font-family: 'Fraunces', serif; font-size: 2.8rem; font-weight: 300; color: white; line-height: 1; }
+.pricing-features { list-style: none; display: flex; flex-direction: column; gap: .55rem; margin-bottom: 1.5rem; }
+.pricing-feature { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.75); }
+.pricing-feature svg { width: 14px; height: 14px; color: var(--verde-mint); flex-shrink: 0; }
+.pricing-btn { display: block; text-align: center; text-decoration: none; padding: 12px; border-radius: var(--radio); font-size: 14px; font-weight: 700; background: rgba(255,255,255,.12); color: white; transition: all .2s; }
+.pricing-card.destacado .pricing-btn { background: var(--verde); color: white; }
 
 /* FAQ */
-.faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
-.faq-item { background: white; margin-bottom: 8px; border-radius: 10px; border: 1px solid #EEE; }
-.faq-q { width: 100%; padding: 1.2rem; text-align: left; background: none; border: none; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; }
-.faq-a { display: none; padding: 0 1.2rem 1.2rem; color: var(--texto2); font-size: 14px; }
+.faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+.faq-list { display: flex; flex-direction: column; gap: .625rem; }
+.faq-item { background: var(--blanco); border: 1px solid #E8E5DE; border-radius: var(--radio); overflow: hidden; }
+.faq-q { width: 100%; padding: 1.1rem 1.4rem; text-align: left; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 1rem; font-size: .95rem; font-weight: 600; color: var(--texto); font-family: 'Plus Jakarta Sans', sans-serif; }
+.faq-q svg { width: 18px; height: 18px; color: var(--texto3); transition: transform .2s; flex-shrink: 0; }
+.faq-item.open .faq-q svg { transform: rotate(45deg); }
+.faq-a { display: none; padding: 0 1.4rem 1.1rem; font-size: .9rem; color: var(--texto2); line-height: 1.7; }
 .faq-item.open .faq-a { display: block; }
 
-/* FOOTER */
-footer { background: var(--texto); padding: 3rem 1.5rem; color: rgba(255,255,255,0.5); text-align: center; }
-.footer-links { margin: 1.5rem 0; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
-.footer-links a { color: inherit; text-decoration: none; font-size: 13px; }
+/* CTA FINAL */
+.cta-section { padding: 7rem 2rem; text-align: center; position: relative; overflow: hidden; }
+.cta-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(30,77,43,0.05) 0%, transparent 70%); pointer-events: none; }
+.cta-inner { max-width: 600px; margin: 0 auto; position: relative; }
+.cta-title { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; letter-spacing: -0.02em; color: var(--texto); margin-bottom: 1rem; line-height: 1.15; }
+.cta-title em { font-style: italic; color: var(--verde); }
+.cta-sub { font-size: 1rem; color: var(--texto2); margin-bottom: 2.5rem; line-height: 1.7; }
 
-/* ANIMACIONES */
-@keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
-.fade-up { opacity: 0; transform: translateY(20px); transition: 0.6s ease-out; }
+/* FOOTER */
+footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.footer-logo { font-family: 'Fraunces', serif; font-size: 18px; color: white; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.footer-links { display: flex; gap: 1.5rem; }
+.footer-links a { font-size: 13px; color: rgba(255,255,255,.5); text-decoration: none; transition: color .2s; }
+.footer-links a:hover { color: white; }
+.footer-copy { font-size: 12px; color: rgba(255,255,255,.3); }
+
+/* Animaciones */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.fade-up { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
 .fade-up.visible { opacity: 1; transform: none; }
 
 /* ==========================================================================
    DISEÑO RESPONSIVO (MÓVILES) - EL ARREGLO DEFINITIVO
    ========================================================================== */
 @media(max-width:768px) {
-  nav { padding: 0.6rem 1rem; }
+  nav { padding: 0.7rem 1.2rem; }
   .nav-logo-text { font-size: 17px; }
-  .nav-links { display: none; } /* Ocultar links para dejar espacio */
+  .nav-links { display: none; }
   .nav-btns { gap: 6px; }
-  .nav-cta { padding: 7px 12px; font-size: 12px; }
-  .nav-login { padding: 6px 10px; font-size: 12px; }
+  .nav-cta { padding: 8px 14px; font-size: 12px; }
+  .nav-login { padding: 8px 12px; font-size: 12px; }
   
-  .hero { padding-top: 6rem; }
-  .dolor-grid, .steps, .pricing-cards, .faq-grid { grid-template-columns: 1fr; }
+  .hero { padding: 6rem 1.25rem 4rem; }
+  .dolor-grid, .steps, .pricing-cards, .faq-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .features-grid { grid-template-columns: 1fr; }
   .preview-row { grid-template-columns: repeat(2, 1fr); }
   .preview-metrics { grid-template-columns: repeat(2, 1fr); }
+  footer { flex-direction: column; text-align: center; }
 }
 
-/* Ajuste crítico para pantallas muy pequeñas (iPhone SE, etc) */
 @media(max-width:480px) {
-  .nav-logo-text { display: none; } /* Dejamos solo el icono para que quepan los dos botones a la derecha */
-  .hero h1 { font-size: 2.1rem; }
+  .nav-logo-text { display: none; } /* Solo icono para que quepan los botones */
+  .hero h1 { font-size: 2.2rem; }
 }
-
 </style>
 </head>
 <body>
@@ -243,17 +317,21 @@ footer { background: var(--texto); padding: 3rem 1.5rem; color: rgba(255,255,255
 <nav>
   <a href="/" class="nav-logo">
     <div class="nav-logo-icon">
-      <svg viewBox="0 0 32 32" fill="none">
-        <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.1)" stroke="white" stroke-width="1.2"/>
-        <line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="2"/>
-        <rect x="24" y="14" width="2" height="8" fill="white"/>
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+        <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
+        <line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="9" y1="10" x2="9" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M9 14.5 Q12 17 15 14.5" fill="none" stroke="white" stroke-width="1.1" stroke-linecap="round"/>
+        <rect x="24" y="14" width="2.2" height="8" rx="1" fill="white"/>
       </svg>
     </div>
     <span class="nav-logo-text">QuantiChef</span>
   </a>
   <div class="nav-links">
     <a href="#como-funciona">Cómo funciona</a>
+    <a href="#funcionalidades">Funcionalidades</a>
     <a href="#precios">Precios</a>
+    <a href="#faq">FAQ</a>
   </div>
   <div class="nav-btns">
     <a href="/login" class="nav-login">Acceder</a>
@@ -262,34 +340,47 @@ footer { background: var(--texto); padding: 3rem 1.5rem; color: rgba(255,255,255
 </nav>
 
 <section class="hero">
-  <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span> Gestión real para hostelería</div>
+  <div class="hero-eyebrow">
+    <span class="hero-eyebrow-dot"></span>
+    Gestión real para dueños de restaurante
+  </div>
   <h1>No sabes cuánto ganas<br>con cada plato.<br><em>Y te está costando dinero.</em></h1>
-  <p class="hero-sub">Descubre el coste real de tus platos en segundos. Sin Excel, sin errores. Nosotros nos encargamos de los cálculos.</p>
+  <p class="hero-sub">Descubre el coste real de tus platos en segundos. Fija precios con margen real desde el primer día. Sin Excel, sin errores. Nosotros nos encargamos.</p>
   <div class="hero-cta-wrap">
-    <a href="/login" class="btn-primary">Calcular mi primer plato gratis</a>
+    <a href="/login" class="btn-primary">
+      Calcular mi primer plato gratis
+    </a>
     <a href="#como-funciona" class="btn-secondary">Ver cómo funciona</a>
   </div>
-  <div class="hero-trust"><span class="stars">★★★★★</span> La herramienta de los chefs que buscan rentabilidad</div>
+  <div class="hero-trust">
+    <span class="stars">★★★★★</span> La herramienta de los chefs que buscan rentabilidad
+  </div>
   <p class="hero-nota">3 días gratis · Cancela cuando quieras</p>
 
   <div class="hero-preview">
     <div class="preview-bar">
       <div class="preview-logo-text">QuantiChef<small>escandallo inteligente</small></div>
-      <div style="color:white; font-size:10px">En directo</div>
+      <div class="preview-badge">En directo</div>
     </div>
     <div class="preview-body">
       <div class="preview-row">
-        <div class="preview-field"><label>Plato</label><input value="Croquetas" class="filled" readonly></div>
+        <div class="preview-field"><label>Plato</label><input value="Croquetas de jamón" class="filled" readonly></div>
         <div class="preview-field"><label>Raciones</label><input value="4" class="filled" readonly></div>
-        <div class="preview-field"><label>Precio</label><input value="8,50 €" class="filled" readonly></div>
+        <div class="preview-field"><label>Precio Carta</label><input value="8,50 €" class="filled" readonly></div>
+        <div class="preview-field"><label>Margen Obj.</label><input value="30%" class="filled" readonly></div>
       </div>
+      <button class="preview-btn">
+        Análisis automático de costes
+      </button>
       <div class="preview-sugs">
-        <div class="preview-sug"><div class="preview-sug-check"></div><span class="preview-sug-name">Jamón ibérico</span><span class="preview-sug-price">✓ Proveedor</span></div>
-        <div class="preview-sug"><div class="preview-sug-check"></div><span class="preview-sug-name">Leche entera</span><span class="preview-sug-price">✓ Proveedor</span></div>
+        <div class="preview-sug"><div class="preview-sug-check"><svg width="8" height="8" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5"/></svg></div><span class="preview-sug-name">Jamón ibérico</span><span class="preview-sug-price">✓ Precio proveedor</span></div>
+        <div class="preview-sug"><div class="preview-sug-check"><svg width="8" height="8" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5"/></svg></div><span class="preview-sug-name">Leche entera</span><span class="preview-sug-price">✓ Precio proveedor</span></div>
       </div>
       <div class="preview-metrics">
-        <div class="preview-metric"><div class="preview-metric-label">Por ración</div><div class="preview-metric-val">0,78€</div></div>
-        <div class="preview-metric"><div class="preview-metric-label">Margen</div><div class="preview-metric-val" style="color:green">70%</div></div>
+        <div class="preview-metric"><div class="preview-metric-label">Coste total</div><div class="preview-metric-val">3,12 €</div></div>
+        <div class="preview-metric"><div class="preview-metric-label">Por ración</div><div class="preview-metric-val">0,78 €</div></div>
+        <div class="preview-metric"><div class="preview-metric-label">Precio ideal</div><div class="preview-metric-val good">2,60 €</div></div>
+        <div class="preview-metric"><div class="preview-metric-label">Margen</div><div class="preview-metric-val good">70%</div></div>
       </div>
     </div>
   </div>
@@ -300,16 +391,19 @@ footer { background: var(--texto); padding: 3rem 1.5rem; color: rgba(255,255,255
     <h2 class="dolor-title fade-up">Muchos restaurantes trabajan duro<br>y aun así <em>no ganan lo que deberían</em></h2>
     <div class="dolor-grid">
       <div class="dolor-card fade-up">
+        <div class="dolor-card-num">01</div>
         <h3>Precios puestos a ojo</h3>
         <p>Sin saber el coste real, los precios se fijan por intuición. Unos platos pagan los errores de otros.</p>
       </div>
       <div class="dolor-card fade-up">
+        <div class="dolor-card-num">02</div>
         <h3>La merma no se calcula</h3>
         <p>Compras 1kg y sirves 600g. Ese 40% de pérdida es dinero que se va por el desagüe si no lo controlas.</p>
       </div>
       <div class="dolor-card fade-up">
+        <div class="dolor-card-num">03</div>
         <h3>No hay tiempo para Excel</h3>
-        <p>Los escandallos manuales llevan horas. Con QuantiChef, nosotros nos encargamos del trabajo sucio.</p>
+        <p>Los escandallos manuales llevan horas. Nosotros nos encargamos de automatizar el proceso por ti.</p>
       </div>
     </div>
   </div>
@@ -317,22 +411,24 @@ footer { background: var(--texto); padding: 3rem 1.5rem; color: rgba(255,255,255
 
 <section class="section" id="como-funciona">
   <div class="section-inner">
+    <p class="section-tag fade-up">Cómo funciona</p>
     <h2 class="section-title fade-up">En menos de 30 segundos sabes<br>si <em>estás ganando dinero o no</em></h2>
+    <p class="section-sub fade-up">Sin formación. Sin configurar nada.</p>
     <div class="steps">
       <div class="step fade-up">
         <div class="step-num">1</div>
-        <h3>Escribe el plato</h3>
-        <p>Nosotros nos encargamos de reconocer la receta y desglosarla al instante.</p>
+        <h3>Escribe el nombre del plato</h3>
+        <p>Incluso si solo lo tienes en la cabeza. Nosotros nos encargamos de reconocer la receta y desglosarla.</p>
       </div>
       <div class="step fade-up">
         <div class="step-num">2</div>
-        <h3>Analizamos el coste</h3>
-        <p>Cantidades, precios de mercado y merma real. Tú solo confirmas con un clic.</p>
+        <h3>Analizamos el coste real</h3>
+        <p>Ingredientes, cantidades, precios de mercado y merma. Tú solo confirmas lo que ya sabes.</p>
       </div>
       <div class="step fade-up">
         <div class="step-num">3</div>
-        <h3>Verde o Rojo</h3>
-        <p>Sabes al instante si el plato te da dinero o si estás trabajando gratis.</p>
+        <h3>Ves el resultado al instante</h3>
+        <p>Verde si el margen es sano. Rojo si estás vendiendo por debajo de tu objetivo.</p>
       </div>
     </div>
   </div>
@@ -340,23 +436,64 @@ footer { background: var(--texto); padding: 3rem 1.5rem; color: rgba(255,255,255
 
 <section class="ejemplo-section">
   <div class="section-inner">
+    <p class="section-tag fade-up" style="text-align:center">Auditoría en vivo</p>
+    <h2 class="section-title fade-up" style="text-align:center;margin-bottom:.5rem">El plato que crees que te deja margen<br><em>puede que no lo haga</em></h2>
+    <p class="section-sub fade-up" style="text-align:center;margin:0 auto 3rem">Un ejemplo con números reales.</p>
     <div class="ejemplo-card fade-up">
-      <p style="text-transform:uppercase; font-size:10px; font-weight:700; color:#888; margin-bottom:1rem">Auditoría en vivo</p>
-      <h3 style="font-family:Fraunces; font-size:1.5rem; margin-bottom:1rem">Solomillo a la pimienta</h3>
-      <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #EEE">
-        <span>Coste real ingredientes</span>
-        <span style="color:red; font-weight:700">4,88 €</span>
+      <div class="ejemplo-title">Solomillo a la pimienta — 1 ración</div>
+      <div class="ejemplo-row">
+        <span class="ejemplo-label">Solomillo (200 g útiles, merma 25%)</span>
+        <span class="ejemplo-val">3,75 €</span>
       </div>
-      <div style="display:flex; justify-content:space-between; padding:8px 0">
-        <span>Precio actual en carta</span>
-        <span>14,50 €</span>
+      <div class="ejemplo-row">
+        <span class="ejemplo-label">Nata, pimienta, guarnición</span>
+        <span class="ejemplo-val">1,13 €</span>
       </div>
+      <div class="ejemplo-row">
+        <span class="ejemplo-label"><strong>Coste real ingredientes</strong></span>
+        <span class="ejemplo-val malo"><strong>4,88 €</strong></span>
+      </div>
+      <div class="ejemplo-row">
+        <span class="ejemplo-label">Precio actual en carta</span>
+        <span class="ejemplo-val">14,50 €</span>
+      </div>
+      
       <div class="audit-example success">
-        <div style="font-size:20px">✅</div>
+        <div style="font-size:24px">✅</div>
         <div>
           <div style="font-weight:700">Precio actual excelente</div>
-          <p style="font-size:12px">Vendes superando tu margen del 30%. Ganas <strong>9,62 €</strong> por ración.</p>
+          <p>Vendes superando tu margen del 30%. Ganas <strong>9,62 €</strong> por ración.</p>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="funcionalidades">
+  <div class="section-inner">
+    <p class="section-tag fade-up">Funcionalidades</p>
+    <h2 class="section-title fade-up">Todo lo que necesitas para dejar<br>de ir a ciegas con <em>tus precios</em></h2>
+    <div class="features-grid">
+      <div class="feature-card fade-up">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div>
+        <h3>Análisis inteligente de platos</h3>
+        <p>Nuestro sistema sugiere los ingredientes típicos y precios de mercado para que no tengas que teclearlos uno a uno.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg></div>
+        <h3>Mermas automáticas</h3>
+        <p>Calculamos lo que realmente compras vs lo que sirves. La pérdida al limpiar el producto ya no será un coste invisible.</p>
+        <span class="feature-badge">Función Pro</span>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
+        <h3>Auditoría de tu carta</h3>
+        <p>Introduce tus precios actuales y descubre qué platos te están haciendo perder dinero hoy mismo.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+        <h3>Actualiza precios con una foto</h3>
+        <p>Sube tu albarán o hazle una foto. Nosotros nos encargamos de extraer los precios reales de tu proveedor automáticamente.</p>
       </div>
     </div>
   </div>
@@ -364,57 +501,69 @@ footer { background: var(--texto); padding: 3rem 1.5rem; color: rgba(255,255,255
 
 <section class="pricing-section" id="precios">
   <div class="pricing-inner">
-    <h2 class="section-title" style="color:white">Un solo plato mal calculado<br>ya te cuesta <em>más que esto</em></h2>
+    <p class="pricing-eyebrow fade-up">Precios</p>
+    <h2 class="pricing-title fade-up">Un solo plato mal calculado<br>ya te cuesta <em>más que esto</em></h2>
     <div class="pricing-cards">
-      <div class="pricing-card">
-        <p style="font-size:12px; opacity:0.7">Plan Mensual</p>
+      <div class="pricing-card fade-up">
+        <div class="pricing-plan">Plan Mensual</div>
         <div class="pricing-price">29€</div>
         <ul class="pricing-features">
-          <li class="pricing-feature">✓ Escandallos ilimitados</li>
-          <li class="pricing-feature">✓ Análisis inteligente</li>
-          <li class="pricing-feature">✓ Ficha técnica PDF</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Escandallos ilimitados</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Análisis de platos</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Exportar PDF</li>
         </ul>
-        <a href="/login" class="pricing-btn" style="background:rgba(255,255,255,0.1)">Probar gratis</a>
+        <a href="/login" class="pricing-btn">Empezar 3 días gratis</a>
       </div>
-      <div class="pricing-card destacado">
-        <p style="font-size:12px; color:var(--dorado); font-weight:700">Ahorra 99€</p>
+      <div class="pricing-card destacado fade-up">
+        <div class="pricing-label">Ahorra 99€</div>
+        <div class="pricing-plan">Plan Anual</div>
         <div class="pricing-price">249€</div>
-        <p style="font-size:11px">al año · restaurante</p>
         <ul class="pricing-features">
-          <li class="pricing-feature">✓ Todo lo del Mensual</li>
-          <li class="pricing-feature">✓ Cálculo de mermas</li>
-          <li class="pricing-feature">✓ Margen neto objetivo</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Todo el Plan Mensual</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Cálculo de mermas</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Albarán por foto</li>
         </ul>
-        <a href="/login" class="pricing-btn">Probar gratis</a>
+        <a href="/login" class="pricing-btn">Empezar 3 días gratis</a>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section" id="faq">
+<section class="section" id="faq" style="background:var(--crema-oscura)">
   <div class="section-inner">
     <div class="faq-grid">
-      <h2 class="section-title">Preguntas<br>Frecuentes</h2>
-      <div class="faq-list">
+      <div>
+        <p class="section-tag fade-up">FAQ</p>
+        <h2 class="section-title fade-up">Preguntas<br>Frecuentes</h2>
+      </div>
+      <div class="faq-list fade-up">
         <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">¿Es difícil de usar? <span>+</span></button>
-          <div class="faq-a">No. Si sabes mandar un WhatsApp, sabes usar QuantiChef. Está hecho para gente de cocina, no de oficina.</div>
+          <button class="faq-q" onclick="toggleFaq(this)">¿Necesito saber de tecnología? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a">No. Si sabes mandar un WhatsApp, sabes usar QuantiChef. Está diseñado para cocineros, no para informáticos.</div>
         </div>
         <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">¿Puedo cancelar cuando quiera? <span>+</span></button>
-          <div class="faq-a">Sí. Sin permanencia ni trucos. Cancelas con un clic desde tu panel.</div>
+          <button class="faq-q" onclick="toggleFaq(this)">¿Puedo cancelar cuando quiera? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a">Sí. Sin permanencia. Cancelas desde tu panel con un solo clic y conservamos tus datos 30 días por si cambias de opinión.</div>
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2 class="cta-title fade-up">Tu carta puede estar<br>perdiendo dinero <em>ahora mismo.</em></h2>
+    <p class="cta-sub fade-up">No necesitas vender más. Necesitas calcular mejor. Descúbrelo en 2 minutos.</p>
+    <a href="/login" class="btn-primary fade-up">Calcular mi primer plato gratis</a>
   </div>
 </section>
 
 <footer>
-  <p>QuantiChef · escandallo inteligente</p>
+  <div class="footer-logo">QuantiChef</div>
   <div class="footer-links">
-    <a href="/legal">Legal</a> · <a href="mailto:hola@quantichef.com">Contacto</a>
+    <a href="/">Inicio</a> · <a href="/legal">Legal</a> · <a href="mailto:hola@quantichef.com">Contacto</a>
   </div>
-  <p style="font-size:10px; opacity:0.5">© 2026 QuantiChef · Todos los derechos reservados</p>
+  <span class="footer-copy">© 2026 QuantiChef · Todos los derechos reservados</span>
 </footer>
 
 <script>
