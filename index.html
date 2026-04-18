@@ -49,6 +49,7 @@ nav {
 }
 .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .nav-logo-icon { width: 34px; height: 34px; background: var(--verde); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.nav-logo-icon svg { width: 15px; height: 15px; }
 .nav-logo-text { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--verde); letter-spacing: -0.02em; }
 .nav-links { display: flex; align-items: center; gap: 2rem; }
 .nav-links a { font-size: 14px; color: var(--texto2); text-decoration: none; font-weight: 500; transition: color .2s; }
@@ -295,12 +296,16 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
 .fade-up { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
 .fade-up.visible { opacity: 1; transform: none; }
 
+/* ==========================================================================
+   DISEÑO RESPONSIVO (MÓVILES)
+   ========================================================================== */
 @media(max-width:768px) {
-  nav { padding: .875rem 1.25rem; }
+  nav { padding: .75rem 1rem; }
+  .nav-logo-text { font-size: 16px; } /* Logo un poco más pequeño */
   .nav-links { display: none; }
-  .nav-btns { gap: 6px; }
-  .nav-cta { padding: 8px 14px; font-size: 13px; }
-  .nav-login { padding: 8px 12px; font-size: 13px; }
+  .nav-btns { gap: 5px; }
+  .nav-cta { padding: 7px 12px; font-size: 12px; } /* Botones más compactos */
+  .nav-login { padding: 7px 10px; font-size: 12px; }
   .hero { padding: 6rem 1.25rem 4rem; }
   .dolor-grid { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr; gap: 1.5rem; }
@@ -312,6 +317,11 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
   footer { flex-direction: column; text-align: center; }
   .ejemplo-section { padding: 4rem 1.25rem; }
   .section { padding: 4rem 1.25rem; }
+}
+
+/* Ajuste extra para móviles muy pequeños (ej. iPhone SE) */
+@media(max-width:380px) {
+  .nav-logo-text { display: none; } /* Oculta la palabra QuantiChef y deja solo el logo visual para que quepan los botones */
 }
 </style>
 </head>
