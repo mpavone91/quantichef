@@ -555,9 +555,7 @@ function renderIngs(){
   ings.forEach(i=>{
     const x=v[i.id]||{n:i.n,q:i.q,u:i.u,p:i.p,m:i.m};
     const d=document.createElement('div');d.className='ing-row '+(mermasOn?'con-merma':'sin-merma');
-    const mc=mermasOn?`<div class="merma-cell"><input type="number" class="merma-input" placeholder="0" min="0" max="99" step="1" id="m${i.id}" value="${x.m}" oninput="calcular()"><span class="merma-pct">%</span></div>`:'';
-    d.innerHTML=`<input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()"><input type="number" placeholder="0" min="0" step="0.001" id="q${i.id}" value="${x.q}" oninput="calcular()"><select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><input type="number" placeholder="0,00" min="0" step="0.01" id="p${i.id}" value="${x.p}" oninput="calcular()">${mc}<button class="btn-del" onclick="removeIng(${i.id})">×</button>`;
-    c.appendChild(d);
+const mc=mermasOn?`<div class="merma-cell"><input type="number" class="merma-input" placeholder="0" min="0" max="99" step="1" id="m${i.id}" value="${x.m}" oninput="calcular()" onfocus="this.select()"><span class="merma-pct">%</span></div>`:'';    d.innerHTML=`<input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()" onfocus="this.select()"><input type="number" placeholder="0" min="0" step="0.001" id="q${i.id}" value="${x.q}" oninput="calcular()" onfocus="this.select()"><select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><input type="number" placeholder="0,00" min="0" step="0.01" id="p${i.id}" value="${x.p}" oninput="calcular()" onfocus="this.select()">${mc}<button class="btn-del" onclick="removeIng(${i.id})">×</button>`;    c.appendChild(d);
   });calcular();
 }
 
@@ -830,9 +828,6 @@ async function cargarApp(session){
       handleNetoToggle();
     }
   }
-}
-
-function cargarEscandallo(e){
 }
 
 function cargarEscandallo(e){
