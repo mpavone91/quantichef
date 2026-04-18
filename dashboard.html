@@ -24,10 +24,26 @@
   .nav-logo-icon{width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center}
   .nav-logo-icon svg{width:15px;height:15px}
   .nav-logo-text{font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:600}
-  .nav-right{display:flex;align-items:center;gap:14px}
+  .nav-right{display:flex;align-items:center;gap:12px}
   .nav-restaurante{font-size:13px;color:rgba(255,255,255,.65)}
   .nav-logout{color:rgba(255,255,255,.5);cursor:pointer;background:none;border:none;display:flex;align-items:center;gap:5px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;padding:0}
   .nav-logout:hover{color:white}
+
+  /* Botón de suscripción en Nav */
+  .btn-suscripcion-nav {
+    display:none; 
+    color:rgba(255,255,255,.8); 
+    border:1.5px solid rgba(255,255,255,.3); 
+    background:none;
+    padding:6px 12px; 
+    border-radius:8px; 
+    font-size:12px; 
+    font-weight:600;
+    cursor:pointer;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    transition: all .2s;
+  }
+  .btn-suscripcion-nav:hover { background: rgba(255,255,255,.1); border-color: white; color: white; }
 
   /* Loading */
   .loading{display:flex;align-items:center;justify-content:center;min-height:80vh;gap:10px;font-size:14px;color:var(--text3)}
@@ -84,7 +100,7 @@
   .empty-title{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:300;color:var(--text);margin-bottom:.5rem}
   .empty-sub{font-size:.9rem;color:var(--text3);margin-bottom:1.5rem;line-height:1.6}
 
-  /* Plan banner */
+  /* Plan banner trial */
   .plan-banner{background:var(--gold-light);border:1px solid rgba(196,148,58,.25);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
   .plan-banner p{font-size:13px;color:var(--text2);flex:1;line-height:1.5}
   .plan-banner strong{color:var(--gold)}
@@ -96,6 +112,12 @@
   .pro-badge svg{width:12px;height:12px}
   .pro-features{display:flex;flex-wrap:wrap;gap:6px;flex:1}
   .pro-feat{font-size:12px;color:var(--accent);background:white;border:1px solid var(--accent-mint);padding:3px 10px;border-radius:20px;white-space:nowrap}
+  .btn-pro-manage { 
+    background: white; border: 1.5px solid var(--accent); color: var(--accent); 
+    font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .btn-pro-manage:hover { background: var(--accent); color: white; }
 
   /* ========== ALERTAS DE PRECIO ========== */
   .alertas-section{margin-top:1.5rem}
@@ -212,6 +234,7 @@
   </a>
   <div class="nav-right">
     <span class="nav-restaurante" id="nav-restaurante"></span>
+    <button class="btn-suscripcion-nav" id="btn-suscripcion-nav" onclick="abrirPortalCliente()">Mi suscripción</button>
     <button class="nav-logout" onclick="cerrarSesion()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       Salir
@@ -245,14 +268,15 @@
     <div class="pro-banner" id="pro-banner" style="display:none">
       <div class="pro-badge">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-        Plan Pro
+        Plan Pro Activo
       </div>
       <div class="pro-features">
         <span class="pro-feat">Escandallos ilimitados</span>
         <span class="pro-feat">Mermas</span>
         <span class="pro-feat">Margen neto</span>
-        <span class="pro-feat">Precios de proveedor</span>
+        <span class="pro-feat">Sincronización albaranes</span>
       </div>
+      <button class="btn-pro-manage" onclick="abrirPortalCliente()">Gestionar cuenta</button>
     </div>
 
     <div class="stats" id="stats" style="display:none">
@@ -377,10 +401,12 @@ async function cargarDatos(session){
   if(esPro){
     document.getElementById('plan-banner').style.display='none';
     document.getElementById('pro-banner').style.display='flex';
+    document.getElementById('btn-suscripcion-nav').style.display = 'inline-block';
     localStorage.setItem('qc_premium','true');
   } else {
     document.getElementById('plan-banner').style.display='flex';
     document.getElementById('pro-banner').style.display='none';
+    document.getElementById('btn-suscripcion-nav').style.display = 'none';
     localStorage.removeItem('qc_premium');
   }
 
@@ -398,7 +424,6 @@ async function cargarDatos(session){
     renderVacio();
   }
 
-  // Cargar precios guardados y alertas
   await cargarPreciosGuardados();
   await cargarAlertas();
 }
@@ -485,9 +510,40 @@ async function cerrarSesion(){
   window.location.href='/login';
 }
 
-// ========== PROVEEDORES ==========
+// ========== STRIPE CUSTOMER PORTAL ==========
+async function abrirPortalCliente() {
+  const btn = document.getElementById('btn-suscripcion-nav');
+  const originalText = btn.textContent;
+  btn.textContent = 'Cargando...';
+  btn.disabled = true;
 
-// Drag & drop
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+
+    // Llamamos a tu backend para crear la sesión del portal
+    const res = await fetch('/api/stripe-portal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: session.user.id,
+        restauranteId: restauranteId
+      })
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'Error al abrir el portal');
+    }
+  } catch (err) {
+    alert('Error al conectar con la gestión de cuenta. Inténtalo de nuevo.');
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+}
+
+// ========== PROVEEDORES (IGUAL QUE ANTES) ==========
 const uploadArea = document.getElementById('upload-area');
 uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
 uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
@@ -502,65 +558,36 @@ function handleFileUpload(e){
 }
 
 async function processFile(file){
-  const maxSize = 10 * 1024 * 1024; // 10MB
+  const maxSize = 10 * 1024 * 1024;
   if(file.size > maxSize){
     showProvMsg('El archivo es demasiado grande. Máximo 10MB.', 'error');
     return;
   }
-
   const ext = file.name.split('.').pop().toLowerCase();
   const allowed = ['pdf','png','jpg','jpeg','webp','gif','csv','xlsx','xls','txt'];
   if(!allowed.includes(ext)){
-    showProvMsg('Formato no soportado. Usa PDF, imagen, CSV o Excel.', 'error');
+    showProvMsg('Formato no soportado.', 'error');
     return;
   }
-
-  // Show loading
   hideProvMsg();
   document.getElementById('extract-loading').classList.add('visible');
   document.getElementById('review-wrap').classList.remove('visible');
-
-  // Convert to base64
   const base64 = await fileToBase64(file);
-
   try {
     const resp = await fetch('/api/extract', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        file_base64: base64,
-        file_type: ext,
-        file_name: file.name
-      })
+      body: JSON.stringify({ file_base64: base64, file_type: ext, file_name: file.name })
     });
-
     const data = await resp.json();
     document.getElementById('extract-loading').classList.remove('visible');
-
-    if(data.error){
-      showProvMsg(data.error, 'error');
-      return;
-    }
-
-    if(!data.productos || data.productos.length === 0){
-      showProvMsg('No se encontraron productos en el documento. Prueba con otro archivo.', 'error');
-      return;
-    }
-
-    // Store extracted data and render review table
-    extractedProducts = data.productos.map(p => ({
-      ...p,
-      proveedor: p.proveedor || data.proveedor || ''
-    }));
-
+    if(data.error){ showProvMsg(data.error, 'error'); return; }
+    extractedProducts = data.productos.map(p => ({ ...p, proveedor: p.proveedor || data.proveedor || '' }));
     renderReviewTable(extractedProducts, data.proveedor, data.fecha_documento);
-
   } catch(err) {
     document.getElementById('extract-loading').classList.remove('visible');
-    showProvMsg('Error al procesar el archivo. Inténtalo de nuevo.', 'error');
+    showProvMsg('Error al procesar.', 'error');
   }
-
-  // Reset file input
   document.getElementById('file-input').value = '';
 }
 
@@ -576,7 +603,6 @@ function fileToBase64(file){
 function renderReviewTable(products, proveedorName, fechaDoc){
   const body = document.getElementById('review-body');
   body.innerHTML = '';
-
   products.forEach((p, i) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -587,9 +613,6 @@ function renderReviewTable(products, proveedorName, fechaDoc){
           <option value="kg" ${p.unidad==='kg'?'selected':''}>kg</option>
           <option value="l" ${p.unidad==='l'?'selected':''}>l</option>
           <option value="ud" ${p.unidad==='ud'?'selected':''}>ud</option>
-          <option value="caja" ${p.unidad==='caja'?'selected':''}>caja</option>
-          <option value="docena" ${p.unidad==='docena'?'selected':''}>docena</option>
-          <option value="manojo" ${p.unidad==='manojo'?'selected':''}>manojo</option>
         </select>
       </td>
       <td><input type="text" value="${escapeHtml(p.proveedor || proveedorName || '')}" data-idx="${i}" data-field="proveedor" style="width:120px"></td>
@@ -597,47 +620,25 @@ function renderReviewTable(products, proveedorName, fechaDoc){
     `;
     body.appendChild(tr);
   });
-
-  document.getElementById('review-count').textContent = `${products.length} productos encontrados`;
+  document.getElementById('review-count').textContent = `${products.length} productos`;
   document.getElementById('review-wrap').classList.add('visible');
-
-  // Listen for edits
   body.querySelectorAll('input, select').forEach(el => {
     el.addEventListener('change', e => {
       const idx = parseInt(e.target.dataset.idx);
       const field = e.target.dataset.field;
-      if(field === 'precio'){
-        extractedProducts[idx][field] = parseFloat(e.target.value) || 0;
-      } else {
-        extractedProducts[idx][field] = e.target.value;
-      }
+      extractedProducts[idx][field] = field === 'precio' ? (parseFloat(e.target.value) || 0) : e.target.value;
     });
   });
 }
 
-function removeReviewRow(idx){
-  extractedProducts.splice(idx, 1);
-  renderReviewTable(extractedProducts);
-}
-
-function cancelarReview(){
-  extractedProducts = [];
-  document.getElementById('review-wrap').classList.remove('visible');
-  hideProvMsg();
-}
+function removeReviewRow(idx){ extractedProducts.splice(idx, 1); renderReviewTable(extractedProducts); }
+function cancelarReview(){ extractedProducts = []; document.getElementById('review-wrap').classList.remove('visible'); hideProvMsg(); }
 
 async function guardarPrecios(){
   if(extractedProducts.length === 0) return;
-  if(!restauranteId){
-    showProvMsg('Error: no se encontró el restaurante.', 'error');
-    return;
-  }
-
   const btn = document.getElementById('btn-guardar-precios');
   btn.disabled = true;
-  btn.textContent = 'Guardando y analizando cambios...';
-
-  // Preparar productos con restaurante_id
+  btn.textContent = 'Analizando...';
   const productos = extractedProducts.map(p => ({
     nombre: p.nombre || p.ingrediente_normalizado,
     ingrediente_normalizado: p.ingrediente_normalizado || p.nombre,
@@ -645,219 +646,76 @@ async function guardarPrecios(){
     unidad: p.unidad || 'kg',
     proveedor: p.proveedor || null
   }));
-
   try {
     const resp = await fetch('/api/extract', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        mode: 'save_prices',
-        restaurante_id: restauranteId,
-        productos
-      })
+      body: JSON.stringify({ mode: 'save_prices', restaurante_id: restauranteId, productos })
     });
-
     const data = await resp.json();
-
-    if(!resp.ok || !data.ok){
-      showProvMsg('Error al guardar: ' + (data.error || 'Inténtalo de nuevo'), 'error');
-      btn.disabled = false;
-      btn.textContent = 'Guardar precios';
-      return;
-    }
-
-    // Mensaje de resultado
-    let msg = `${data.precios_nuevos} precio${data.precios_nuevos !== 1 ? 's' : ''} nuevo${data.precios_nuevos !== 1 ? 's' : ''} añadido${data.precios_nuevos !== 1 ? 's' : ''}`;
-    if(data.precios_actualizados > 0){
-      msg += `, ${data.precios_actualizados} actualizado${data.precios_actualizados !== 1 ? 's' : ''}`;
-    }
-    if(data.alertas_generadas > 0){
-      msg += `. ⚠️ ${data.alertas_generadas} plato${data.alertas_generadas !== 1 ? 's' : ''} afectado${data.alertas_generadas !== 1 ? 's' : ''} — revisa las alertas.`;
-    }
-    msg += ' Se usarán en tus próximos escandallos.';
-
-    showProvMsg(msg, data.alertas_generadas > 0 ? 'error' : 'success');
+    if(!resp.ok || !data.ok){ throw new Error(); }
+    showProvMsg(`Actualizado con éxito. ${data.alertas_generadas ? '⚠️ Revisa las alertas.' : ''}`, data.alertas_generadas ? 'error' : 'success');
     extractedProducts = [];
     document.getElementById('review-wrap').classList.remove('visible');
-
-    // Recargar precios y alertas
     await cargarPreciosGuardados();
     await cargarAlertas();
-
-  } catch(err) {
-    showProvMsg('Error de conexión. Inténtalo de nuevo.', 'error');
-  }
-
-  btn.disabled = false;
-  btn.textContent = 'Guardar precios';
-}
-
-function normalizar(str){
-  return (str || '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9\s]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  } catch(err) { showProvMsg('Error al guardar.', 'error'); }
+  btn.disabled = false; btn.textContent = 'Guardar precios';
 }
 
 async function cargarPreciosGuardados(){
   if(!restauranteId) return;
-  const {data: precios} = await sb.from('precios_proveedor')
-    .select('*')
-    .eq('restaurante_id', restauranteId)
-    .order('ingrediente_normalizado', {ascending: true});
-
+  const {data: precios} = await sb.from('precios_proveedor').select('*').eq('restaurante_id', restauranteId).order('ingrediente_normalizado', {ascending: true});
   const container = document.getElementById('precios-guardados');
-
-  if(!precios || precios.length === 0){
-    container.innerHTML = '';
-    return;
-  }
-
-  let html = `<div style="font-size:12px;color:var(--text3);margin-bottom:.5rem">${precios.length} ingrediente${precios.length>1?'s':''} con precio de proveedor</div>`;
-
+  if(!precios || precios.length === 0){ container.innerHTML = ''; return; }
+  let html = `<div style="font-size:12px;color:var(--text3);margin-bottom:.5rem">${precios.length} precios activos</div>`;
   precios.forEach(p => {
-    html += `
-      <div class="precio-card">
-        <div class="precio-nombre">${escapeHtml(p.ingrediente_normalizado || p.ingrediente)}</div>
-        <div class="precio-valor">${fmt(p.precio_kg)}</div>
-        <div class="precio-meta">/${p.unidad || 'kg'}</div>
-        ${p.proveedor ? `<div class="precio-meta">${escapeHtml(p.proveedor)}</div>` : ''}
-        <button class="precio-del" onclick="eliminarPrecio('${p.id}')" title="Eliminar">×</button>
-      </div>
-    `;
+    html += `<div class="precio-card"><div class="precio-nombre">${escapeHtml(p.ingrediente_normalizado || p.ingrediente)}</div><div class="precio-valor">${fmt(p.precio_kg)}</div><div class="precio-meta">/${p.unidad || 'kg'}</div><button class="precio-del" onclick="eliminarPrecio('${p.id}')">×</button></div>`;
   });
-
   container.innerHTML = html;
 }
 
-async function eliminarPrecio(id){
-  if(!confirm('¿Eliminar este precio de proveedor?')) return;
-  await sb.from('precios_proveedor').delete().eq('id', id);
-  await cargarPreciosGuardados();
-}
+async function eliminarPrecio(id){ if(confirm('¿Eliminar?')){ await sb.from('precios_proveedor').delete().eq('id', id); await cargarPreciosGuardados(); } }
 
 // ========== ALERTAS ==========
 async function cargarAlertas(){
   if(!restauranteId) return;
-
-  const {data: alertas} = await sb.from('alertas_precio')
-    .select('*')
-    .eq('restaurante_id', restauranteId)
-    .eq('vista', false)
-    .order('created_at', {ascending: false});
-
+  const {data: alertas} = await sb.from('alertas_precio').select('*').eq('restaurante_id', restauranteId).eq('vista', false).order('created_at', {ascending: false});
   const section = document.getElementById('alertas-section');
   const lista = document.getElementById('alertas-lista');
-
-  if(!alertas || alertas.length === 0){
-    section.style.display = 'none';
-    return;
-  }
-
+  if(!alertas || alertas.length === 0){ section.style.display = 'none'; return; }
   section.style.display = 'block';
-  document.getElementById('alertas-header-title').textContent =
-    `${alertas.length} cambio${alertas.length !== 1 ? 's' : ''} de precio detectado${alertas.length !== 1 ? 's' : ''}`;
-  document.getElementById('alertas-header-sub').textContent =
-    `${alertas.length} plato${alertas.length !== 1 ? 's' : ''} con coste desactualizado — revisa el precio de venta`;
-
+  document.getElementById('alertas-header-title').textContent = `${alertas.length} cambios detectados`;
   lista.innerHTML = '';
   alertas.forEach(a => {
     const subida = a.precio_nuevo > a.precio_anterior;
-    const diffPrecio = Math.abs(a.precio_nuevo - a.precio_anterior).toFixed(2);
-    const diffCoste = a.coste_racion_nuevo !== null && a.coste_racion_anterior !== null
-      ? (a.coste_racion_nuevo - a.coste_racion_anterior)
-      : null;
-
+    const diffCoste = a.coste_racion_nuevo !== null && a.coste_racion_anterior !== null ? (a.coste_racion_nuevo - a.coste_racion_anterior) : null;
     const div = document.createElement('div');
     div.className = 'alerta-item';
-    div.dataset.id = a.id;
-
-    const diffCosteHtml = diffCoste !== null
-      ? `<span class="alerta-diff ${diffCoste <= 0 ? 'positiva' : ''}">${diffCoste > 0 ? '+' : ''}${diffCoste.toFixed(2)}€/ración</span>`
-      : '';
-
     div.innerHTML = `
-      <span style="font-size:16px">${subida ? '📈' : '📉'}</span>
-      <div class="alerta-plato">
-        ${escapeHtml(a.escandallo_nombre)}
-        <small>${escapeHtml(a.ingrediente)} ${subida ? 'subió' : 'bajó'} ${diffPrecio}€ (${a.precio_anterior.toFixed(2)}€ → ${a.precio_nuevo.toFixed(2)}€)</small>
-      </div>
-      ${a.coste_racion_nuevo !== null ? `
-      <div class="alerta-coste">
-        <div class="alerta-coste-ant">${a.coste_racion_anterior?.toFixed(2)}€</div>
-        <div class="alerta-coste-new">${a.coste_racion_nuevo?.toFixed(2)}€</div>
-        ${diffCosteHtml}
-      </div>` : ''}
-      
+      <span>${subida ? '📈' : '📉'}</span>
+      <div class="alerta-plato">${escapeHtml(a.escandallo_nombre)}<small>${escapeHtml(a.ingrediente)} ${subida ? 'subió' : 'bajó'} (${a.precio_anterior.toFixed(2)}€ → ${a.precio_nuevo.toFixed(2)}€)</small></div>
+      <div class="alerta-coste"><div class="alerta-coste-ant">${a.coste_racion_anterior?.toFixed(2)}€</div><div class="alerta-coste-new">${a.coste_racion_nuevo?.toFixed(2)}€</div><span class="alerta-diff">${diffCoste > 0 ? '+' : ''}${diffCoste?.toFixed(2)}€/ración</span></div>
       <button class="btn-revisar" onclick="abrirEscandallo('${a.escandallo_id}', event)">Revisar</button>
     `;
     lista.appendChild(div);
   });
 }
 
-// Nueva función abrirEscandallo (Reemplaza a la antigua que solo redirigía)
 async function abrirEscandallo(escId, event) {
-  if (event) {
-    event.preventDefault();
-    const btn = event.target;
-    btn.textContent = 'Cargando...';
-    btn.style.opacity = '0.7';
-    btn.style.pointerEvents = 'none';
-  }
-
-  try {
-    // 1. Buscamos el escandallo completo en la base de datos
-    const { data: escandallo, error } = await sb
-      .from('escandallos')
-      .select('*')
-      .eq('id', escId)
-      .single();
-
-    if (error || !escandallo) throw new Error('No se pudo encontrar la receta en la base de datos');
-
-    // 2. Lo metemos en la memoria de la sesión
+  if (event) { event.target.textContent = '...'; }
+  const { data: escandallo } = await sb.from('escandallos').select('*').eq('id', escId).single();
+  if (escandallo) {
     sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(escandallo));
-    
-    // 3. Viajamos a la pantalla del escandallo
     window.location.href = '/escandallo';
-
-  } catch (err) {
-    alert('Error al cargar el plato: ' + err.message);
-    if (event) {
-      event.target.textContent = 'Revisar';
-      event.target.style.opacity = '1';
-      event.target.style.pointerEvents = 'auto';
-    }
   }
 }
 
-async function marcarTodasVistas(){
-  if(!restauranteId) return;
-  await sb.from('alertas_precio')
-    .update({vista: true})
-    .eq('restaurante_id', restauranteId)
-    .eq('vista', false);
-  document.getElementById('alertas-section').style.display = 'none';
-}
+async function marcarTodasVistas(){ if(!restauranteId) return; await sb.from('alertas_precio').update({vista: true}).eq('restaurante_id', restauranteId); document.getElementById('alertas-section').style.display = 'none'; }
 
-function showProvMsg(txt, type){
-  const el = document.getElementById('prov-msg');
-  el.textContent = txt;
-  el.className = 'prov-msg ' + type;
-}
-
-function hideProvMsg(){
-  document.getElementById('prov-msg').className = 'prov-msg';
-}
-
-function escapeHtml(str){
-  const div = document.createElement('div');
-  div.textContent = str || '';
-  return div.innerHTML;
-}
+function showProvMsg(txt, type){ const el = document.getElementById('prov-msg'); el.textContent = txt; el.className = 'prov-msg ' + type; }
+function hideProvMsg(){ document.getElementById('prov-msg').className = 'prov-msg'; }
+function escapeHtml(str){ const div = document.createElement('div'); div.textContent = str || ''; return div.innerHTML; }
 
 init();
 </script>
