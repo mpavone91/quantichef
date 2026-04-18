@@ -338,28 +338,7 @@
       <div class="metric-sub" id="m-neto-sub">activa margen neto</div>
     </div>
   </div>
-<!-- INSIGHT RENTABILIDAD -->
-<div id="insight-box" style="display:none;margin-bottom:12px;padding:12px 14px;border-radius:10px;font-size:13px;font-weight:600"></div>
-  <!-- ESTADO DEL PLATO -->
-<div class="card" id="estado-card" style="display:none">
-  <div class="card-title">Estado del plato</div>
 
-  <div id="estado-box" style="padding:1rem;border-radius:10px;border:1px solid var(--border);background:var(--surface2)">
-
-    <div id="estado-titulo" style="font-family:'Fraunces',serif;font-size:1.4rem;font-weight:300;margin-bottom:.4rem">
-      —
-    </div>
-
-    <div id="estado-msg" style="font-size:.95rem;color:var(--text2);line-height:1.5">
-      —
-    </div>
-
-    <div id="estado-extra" style="margin-top:.6rem;font-size:.85rem;color:var(--text3)">
-      —
-    </div>
-
-  </div>
-</div>
   <!-- MÁRGENES -->
   <div class="card">
     <div class="card-title">Márgenes y precio de venta</div>
@@ -625,34 +604,6 @@ function calcular(){
   const act=Array.from(document.querySelectorAll('.alg input:checked')).map(i=>i.closest('.alg').textContent.trim());
   document.getElementById('alg-resumen').textContent=act.join(', ');
   document.getElementById('alg-list').classList.toggle('visible',act.length>0);
-  // INSIGHT RENTABILIDAD
-const insightBox = document.getElementById('insight-box');
-
-if(pvpMin > 0){
-  const margenReal = ((pvpMin - por) / pvpMin) * 100;
-
-  if(margenReal < 60){
-    insightBox.style.display = 'block';
-    insightBox.style.background = '#FDEAEA';
-    insightBox.style.color = '#8B1A1A';
-    insightBox.innerHTML = '⚠️ Este plato tiene margen bajo. Estás ganando poco por ración.';
-  } 
-  else if(margenReal < 70){
-    insightBox.style.display = 'block';
-    insightBox.style.background = '#FFF3E0';
-    insightBox.style.color = '#8B4A00';
-    insightBox.innerHTML = '⚡ Margen ajustado. Podrías mejorar precio o reducir coste.';
-  } 
-  else {
-    insightBox.style.display = 'block';
-    insightBox.style.background = '#E8F2EC';
-    insightBox.style.color = '#1E4D2B';
-    insightBox.innerHTML = '✅ Plato rentable. Buen margen.';
-  }
-} else {
-  insightBox.style.display = 'none';
-}
-⚠️ IMPORTANTE
 }
 
 // ── IA ───────────────────────────────────────────────────────
