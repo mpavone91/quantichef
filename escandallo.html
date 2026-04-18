@@ -932,7 +932,14 @@ async function guardarEscandallo(){
   }
 
   sessionStorage.removeItem('qc_escandallo_editar');
-  window.location.href='/dashboard';
+  sessionStorage.setItem('qc_guardando', 'true'); // Evita que salte la alerta de salir de la página
+  
+  btn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> ¡Guardado!';
+  btn.style.backgroundColor = '#2D5A3D'; // Verde oscuro de confirmación
+  
+  setTimeout(() => {
+    window.location.href = '/dashboard';
+  }, 800); // Espera casi 1 segundo para que el usuario vea el mensaje
 }
 
 async function cerrarSesion(){
