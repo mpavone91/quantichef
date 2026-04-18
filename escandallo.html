@@ -820,7 +820,19 @@ async function cargarApp(session){
       const e=JSON.parse(editData);
       cargarEscandallo(e);
     }catch(err){console.log('Error cargando escandallo:',err);}
+  } else {
+    // Si es un escandallo NUEVO y el usuario es Premium, lo activamos por defecto
+    if(esPremium){
+      document.getElementById('toggle-merma').checked = true;
+      handleMermaToggle();
+      
+      document.getElementById('toggle-neto').checked = true;
+      handleNetoToggle();
+    }
   }
+}
+
+function cargarEscandallo(e){
 }
 
 function cargarEscandallo(e){
