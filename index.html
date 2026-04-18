@@ -111,7 +111,7 @@ nav {
 
 .hero-cta-wrap {
   display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
   animation: fadeUp .5s .3s ease both;
 }
 .btn-primary {
@@ -131,6 +131,13 @@ nav {
   border: 1.5px solid #DDD9D0;
 }
 .btn-secondary:hover { border-color: var(--verde-mint); background: var(--verde-suave); color: var(--verde); }
+
+.hero-trust {
+  font-size: 13px; color: var(--texto3);
+  margin-bottom: 3.5rem;
+  animation: fadeUp .5s .35s ease both;
+}
+.stars { color: #FFB800; margin-right: 5px; }
 
 .hero-nota {
   font-size: 12px; color: var(--texto3);
@@ -158,7 +165,7 @@ nav {
 .preview-logo-text small { color: #A8D5B5; font-size: 9px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 400; display: block; letter-spacing: .06em; text-transform: uppercase; margin-top: -1px; }
 .preview-badge { background: rgba(255,255,255,.15); color: white; font-size: 10px; padding: 3px 9px; border-radius: 20px; }
 .preview-body { padding: 18px; }
-.preview-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.preview-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
 .preview-field label { font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--texto3); display: block; margin-bottom: 4px; }
 .preview-field input { width: 100%; padding: 7px 9px; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; border: 1px solid #E0DDD6; border-radius: 6px; background: #FAFAF8; color: var(--texto); outline: none; }
 .preview-field input.filled { border-color: #3D7A54; background: var(--verde-suave); font-weight: 600; color: var(--verde); }
@@ -210,11 +217,13 @@ nav {
 .ejemplo-val { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 300; }
 .ejemplo-val.malo { color: var(--rojo); }
 .ejemplo-val.bien { color: var(--verde); }
-.ejemplo-resultado { margin-top: 1.25rem; background: var(--rojo-suave); border: 1px solid rgba(220,38,38,.15); border-radius: var(--radio); padding: 1rem 1.25rem; display: flex; align-items: center; gap: 12px; }
-.ejemplo-resultado.ok { background: var(--verde-suave); border-color: var(--verde-mint); }
-.ejemplo-resultado p { font-size: .92rem; color: var(--texto2); line-height: 1.5; }
-.ejemplo-resultado strong { color: var(--rojo); }
-.ejemplo-resultado.ok strong { color: var(--verde); }
+
+/* Estilo Auditoría (igual que la app) */
+.audit-example { margin-top: 1.25rem; border-radius: var(--radio); padding: 1rem 1.25rem; display: flex; align-items: center; gap: 12px; }
+.audit-example.danger { background: var(--rojo-suave); border: 1px solid rgba(220,38,38,0.15); color: var(--rojo); }
+.audit-example.success { background: var(--verde-suave); border: 1px solid var(--verde-mint); color: var(--verde); }
+.audit-example p { font-size: .92rem; line-height: 1.5; color: var(--texto2); }
+.audit-example strong { color: inherit; }
 
 /* FEATURES */
 .features-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.25rem; }
@@ -254,7 +263,8 @@ nav {
 .pricing-btn:hover { opacity: .88; transform: translateY(-1px); }
 .pricing-note { font-size: 12px; color: rgba(255,255,255,.45); }
 
-/* FAQ */
+/* FAQ GRID */
+.faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
 .faq-list { display: flex; flex-direction: column; gap: .625rem; }
 .faq-item { background: var(--blanco); border: 1px solid #E8E5DE; border-radius: var(--radio); overflow: hidden; }
 .faq-q { width: 100%; padding: 1.1rem 1.4rem; text-align: left; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 1rem; font-size: .95rem; font-weight: 600; color: var(--texto); font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -296,7 +306,8 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
   .steps { grid-template-columns: 1fr; gap: 1.5rem; }
   .features-grid { grid-template-columns: 1fr; }
   .pricing-cards { grid-template-columns: 1fr; }
-  .preview-row { grid-template-columns: 1fr 1fr; }
+  .faq-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .preview-row { grid-template-columns: repeat(2, 1fr); }
   .preview-metrics { grid-template-columns: repeat(2,1fr); }
   footer { flex-direction: column; text-align: center; }
   .ejemplo-section { padding: 4rem 1.25rem; }
@@ -306,7 +317,6 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="/" class="nav-logo">
     <div class="nav-logo-icon">
@@ -336,7 +346,6 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-eyebrow">
     <span class="hero-eyebrow-dot"></span>
@@ -351,9 +360,11 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
     </a>
     <a href="#como-funciona" class="btn-secondary">Ver cómo funciona</a>
   </div>
+  <div class="hero-trust">
+    <span class="stars">★★★★★</span> La herramienta de los chefs que buscan rentabilidad
+  </div>
   <p class="hero-nota">3 días gratis · Sin tarjeta de crédito · Cancela cuando quieras</p>
 
-  <!-- App preview -->
   <div class="hero-preview">
     <div class="preview-bar">
       <div class="preview-logo-wrap">
@@ -379,13 +390,14 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
         <div class="preview-field"><label>Plato</label><input value="Croquetas de jamón" class="filled" readonly></div>
         <div class="preview-field"><label>Categoría</label><input value="Entrante" class="filled" readonly></div>
         <div class="preview-field"><label>Raciones</label><input value="4" class="filled" readonly></div>
+        <div class="preview-field"><label>Precio Carta</label><input value="8,50 €" class="filled" readonly></div>
       </div>
       <button class="preview-btn">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        Calcular ingredientes y costes
+        Análisis automático de costes
       </button>
       <div class="preview-sugs">
-        <div class="preview-sug"><div class="preview-sug-check"><svg width="8" height="8" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5"/></svg></div><span class="preview-sug-name">Jamón ibérico</span><span class="preview-sug-qty">120 g · merma 8%</span><span class="preview-sug-price">~45€/kg</span></div>
+        <div class="preview-sug"><div class="preview-sug-check"><svg width="8" height="8" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5"/></svg></div><span class="preview-sug-name">Jamón ibérico</span><span class="preview-sug-qty">120 g · merma 8%</span><span class="preview-sug-price">✓ Precio proveedor</span></div>
         <div class="preview-sug"><div class="preview-sug-check"><svg width="8" height="8" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5"/></svg></div><span class="preview-sug-name">Bechamel</span><span class="preview-sug-qty">200 ml</span><span class="preview-sug-price">~2.40€/l</span></div>
         <div class="preview-sug"><div class="preview-sug-check"><svg width="8" height="8" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5"/></svg></div><span class="preview-sug-name">Pan rallado</span><span class="preview-sug-qty">80 g</span><span class="preview-sug-price">~1.80€/kg</span></div>
       </div>
@@ -399,7 +411,6 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
   </div>
 </section>
 
-<!-- SECCIÓN DOLOR -->
 <section class="dolor-section">
   <div class="dolor-inner">
     <h2 class="dolor-title fade-up">Muchos restaurantes trabajan duro<br>y aun así <em>no ganan lo que deberían</em></h2>
@@ -423,7 +434,6 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
   </div>
 </section>
 
-<!-- CÓMO FUNCIONA -->
 <section class="section" id="como-funciona">
   <div class="section-inner">
     <p class="section-tag fade-up">Cómo funciona</p>
@@ -433,26 +443,25 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
       <div class="step fade-up">
         <div class="step-num">1</div>
         <h3>Escribe el nombre de cualquier plato de tu carta</h3>
-        <p>Aunque solo lo tengas en la cabeza. QuantiChef reconoce cualquier receta española o internacional.</p>
+        <p>Aunque solo lo tengas en la cabeza. Nosotros nos encargamos de reconocer la receta y desglosarla al instante.</p>
       </div>
       <div class="step fade-up">
         <div class="step-num">2</div>
-        <h3>Te mostramos lo que realmente te cuesta</h3>
-        <p>Ingredientes, cantidades, precios de mercado y porcentaje de merma real. Tú solo ajustas lo que no cuadre con tu proveedor.</p>
+        <h3>Analizamos lo que realmente te cuesta</h3>
+        <p>Ingredientes, cantidades, precios de mercado y merma real. Tú solo ajustas lo que no cuadre con tu proveedor.</p>
       </div>
       <div class="step fade-up">
         <div class="step-num">3</div>
         <h3>Ves al instante si el plato te da dinero</h3>
-        <p>Verde si el margen es sano. Rojo si estás vendiendo por debajo de lo que debería. Sin cálculos, sin errores.</p>
+        <p>Verde si el margen es sano. Rojo si estás vendiendo por debajo de tu objetivo. Sin cálculos, sin errores.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- EJEMPLO REAL -->
 <section class="ejemplo-section">
   <div class="section-inner">
-    <p class="section-tag fade-up" style="text-align:center">Ejemplo real</p>
+    <p class="section-tag fade-up" style="text-align:center">Auditoría en vivo</p>
     <h2 class="section-title fade-up" style="text-align:center;margin-bottom:.5rem">El plato que crees que te deja margen<br><em>puede que no lo haga</em></h2>
     <p class="section-sub fade-up" style="text-align:center;margin:0 auto 3rem">Un ejemplo con números reales. Sin trucos.</p>
     <div class="ejemplo-card fade-up">
@@ -474,22 +483,21 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
         <span class="ejemplo-val malo"><strong>4,88 €</strong></span>
       </div>
       <div class="ejemplo-row">
-        <span class="ejemplo-label">Precio en carta</span>
+        <span class="ejemplo-label">Precio actual en carta</span>
         <span class="ejemplo-val">14,50 €</span>
       </div>
-      <div class="ejemplo-row">
-        <span class="ejemplo-label">Food cost real</span>
-        <span class="ejemplo-val bien">33,6% ✓</span>
-      </div>
-      <div class="ejemplo-resultado ok">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E4D2B" stroke-width="2" style="flex-shrink:0"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        <p>Este plato está bien calculado. Deja <strong style="color:var(--verde)">9,62 € de margen por ración</strong>. Pero sin calcularlo, ¿lo sabías seguro?</p>
+      
+      <div class="audit-example success">
+        <div style="font-size:24px; margin-right:12px">✅</div>
+        <div>
+          <div style="font-weight:700; margin-bottom:2px">Precio actual excelente</div>
+          <p>Vendes a <strong>14,50 €</strong>, superando tu margen del 30%. Tienes un colchón de <strong>9,62 €</strong> por ración.</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FUNCIONALIDADES -->
 <section class="section" id="funcionalidades">
   <div class="section-inner">
     <p class="section-tag fade-up">Funcionalidades</p>
@@ -500,36 +508,35 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
         <div class="feature-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         </div>
-        <h3>No tienes que pensar los ingredientes</h3>
-        <p>Escribe el nombre del plato y te damos los ingredientes típicos con cantidades reales, precios de mercado y porcentaje de merma. Tú solo confirmas o ajustas.</p>
+        <h3>Análisis inteligente de ingredientes</h3>
+        <p>Escribe el nombre del plato y nuestro sistema sugiere los ingredientes típicos con cantidades reales y precios de mercado. Tú solo confirmas.</p>
       </div>
       <div class="feature-card fade-up">
         <div class="feature-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
         </div>
         <h3>La merma real incluida</h3>
-        <p>Lo que compras no es lo que sirves. QuantiChef calcula automáticamente la cantidad bruta que necesitas comprar para obtener la cantidad útil del plato.</p>
+        <p>Lo que compras no es lo que sirves. QuantiChef calcula automáticamente la cantidad bruta real que necesitas comprar para que el plato sea rentable.</p>
         <span class="feature-badge">Función Pro</span>
       </div>
       <div class="feature-card fade-up">
         <div class="feature-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
         </div>
-        <h3>Verde o rojo en un vistazo</h3>
-        <p>Sabes al instante si el plato es rentable o es un problema. Sin fórmulas, sin interpretar números. Solo miras el color.</p>
+        <h3>Auditoría de precios en carta</h3>
+        <p>Dinos a cuánto vendes hoy y nosotros te decimos cuánto estás ganando o perdiendo frente a tu objetivo ideal. En rojo o verde, sin dudas.</p>
       </div>
       <div class="feature-card fade-up">
         <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         </div>
-        <h3>Edita todo con los precios de tu proveedor</h3>
-        <p>Los precios sugeridos son de mercado. Cámbialos por los de tu proveedor real y el coste se recalcula al instante.</p>
+        <h3>Actualiza precios con una foto</h3>
+        <p>Sube tu albarán o hazle una foto con el móvil. Nosotros nos encargamos de extraer los precios reales de tu proveedor y actualizar tus costes al instante.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PRICING -->
 <section class="pricing-section" id="precios">
   <div class="pricing-inner">
     <p class="pricing-eyebrow fade-up">Precios</p>
@@ -542,7 +549,7 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
         <div class="pricing-period">al mes · por restaurante</div>
         <ul class="pricing-features">
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Escandallos ilimitados</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Cálculo automático de ingredientes</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Análisis de platos inteligente</li>
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>14 alérgenos EU incluidos</li>
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Exportar ficha técnica en PDF</li>
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Chat de soporte</li>
@@ -559,7 +566,7 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Cálculo de mermas incluido</li>
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Margen neto objetivo</li>
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Módulo Stock (próximo)</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Acceso prioritario a novedades</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Actualización por albarán foto</li>
         </ul>
         <a href="/login" class="pricing-btn">Empezar 3 días gratis</a>
       </div>
@@ -568,48 +575,48 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
   </div>
 </section>
 
-<!-- FAQ -->
 <section class="section" id="faq" style="background:var(--crema-oscura)">
-  <div class="section-inner" style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start">
-    <div>
-      <p class="section-tag fade-up">FAQ</p>
-      <h2 class="section-title fade-up">Tres preguntas<br>que te estarás <em>haciendo</em></h2>
-      <p style="font-size:.95rem;color:var(--texto2);line-height:1.7;margin-top:.5rem" class="fade-up">Si tienes más dudas, escríbenos por el chat. Te respondemos en menos de 24h.</p>
-    </div>
-    <div class="faq-list fade-up">
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Necesito saber de tecnología para usarlo?
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-        </button>
-        <div class="faq-a">No. Si sabes escribir en el móvil, sabes usar QuantiChef. Escribes el nombre del plato, pulsas un botón y en segundos tienes el coste calculado. Diseñado para chefs, no para informáticos.</div>
+  <div class="section-inner">
+    <div class="faq-grid">
+      <div>
+        <p class="section-tag fade-up">FAQ</p>
+        <h2 class="section-title fade-up">Tres preguntas<br>que te estarás <em>haciendo</em></h2>
+        <p style="font-size:.95rem;color:var(--texto2);line-height:1.7;margin-top:.5rem" class="fade-up">Si tienes más dudas, escríbenos por el chat. Te respondemos en menos de 24h.</p>
       </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Y si mis precios ya están bien calculados?
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-        </button>
-        <div class="faq-a">Perfecto. Confirmas que todo está bien y tienes un documento oficial con la ficha técnica de cada plato, los alérgenos y el coste desglosado. Eso también tiene valor si te visita sanidad o si quieres vender el negocio.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Cuánto tiempo lleva calcular un plato?
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-        </button>
-        <div class="faq-a">Entre 30 segundos y 2 minutos dependiendo de lo que ajustes. Si aceptas los ingredientes sugeridos tal cual, en 30 segundos tienes el coste completo con mermas y precio de venta recomendado.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Puedo cancelar cuando quiera?
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-        </button>
-        <div class="faq-a">Sí. Sin permanencia, sin penalizaciones. Cancelas desde tu cuenta en cualquier momento. Tus datos se conservan 30 días por si cambias de opinión.</div>
+      <div class="faq-list fade-up">
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            ¿Necesito saber de tecnología para usarlo?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-a">No. Si sabes escribir en el móvil, sabes usar QuantiChef. Escribes el nombre del plato, pulsas un botón y en segundos el sistema se encarga de darte el coste calculado. Diseñado para chefs, no para informáticos.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            ¿Y si mis precios ya están bien calculados?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-a">Perfecto. Confirmas que todo está bien y tienes un documento oficial con la ficha técnica de cada plato, los alérgenos y el coste desglosado. Eso también tiene valor si te visita sanidad o si quieres vender el negocio.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            ¿Cuánto tiempo lleva calcular un plato?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-a">Entre 30 segundos y 2 minutos dependiendo de lo que ajustes. Si aceptas los ingredientes sugeridos, en segundos tienes el coste completo con mermas y precio de venta recomendado.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            ¿Puedo cancelar cuando quiera?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-a">Sí. Sin permanencia, sin penalizaciones. Cancelas desde tu cuenta en cualquier momento. Tus datos se conservan 30 días por si cambias de opinión.</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA FINAL -->
 <section class="cta-section">
   <div class="cta-inner">
     <h2 class="cta-title fade-up">Tu carta puede estar<br>perdiendo dinero <em>ahora mismo.</em></h2>
@@ -622,7 +629,6 @@ footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-it
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-logo">
     <div style="width:28px;height:28px;background:rgba(255,255,255,0.12);border-radius:7px;display:flex;align-items:center;justify-content:center">
