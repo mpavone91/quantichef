@@ -226,7 +226,6 @@
 <div id="app" style="display:none">
   <div class="container">
 
-    <!-- Bienvenida -->
     <div class="welcome">
       <div class="welcome-tag">Mi cocina</div>
       <h1 class="welcome-title">Hola, <em id="welcome-nombre">chef</em> 👋</h1>
@@ -237,14 +236,12 @@
       </button>
     </div>
 
-    <!-- Banner plan trial -->
     <div class="plan-banner" id="plan-banner" style="display:none">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
       <p>Estás en la <strong>prueba gratuita</strong>. Activa tu plan para escandallos ilimitados, mermas y margen neto.</p>
       <a href="/precios" class="btn-plan">Ver planes</a>
     </div>
 
-    <!-- Banner Pro -->
     <div class="pro-banner" id="pro-banner" style="display:none">
       <div class="pro-badge">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
@@ -258,7 +255,6 @@
       </div>
     </div>
 
-    <!-- Stats -->
     <div class="stats" id="stats" style="display:none">
       <div class="stat">
         <div class="stat-label">Escandallos</div>
@@ -277,11 +273,9 @@
       </div>
     </div>
 
-    <!-- Lista escandallos -->
     <div class="section-title">Mis escandallos</div>
     <div id="lista-escandallos"></div>
 
-    <!-- ========== ALERTAS DE PRECIO ========== -->
     <div class="alertas-section" id="alertas-section" style="display:none">
       <div class="section-title" style="margin-top:2rem">Alertas de precio</div>
       <div class="alertas-panel" id="alertas-panel">
@@ -297,11 +291,9 @@
       </div>
     </div>
 
-    <!-- ========== PROVEEDORES ========== -->
     <div class="proveedores-section">
       <div class="section-title" style="margin-top:2rem">Precios de mis proveedores</div>
 
-      <!-- Upload area -->
       <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
         <div class="upload-area-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -311,16 +303,13 @@
         <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.csv,.xlsx,.xls,.txt" onchange="handleFileUpload(event)">
       </div>
 
-      <!-- Extraction loading -->
       <div class="extract-loading" id="extract-loading">
         <div class="spinner"></div>
         <span>Analizando el documento con IA... Esto puede tardar unos segundos.</span>
       </div>
 
-      <!-- Message -->
       <div class="prov-msg" id="prov-msg"></div>
 
-      <!-- Review table (appears after extraction) -->
       <div class="review-wrap" id="review-wrap">
         <div class="review-header">
           <span class="review-title">Revisa los productos extraídos</span>
@@ -346,7 +335,6 @@
         </div>
       </div>
 
-      <!-- Saved prices -->
       <div class="precios-guardados" id="precios-guardados"></div>
     </div>
 
@@ -803,17 +791,47 @@ async function cargarAlertas(){
         <div class="alerta-coste-new">${a.coste_racion_nuevo?.toFixed(2)}€</div>
         ${diffCosteHtml}
       </div>` : ''}
-      <a href="/escandallo" class="btn-revisar" onclick="abrirEscandallo('${a.escandallo_id}')">Revisar</a>
+      
+      <button class="btn-revisar" onclick="abrirEscandallo('${a.escandallo_id}', event)">Revisar</button>
     `;
     lista.appendChild(div);
   });
 }
 
-function abrirEscandallo(escId){
-  // Buscar el escandallo en sesión o navegar al dashboard
-  // Por ahora solo navega — se puede mejorar cargando el escandallo directamente
-  sessionStorage.setItem('qc_alerta_escandallo_id', escId);
-  window.location.href = '/escandallo?alerta=' + escId;
+// Nueva función abrirEscandallo (Reemplaza a la antigua que solo redirigía)
+async function abrirEscandallo(escId, event) {
+  if (event) {
+    event.preventDefault();
+    const btn = event.target;
+    btn.textContent = 'Cargando...';
+    btn.style.opacity = '0.7';
+    btn.style.pointerEvents = 'none';
+  }
+
+  try {
+    // 1. Buscamos el escandallo completo en la base de datos
+    const { data: escandallo, error } = await sb
+      .from('escandallos')
+      .select('*')
+      .eq('id', escId)
+      .single();
+
+    if (error || !escandallo) throw new Error('No se pudo encontrar la receta en la base de datos');
+
+    // 2. Lo metemos en la memoria de la sesión
+    sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(escandallo));
+    
+    // 3. Viajamos a la pantalla del escandallo
+    window.location.href = '/escandallo';
+
+  } catch (err) {
+    alert('Error al cargar el plato: ' + err.message);
+    if (event) {
+      event.target.textContent = 'Revisar';
+      event.target.style.opacity = '1';
+      event.target.style.pointerEvents = 'auto';
+    }
+  }
 }
 
 async function marcarTodasVistas(){
