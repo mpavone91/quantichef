@@ -3,6 +3,7 @@
     { "source": "/dashboard", "destination": "/dashboard.html" },
     { "source": "/escandallo", "destination": "/escandallo.html" },
     { "source": "/login", "destination": "/auth.html" },
-    { "source": "/precios", "destination": "/precios.html" }
+    { "source": "/precios", "destination": "/precios.html" },
+    { "source": "/legal", "destination": "/legal.html" }
   ]
 }
