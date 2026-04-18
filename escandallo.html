@@ -939,7 +939,21 @@ async function cerrarSesion(){
   await sb.auth.signOut();
   window.location.href='/login';
 }
-
+  
+// ── PREVENIR SALIDA ACCIDENTAL ──────────────────────────────
+window.addEventListener('beforeunload', function (e) {
+  // Comprobamos si hay algún ingrediente con el nombre relleno
+  const hayDatos = ings.some(i => {
+    const inputNombre = document.getElementById('n'+i.id);
+    return inputNombre && inputNombre.value.trim() !== '';
+  });
+  
+  if (hayDatos && !sessionStorage.getItem('qc_guardando')) {
+    e.preventDefault();
+    e.returnValue = ''; // Muestra la alerta nativa del navegador
+  }
+  
+});
 // ── INIT ─────────────────────────────────────────────────────
 initAlergenos();
 // Solo añadir filas vacías si no hay escandallo para editar
