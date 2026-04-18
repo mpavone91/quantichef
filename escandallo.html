@@ -622,32 +622,45 @@ function calcular(){
   document.getElementById('alg-list').classList.toggle('visible',act.length>0);
 
   // Estado del plato
-  const statusEl=document.getElementById('plato-status');
-  const statusIcon=document.getElementById('plato-status-icon');
-  const statusTitle=document.getElementById('plato-status-title');
-  const statusDesc=document.getElementById('plato-status-desc');
-  if(tot>0&&por>0){
-    statusEl.classList.add('visible');
-    const margenPct=pvpMin>0?((pvpMin-por)/pvpMin*100):0;
-    if(fc<=25){
-      statusEl.className='plato-status visible status-good';
-      statusIcon.textContent='\u2705';
-      statusTitle.textContent='Plato rentable';
-      statusDesc.textContent=`Con un food cost del ${fc}%, tienes un buen margen por ración.`;
-    } else if(fc<=35){
-      statusEl.className='plato-status visible status-mid';
-      statusIcon.textContent='\u26A1';
-      statusTitle.textContent='Margen ajustado';
-      statusDesc.textContent=`Food cost del ${fc}% — podrías mejorar el precio de venta o reducir algún coste.`;
-    } else {
-      statusEl.className='plato-status visible status-bad';
-      statusIcon.textContent='\u26A0\uFE0F';
-      statusTitle.textContent='Margen bajo';
-      statusDesc.textContent=`Con un food cost del ${fc}%, estás ganando poco por ración. Revisa ingredientes o sube el precio.`;
-    }
-  } else {
-    statusEl.classList.remove('visible');
+// Estado del plato
+const statusEl=document.getElementById('plato-status');
+const statusIcon=document.getElementById('plato-status-icon');
+const statusTitle=document.getElementById('plato-status-title');
+const statusDesc=document.getElementById('plato-status-desc');
+
+if(tot>0&&por>0&&pvpMin>0){
+  statusEl.classList.add('visible');
+
+  const margenPct=((pvpMin-por)/pvpMin*100);
+  const margenStr=margenPct.toFixed(1);
+
+  if(margenPct < 0){
+    statusEl.className='plato-status visible status-bad';
+    statusIcon.textContent='💸';
+    statusTitle.textContent='Estás perdiendo dinero';
+    statusDesc.textContent=`Margen del ${margenStr}% — el precio no cubre los costes.`;
   }
+  else if(margenPct>=70){
+    statusEl.className='plato-status visible status-good';
+    statusIcon.textContent='\u2705';
+    statusTitle.textContent='Plato rentable';
+    statusDesc.textContent=`Tienes un margen del ${margenStr}% — buen equilibrio entre coste e ingreso.`;
+  }
+  else if(margenPct>=50){
+    statusEl.className='plato-status visible status-mid';
+    statusIcon.textContent='\u26A1';
+    statusTitle.textContent='Margen ajustado';
+    statusDesc.textContent=`Margen del ${margenStr}% — podrías mejorar el precio de venta o reducir algún coste.`;
+  }
+  else{
+    statusEl.className='plato-status visible status-bad';
+    statusIcon.textContent='\u26A0\uFE0F';
+    statusTitle.textContent='Margen bajo';
+    statusDesc.textContent=`Margen del ${margenStr}% — estás ganando poco por ración. Revisa ingredientes o sube el precio.`;
+  }
+
+} else {
+  statusEl.classList.remove('visible');
 }
 
 // ── IA ───────────────────────────────────────────────────────
