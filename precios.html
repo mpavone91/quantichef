@@ -32,20 +32,24 @@
 
   /* Cards */
   .plans{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:2rem}
-  .plan-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:1.75rem;transition:all .2s}
+  .plan-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:1.75rem;transition:all .2s; position: relative;}
   .plan-card.destacado{border-color:var(--accent);background:var(--accent-light)}
-  .plan-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);background:var(--gold-light);padding:3px 9px;border-radius:4px;display:inline-block;margin-bottom:.875rem}
-  .plan-name{font-size:13px;font-weight:600;color:var(--text3);margin-bottom:.4rem}
+  .plan-label{position: absolute; top: -12px; right: 20px; font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:white;background:var(--gold);padding:4px 12px;border-radius:20px;display:inline-block;}
+  .plan-name{font-size:12px;font-weight:600;color:var(--text3);margin-bottom:.4rem; text-transform:uppercase; letter-spacing:1px;}
   .plan-card.destacado .plan-name{color:var(--accent-mid)}
   .plan-price{font-family:'Fraunces',serif;font-size:3rem;font-weight:300;color:var(--text);line-height:1;margin-bottom:.25rem}
   .plan-card.destacado .plan-price{color:var(--accent)}
   .plan-period{font-size:13px;color:var(--text3);margin-bottom:1.5rem}
+  
+  /* Nuevo estilo para el subtexto de ahorro */
+  .plan-saving { font-size: 13px; font-weight: 600; color: var(--accent); margin-top: -1rem; margin-bottom: 1.5rem; display: block; }
+  
   .plan-features{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.75rem}
   .plan-feature{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)}
   .plan-feature svg{width:15px;height:15px;color:var(--accent);flex-shrink:0}
   .btn-plan{display:block;width:100%;padding:13px;border-radius:9px;font-size:14px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;border:none;cursor:pointer;transition:all .2s;text-align:center}
-  .btn-plan.secondary{background:var(--accent-light);color:var(--accent)}
-  .btn-plan.secondary:hover{background:var(--accent-mint)}
+  .btn-plan.secondary{background:var(--surface); border: 1px solid var(--border); color:var(--text)}
+  .btn-plan.secondary:hover{border-color:var(--accent); color:var(--accent)}
   .btn-plan.primary{background:var(--accent);color:white}
   .btn-plan.primary:hover{background:var(--accent-mid);transform:translateY(-1px);box-shadow:0 6px 20px rgba(30,77,43,.2)}
   .btn-plan:disabled{background:var(--text3);cursor:not-allowed;transform:none;box-shadow:none}
@@ -87,47 +91,47 @@
   </a>
   <a href="/dashboard" class="nav-back">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-    Mi cocina
+    Volver a Mi cocina
   </a>
 </nav>
 
 <div class="container">
   <div class="pago-ok" id="pago-ok">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-    ¡Pago completado! Tu plan está activo. Bienvenido a QuantiChef Pro.
+    ¡Pago completado! Tu plan está activo. Bienvenido a QuantiChef.
   </div>
 
   <p class="page-tag">Planes y precios</p>
-  <h1 class="page-title">Simple y <em>sin sorpresas</em></h1>
-  <p class="page-sub">Una licencia por restaurante. Sin contratos. Cancela cuando quieras.</p>
+  <h1 class="page-title">Recuperas la cuota con el <em>primer plato que corrijas</em></h1>
+  <p class="page-sub">Todas las funcionalidades incluidas. Una licencia por restaurante.<br>Sin contratos ocultos. Cancela cuando quieras.</p>
 
   <div class="plans">
     <div class="plan-card">
-      <div class="plan-name">Plan Mensual</div>
-      <div class="plan-price">29<span style="font-size:1.2rem">€</span></div>
-      <div class="plan-period">al mes · por restaurante</div>
+      <div class="plan-name">Pago Mensual</div>
+      <div class="plan-price">39<span style="font-size:1.2rem; font-family:'Plus Jakarta Sans', sans-serif; font-weight:400; color:var(--text3)">€/mes</span></div>
+      <div class="plan-period">Sin permanencia</div>
+      
       <ul class="plan-features">
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Escandallos ilimitados</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>IA con precios y mermas</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Margen neto objetivo</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>14 alérgenos EU</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Exportar PDF</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Chat de soporte</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Escandallos y mermas ilimitados</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Lectura de albaranes (Foto/PDF)</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Análisis de precios en cascada</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Alertas de pérdida de margen</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Exportación a PDF</li>
       </ul>
       <button class="btn-plan secondary" onclick="checkout('price_1TNVHKQ2tw1TGl0P632bQsDy', this)" id="btn-mensual">Activar plan mensual</button>
     </div>
 
     <div class="plan-card destacado">
-      <div class="plan-label">Ahorra 99€</div>
-      <div class="plan-name">Plan Anual</div>
-      <div class="plan-price">249<span style="font-size:1.2rem">€</span></div>
-      <div class="plan-period">al año · por restaurante</div>
+      <div class="plan-label">3 meses gratis</div>
+      <div class="plan-name">Pago Anual</div>
+      <div class="plan-price">349<span style="font-size:1.2rem; font-family:'Plus Jakarta Sans', sans-serif; font-weight:400; color:var(--accent)">€/año</span></div>
+      <div class="plan-saving">Ahorras 119€ al año</div>
+      
       <ul class="plan-features">
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Todo del plan mensual</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Módulo Stock (próximo)</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Costes fijos (próximo)</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Acceso prioritario novedades</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Soporte prioritario</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><strong>Todo el software sin restricciones</strong></li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Alertas de rentabilidad inmediatas</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Soporte prioritario por email</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Acceso a nuevas funciones (Stock)</li>
       </ul>
       <button class="btn-plan primary" onclick="checkout('price_1TNVI0Q2tw1TGl0PG3MQyHal', this)" id="btn-anual">Activar plan anual</button>
     </div>
@@ -135,7 +139,7 @@
 
   <p class="guarantee">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    Pago seguro con Stripe · Sin permanencia · Cancela cuando quieras
+    Pago seguro con Stripe · Factura con IVA para deducir
   </p>
 </div>
 
@@ -168,7 +172,7 @@ async function checkout(priceId, btn){
   if(!currentUser){window.location.href='/login';return;}
   const originalText=btn.textContent;
   btn.disabled=true;
-  btn.innerHTML=`<span class="spinner-sm"></span>Redirigiendo a pago...`;
+  btn.innerHTML=`<span class="spinner-sm"></span>Redirigiendo a Stripe...`;
 
   try{
     const res=await fetch('/api/stripe-checkout',{
