@@ -90,6 +90,13 @@
   .plan-banner strong{color:var(--gold)}
   .btn-plan{background:var(--gold);color:white;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none}
 
+  /* Pro banner */
+  .pro-banner{background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
+  .pro-badge{display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:white;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:6px;flex-shrink:0}
+  .pro-badge svg{width:12px;height:12px}
+  .pro-features{display:flex;flex-wrap:wrap;gap:6px;flex:1}
+  .pro-feat{font-size:12px;color:var(--accent);background:white;border:1px solid var(--accent-mint);padding:3px 10px;border-radius:20px;white-space:nowrap}
+
   /* ========== PROVEEDORES ========== */
   .proveedores-section{margin-top:3rem}
 
@@ -209,11 +216,25 @@
       </button>
     </div>
 
-    <!-- Banner plan -->
+    <!-- Banner plan trial -->
     <div class="plan-banner" id="plan-banner" style="display:none">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
       <p>Estás en la <strong>prueba gratuita</strong>. Activa tu plan para escandallos ilimitados, mermas y margen neto.</p>
       <a href="/precios" class="btn-plan">Ver planes</a>
+    </div>
+
+    <!-- Banner Pro -->
+    <div class="pro-banner" id="pro-banner" style="display:none">
+      <div class="pro-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+        Plan Pro
+      </div>
+      <div class="pro-features">
+        <span class="pro-feat">Escandallos ilimitados</span>
+        <span class="pro-feat">Mermas</span>
+        <span class="pro-feat">Margen neto</span>
+        <span class="pro-feat">Precios de proveedor</span>
+      </div>
     </div>
 
     <!-- Stats -->
@@ -330,9 +351,11 @@ async function cargarDatos(session){
   const esPro = rest.plan === 'pro';
   if(esPro){
     document.getElementById('plan-banner').style.display='none';
+    document.getElementById('pro-banner').style.display='flex';
     localStorage.setItem('qc_premium','true');
   } else {
     document.getElementById('plan-banner').style.display='flex';
+    document.getElementById('pro-banner').style.display='none';
     localStorage.removeItem('qc_premium');
   }
 
@@ -340,7 +363,6 @@ async function cargarDatos(session){
 
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
-  document.getElementById('plan-banner').style.display='flex';
 
   if(escandallos&&escandallos.length>0){
     document.getElementById('stats').style.display='grid';
