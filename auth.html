@@ -192,7 +192,7 @@
       <button class="btn-primary" onclick="registro()" id="btn-registro">Crear cuenta gratis</button>
       <div class="trial-info">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        <span><strong>7 días gratis · 5 escandallos</strong> — sin tarjeta de crédito. Acceso inmediato tras el registro.</span>
+        <span><strong>3 días gratis · 5 escandallos</strong> — sin tarjeta de crédito. Acceso inmediato tras el registro.</span>
       </div>
     </div>
 
@@ -270,6 +270,9 @@ function togglePass(inputId, eyeId) {
   }
 }
 
+// Estado del registro en pasos
+let registroData = {};
+
 async function registro() {
   const nombrePersona = document.getElementById('reg-nombre-persona').value.trim();
   const apellidos = document.getElementById('reg-apellidos').value.trim();
@@ -287,38 +290,87 @@ async function registro() {
   if (pass.length < 8) { showMsg('La contraseña debe tener al menos 8 caracteres.'); return; }
   if (pass !== pass2) { showMsg('Las contraseñas no coinciden.'); return; }
 
-  setLoading('btn-registro', true, 'Crear cuenta gratis', 'Creando cuenta...');
+  // Formatear teléfono — asegurar que empieza por +
+  let telefonoFormateado = telefono.replace(/\s/g, '');
+  if (!telefonoFormateado.startsWith('+')) {
+    telefonoFormateado = '+34' + telefonoFormateado.replace(/^0034/, '');
+  }
+
+  setLoading('btn-registro', true, 'Crear cuenta gratis', 'Enviando código...');
   hideMsg();
 
-  const { data, error } = await sb.auth.signUp({
-    email,
-    password: pass,
-    options: {
-      data: {
-        nombre: nombrePersona,
-        apellidos: apellidos,
-        telefono: telefono
-      }
-    }
+  // Guardar datos para usar después de verificar
+  registroData = { nombrePersona, apellidos, nombreRestaurante, email, pass, telefono: telefonoFormateado };
+
+  // Enviar OTP al móvil
+  const { error } = await sb.auth.signInWithOtp({
+    phone: telefonoFormateado
   });
 
   if (error) {
-    showMsg(error.message === 'User already registered'
-      ? 'Ya existe una cuenta con ese email. Inicia sesión.'
-      : 'Error al crear la cuenta. Inténtalo de nuevo.');
+    const msg = error.message.includes('already registered') || error.message.includes('already in use')
+      ? 'Este número de teléfono ya tiene una cuenta. Inicia sesión.'
+      : 'Error al enviar el código. Comprueba el número e inténtalo de nuevo.';
+    showMsg(msg);
     setLoading('btn-registro', false, 'Crear cuenta gratis', '');
     return;
   }
 
+  // Mostrar formulario de verificación
+  document.getElementById('form-registro').style.display = 'none';
+  document.getElementById('form-verify').style.display = 'block';
+  showMsg('Código enviado a ' + telefonoFormateado + '. Revisa tu móvil.', 'success');
+  setLoading('btn-registro', false, 'Crear cuenta gratis', '');
+}
+
+async function verificarCodigo() {
+  const codigo = document.getElementById('verify-code').value.trim();
+  if (!codigo || codigo.length < 4) { showMsg('Introduce el código que te hemos enviado.'); return; }
+
+  setLoading('btn-verify', true, 'Verificar y crear cuenta', 'Verificando...');
+  hideMsg();
+
+  // Verificar OTP
+  const { data, error } = await sb.auth.verifyOtp({
+    phone: registroData.telefono,
+    token: codigo,
+    type: 'sms'
+  });
+
+  if (error) {
+    showMsg('Código incorrecto o caducado. Inténtalo de nuevo.');
+    setLoading('btn-verify', false, 'Verificar y crear cuenta', '');
+    return;
+  }
+
+  // Vincular email y contraseña a la cuenta verificada por SMS
+  const { error: updateError } = await sb.auth.updateUser({
+    email: registroData.email,
+    password: registroData.pass,
+    data: {
+      nombre: registroData.nombrePersona,
+      apellidos: registroData.apellidos,
+      telefono: registroData.telefono
+    }
+  });
+
+  // Crear restaurante
   if (data.user) {
     await sb.from('restaurantes').insert({
       user_id: data.user.id,
-      nombre: nombreRestaurante
+      nombre: registroData.nombreRestaurante
     });
   }
 
   showMsg('¡Cuenta creada! Redirigiendo...', 'success');
   setTimeout(() => window.location.href = '/dashboard', 1500);
+}
+
+async function reenviarCodigo() {
+  if (!registroData.telefono) return;
+  const { error } = await sb.auth.signInWithOtp({ phone: registroData.telefono });
+  if (!error) showMsg('Código reenviado a ' + registroData.telefono, 'success');
+  else showMsg('Error al reenviar. Inténtalo en unos segundos.');
 }
 
 // Enter key en inputs
