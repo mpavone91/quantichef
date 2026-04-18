@@ -90,6 +90,63 @@
   .plan-banner strong{color:var(--gold)}
   .btn-plan{background:var(--gold);color:white;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none}
 
+  /* ========== PROVEEDORES ========== */
+  .proveedores-section{margin-top:3rem}
+
+  /* Upload area */
+  .upload-area{background:var(--surface);border:2px dashed var(--border);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:all .2s}
+  .upload-area:hover{border-color:var(--accent-mint);background:var(--accent-light)}
+  .upload-area.dragover{border-color:var(--accent);background:var(--accent-light)}
+  .upload-area-icon{width:48px;height:48px;border-radius:12px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem}
+  .upload-area-icon svg{width:22px;height:22px;color:var(--accent)}
+  .upload-area-title{font-weight:600;font-size:.95rem;color:var(--text);margin-bottom:.25rem}
+  .upload-area-sub{font-size:12px;color:var(--text3)}
+  .upload-area input[type=file]{display:none}
+
+  /* Extraction loading */
+  .extract-loading{background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:10px;padding:1.25rem;display:none;align-items:center;gap:12px;margin-top:1rem}
+  .extract-loading.visible{display:flex}
+  .extract-loading .spinner{border-color:var(--accent-mint);border-top-color:var(--accent)}
+  .extract-loading span{font-size:13px;color:var(--accent);font-weight:500}
+
+  /* Review table */
+  .review-wrap{display:none;margin-top:1rem}
+  .review-wrap.visible{display:block}
+  .review-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+  .review-title{font-size:13px;font-weight:700;color:var(--accent)}
+  .review-count{font-size:12px;color:var(--text3)}
+  .review-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  .review-table th{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);background:var(--bg);padding:8px 10px;text-align:left;border-bottom:1px solid var(--border)}
+  .review-table td{padding:6px 10px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+  .review-table tr:last-child td{border-bottom:none}
+  .review-table input{width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;background:var(--surface);color:var(--text)}
+  .review-table input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 2px rgba(30,77,43,.08)}
+  .review-table input[type=number]{width:80px}
+  .review-table select{padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;background:var(--surface);color:var(--text)}
+  .review-del{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;flex-shrink:0}
+  .review-del:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+  .review-actions{display:flex;gap:10px;margin-top:1rem}
+  .btn-guardar-precios{padding:10px 20px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .15s}
+  .btn-guardar-precios:hover{background:var(--accent-mid)}
+  .btn-guardar-precios:disabled{background:var(--text3);cursor:not-allowed}
+  .btn-cancelar-review{padding:10px 20px;background:none;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text2);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif}
+  .btn-cancelar-review:hover{border-color:var(--text3)}
+
+  /* Saved prices list */
+  .precios-guardados{margin-top:1.5rem}
+  .precio-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .precio-card:hover{border-color:var(--accent-mint)}
+  .precio-nombre{font-weight:600;font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .precio-valor{font-family:'Fraunces',serif;font-size:1rem;color:var(--accent);font-weight:300;white-space:nowrap}
+  .precio-meta{font-size:11px;color:var(--text3);white-space:nowrap}
+  .precio-del{width:22px;height:22px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0}
+  .precio-del:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+
+  /* Msg */
+  .prov-msg{padding:10px 14px;border-radius:8px;font-size:13px;margin-top:.75rem;display:none}
+  .prov-msg.error{background:var(--danger-light);color:var(--danger);border:1px solid rgba(139,26,26,.2);display:block}
+  .prov-msg.success{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-mint);display:block}
+
   @media(max-width:640px){
     nav{padding:.875rem 1.25rem}
     .container{padding:1.5rem 1rem}
@@ -97,6 +154,9 @@
     .stats .stat:last-child{grid-column:1/-1}
     .card-metrics{display:none}
     .nav-restaurante{display:none}
+    .review-table{font-size:12px}
+    .review-table input,.review-table select{font-size:12px}
+    .review-table input[type=number]{width:65px}
   }
 </style>
 </head>
@@ -175,9 +235,62 @@
       </div>
     </div>
 
-    <!-- Lista -->
+    <!-- Lista escandallos -->
     <div class="section-title">Mis escandallos</div>
     <div id="lista-escandallos"></div>
+
+    <!-- ========== PROVEEDORES ========== -->
+    <div class="proveedores-section">
+      <div class="section-title" style="margin-top:2rem">Precios de mis proveedores</div>
+
+      <!-- Upload area -->
+      <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+        <div class="upload-area-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <div class="upload-area-title">Sube un albarán o lista de precios</div>
+        <div class="upload-area-sub">PDF, imagen (foto del albarán), CSV o Excel · La IA extraerá los ingredientes y precios</div>
+        <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.csv,.xlsx,.xls,.txt" onchange="handleFileUpload(event)">
+      </div>
+
+      <!-- Extraction loading -->
+      <div class="extract-loading" id="extract-loading">
+        <div class="spinner"></div>
+        <span>Analizando el documento con IA... Esto puede tardar unos segundos.</span>
+      </div>
+
+      <!-- Message -->
+      <div class="prov-msg" id="prov-msg"></div>
+
+      <!-- Review table (appears after extraction) -->
+      <div class="review-wrap" id="review-wrap">
+        <div class="review-header">
+          <span class="review-title">Revisa los productos extraídos</span>
+          <span class="review-count" id="review-count"></span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="review-table">
+            <thead>
+              <tr>
+                <th>Ingrediente</th>
+                <th>Precio</th>
+                <th>Unidad</th>
+                <th>Proveedor</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="review-body"></tbody>
+          </table>
+        </div>
+        <div class="review-actions">
+          <button class="btn-guardar-precios" id="btn-guardar-precios" onclick="guardarPrecios()">Guardar precios</button>
+          <button class="btn-cancelar-review" onclick="cancelarReview()">Cancelar</button>
+        </div>
+      </div>
+
+      <!-- Saved prices -->
+      <div class="precios-guardados" id="precios-guardados"></div>
+    </div>
 
   </div>
 </div>
@@ -189,9 +302,9 @@ const {createClient}=supabase;
 const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let restauranteId=null;
+let extractedProducts=[];
 
 async function init(){
-  // Esperar INITIAL_SESSION — es el único evento fiable al arrancar
   sb.auth.onAuthStateChange(async (event, session) => {
     if(event==='INITIAL_SESSION'){
       if(!session){
@@ -207,8 +320,6 @@ async function init(){
 }
 
 async function cargarDatos(session){
-
-  // Cargar restaurante
   const {data:rest}=await sb.from('restaurantes').select('id,nombre,plan').eq('user_id',session.user.id).single();
   if(!rest){window.location.href='/login';return;}
 
@@ -216,7 +327,6 @@ async function cargarDatos(session){
   document.getElementById('nav-restaurante').textContent=rest.nombre;
   document.getElementById('welcome-nombre').textContent=rest.nombre;
 
-  // Comprobar plan desde Supabase
   const esPro = rest.plan === 'pro';
   if(esPro){
     document.getElementById('plan-banner').style.display='none';
@@ -226,7 +336,6 @@ async function cargarDatos(session){
     localStorage.removeItem('qc_premium');
   }
 
-  // Cargar escandallos
   const {data:escandallos}=await sb.from('escandallos').select('*').eq('restaurante_id',rest.id).order('updated_at',{ascending:false});
 
   document.getElementById('loading').style.display='none';
@@ -241,6 +350,9 @@ async function cargarDatos(session){
   } else {
     renderVacio();
   }
+
+  // Cargar precios guardados
+  await cargarPreciosGuardados();
 }
 
 function fmt(n){return Number(n).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';}
@@ -323,6 +435,259 @@ async function eliminar(id, evt){
 async function cerrarSesion(){
   await sb.auth.signOut();
   window.location.href='/login';
+}
+
+// ========== PROVEEDORES ==========
+
+// Drag & drop
+const uploadArea = document.getElementById('upload-area');
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+  if(e.dataTransfer.files.length > 0) processFile(e.dataTransfer.files[0]);
+});
+
+function handleFileUpload(e){
+  if(e.target.files.length > 0) processFile(e.target.files[0]);
+}
+
+async function processFile(file){
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  if(file.size > maxSize){
+    showProvMsg('El archivo es demasiado grande. Máximo 10MB.', 'error');
+    return;
+  }
+
+  const ext = file.name.split('.').pop().toLowerCase();
+  const allowed = ['pdf','png','jpg','jpeg','webp','gif','csv','xlsx','xls','txt'];
+  if(!allowed.includes(ext)){
+    showProvMsg('Formato no soportado. Usa PDF, imagen, CSV o Excel.', 'error');
+    return;
+  }
+
+  // Show loading
+  hideProvMsg();
+  document.getElementById('extract-loading').classList.add('visible');
+  document.getElementById('review-wrap').classList.remove('visible');
+
+  // Convert to base64
+  const base64 = await fileToBase64(file);
+
+  try {
+    const resp = await fetch('/api/extract', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        file_base64: base64,
+        file_type: ext,
+        file_name: file.name
+      })
+    });
+
+    const data = await resp.json();
+    document.getElementById('extract-loading').classList.remove('visible');
+
+    if(data.error){
+      showProvMsg(data.error, 'error');
+      return;
+    }
+
+    if(!data.productos || data.productos.length === 0){
+      showProvMsg('No se encontraron productos en el documento. Prueba con otro archivo.', 'error');
+      return;
+    }
+
+    // Store extracted data and render review table
+    extractedProducts = data.productos.map(p => ({
+      ...p,
+      proveedor: p.proveedor || data.proveedor || ''
+    }));
+
+    renderReviewTable(extractedProducts, data.proveedor, data.fecha_documento);
+
+  } catch(err) {
+    document.getElementById('extract-loading').classList.remove('visible');
+    showProvMsg('Error al procesar el archivo. Inténtalo de nuevo.', 'error');
+  }
+
+  // Reset file input
+  document.getElementById('file-input').value = '';
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderReviewTable(products, proveedorName, fechaDoc){
+  const body = document.getElementById('review-body');
+  body.innerHTML = '';
+
+  products.forEach((p, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" value="${escapeHtml(p.ingrediente_normalizado || p.nombre)}" data-idx="${i}" data-field="ingrediente_normalizado"></td>
+      <td><input type="number" step="0.01" min="0" value="${p.precio}" data-idx="${i}" data-field="precio" style="width:80px"></td>
+      <td>
+        <select data-idx="${i}" data-field="unidad">
+          <option value="kg" ${p.unidad==='kg'?'selected':''}>kg</option>
+          <option value="l" ${p.unidad==='l'?'selected':''}>l</option>
+          <option value="ud" ${p.unidad==='ud'?'selected':''}>ud</option>
+          <option value="caja" ${p.unidad==='caja'?'selected':''}>caja</option>
+          <option value="docena" ${p.unidad==='docena'?'selected':''}>docena</option>
+          <option value="manojo" ${p.unidad==='manojo'?'selected':''}>manojo</option>
+        </select>
+      </td>
+      <td><input type="text" value="${escapeHtml(p.proveedor || proveedorName || '')}" data-idx="${i}" data-field="proveedor" style="width:120px"></td>
+      <td><button class="review-del" onclick="removeReviewRow(${i})" title="Quitar">×</button></td>
+    `;
+    body.appendChild(tr);
+  });
+
+  document.getElementById('review-count').textContent = `${products.length} productos encontrados`;
+  document.getElementById('review-wrap').classList.add('visible');
+
+  // Listen for edits
+  body.querySelectorAll('input, select').forEach(el => {
+    el.addEventListener('change', e => {
+      const idx = parseInt(e.target.dataset.idx);
+      const field = e.target.dataset.field;
+      if(field === 'precio'){
+        extractedProducts[idx][field] = parseFloat(e.target.value) || 0;
+      } else {
+        extractedProducts[idx][field] = e.target.value;
+      }
+    });
+  });
+}
+
+function removeReviewRow(idx){
+  extractedProducts.splice(idx, 1);
+  renderReviewTable(extractedProducts);
+}
+
+function cancelarReview(){
+  extractedProducts = [];
+  document.getElementById('review-wrap').classList.remove('visible');
+  hideProvMsg();
+}
+
+async function guardarPrecios(){
+  if(extractedProducts.length === 0) return;
+  if(!restauranteId){
+    showProvMsg('Error: no se encontró el restaurante.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btn-guardar-precios');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+
+  // Prepare rows for Supabase
+  const rows = extractedProducts.map(p => ({
+    restaurante_id: restauranteId,
+    ingrediente: p.nombre || p.ingrediente_normalizado,
+    ingrediente_normalizado: normalizar(p.ingrediente_normalizado || p.nombre),
+    precio_kg: parseFloat(p.precio) || 0,
+    unidad: p.unidad || 'kg',
+    proveedor: p.proveedor || null,
+    fecha_documento: p.fecha_documento || null,
+    updated_at: new Date().toISOString()
+  }));
+
+  // Upsert: if same ingrediente_normalizado exists for this restaurant, update
+  const { error } = await sb.from('precios_proveedor').upsert(rows, {
+    onConflict: 'restaurante_id,ingrediente_normalizado',
+    ignoreDuplicates: false
+  });
+
+  // If upsert fails (no unique constraint yet), fall back to insert
+  if(error){
+    const { error: insertError } = await sb.from('precios_proveedor').insert(rows);
+    if(insertError){
+      showProvMsg('Error al guardar: ' + insertError.message, 'error');
+      btn.disabled = false;
+      btn.textContent = 'Guardar precios';
+      return;
+    }
+  }
+
+  showProvMsg(`${rows.length} precio${rows.length>1?'s':''} guardado${rows.length>1?'s':''}. Se usarán en tus próximos escandallos.`, 'success');
+  extractedProducts = [];
+  document.getElementById('review-wrap').classList.remove('visible');
+  btn.disabled = false;
+  btn.textContent = 'Guardar precios';
+
+  await cargarPreciosGuardados();
+}
+
+function normalizar(str){
+  return (str || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+async function cargarPreciosGuardados(){
+  if(!restauranteId) return;
+  const {data: precios} = await sb.from('precios_proveedor')
+    .select('*')
+    .eq('restaurante_id', restauranteId)
+    .order('ingrediente_normalizado', {ascending: true});
+
+  const container = document.getElementById('precios-guardados');
+
+  if(!precios || precios.length === 0){
+    container.innerHTML = '';
+    return;
+  }
+
+  let html = `<div style="font-size:12px;color:var(--text3);margin-bottom:.5rem">${precios.length} ingrediente${precios.length>1?'s':''} con precio de proveedor</div>`;
+
+  precios.forEach(p => {
+    html += `
+      <div class="precio-card">
+        <div class="precio-nombre">${escapeHtml(p.ingrediente_normalizado || p.ingrediente)}</div>
+        <div class="precio-valor">${fmt(p.precio_kg)}</div>
+        <div class="precio-meta">/${p.unidad || 'kg'}</div>
+        ${p.proveedor ? `<div class="precio-meta">${escapeHtml(p.proveedor)}</div>` : ''}
+        <button class="precio-del" onclick="eliminarPrecio('${p.id}')" title="Eliminar">×</button>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+async function eliminarPrecio(id){
+  if(!confirm('¿Eliminar este precio de proveedor?')) return;
+  await sb.from('precios_proveedor').delete().eq('id', id);
+  await cargarPreciosGuardados();
+}
+
+function showProvMsg(txt, type){
+  const el = document.getElementById('prov-msg');
+  el.textContent = txt;
+  el.className = 'prov-msg ' + type;
+}
+
+function hideProvMsg(){
+  document.getElementById('prov-msg').className = 'prov-msg';
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
 }
 
 init();
