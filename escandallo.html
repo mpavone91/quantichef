@@ -52,7 +52,7 @@
   .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:.875rem}
   .card-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
   .card-title::after{content:'';flex:1;height:1px;background:var(--border)}
-  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
   .field{position:relative}
   .field-label{display:flex;align-items:center;gap:5px;margin-bottom:5px}
   .field-label label{font-size:12px;font-weight:600;color:var(--text2)}
@@ -109,6 +109,10 @@
   .sug-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
   .sug-item{display:flex;align-items:center;gap:8px;background:white;border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:13px}
   .sug-item.selected{border-color:var(--accent);background:var(--accent-light)}
+  
+  /* ESTILO PARA PRECIO DE PROVEEDOR VERIFICADO */
+  .sug-item.is-provider {border: 2px solid var(--accent);background: #f0fdf4;}
+
   .sug-check{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);background:white;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}.sug-item.selected .sug-check{background:var(--accent);border-color:var(--accent)}.sug-check-icon{display:none;width:10px;height:10px}.sug-item.selected .sug-check-icon{display:block}.sug-item input[type=checkbox]{display:none}
   .sug-name{font-weight:600;color:var(--text);flex:1}
   .sug-qty{font-size:12px;color:var(--text2);background:var(--surface2);padding:2px 7px;border-radius:4px;white-space:nowrap}
@@ -187,7 +191,7 @@
 
   @media(max-width:640px){
     header{padding:1rem 1.2rem}.container{padding:1rem}
-    .grid-3{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}
+    .grid-4{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}
     .metrics .metric:last-child{grid-column:1/-1}
     .ing-header{display:none!important}.ing-row{grid-template-columns:1fr 1fr!important;gap:6px}
     .ing-row>input:first-child{grid-column:1/-1}.btn-del{justify-self:end}
@@ -236,14 +240,13 @@
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
       <span>Prueba · <strong id="trial-count">5 de 5</strong></span>
     </div>
-    <a href="/precios" class="btn-upgrade">Activar plan</a>
+    <a href="/precios" class="btn-upgrade" id="btn-upgrade-header">Activar plan</a>
     <a href="#" onclick="cerrarSesion();return false;" style="font-size:12px;color:rgba(255,255,255,.5);text-decoration:none;padding:5px 0" title="Cerrar sesión">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
     </a>
   </div>
 </header>
 
-<!-- Modal -->
 <div class="modal-overlay" id="modal-overlay" onclick="hideModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-icon">
@@ -277,10 +280,9 @@
     <button class="btn-limit" onclick="window.location.href='/precios'">Activar plan</button>
   </div>
 
-  <!-- DATOS DEL PLATO -->
   <div class="card">
     <div class="card-title">Datos del plato</div>
-    <div class="grid-3">
+    <div class="grid-4">
       <div class="field">
         <div class="field-label"><label>Nombre del plato</label><button class="help-btn" onclick="tt('tt-nombre')">?</button><div class="tooltip" id="tt-nombre">Escribe el nombre tal como aparece en carta. Cuanto más específico, mejor sugerencia de la IA.</div></div>
         <input type="text" id="nombre" placeholder="Ej: Merluza a la bilbaína" oninput="calcular()">
@@ -292,6 +294,14 @@
       <div class="field">
         <div class="field-label"><label>Nº de raciones</label><button class="help-btn" onclick="tt('tt-rac')">?</button><div class="tooltip" id="tt-rac">Para cuántas raciones calculas los ingredientes. El coste se divide automáticamente.</div></div>
         <input type="number" id="raciones" value="1" min="1" oninput="calcular()">
+      </div>
+      <div class="field">
+        <div class="field-label">
+          <label>Precio en carta</label>
+          <button class="help-btn" onclick="tt('tt-pcarta')">?</button>
+          <div class="tooltip" id="tt-pcarta" style="left:auto;right:0">¿A cuánto vendes este plato hoy? (Opcional). Sirve para auditar si tu precio actual es rentable.</div>
+        </div>
+        <input type="number" id="precio-carta" placeholder="Ej: 14,00" min="0" step="0.01" oninput="calcular()" onfocus="this.select()">
       </div>
     </div>
     <div class="ai-row">
@@ -311,7 +321,6 @@
     </div>
   </div>
 
-  <!-- INGREDIENTES -->
   <div class="card">
     <div class="card-title">Ingredientes</div>
     <div class="toggle-row" id="merma-row">
@@ -336,7 +345,6 @@
     <p class="hint">Calcula automáticamente o añade manualmente. Edita los precios con los de tu proveedor real.</p>
   </div>
 
-  <!-- MÉTRICAS -->
   <div class="metrics">
     <div class="metric"><div class="metric-label">Coste total</div><div class="metric-value" id="m-coste">0,00 €</div></div>
     <div class="metric"><div class="metric-label">Coste por ración</div><div class="metric-value" id="m-racion">0,00 €</div></div>
@@ -349,7 +357,14 @@
     </div>
   </div>
 
-  <!-- ESTADO DEL PLATO -->
+  <div id="auditoria-box" style="display:none; border-radius:10px; padding:14px 16px; margin-bottom:.875rem; align-items:center; gap:12px; animation:fadeIn .25s ease;">
+    <div style="font-size:24px" id="audit-icon">🚨</div>
+    <div style="flex:1">
+      <div style="font-size:13px; font-weight:700; margin-bottom:2px" id="audit-title">Auditoría</div>
+      <div style="font-size:12px; line-height:1.4" id="audit-desc"></div>
+    </div>
+  </div>
+
   <div class="plato-status" id="plato-status">
     <span class="plato-status-icon" id="plato-status-icon"></span>
     <div class="plato-status-text">
@@ -358,12 +373,10 @@
     </div>
   </div>
 
-  <!-- MÁRGENES -->
   <div class="card">
     <div class="card-title">Márgenes y precio de venta</div>
     <div class="sliders-wrap">
 
-      <!-- Slider 1 — Food cost (gratis) -->
       <div>
         <div class="slider-row">
           <div class="slider-label-wrap">
@@ -378,7 +391,6 @@
 
       <div class="slider-divider"></div>
 
-      <!-- Slider 2 — Margen neto (premium) -->
       <div class="toggle-row" id="neto-row" style="flex-direction:column;align-items:stretch;gap:.75rem">
         <div style="display:flex;align-items:center;gap:10px">
           <div class="toggle-label">Margen neto objetivo<small>Incluye costes fijos y beneficio — para conocer el precio de venta real</small></div>
@@ -406,7 +418,6 @@
     </div>
   </div>
 
-  <!-- ALÉRGENOS -->
   <div class="card">
     <div class="card-title">Alérgenos
       <button class="help-btn" onclick="tt('tt-alg')" style="margin-top:0;margin-left:-4px">?</button>
@@ -467,6 +478,8 @@ async function checkTrial() {
       document.getElementById('trial-badge').style.display = 'none';
       document.getElementById('merma-lock').style.display = 'none';
       document.getElementById('neto-lock').style.display = 'none';
+      const btnUpgrade = document.getElementById('btn-upgrade-header');
+      if(btnUpgrade) btnUpgrade.style.display = 'none';
     }
   } catch (err) {
     console.log('Trial check error:', err);
@@ -474,7 +487,12 @@ async function checkTrial() {
 }
 
 function updateTrialBadge(data) {
-  if (esPremium) { document.getElementById('trial-badge').style.display = 'none'; return; }
+  if (esPremium) { 
+    document.getElementById('trial-badge').style.display = 'none'; 
+    const btnUpgrade = document.getElementById('btn-upgrade-header');
+    if(btnUpgrade) btnUpgrade.style.display = 'none';
+    return; 
+  }
   const restantes = data ? data.restantes : Math.max(0, MAX_FREE - trialCount);
   document.getElementById('trial-count').textContent = restantes + ' de ' + MAX_FREE;
   if (restantes === 0) {
@@ -555,7 +573,9 @@ function renderIngs(){
   ings.forEach(i=>{
     const x=v[i.id]||{n:i.n,q:i.q,u:i.u,p:i.p,m:i.m};
     const d=document.createElement('div');d.className='ing-row '+(mermasOn?'con-merma':'sin-merma');
-const mc=mermasOn?`<div class="merma-cell"><input type="number" class="merma-input" placeholder="0" min="0" max="99" step="1" id="m${i.id}" value="${x.m}" oninput="calcular()" onfocus="this.select()"><span class="merma-pct">%</span></div>`:'';    d.innerHTML=`<input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()" onfocus="this.select()"><input type="number" placeholder="0" min="0" step="0.001" id="q${i.id}" value="${x.q}" oninput="calcular()" onfocus="this.select()"><select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><input type="number" placeholder="0,00" min="0" step="0.01" id="p${i.id}" value="${x.p}" oninput="calcular()" onfocus="this.select()">${mc}<button class="btn-del" onclick="removeIng(${i.id})">×</button>`;    c.appendChild(d);
+    const mc=mermasOn?`<div class="merma-cell"><input type="number" class="merma-input" placeholder="0" min="0" max="99" step="1" id="m${i.id}" value="${x.m}" oninput="calcular()" onfocus="this.select()"><span class="merma-pct">%</span></div>`:'';
+    d.innerHTML=`<input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()" onfocus="this.select()"><input type="number" placeholder="0" min="0" step="0.001" id="q${i.id}" value="${x.q}" oninput="calcular()" onfocus="this.select()"><select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><input type="number" placeholder="0,00" min="0" step="0.01" id="p${i.id}" value="${x.p}" oninput="calcular()" onfocus="this.select()">${mc}<button class="btn-del" onclick="removeIng(${i.id})">×</button>`;
+    c.appendChild(d);
   });calcular();
 }
 
@@ -565,6 +585,8 @@ function calcular(){
   const rac=Math.max(parseFloat(document.getElementById('raciones').value)||1,1);
   const fc=parseFloat(document.getElementById('margen-fc').value)||30;
   const neto=parseFloat(document.getElementById('margen-neto').value)||20;
+  const pCarta=parseFloat(document.getElementById('precio-carta').value)||0; // CAMPO NUEVO
+  
   document.getElementById('val-fc').textContent=fc+'%';
   document.getElementById('val-neto').textContent=neto+'%';
 
@@ -586,7 +608,6 @@ function calcular(){
   const fcReal=pvpMin>0?(por/pvpMin*100):0;
 
   // Precio recomendado (food cost + margen neto)
-  // Precio recomendado = coste ingredientes / (1 - fc% - neto%)
   const totalPct=(fc+neto)/100;
   const pvpRec=totalPct<1&&totalPct>0?por/(1-neto/100-fc/100*(1-neto/100)):0;
   // Simplificado: pvpRec = por / (fc/100) / (1 - neto/100)
@@ -621,6 +642,43 @@ function calcular(){
   const act=Array.from(document.querySelectorAll('.alg input:checked')).map(i=>i.closest('.alg').textContent.trim());
   document.getElementById('alg-resumen').textContent=act.join(', ');
   document.getElementById('alg-list').classList.toggle('visible',act.length>0);
+
+  // Lógica de Auditoría (Precio real vs Precio ideal)
+  const auditBox = document.getElementById('auditoria-box');
+  const auditTitle = document.getElementById('audit-title');
+  const auditDesc = document.getElementById('audit-desc');
+  const auditIcon = document.getElementById('audit-icon');
+
+  if (pCarta > 0 && por > 0) {
+    auditBox.style.display = 'flex';
+    const realFcPct = (por / pCarta) * 100;
+    // Si tiene el Premium activado usa el pvpRecomendado, si no, el pvpMin
+    const targetPvp = (netoOn && pvpRecomendado > 0) ? pvpRecomendado : pvpMin;
+
+    if (pCarta < targetPvp) {
+      // ESTÁ PERDIENDO MARGEN
+      auditBox.style.background = 'var(--danger-light)';
+      auditBox.style.border = '1px solid rgba(139, 26, 26, 0.2)';
+      auditTitle.style.color = 'var(--danger)';
+      auditDesc.style.color = 'var(--danger)';
+      auditIcon.textContent = '🚨';
+      auditTitle.textContent = 'Estás perdiendo margen frente a tu objetivo';
+      const diff = targetPvp - pCarta;
+      auditDesc.innerHTML = `Vendes a <strong>${fmt(pCarta)}</strong> pero para tu objetivo deberías vender a <strong>${fmt(targetPvp)}</strong>. Estás dejando de ganar <strong>${fmt(diff)} por ración</strong>. Tu Food Cost real es del ${realFcPct.toFixed(1)}%.`;
+    } else {
+      // RENTABILIDAD SUPERADA
+      auditBox.style.background = 'var(--accent-light)';
+      auditBox.style.border = '1px solid var(--accent-mint)';
+      auditTitle.style.color = 'var(--accent)';
+      auditDesc.style.color = 'var(--accent)';
+      auditIcon.textContent = '✅';
+      auditTitle.textContent = 'Precio actual excelente';
+      const extra = pCarta - targetPvp;
+      auditDesc.innerHTML = `Vendes a <strong>${fmt(pCarta)}</strong>, superando tu objetivo. Tienes un colchón extra de <strong>${fmt(extra)} por ración</strong>. Tu Food Cost real es del fantástico ${realFcPct.toFixed(1)}%.`;
+    }
+  } else {
+    auditBox.style.display = 'none';
+  }
 
   // Estado del plato
   const statusEl=document.getElementById('plato-status');
@@ -706,7 +764,9 @@ async function sugerir(){
         s._es_proveedor=false;
       }
 
-      const item=document.createElement('div');item.className='sug-item selected';
+      const item=document.createElement('div');
+      item.className = s._es_proveedor ? 'sug-item selected is-provider' : 'sug-item selected';
+      
       const pc=s.unidad==='ud'?`${s.precio_kg.toFixed(2)}€/ud`:`${s.precio_kg.toFixed(2)}€/kg`;
       const mt=s.merma>0?`<span class="sug-merma">Merma ${s.merma}%</span>`:'';
       const provBadge=s._es_proveedor
@@ -836,6 +896,11 @@ function cargarEscandallo(e){
   document.getElementById('categoria').value=e.categoria||'';
   document.getElementById('raciones').value=e.raciones||1;
 
+  // Restaurar precio en carta si lo hubiera guardado
+  if(e.precio_carta) {
+    document.getElementById('precio-carta').value = e.precio_carta;
+  }
+
   // Sliders
   if(e.food_cost_pct){
     document.getElementById('margen-fc').value=e.food_cost_pct;
@@ -893,6 +958,7 @@ async function guardarEscandallo(){
   const alergenos=Array.from(document.querySelectorAll('.alg input:checked')).map(i=>i.closest('.alg').textContent.trim());
   const fc=parseFloat(document.getElementById('margen-fc').value)||30;
   const neto=netoOn?(parseFloat(document.getElementById('margen-neto').value)||0):0;
+  const precioCarta = parseFloat(document.getElementById('precio-carta').value)||null; // NUEVO
 
   // Leer valores numéricos de las métricas
   const mCoste=document.getElementById('m-coste').textContent.replace(/[^0-9,.]/g,'').replace(',','.');
@@ -913,6 +979,7 @@ async function guardarEscandallo(){
     nombre_plato:nombre,
     categoria:document.getElementById('categoria').value||null,
     raciones:parseInt(document.getElementById('raciones').value)||1,
+    precio_carta: precioCarta, // NUEVO (requerirá que añadas esta columna a tu BD Supabase si quieres guardarlo)
     food_cost_pct:fc,
     margen_neto_pct:neto,
     ingredientes:ingredientesData,
