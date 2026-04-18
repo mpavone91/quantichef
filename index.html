@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QuantiChef — Escandallo inteligente para tu restaurante</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>QuantiChef — Calcula el coste real de tus platos</title>
+<meta name="description" content="Descubre cuánto te cuesta realmente cada plato y fija precios con margen real. Sin Excel, sin errores, en segundos.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --verde: #1E4D2B;
@@ -19,10 +20,13 @@
   --texto3: #8A8784;
   --dorado: #C4943A;
   --dorado-suave: #FFF4E0;
+  --rojo-suave: #FEF2F2;
+  --rojo: #DC2626;
   --blanco: #FFFFFF;
   --radio: 10px;
   --radio-lg: 16px;
 }
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--crema); color: var(--texto); line-height: 1.6; overflow-x: hidden; }
@@ -32,32 +36,24 @@ nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   padding: 1rem 2rem;
   display: flex; align-items: center; justify-content: space-between;
-  background: rgba(249,247,242,0.92);
-  backdrop-filter: blur(12px);
+  background: rgba(249,247,242,0.94);
+  backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(30,77,43,0.08);
 }
 .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.nav-logo-icon {
-  width: 34px; height: 34px; background: var(--verde); border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-}
-.nav-logo-icon svg { width: 18px; height: 18px; }
+.nav-logo-icon { width: 34px; height: 34px; background: var(--verde); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
 .nav-logo-text { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--verde); letter-spacing: -0.02em; }
 .nav-links { display: flex; align-items: center; gap: 2rem; }
 .nav-links a { font-size: 14px; color: var(--texto2); text-decoration: none; font-weight: 500; transition: color .2s; }
 .nav-links a:hover { color: var(--verde); }
-.nav-cta {
-  background: var(--verde); color: white; padding: 9px 20px;
-  border-radius: var(--radio); font-size: 14px; font-weight: 600;
-  text-decoration: none; transition: background .2s; white-space: nowrap;
-}
-.nav-cta:hover { background: var(--verde-medio); }
+.nav-cta { background: var(--verde); color: white; padding: 9px 20px; border-radius: var(--radio); font-size: 14px; font-weight: 600; text-decoration: none; transition: all .2s; white-space: nowrap; }
+.nav-cta:hover { background: var(--verde-medio); transform: translateY(-1px); }
 
 /* HERO */
 .hero {
   min-height: 100vh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 7rem 2rem 5rem;
+  padding: 8rem 2rem 5rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -65,269 +61,233 @@ nav {
 .hero::before {
   content: '';
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(30,77,43,0.07) 0%, transparent 70%);
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(30,77,43,0.06) 0%, transparent 70%);
   pointer-events: none;
 }
-.hero-tag {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: var(--verde-suave); color: var(--verde);
-  padding: 6px 14px; border-radius: 20px;
-  font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
-  margin-bottom: 1.8rem;
-  border: 1px solid var(--verde-mint);
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--rojo-suave); color: var(--rojo);
+  padding: 6px 16px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(220,38,38,0.15);
+  animation: fadeUp .5s ease both;
 }
-.hero-tag-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--verde-claro); }
+.hero-eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rojo); }
+
 .hero h1 {
   font-family: 'Fraunces', serif;
-  font-size: clamp(2.8rem, 6vw, 4.8rem);
+  font-size: clamp(2.6rem, 6vw, 5rem);
   font-weight: 300;
-  line-height: 1.1;
+  line-height: 1.08;
   letter-spacing: -0.03em;
   color: var(--texto);
-  margin-bottom: 1.6rem;
-  max-width: 820px;
+  margin-bottom: 1.5rem;
+  max-width: 860px;
+  animation: fadeUp .5s .1s ease both;
 }
-.hero h1 em {
-  font-style: italic;
-  color: var(--verde);
-}
+.hero h1 em { font-style: italic; color: var(--verde); }
+.hero h1 strong { font-weight: 600; }
+
 .hero-sub {
   font-size: clamp(1rem, 2vw, 1.2rem);
   color: var(--texto2);
-  max-width: 560px;
-  margin: 0 auto 2.8rem;
+  max-width: 540px;
+  margin: 0 auto 2.5rem;
   line-height: 1.7;
+  animation: fadeUp .5s .2s ease both;
 }
-.hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; }
+
+.hero-cta-wrap {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+  animation: fadeUp .5s .3s ease both;
+}
 .btn-primary {
   background: var(--verde); color: white;
-  padding: 14px 28px; border-radius: var(--radio);
+  padding: 15px 30px; border-radius: var(--radio);
   font-size: 15px; font-weight: 600;
   text-decoration: none; transition: all .2s;
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex; align-items: center; gap: 9px;
+  box-shadow: 0 4px 20px rgba(30,77,43,0.2);
 }
-.btn-primary:hover { background: var(--verde-medio); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(30,77,43,0.25); }
+.btn-primary:hover { background: var(--verde-medio); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(30,77,43,0.28); }
 .btn-secondary {
   background: transparent; color: var(--texto);
-  padding: 14px 28px; border-radius: var(--radio);
+  padding: 15px 28px; border-radius: var(--radio);
   font-size: 15px; font-weight: 500;
   text-decoration: none; transition: all .2s;
-  border: 1.5px solid var(--crema-oscura);
+  border: 1.5px solid #DDD9D0;
 }
-.btn-secondary:hover { border-color: var(--verde-mint); background: var(--verde-suave); }
+.btn-secondary:hover { border-color: var(--verde-mint); background: var(--verde-suave); color: var(--verde); }
 
-/* App preview */
+.hero-nota {
+  font-size: 12px; color: var(--texto3);
+  animation: fadeUp .5s .4s ease both;
+  margin-bottom: 4rem;
+}
+
+/* Preview app */
 .hero-preview {
-  width: 100%; max-width: 760px;
+  width: 100%; max-width: 780px;
   background: var(--blanco);
   border-radius: var(--radio-lg);
-  border: 1px solid rgba(30,77,43,0.12);
-  box-shadow: 0 32px 80px rgba(30,77,43,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid rgba(30,77,43,0.1);
+  box-shadow: 0 40px 100px rgba(30,77,43,0.1), 0 2px 8px rgba(0,0,0,0.05);
   overflow: hidden;
+  animation: fadeUp .6s .5s ease both;
 }
 .preview-bar {
-  background: var(--verde); padding: 14px 20px;
+  background: var(--verde); padding: 13px 18px;
   display: flex; align-items: center; justify-content: space-between;
 }
-.preview-logo { font-family: 'Fraunces', serif; font-size: 16px; color: white; font-weight: 600; }
-.preview-logo small { color: #A8D5B5; font-size: 11px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 400; display: block; letter-spacing: .05em; text-transform: uppercase; }
-.preview-badge { background: rgba(255,255,255,.15); color: white; font-size: 11px; padding: 3px 10px; border-radius: 20px; }
-.preview-body { padding: 20px; }
-.preview-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-.preview-field label { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--texto3); display: block; margin-bottom: 5px; }
-.preview-field input {
-  width: 100%; padding: 8px 10px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif;
-  border: 1px solid #E0DDD6; border-radius: 7px; background: #FAFAF8; color: var(--texto);
-  outline: none;
-}
-.preview-field input.filled { border-color: var(--verde-claro); background: var(--verde-suave); font-weight: 500; color: var(--verde); }
-.preview-btn-ia {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: var(--verde); color: white; padding: 9px 16px;
-  border-radius: 8px; font-size: 12px; font-weight: 600;
-  font-family: 'Plus Jakarta Sans', sans-serif; border: none; cursor: default; margin-bottom: 12px;
-}
-.preview-sugs { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-.preview-sug {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--verde-suave); border: 1px solid var(--verde-mint);
-  border-radius: 7px; padding: 7px 10px; font-size: 12px;
-}
+.preview-logo-wrap { display: flex; align-items: center; gap: 8px; }
+.preview-logo-icon { width: 24px; height: 24px; background: rgba(255,255,255,0.15); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+.preview-logo-text { font-family: 'Fraunces', serif; font-size: 14px; color: white; font-weight: 600; }
+.preview-logo-text small { color: #A8D5B5; font-size: 9px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 400; display: block; letter-spacing: .06em; text-transform: uppercase; margin-top: -1px; }
+.preview-badge { background: rgba(255,255,255,.15); color: white; font-size: 10px; padding: 3px 9px; border-radius: 20px; }
+.preview-body { padding: 18px; }
+.preview-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.preview-field label { font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--texto3); display: block; margin-bottom: 4px; }
+.preview-field input { width: 100%; padding: 7px 9px; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; border: 1px solid #E0DDD6; border-radius: 6px; background: #FAFAF8; color: var(--texto); outline: none; }
+.preview-field input.filled { border-color: #3D7A54; background: var(--verde-suave); font-weight: 600; color: var(--verde); }
+.preview-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--verde); color: white; padding: 8px 14px; border-radius: 7px; font-size: 11px; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; border: none; cursor: default; margin-bottom: 10px; }
+.preview-sugs { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.preview-sug { display: flex; align-items: center; gap: 7px; background: var(--verde-suave); border: 1px solid var(--verde-mint); border-radius: 6px; padding: 6px 9px; font-size: 11px; }
 .preview-sug-check { width: 14px; height: 14px; border-radius: 3px; background: var(--verde); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .preview-sug-name { font-weight: 600; color: var(--texto); flex: 1; }
-.preview-sug-qty { font-size: 11px; color: var(--texto3); background: white; padding: 2px 6px; border-radius: 4px; }
-.preview-sug-price { font-size: 11px; color: var(--verde); font-weight: 600; background: white; padding: 2px 6px; border-radius: 4px; }
-.preview-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
-.preview-metric { background: #FAFAF8; border: 1px solid #E0DDD6; border-radius: 8px; padding: 10px; text-align: center; }
-.preview-metric-label { font-size: 9px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--texto3); margin-bottom: 4px; }
-.preview-metric-val { font-family: 'Fraunces', serif; font-size: 18px; color: var(--texto); }
+.preview-sug-qty { font-size: 10px; color: var(--texto3); background: white; padding: 2px 5px; border-radius: 3px; }
+.preview-sug-price { font-size: 10px; color: var(--verde); font-weight: 600; background: white; padding: 2px 5px; border-radius: 3px; }
+.preview-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; }
+.preview-metric { background: #FAFAF8; border: 1px solid #E0DDD6; border-radius: 7px; padding: 9px; text-align: center; }
+.preview-metric-label { font-size: 8px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--texto3); margin-bottom: 3px; }
+.preview-metric-val { font-family: 'Fraunces', serif; font-size: 16px; color: var(--texto); }
 .preview-metric-val.good { color: var(--verde); }
+.preview-metric-val.bad { color: var(--rojo); }
 
-/* PRUEBA GRATIS */
-.prueba-banner {
-  background: var(--dorado-suave);
-  border: 1px solid rgba(196,148,58,0.25);
-  border-radius: var(--radio);
-  padding: 10px 20px;
-  display: inline-flex; align-items: center; gap: 10px;
-  font-size: 13px; color: var(--texto2); margin-bottom: 2rem;
-}
-.prueba-banner strong { color: var(--dorado); }
+/* DOLOR */
+.dolor-section { padding: 5rem 2rem; background: var(--texto); }
+.dolor-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+.dolor-title { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 300; color: white; margin-bottom: 1rem; letter-spacing: -0.02em; line-height: 1.2; }
+.dolor-title em { font-style: italic; color: #A8D5B5; }
+.dolor-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 3rem; }
+.dolor-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radio-lg); padding: 1.5rem; text-align: left; }
+.dolor-card-num { font-family: 'Fraunces', serif; font-size: 2.4rem; font-weight: 300; color: rgba(255,255,255,.2); margin-bottom: .5rem; line-height: 1; }
+.dolor-card h3 { font-size: .95rem; font-weight: 600; color: white; margin-bottom: .5rem; }
+.dolor-card p { font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.6; }
 
-/* SECCIÓN CÓMO FUNCIONA */
+/* CÓMO FUNCIONA */
 .section { padding: 6rem 2rem; }
 .section-inner { max-width: 1100px; margin: 0 auto; }
-.section-tag { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--verde); margin-bottom: 1rem; }
-.section-title {
-  font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 300; letter-spacing: -0.02em; line-height: 1.2;
-  color: var(--texto); margin-bottom: 1rem;
-}
+.section-tag { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--verde); margin-bottom: .875rem; }
+.section-title { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; letter-spacing: -0.02em; line-height: 1.2; color: var(--texto); margin-bottom: .875rem; }
 .section-title em { font-style: italic; color: var(--verde); }
-.section-sub { font-size: 1.05rem; color: var(--texto2); max-width: 520px; line-height: 1.7; margin-bottom: 3.5rem; }
+.section-sub { font-size: 1.05rem; color: var(--texto2); max-width: 500px; line-height: 1.7; margin-bottom: 3.5rem; }
 
-.steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
-.step { position: relative; }
-.step-num {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: var(--verde); color: white;
-  font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 1rem;
-}
-.step h3 { font-size: 1.05rem; font-weight: 600; color: var(--texto); margin-bottom: .5rem; }
-.step p { font-size: .95rem; color: var(--texto2); line-height: 1.6; }
-.step-connector {
-  position: absolute; top: 18px; left: calc(100% + 12px);
-  width: calc(100% - 60px); height: 1px;
-  background: var(--verde-mint);
-  display: none;
-}
+.steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+.step-num { width: 40px; height: 40px; border-radius: 50%; background: var(--verde); color: white; font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; display: flex; align-items: center; justify-content: center; margin-bottom: 1.1rem; }
+.step h3 { font-size: 1.05rem; font-weight: 600; color: var(--texto); margin-bottom: .5rem; line-height: 1.3; }
+.step p { font-size: .92rem; color: var(--texto2); line-height: 1.65; }
+
+/* EJEMPLO REAL */
+.ejemplo-section { background: var(--crema-oscura); padding: 6rem 2rem; }
+.ejemplo-card { max-width: 680px; margin: 0 auto; background: var(--blanco); border-radius: var(--radio-lg); border: 1px solid #E0DDD6; padding: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.05); }
+.ejemplo-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--texto3); margin-bottom: 1.25rem; }
+.ejemplo-row { display: flex; align-items: center; justify-content: space-between; padding: .75rem 0; border-bottom: 1px solid #F0EDE4; }
+.ejemplo-row:last-of-type { border-bottom: none; }
+.ejemplo-label { font-size: .92rem; color: var(--texto2); }
+.ejemplo-val { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 300; }
+.ejemplo-val.malo { color: var(--rojo); }
+.ejemplo-val.bien { color: var(--verde); }
+.ejemplo-resultado { margin-top: 1.25rem; background: var(--rojo-suave); border: 1px solid rgba(220,38,38,.15); border-radius: var(--radio); padding: 1rem 1.25rem; display: flex; align-items: center; gap: 12px; }
+.ejemplo-resultado.ok { background: var(--verde-suave); border-color: var(--verde-mint); }
+.ejemplo-resultado p { font-size: .92rem; color: var(--texto2); line-height: 1.5; }
+.ejemplo-resultado strong { color: var(--rojo); }
+.ejemplo-resultado.ok strong { color: var(--verde); }
 
 /* FEATURES */
-.features-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem; }
-.feature-card {
-  background: var(--blanco); border: 1px solid #E8E5DE;
-  border-radius: var(--radio-lg); padding: 1.8rem;
-  transition: all .2s;
-}
-.feature-card:hover { border-color: var(--verde-mint); box-shadow: 0 8px 32px rgba(30,77,43,0.08); transform: translateY(-2px); }
-.feature-icon {
-  width: 44px; height: 44px; border-radius: 10px;
-  background: var(--verde-suave); display: flex; align-items: center; justify-content: center;
-  margin-bottom: 1rem;
-}
-.feature-icon svg { width: 22px; height: 22px; color: var(--verde); }
-.feature-card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: .5rem; color: var(--texto); }
-.feature-card p { font-size: .92rem; color: var(--texto2); line-height: 1.65; }
-.feature-badge {
-  display: inline-block; margin-top: .75rem;
-  font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-  color: var(--dorado); background: var(--dorado-suave);
-  padding: 3px 8px; border-radius: 4px;
-}
+.features-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.25rem; }
+.feature-card { background: var(--blanco); border: 1px solid #E8E5DE; border-radius: var(--radio-lg); padding: 1.75rem; transition: all .2s; }
+.feature-card:hover { border-color: var(--verde-mint); box-shadow: 0 8px 32px rgba(30,77,43,0.07); transform: translateY(-2px); }
+.feature-icon { width: 42px; height: 42px; border-radius: 10px; background: var(--verde-suave); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+.feature-icon svg { width: 20px; height: 20px; color: var(--verde); }
+.feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: .4rem; color: var(--texto); }
+.feature-card p { font-size: .9rem; color: var(--texto2); line-height: 1.65; }
+.feature-badge { display: inline-block; margin-top: .625rem; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--dorado); background: var(--dorado-suave); padding: 3px 8px; border-radius: 4px; }
 
 /* PRICING */
 .pricing-section { background: var(--verde); padding: 6rem 2rem; }
-.pricing-inner { max-width: 900px; margin: 0 auto; text-align: center; }
-.pricing-title {
-  font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 300; letter-spacing: -0.02em; color: white; margin-bottom: .75rem;
-}
+.pricing-inner { max-width: 860px; margin: 0 auto; text-align: center; }
+.pricing-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--verde-mint); margin-bottom: .875rem; }
+.pricing-title { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 300; color: white; margin-bottom: .75rem; letter-spacing: -0.02em; line-height: 1.2; }
 .pricing-title em { font-style: italic; color: var(--verde-mint); }
-.pricing-sub { font-size: 1rem; color: rgba(255,255,255,.7); margin-bottom: 3rem; }
-.pricing-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 680px; margin: 0 auto 2.5rem; }
-.pricing-card {
-  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
-  border-radius: var(--radio-lg); padding: 2rem;
-  text-align: left; transition: all .2s;
-}
-.pricing-card:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.25); }
-.pricing-card.destacado {
-  background: white; border-color: white;
-}
-.pricing-card.destacado .pricing-plan { color: var(--verde); }
+.pricing-sub { font-size: 1rem; color: rgba(255,255,255,.65); margin-bottom: 3rem; line-height: 1.6; }
+.pricing-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; max-width: 660px; margin: 0 auto 2rem; }
+.pricing-card { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: var(--radio-lg); padding: 2rem; text-align: left; transition: all .2s; }
+.pricing-card:hover { background: rgba(255,255,255,.12); }
+.pricing-card.destacado { background: white; border-color: white; }
+.pricing-card.destacado .pricing-plan { color: var(--verde-claro); }
 .pricing-card.destacado .pricing-price { color: var(--verde); }
 .pricing-card.destacado .pricing-period { color: var(--texto3); }
 .pricing-card.destacado .pricing-feature { color: var(--texto2); }
 .pricing-card.destacado .pricing-feature svg { color: var(--verde); }
-.pricing-label {
-  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--dorado); background: var(--dorado-suave);
-  padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: .75rem;
-}
-.pricing-plan { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.6); margin-bottom: .5rem; }
-.pricing-price { font-family: 'Fraunces', serif; font-size: 3rem; font-weight: 300; color: white; line-height: 1; }
-.pricing-period { font-size: 13px; color: rgba(255,255,255,.5); margin-bottom: 1.5rem; }
-.pricing-features { list-style: none; display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.5rem; }
-.pricing-feature { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.8); }
-.pricing-feature svg { width: 15px; height: 15px; color: var(--verde-mint); flex-shrink: 0; }
-.pricing-btn {
-  display: block; text-align: center; text-decoration: none;
-  padding: 11px; border-radius: var(--radio); font-size: 14px; font-weight: 600;
-  background: var(--verde-suave); color: var(--verde); transition: all .2s;
-}
+.pricing-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--dorado); background: var(--dorado-suave); padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: .75rem; }
+.pricing-plan { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.55); margin-bottom: .4rem; }
+.pricing-price { font-family: 'Fraunces', serif; font-size: 2.8rem; font-weight: 300; color: white; line-height: 1; }
+.pricing-period { font-size: 12px; color: rgba(255,255,255,.45); margin-bottom: 1.25rem; }
+.pricing-features { list-style: none; display: flex; flex-direction: column; gap: .55rem; margin-bottom: 1.5rem; }
+.pricing-feature { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.75); }
+.pricing-feature svg { width: 14px; height: 14px; color: var(--verde-mint); flex-shrink: 0; }
+.pricing-btn { display: block; text-align: center; text-decoration: none; padding: 12px; border-radius: var(--radio); font-size: 14px; font-weight: 700; background: rgba(255,255,255,.12); color: white; transition: all .2s; }
 .pricing-card.destacado .pricing-btn { background: var(--verde); color: white; }
-.pricing-btn:hover { opacity: .9; transform: translateY(-1px); }
-.pricing-note { font-size: 13px; color: rgba(255,255,255,.5); }
+.pricing-btn:hover { opacity: .88; transform: translateY(-1px); }
+.pricing-note { font-size: 12px; color: rgba(255,255,255,.45); }
 
 /* FAQ */
-.faq-list { display: flex; flex-direction: column; gap: .75rem; max-width: 700px; }
+.faq-list { display: flex; flex-direction: column; gap: .625rem; }
 .faq-item { background: var(--blanco); border: 1px solid #E8E5DE; border-radius: var(--radio); overflow: hidden; }
-.faq-q {
-  width: 100%; padding: 1.1rem 1.4rem; text-align: left; background: none; border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  font-size: .95rem; font-weight: 600; color: var(--texto); font-family: 'Plus Jakarta Sans', sans-serif;
-}
+.faq-q { width: 100%; padding: 1.1rem 1.4rem; text-align: left; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 1rem; font-size: .95rem; font-weight: 600; color: var(--texto); font-family: 'Plus Jakarta Sans', sans-serif; }
 .faq-q svg { width: 18px; height: 18px; color: var(--texto3); transition: transform .2s; flex-shrink: 0; }
 .faq-item.open .faq-q svg { transform: rotate(45deg); }
-.faq-a { display: none; padding: 0 1.4rem 1.1rem; font-size: .92rem; color: var(--texto2); line-height: 1.7; }
+.faq-a { display: none; padding: 0 1.4rem 1.1rem; font-size: .9rem; color: var(--texto2); line-height: 1.7; }
 .faq-item.open .faq-a { display: block; }
 
 /* CTA FINAL */
-.cta-section { padding: 6rem 2rem; text-align: center; background: var(--crema-oscura); }
-.cta-inner { max-width: 620px; margin: 0 auto; }
-.cta-title {
-  font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 300; letter-spacing: -0.02em; color: var(--texto); margin-bottom: 1rem;
-}
+.cta-section { padding: 7rem 2rem; text-align: center; position: relative; overflow: hidden; }
+.cta-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(30,77,43,0.05) 0%, transparent 70%); pointer-events: none; }
+.cta-inner { max-width: 600px; margin: 0 auto; position: relative; }
+.cta-title { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; letter-spacing: -0.02em; color: var(--texto); margin-bottom: 1rem; line-height: 1.15; }
 .cta-title em { font-style: italic; color: var(--verde); }
 .cta-sub { font-size: 1rem; color: var(--texto2); margin-bottom: 2.5rem; line-height: 1.7; }
-.cta-form { display: flex; gap: 10px; max-width: 440px; margin: 0 auto 1rem; }
-.cta-form input {
-  flex: 1; padding: 13px 16px; border: 1.5px solid #E0DDD6; border-radius: var(--radio);
-  font-size: 14px; font-family: 'Plus Jakarta Sans', sans-serif;
-  background: white; color: var(--texto); outline: none; transition: border-color .2s;
-}
-.cta-form input:focus { border-color: var(--verde); box-shadow: 0 0 0 3px rgba(30,77,43,.08); }
-.cta-note { font-size: 12px; color: var(--texto3); }
+.cta-nota { font-size: 12px; color: var(--texto3); margin-top: 1rem; }
 
 /* FOOTER */
-footer {
-  background: var(--verde); padding: 2.5rem 2rem;
-  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-}
-.footer-logo { font-family: 'Fraunces', serif; font-size: 18px; color: white; font-weight: 600; }
+footer { background: var(--texto); padding: 2.5rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.footer-logo { font-family: 'Fraunces', serif; font-size: 18px; color: white; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 .footer-links { display: flex; gap: 1.5rem; }
-.footer-links a { font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; transition: color .2s; }
+.footer-links a { font-size: 13px; color: rgba(255,255,255,.5); text-decoration: none; transition: color .2s; }
 .footer-links a:hover { color: white; }
-.footer-copy { font-size: 12px; color: rgba(255,255,255,.4); }
+.footer-copy { font-size: 12px; color: rgba(255,255,255,.3); }
 
-/* Animaciones entrada */
+/* Animaciones */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 .fade-up { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
 .fade-up.visible { opacity: 1; transform: none; }
 
-@media(max-width:768px){
+@media(max-width:768px) {
   nav { padding: .875rem 1.25rem; }
   .nav-links { display: none; }
   .hero { padding: 6rem 1.25rem 4rem; }
-  .steps { grid-template-columns: 1fr; }
+  .dolor-grid { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; gap: 1.5rem; }
   .features-grid { grid-template-columns: 1fr; }
   .pricing-cards { grid-template-columns: 1fr; }
   .preview-row { grid-template-columns: 1fr 1fr; }
   .preview-metrics { grid-template-columns: repeat(2,1fr); }
   footer { flex-direction: column; text-align: center; }
-  .cta-form { flex-direction: column; }
+  .ejemplo-section { padding: 4rem 1.25rem; }
+  .section { padding: 4rem 1.25rem; }
 }
 </style>
 </head>
@@ -335,8 +295,8 @@ footer {
 
 <!-- NAV -->
 <nav>
-  <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none">
-    <div style="width:34px;height:34px;background:#1E4D2B;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-icon">
       <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
         <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
         <line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
@@ -349,7 +309,7 @@ footer {
         <rect x="24" y="14" width="2.2" height="8" rx="1" fill="white"/>
       </svg>
     </div>
-    <span style="font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:600;color:#1E4D2B;letter-spacing:-0.02em">QuantiChef</span>
+    <span class="nav-logo-text">QuantiChef</span>
   </a>
   <div class="nav-links">
     <a href="#como-funciona">Cómo funciona</a>
@@ -357,55 +317,91 @@ footer {
     <a href="#precios">Precios</a>
     <a href="#faq">FAQ</a>
   </div>
-  <a href="/escandallo" class="nav-cta">Empezar gratis</a>
+  <a href="/login" class="nav-cta">Calcular mi primer plato gratis</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-tag">
-    <span class="hero-tag-dot"></span>
-    Hecho por hosteleros para hosteleros
+  <div class="hero-eyebrow">
+    <span class="hero-eyebrow-dot"></span>
+    Para dueños y chefs que quieren saber la verdad
   </div>
-  <h1>El escandallo que<br><em>entiende tu cocina</em></h1>
-  <p class="hero-sub">Calcula el coste real de cada plato en segundos. La IA sugiere ingredientes, cantidades y precios de mercado. Tú ajustas y cobras lo que toca.</p>
-  <div class="prueba-banner">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-    <span>Primeros <strong>7 días gratis</strong> — sin tarjeta de crédito</span>
-  </div>
-  <div class="hero-ctas">
-    <a href="/escandallo" class="btn-primary">
+  <h1>No sabes cuánto ganas<br>con cada plato.<br><em>Y te está costando dinero.</em></h1>
+  <p class="hero-sub">Descubre el coste real de tus platos en segundos. Fija precios con margen real desde el primer día. Sin Excel, sin errores, sin perder el tiempo.</p>
+  <div class="hero-cta-wrap">
+    <a href="/login" class="btn-primary">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      Probar ahora gratis
+      Calcular mi primer plato gratis
     </a>
     <a href="#como-funciona" class="btn-secondary">Ver cómo funciona</a>
   </div>
+  <p class="hero-nota">7 días gratis · Sin tarjeta de crédito · Cancela cuando quieras</p>
 
   <!-- App preview -->
-  <div class="hero-preview fade-up">
+  <div class="hero-preview">
     <div class="preview-bar">
-      <div class="preview-logo">QuantiChef<small>Escandallo inteligente con IA</small></div>
-      <div class="preview-badge">v2.0</div>
+      <div class="preview-logo-wrap">
+        <div class="preview-logo-icon">
+          <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+            <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
+            <line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="9" y1="10" x2="9" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+            <line x1="12" y1="10" x2="12" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+            <line x1="15" y1="10" x2="15" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M9 14.5 Q12 17 15 14.5" fill="none" stroke="white" stroke-width="1.1" stroke-linecap="round"/>
+            <rect x="18" y="18.5" width="2.2" height="3.5" rx="1" fill="rgba(255,255,255,0.4)"/>
+            <rect x="21" y="16.5" width="2.2" height="5.5" rx="1" fill="rgba(255,255,255,0.65)"/>
+            <rect x="24" y="14" width="2.2" height="8" rx="1" fill="white"/>
+          </svg>
+        </div>
+        <div class="preview-logo-text">QuantiChef<small>escandallo inteligente</small></div>
+      </div>
+      <div class="preview-badge">En directo</div>
     </div>
     <div class="preview-body">
       <div class="preview-row">
-        <div class="preview-field"><label>Nombre del plato</label><input value="Merluza a la bilbaína" class="filled" readonly></div>
-        <div class="preview-field"><label>Categoría</label><input value="Principal" class="filled" readonly></div>
-        <div class="preview-field"><label>Nº raciones</label><input value="4" class="filled" readonly></div>
+        <div class="preview-field"><label>Plato</label><input value="Croquetas de jamón" class="filled" readonly></div>
+        <div class="preview-field"><label>Categoría</label><input value="Entrante" class="filled" readonly></div>
+        <div class="preview-field"><label>Raciones</label><input value="4" class="filled" readonly></div>
       </div>
-      <button class="preview-btn-ia">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        Sugerir ingredientes y precios con IA
+      <button class="preview-btn">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        Calcular ingredientes y costes
       </button>
       <div class="preview-sugs">
-        <div class="preview-sug"><div class="preview-sug-check"><svg width="8" height="8" viewBox="0 0 12 12" fill="white"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" fill="none"/></svg></div><span class="preview-sug-name">Merluza fresca (filete)</span><span class="preview-sug-qty">280 g · merma 30%</span><span class="preview-sug-price">~9.50€/kg</span></div>
-        <div class="preview-sug"><div class="preview-sug-check"><svg width="8" height="8" viewBox="0 0 12 12" fill="white"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" fill="none"/></svg></div><span class="preview-sug-name">Aceite de oliva virgen</span><span class="preview-sug-qty">40 ml</span><span class="preview-sug-price">~6.50€/l</span></div>
-        <div class="preview-sug"><div class="preview-sug-check"><svg width="8" height="8" viewBox="0 0 12 12" fill="white"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" fill="none"/></svg></div><span class="preview-sug-name">Ajo fresco</span><span class="preview-sug-qty">8 g · merma 10%</span><span class="preview-sug-price">~3.20€/kg</span></div>
+        <div class="preview-sug"><div class="preview-sug-check"><svg width="8" height="8" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5"/></svg></div><span class="preview-sug-name">Jamón ibérico</span><span class="preview-sug-qty">120 g · merma 8%</span><span class="preview-sug-price">~45€/kg</span></div>
+        <div class="preview-sug"><div class="preview-sug-check"><svg width="8" height="8" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5"/></svg></div><span class="preview-sug-name">Bechamel</span><span class="preview-sug-qty">200 ml</span><span class="preview-sug-price">~2.40€/l</span></div>
+        <div class="preview-sug"><div class="preview-sug-check"><svg width="8" height="8" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5"/></svg></div><span class="preview-sug-name">Pan rallado</span><span class="preview-sug-qty">80 g</span><span class="preview-sug-price">~1.80€/kg</span></div>
       </div>
       <div class="preview-metrics">
-        <div class="preview-metric"><div class="preview-metric-label">Coste total</div><div class="preview-metric-val">4,82 €</div></div>
-        <div class="preview-metric"><div class="preview-metric-label">Por ración</div><div class="preview-metric-val">1,21 €</div></div>
-        <div class="preview-metric"><div class="preview-metric-label">Precio venta</div><div class="preview-metric-val good">4,02 €</div></div>
-        <div class="preview-metric"><div class="preview-metric-label">Margen</div><div class="preview-metric-val good">69.9%</div></div>
+        <div class="preview-metric"><div class="preview-metric-label">Coste total</div><div class="preview-metric-val">3,12 €</div></div>
+        <div class="preview-metric"><div class="preview-metric-label">Por ración</div><div class="preview-metric-val">0,78 €</div></div>
+        <div class="preview-metric"><div class="preview-metric-label">Precio venta</div><div class="preview-metric-val good">2,60 €</div></div>
+        <div class="preview-metric"><div class="preview-metric-label">Margen</div><div class="preview-metric-val good">70%</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN DOLOR -->
+<section class="dolor-section">
+  <div class="dolor-inner">
+    <h2 class="dolor-title fade-up">Muchos restaurantes trabajan duro<br>y aun así <em>no ganan lo que deberían</em></h2>
+    <div class="dolor-grid">
+      <div class="dolor-card fade-up">
+        <div class="dolor-card-num">01</div>
+        <h3>Precios puestos a ojo</h3>
+        <p>Sin saber el coste real, los precios se fijan por intuición. Algunos platos dejan margen. Otros, directamente generan pérdidas.</p>
+      </div>
+      <div class="dolor-card fade-up">
+        <div class="dolor-card-num">02</div>
+        <h3>La merma no se calcula</h3>
+        <p>Compras 1 kg de pescado y sirves 600 g. Ese 40% de pérdida tiene un coste que casi nadie incluye en el precio del plato.</p>
+      </div>
+      <div class="dolor-card fade-up">
+        <div class="dolor-card-num">03</div>
+        <h3>No hay tiempo para Excel</h3>
+        <p>Los escandallos manuales llevan horas. Se hacen una vez, se quedan desactualizados y nadie los vuelve a mirar.</p>
       </div>
     </div>
   </div>
@@ -415,63 +411,103 @@ footer {
 <section class="section" id="como-funciona">
   <div class="section-inner">
     <p class="section-tag fade-up">Cómo funciona</p>
-    <h2 class="section-title fade-up">Tres pasos y tu escandallo<br><em>está listo</em></h2>
-    <p class="section-sub fade-up">Sin formación. Sin reuniones. Sin Excel. Solo escribe el nombre del plato y deja que la IA haga el trabajo pesado.</p>
+    <h2 class="section-title fade-up">En menos de 30 segundos sabes<br>si <em>estás ganando dinero o no</em></h2>
+    <p class="section-sub fade-up">Sin formación. Sin reuniones. Sin configurar nada.</p>
     <div class="steps">
       <div class="step fade-up">
         <div class="step-num">1</div>
-        <h3>Escribe el nombre del plato</h3>
-        <p>Escribe el nombre tal como aparece en tu carta. QuantiChef entiende cualquier receta española o internacional.</p>
+        <h3>Escribe el nombre de cualquier plato de tu carta</h3>
+        <p>Aunque solo lo tengas en la cabeza. QuantiChef reconoce cualquier receta española o internacional.</p>
       </div>
       <div class="step fade-up">
         <div class="step-num">2</div>
-        <h3>La IA sugiere ingredientes y precios</h3>
-        <p>En segundos recibes ingredientes típicos, cantidades ajustadas a tus raciones, precios de mercado en España y porcentaje de merma estimado.</p>
+        <h3>Te mostramos lo que realmente te cuesta</h3>
+        <p>Ingredientes, cantidades, precios de mercado y porcentaje de merma real. Tú solo ajustas lo que no cuadre con tu proveedor.</p>
       </div>
       <div class="step fade-up">
         <div class="step-num">3</div>
-        <h3>Ajusta y conoce tu coste real</h3>
-        <p>Edita los precios con los de tu proveedor real. QuantiChef calcula al instante el coste, el precio de venta y tu margen.</p>
+        <h3>Ves al instante si el plato te da dinero</h3>
+        <p>Verde si el margen es sano. Rojo si estás vendiendo por debajo de lo que debería. Sin cálculos, sin errores.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EJEMPLO REAL -->
+<section class="ejemplo-section">
+  <div class="section-inner">
+    <p class="section-tag fade-up" style="text-align:center">Ejemplo real</p>
+    <h2 class="section-title fade-up" style="text-align:center;margin-bottom:.5rem">El plato que crees que te deja margen<br><em>puede que no lo haga</em></h2>
+    <p class="section-sub fade-up" style="text-align:center;margin:0 auto 3rem">Un ejemplo con números reales. Sin trucos.</p>
+    <div class="ejemplo-card fade-up">
+      <div class="ejemplo-title">Solomillo a la pimienta — 1 ración</div>
+      <div class="ejemplo-row">
+        <span class="ejemplo-label">Solomillo (200 g útiles, merma 25%)</span>
+        <span class="ejemplo-val">3,75 €</span>
+      </div>
+      <div class="ejemplo-row">
+        <span class="ejemplo-label">Nata, pimienta, cognac</span>
+        <span class="ejemplo-val">0,65 €</span>
+      </div>
+      <div class="ejemplo-row">
+        <span class="ejemplo-label">Guarnición (patatas, verduras)</span>
+        <span class="ejemplo-val">0,48 €</span>
+      </div>
+      <div class="ejemplo-row">
+        <span class="ejemplo-label"><strong>Coste real por ración</strong></span>
+        <span class="ejemplo-val malo"><strong>4,88 €</strong></span>
+      </div>
+      <div class="ejemplo-row">
+        <span class="ejemplo-label">Precio en carta</span>
+        <span class="ejemplo-val">14,50 €</span>
+      </div>
+      <div class="ejemplo-row">
+        <span class="ejemplo-label">Food cost real</span>
+        <span class="ejemplo-val bien">33,6% ✓</span>
+      </div>
+      <div class="ejemplo-resultado ok">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E4D2B" stroke-width="2" style="flex-shrink:0"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <p>Este plato está bien calculado. Deja <strong style="color:var(--verde)">9,62 € de margen por ración</strong>. Pero sin calcularlo, ¿lo sabías seguro?</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FUNCIONALIDADES -->
-<section class="section" id="funcionalidades" style="background:var(--crema-oscura)">
+<section class="section" id="funcionalidades">
   <div class="section-inner">
     <p class="section-tag fade-up">Funcionalidades</p>
-    <h2 class="section-title fade-up">Todo lo que necesita<br><em>tu cocina</em></h2>
-    <p class="section-sub fade-up">Diseñado para el chef que prefiere cocinar antes que rellenar hojas de cálculo.</p>
+    <h2 class="section-title fade-up">Todo lo que necesitas para dejar<br>de ir a ciegas con <em>tus precios</em></h2>
+    <p class="section-sub fade-up">Diseñado para el chef que prefiere cocinar. No para el que le gusta hacer hojas de cálculo.</p>
     <div class="features-grid">
       <div class="feature-card fade-up">
         <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         </div>
-        <h3>IA que conoce la cocina española</h3>
-        <p>Sugiere ingredientes con cantidades reales, precios de proveedor en España y porcentaje de merma para cada ingrediente. Tú solo confirmas o ajustas.</p>
+        <h3>No tienes que pensar los ingredientes</h3>
+        <p>Escribe el nombre del plato y te damos los ingredientes típicos con cantidades reales, precios de mercado y porcentaje de merma. Tú solo confirmas o ajustas.</p>
       </div>
       <div class="feature-card fade-up">
         <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
         </div>
-        <h3>Cálculo de mermas incluido</h3>
-        <p>Activa el modo mermas para platos con pescado, carne o verduras. QuantiChef calcula la cantidad bruta real que necesitas comprar para obtener la cantidad útil del plato.</p>
-        <span class="feature-badge">Nuevo en v2.0</span>
-      </div>
-      <div class="feature-card fade-up">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-        </div>
-        <h3>14 alérgenos según normativa EU</h3>
-        <p>Marca los alérgenos presentes en cada plato conforme al Reglamento EU 1169/2011. Imprime la ficha técnica en PDF para tener siempre al día la documentación de cocina.</p>
+        <h3>La merma real incluida</h3>
+        <p>Lo que compras no es lo que sirves. QuantiChef calcula automáticamente la cantidad bruta que necesitas comprar para obtener la cantidad útil del plato.</p>
+        <span class="feature-badge">Función Pro</span>
       </div>
       <div class="feature-card fade-up">
         <div class="feature-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
         </div>
-        <h3>Food cost y margen en tiempo real</h3>
-        <p>Ajusta el slider de food cost y el precio de venta se recalcula al instante. Indicador visual en verde, naranja o rojo según la rentabilidad del plato.</p>
+        <h3>Verde o rojo en un vistazo</h3>
+        <p>Sabes al instante si el plato es rentable o es un problema. Sin fórmulas, sin interpretar números. Solo miras el color.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        <h3>Edita todo con los precios de tu proveedor</h3>
+        <p>Los precios sugeridos son de mercado. Cámbialos por los de tu proveedor real y el coste se recalcula al instante.</p>
       </div>
     </div>
   </div>
@@ -480,8 +516,8 @@ footer {
 <!-- PRICING -->
 <section class="pricing-section" id="precios">
   <div class="pricing-inner">
-    <p class="section-tag fade-up" style="color:var(--verde-mint)">Precios</p>
-    <h2 class="pricing-title fade-up">Simple y <em>sin sorpresas</em></h2>
+    <p class="pricing-eyebrow fade-up">Precios</p>
+    <h2 class="pricing-title fade-up">Un solo plato mal calculado<br>ya te cuesta <em>más que esto</em></h2>
     <p class="pricing-sub fade-up">Una licencia por restaurante. Sin contratos. Sin permanencia. Cancela cuando quieras.</p>
     <div class="pricing-cards">
       <div class="pricing-card fade-up">
@@ -490,12 +526,12 @@ footer {
         <div class="pricing-period">al mes · por restaurante</div>
         <ul class="pricing-features">
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Escandallos ilimitados</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>IA con precios y mermas</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>14 alérgenos EU</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Exportar PDF</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Cálculo automático de ingredientes</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>14 alérgenos EU incluidos</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Exportar ficha técnica en PDF</li>
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Chat de soporte</li>
         </ul>
-        <a href="/escandallo" class="pricing-btn">Empezar 7 días gratis</a>
+        <a href="/login" class="pricing-btn">Empezar 7 días gratis</a>
       </div>
       <div class="pricing-card destacado fade-up">
         <div class="pricing-label">Ahorra 99€</div>
@@ -504,61 +540,54 @@ footer {
         <div class="pricing-period">al año · por restaurante</div>
         <ul class="pricing-features">
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Todo del plan mensual</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Cálculo de mermas incluido</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Margen neto objetivo</li>
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Módulo Stock (próximo)</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Costes fijos (próximo)</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Acceso prioritario novedades</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Soporte prioritario</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Acceso prioritario a novedades</li>
         </ul>
-        <a href="/escandallo" class="pricing-btn">Empezar 7 días gratis</a>
+        <a href="/login" class="pricing-btn">Empezar 7 días gratis</a>
       </div>
     </div>
-    <p class="pricing-note">7 días de prueba gratuita · 5 escandallos gratis. Sin tarjeta de crédito.</p>
+    <p class="pricing-note">7 días de prueba gratuita en ambos planes · Sin tarjeta de crédito</p>
   </div>
 </section>
 
 <!-- FAQ -->
-<section class="section" id="faq">
+<section class="section" id="faq" style="background:var(--crema-oscura)">
   <div class="section-inner" style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start">
     <div>
       <p class="section-tag fade-up">FAQ</p>
-      <h2 class="section-title fade-up">Preguntas<br><em>frecuentes</em></h2>
-      <p class="section-sub fade-up" style="margin-bottom:0">Si tienes más dudas, escríbenos por el chat y te respondemos en menos de 24h.</p>
+      <h2 class="section-title fade-up">Tres preguntas<br>que te estarás <em>haciendo</em></h2>
+      <p style="font-size:.95rem;color:var(--texto2);line-height:1.7;margin-top:.5rem" class="fade-up">Si tienes más dudas, escríbenos por el chat. Te respondemos en menos de 24h.</p>
     </div>
     <div class="faq-list fade-up">
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Necesito saber de tecnología para usar QuantiChef?
+          ¿Necesito saber de tecnología para usarlo?
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         </button>
-        <div class="faq-a">No. Si sabes escribir en Google, sabes usar QuantiChef. Escribe el nombre del plato, pulsa el botón verde y la IA hace el resto. Diseñado para chefs, no para informáticos.</div>
+        <div class="faq-a">No. Si sabes escribir en el móvil, sabes usar QuantiChef. Escribes el nombre del plato, pulsas un botón y en segundos tienes el coste calculado. Diseñado para chefs, no para informáticos.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Los precios que sugiere la IA son fiables?
+          ¿Y si mis precios ya están bien calculados?
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         </button>
-        <div class="faq-a">Son precios aproximados basados en el mercado español de hostelería. Sirven como punto de partida. Siempre puedes — y debes — ajustarlos con los precios reales de tu proveedor para obtener el coste exacto.</div>
+        <div class="faq-a">Perfecto. Confirmas que todo está bien y tienes un documento oficial con la ficha técnica de cada plato, los alérgenos y el coste desglosado. Eso también tiene valor si te visita sanidad o si quieres vender el negocio.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Qué es la merma y para qué sirve?
+          ¿Cuánto tiempo lleva calcular un plato?
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         </button>
-        <div class="faq-a">La merma es el porcentaje de ingrediente que se pierde al limpiar, pelar o cocinar. Un filete de merluza pierde un 30% al limpiarlo. Si el plato lleva 200g limpios, necesitas comprar 286g reales. QuantiChef calcula esto automáticamente cuando activas el modo mermas.</div>
+        <div class="faq-a">Entre 30 segundos y 2 minutos dependiendo de lo que ajustes. Si aceptas los ingredientes sugeridos tal cual, en 30 segundos tienes el coste completo con mermas y precio de venta recomendado.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
           ¿Puedo cancelar cuando quiera?
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         </button>
-        <div class="faq-a">Sí. Sin permanencia, sin penalizaciones. Cancelas desde tu cuenta en cualquier momento y dejas de pagar al finalizar el periodo. Tus datos se conservan 30 días por si cambias de opinión. Durante la prueba puedes crear hasta 5 escandallos completos.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Cuándo llega el módulo de stock?
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-        </button>
-        <div class="faq-a">Estamos trabajando en ello. Los clientes del plan anual tendrán acceso prioritario cuando esté disponible. El módulo de stock se conectará directamente con el escandallo — cuando recibas mercancía, los precios se actualizarán solos.</div>
+        <div class="faq-a">Sí. Sin permanencia, sin penalizaciones. Cancelas desde tu cuenta en cualquier momento. Tus datos se conservan 30 días por si cambias de opinión.</div>
       </div>
     </div>
   </div>
@@ -567,19 +596,34 @@ footer {
 <!-- CTA FINAL -->
 <section class="cta-section">
   <div class="cta-inner">
-    <h2 class="cta-title fade-up">Empieza a cobrar<br><em>lo que realmente cuesta</em></h2>
-    <p class="cta-sub fade-up">Únete a los restaurantes que ya conocen el coste real de cada plato. 7 días gratis, sin tarjeta de crédito.</p>
-    <div class="cta-form fade-up">
-      <input type="email" placeholder="tu@email.com">
-      <a href="/escandallo" class="btn-primary" style="white-space:nowrap">Empezar gratis</a>
-    </div>
-    <p class="cta-note fade-up">Sin tarjeta de crédito · Cancela cuando quieras · Soporte en español</p>
+    <h2 class="cta-title fade-up">Tu carta puede estar<br>perdiendo dinero <em>ahora mismo.</em></h2>
+    <p class="cta-sub fade-up">No necesitas vender más. Necesitas calcular mejor. Descúbrelo en 2 minutos.</p>
+    <a href="/login" class="btn-primary fade-up" style="display:inline-flex;margin:0 auto">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Calcular mi primer plato gratis
+    </a>
+    <p class="cta-nota fade-up" style="margin-top:1.25rem">7 días gratis · Sin tarjeta · Cancela cuando quieras</p>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <span style="font-family:'Fraunces',Georgia,serif;font-size:18px;color:white;font-weight:600;letter-spacing:-0.02em">QuantiChef</span>
+  <div class="footer-logo">
+    <div style="width:28px;height:28px;background:rgba(255,255,255,0.12);border-radius:7px;display:flex;align-items:center;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+        <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
+        <line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="9" y1="10" x2="9" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <line x1="12" y1="10" x2="12" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <line x1="15" y1="10" x2="15" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M9 14.5 Q12 17 15 14.5" fill="none" stroke="white" stroke-width="1.1" stroke-linecap="round"/>
+        <rect x="18" y="18.5" width="2.2" height="3.5" rx="1" fill="rgba(255,255,255,0.4)"/>
+        <rect x="21" y="16.5" width="2.2" height="5.5" rx="1" fill="rgba(255,255,255,0.65)"/>
+        <rect x="24" y="14" width="2.2" height="8" rx="1" fill="white"/>
+      </svg>
+    </div>
+    QuantiChef
+  </div>
   <div class="footer-links">
     <a href="#como-funciona">Cómo funciona</a>
     <a href="#precios">Precios</a>
@@ -591,17 +635,15 @@ footer {
 
 <script>
 function toggleFaq(btn){
-  const item=btn.closest('.faq-item');
-  const isOpen=item.classList.contains('open');
-  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
-  if(!isOpen)item.classList.add('open');
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
 }
-
-// Scroll animations
-const observer=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
-},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
-document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: .1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
