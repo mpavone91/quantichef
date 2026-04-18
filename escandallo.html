@@ -208,6 +208,10 @@
     </div>
   </a>
   <div class="header-right">
+    <a href="/dashboard" style="font-size:12px;color:rgba(255,255,255,.6);text-decoration:none;display:flex;align-items:center;gap:5px;padding:6px 10px;border:1px solid rgba(255,255,255,.2);border-radius:7px;transition:all .15s" onmouseover="this.style.color='white';this.style.borderColor='rgba(255,255,255,.4)'" onmouseout="this.style.color='rgba(255,255,255,.6)';this.style.borderColor='rgba(255,255,255,.2)'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Mi cocina
+    </a>
     <span style="font-size:12px;color:rgba(255,255,255,.6);display:none" id="restaurante-nombre-wrap">📍 <span id="restaurante-nombre"></span></span>
     <div class="trial-badge" id="trial-badge">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -310,7 +314,7 @@
     <div id="ingredientes"></div>
     <button class="btn-add-manual" onclick="addIng()">+ Añadir ingrediente manualmente</button>
     <p class="hint" id="merma-hint" style="display:none">Con mermas activas: coste = cantidad bruta real × precio (cantidad útil ÷ (1 − merma%)).</p>
-    <p class="hint">Usa la IA o añade manualmente. Edita los precios con los de tu proveedor real.</p>
+    <p class="hint">Calcula automáticamente o añade manualmente. Edita los precios con los de tu proveedor real.</p>
   </div>
 
   <!-- MÉTRICAS -->
@@ -409,16 +413,30 @@ async function checkTrial() {
     if (!session) return;
     authToken = session.access_token;
 
-    const res = await fetch('/api/check-trial', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken }
-    });
-    const data = await res.json();
-    esPremium = data.esPro || false;
-    trialCount = data.count || 0;
-    updateTrialBadge(data);
+    // Get restaurante plan
+    const { data: rest } = await sb.from('restaurantes')
+      .select('id, plan')
+      .eq('user_id', session.user.id)
+      .single();
 
-    if (esPremium) {
+    if (!rest) return;
+    esPremium = rest.plan === 'pro';
+
+    if (!esPremium) {
+      // Count real escandallos from DB — no localStorage tricks possible
+      const { count } = await sb.from('escandallos')
+        .select('id', { count: 'exact', head: true })
+        .eq('restaurante_id', rest.id);
+
+      trialCount = count || 0;
+      const restantes = Math.max(0, MAX_FREE - trialCount);
+      document.getElementById('trial-count').textContent = restantes + ' de ' + MAX_FREE;
+      if (restantes === 0) {
+        document.getElementById('trial-badge').classList.add('agotado');
+        document.getElementById('limit-banner').classList.add('visible');
+      }
+    } else {
+      document.getElementById('trial-badge').style.display = 'none';
       document.getElementById('merma-lock').style.display = 'none';
       document.getElementById('neto-lock').style.display = 'none';
     }
@@ -747,7 +765,8 @@ async function guardarEscandallo(){
   if(!nombre){alert('Escribe el nombre del plato antes de guardar.');return;}
   const btn=document.getElementById('btn-save');
   const btnOriginal=btn.innerHTML;
-  btn.disabled=true;btn.textContent='Guardando...';
+  btn.disabled=true;
+  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin .7s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Guardando...';
 
   const ingredientesData=ings.map(i=>({
     nombre:document.getElementById('n'+i.id)?.value||'',
@@ -798,16 +817,11 @@ async function guardarEscandallo(){
   }
 
   if(error){
-    alert('Error al guardar. Inténtalo de nuevo.');
-    btn.disabled=false;btn.innerHTML=btnOriginal;
+    console.error('Save error:', error);
+    alert('Error al guardar: ' + (error.message || 'Inténtalo de nuevo.'));
+    btn.disabled=false;
+    btn.innerHTML=btnOriginal;
     return;
-  }
-
-  // Increment escandallo count if new (not edit)
-  if(!editId){
-    await sb.from('restaurantes').rpc('incrementar_escandallos', {
-      restaurante_id_param: rest.id
-    }).catch(() => {}); // Silent fail — count tracked on save
   }
 
   sessionStorage.removeItem('qc_escandallo_editar');
