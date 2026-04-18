@@ -251,7 +251,7 @@
   <div class="limit-banner" id="limit-banner">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
     <p><strong>Has usado tus 5 escandallos de prueba.</strong> Activa tu plan para escandallos ilimitados, mermas y margen neto.</p>
-    <button class="btn-limit" onclick="showModal()">Activar plan</button>
+    <button class="btn-limit" onclick="window.location.href='/precios'">Activar plan</button>
   </div>
 
   <!-- DATOS DEL PLATO -->
@@ -273,10 +273,10 @@
     </div>
     <div class="ai-row">
       <button class="btn-ai" onclick="sugerir()" id="btn-ia">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        Sugerir ingredientes y precios con IA
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        Calcular ingredientes y costes
       </button>
-      <span class="ai-hint">La IA sugiere ingredientes con cantidades, precios y % de merma.</span>
+      <span class="ai-hint">Calculamos ingredientes, cantidades, precios y merma para tu plato.</span>
     </div>
     <div class="ai-box" id="ai-box">
       <div class="ai-box-title"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Sugerencia IA — selecciona los que quieres añadir</div>
@@ -284,7 +284,7 @@
       <div id="ai-error" class="ai-error" style="display:none"></div>
       <div class="sug-list" id="sug-list"></div>
       <button class="btn-add-sel" id="btn-add-sel" onclick="addSugeridos()" style="display:none">Añadir seleccionados a la ficha</button>
-      <p class="ai-note" id="ai-note" style="display:none">Precios y mermas aproximados. Ajústalos con los valores reales de tu cocina.</p>
+      <p class="ai-note" id="ai-note" style="display:none">Precios y mermas aproximados según mercado español. Ajústalos con los de tu proveedor.</p>
     </div>
   </div>
 
@@ -297,7 +297,7 @@
       <button class="help-btn" onclick="tt('tt-merma')">?</button>
       <div class="tooltip" id="tt-merma" style="left:auto;right:0">La merma es el % que se pierde al limpiar o cocinar. Ej: merluza pierde 30% al limpiar.</div>
       <label class="toggle"><input type="checkbox" id="toggle-merma" onchange="handleMermaToggle()"><span class="toggle-slider"></span></label>
-      <div class="lock-overlay" id="merma-lock" onclick="showModal('merma')">
+      <div class="lock-overlay" id="merma-lock" onclick="window.location.href='/precios'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
         <span>Función Premium — Activar plan</span>
       </div>
@@ -364,7 +364,7 @@
             <span class="slider-val gold" id="val-neto">20%</span>
           </div>
         </div>
-        <div class="lock-overlay" id="neto-lock" onclick="showModal('neto')">
+        <div class="lock-overlay" id="neto-lock" onclick="window.location.href='/precios'">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
           <span>Función Premium — Activar plan</span>
         </div>
@@ -397,21 +397,62 @@
 </div>
 
 <script>
-// ── TRIAL ────────────────────────────────────────────────────
-const MAX_FREE=5;
-let usados=parseInt(localStorage.getItem('qc_escandallos')||'0');
-let esPremium=localStorage.getItem('qc_premium')==='true';
+// ── TRIAL — SERVER SIDE (no burlarle) ────────────────────────
+const MAX_FREE = 5;
+let esPremium = false;
+let trialCount = 0;
+let authToken = null;
 
-function updateTrialBadge(){
-  if(esPremium){document.getElementById('trial-badge').style.display='none';return;}
-  const r=Math.max(0,MAX_FREE-usados);
-  document.getElementById('trial-count').textContent=r+' de '+MAX_FREE;
-  if(r===0){document.getElementById('trial-badge').classList.add('agotado');document.getElementById('limit-banner').classList.add('visible');}
+async function checkTrial() {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+    authToken = session.access_token;
+
+    const res = await fetch('/api/check-trial', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken }
+    });
+    const data = await res.json();
+    esPremium = data.esPro || false;
+    trialCount = data.count || 0;
+    updateTrialBadge(data);
+
+    if (esPremium) {
+      document.getElementById('merma-lock').style.display = 'none';
+      document.getElementById('neto-lock').style.display = 'none';
+    }
+  } catch (err) {
+    console.log('Trial check error:', err);
+  }
 }
-function registrarEscandallo(){
-  if(esPremium)return true;
-  if(usados>=MAX_FREE){showModal('limite');return false;}
-  usados++;localStorage.setItem('qc_escandallos',usados);updateTrialBadge();return true;
+
+function updateTrialBadge(data) {
+  if (esPremium) { document.getElementById('trial-badge').style.display = 'none'; return; }
+  const restantes = data ? data.restantes : Math.max(0, MAX_FREE - trialCount);
+  document.getElementById('trial-count').textContent = restantes + ' de ' + MAX_FREE;
+  if (restantes === 0) {
+    document.getElementById('trial-badge').classList.add('agotado');
+    document.getElementById('limit-banner').classList.add('visible');
+  }
+}
+
+async function registrarEscandallo() {
+  if (esPremium) return true;
+  // Re-check server before allowing
+  try {
+    const res = await fetch('/api/check-trial', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken }
+    });
+    const data = await res.json();
+    esPremium = data.esPro || false;
+    trialCount = data.count || 0;
+    if (!data.puedeCrear) { window.location.href='/precios'; return false; }
+    return true;
+  } catch (err) {
+    return true; // En caso de error de red, permitir pero el servidor lo controla al guardar
+  }
 }
 
 function showModal(tipo){
@@ -427,7 +468,7 @@ function hideModal(e){if(!e||e.target===document.getElementById('modal-overlay')
 let mermasOn=false;
 function handleMermaToggle(){
   const t=document.getElementById('toggle-merma');
-  if(!esPremium){t.checked=false;showModal('merma');return;}
+  if(!esPremium){t.checked=false;window.location.href='/precios';return;}
   mermasOn=t.checked;
   const hdr=document.getElementById('ing-header');
   hdr.className='ing-header '+(mermasOn?'con-merma':'sin-merma');
@@ -441,7 +482,7 @@ function handleMermaToggle(){
 let netoOn=false;
 function handleNetoToggle(){
   const t=document.getElementById('toggle-neto');
-  if(!esPremium){t.checked=false;showModal('neto');return;}
+  if(!esPremium){t.checked=false;window.location.href='/precios';return;}
   netoOn=t.checked;
   document.getElementById('neto-slider-wrap').style.display=netoOn?'block':'none';
   calcular();
@@ -546,7 +587,7 @@ async function sugerir(){
   const btn=document.getElementById('btn-ia'),box=document.getElementById('ai-box');
   const loading=document.getElementById('ai-loading'),errorEl=document.getElementById('ai-error');
   const list=document.getElementById('sug-list'),addBtn=document.getElementById('btn-add-sel');
-  btn.disabled=true;btn.textContent='Consultando IA...';
+  btn.disabled=true;btn.textContent='Calculando...';
   box.classList.add('visible');loading.style.display='flex';
   errorEl.style.display='none';list.innerHTML='';addBtn.style.display='none';
   document.getElementById('ai-note').style.display='none';
@@ -570,7 +611,7 @@ async function sugerir(){
     errorEl.textContent='No se pudo conectar con la IA. Añade manualmente. ('+err.message+')';
   }
   btn.disabled=false;
-  btn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Sugerir ingredientes y precios con IA`;
+  btn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Calcular ingredientes y costes`;
 }
 function toggleSug(checkEl,i){
   const item=checkEl.closest('.sug-item');
@@ -644,9 +685,8 @@ async function cargarApp(session){
   }
   document.getElementById('auth-loading').style.display='none';
   document.getElementById('app-content').style.display='block';
-  esPremium=localStorage.getItem('qc_premium')==='true';
-  updateTrialBadge();
-  if(esPremium){document.getElementById('merma-lock').style.display='none';document.getElementById('neto-lock').style.display='none';}
+  // Check trial from server — no localStorage
+  await checkTrial();
 
   // Cargar datos si venimos de editar un escandallo existente
   const editData=sessionStorage.getItem('qc_escandallo_editar');
@@ -761,6 +801,13 @@ async function guardarEscandallo(){
     alert('Error al guardar. Inténtalo de nuevo.');
     btn.disabled=false;btn.innerHTML=btnOriginal;
     return;
+  }
+
+  // Increment escandallo count if new (not edit)
+  if(!editId){
+    await sb.from('restaurantes').rpc('incrementar_escandallos', {
+      restaurante_id_param: rest.id
+    }).catch(() => {}); // Silent fail — count tracked on save
   }
 
   sessionStorage.removeItem('qc_escandallo_editar');
