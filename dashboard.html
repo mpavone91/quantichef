@@ -97,6 +97,27 @@
   .pro-features{display:flex;flex-wrap:wrap;gap:6px;flex:1}
   .pro-feat{font-size:12px;color:var(--accent);background:white;border:1px solid var(--accent-mint);padding:3px 10px;border-radius:20px;white-space:nowrap}
 
+  /* ========== ALERTAS DE PRECIO ========== */
+  .alertas-section{margin-top:1.5rem}
+  .alertas-panel{background:#FEF2F2;border:1px solid rgba(220,38,38,.2);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
+  .alertas-header{display:flex;align-items:center;gap:10px;padding:1rem 1.2rem;background:rgba(220,38,38,.06);border-bottom:1px solid rgba(220,38,38,.12)}
+  .alertas-header-icon{font-size:18px;flex-shrink:0}
+  .alertas-header-text{flex:1}
+  .alertas-header-title{font-size:14px;font-weight:700;color:#991B1B}
+  .alertas-header-sub{font-size:12px;color:#DC2626;margin-top:1px}
+  .btn-marcar-vistas{font-size:12px;font-weight:600;color:#991B1B;background:none;border:1px solid rgba(220,38,38,.3);border-radius:6px;padding:5px 12px;cursor:pointer;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif}
+  .btn-marcar-vistas:hover{background:rgba(220,38,38,.08)}
+  .alerta-item{display:flex;align-items:center;gap:12px;padding:.875rem 1.2rem;border-bottom:1px solid rgba(220,38,38,.08)}
+  .alerta-item:last-child{border-bottom:none}
+  .alerta-plato{font-weight:600;font-size:13px;color:#1A1916;flex:1;min-width:0}
+  .alerta-plato small{display:block;font-weight:400;font-size:12px;color:#DC2626;margin-top:1px}
+  .alerta-coste{text-align:right;flex-shrink:0}
+  .alerta-coste-ant{font-size:11px;color:#8A8784;text-decoration:line-through}
+  .alerta-coste-new{font-size:14px;font-weight:700;color:#DC2626;font-family:'Fraunces',serif}
+  .alerta-diff{font-size:11px;color:#DC2626;font-weight:600}
+  .alerta-diff.positiva{color:#1E4D2B}
+  .btn-revisar{font-size:12px;color:#1E4D2B;background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:6px;padding:5px 10px;cursor:pointer;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none}
+
   /* ========== PROVEEDORES ========== */
   .proveedores-section{margin-top:3rem}
 
@@ -260,6 +281,22 @@
     <div class="section-title">Mis escandallos</div>
     <div id="lista-escandallos"></div>
 
+    <!-- ========== ALERTAS DE PRECIO ========== -->
+    <div class="alertas-section" id="alertas-section" style="display:none">
+      <div class="section-title" style="margin-top:2rem">Alertas de precio</div>
+      <div class="alertas-panel" id="alertas-panel">
+        <div class="alertas-header">
+          <span class="alertas-header-icon">🚨</span>
+          <div class="alertas-header-text">
+            <div class="alertas-header-title" id="alertas-header-title">Cambios de precio detectados</div>
+            <div class="alertas-header-sub" id="alertas-header-sub">Algunos platos tienen el coste desactualizado</div>
+          </div>
+          <button class="btn-marcar-vistas" onclick="marcarTodasVistas()">Marcar como vistas</button>
+        </div>
+        <div id="alertas-lista"></div>
+      </div>
+    </div>
+
     <!-- ========== PROVEEDORES ========== -->
     <div class="proveedores-section">
       <div class="section-title" style="margin-top:2rem">Precios de mis proveedores</div>
@@ -373,8 +410,9 @@ async function cargarDatos(session){
     renderVacio();
   }
 
-  // Cargar precios guardados
+  // Cargar precios guardados y alertas
   await cargarPreciosGuardados();
+  await cargarAlertas();
 }
 
 function fmt(n){return Number(n).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';}
@@ -609,44 +647,61 @@ async function guardarPrecios(){
 
   const btn = document.getElementById('btn-guardar-precios');
   btn.disabled = true;
-  btn.textContent = 'Guardando...';
+  btn.textContent = 'Guardando y analizando cambios...';
 
-  // Prepare rows for Supabase
-  const rows = extractedProducts.map(p => ({
-    restaurante_id: restauranteId,
-    ingrediente: p.nombre || p.ingrediente_normalizado,
-    ingrediente_normalizado: normalizar(p.ingrediente_normalizado || p.nombre),
-    precio_kg: parseFloat(p.precio) || 0,
+  // Preparar productos con restaurante_id
+  const productos = extractedProducts.map(p => ({
+    nombre: p.nombre || p.ingrediente_normalizado,
+    ingrediente_normalizado: p.ingrediente_normalizado || p.nombre,
+    precio: parseFloat(p.precio) || 0,
     unidad: p.unidad || 'kg',
-    proveedor: p.proveedor || null,
-    fecha_documento: p.fecha_documento || null,
-    updated_at: new Date().toISOString()
+    proveedor: p.proveedor || null
   }));
 
-  // Upsert: if same ingrediente_normalizado exists for this restaurant, update
-  const { error } = await sb.from('precios_proveedor').upsert(rows, {
-    onConflict: 'restaurante_id,ingrediente_normalizado',
-    ignoreDuplicates: false
-  });
+  try {
+    const resp = await fetch('/api/extract', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        mode: 'save_prices',
+        restaurante_id: restauranteId,
+        productos
+      })
+    });
 
-  // If upsert fails (no unique constraint yet), fall back to insert
-  if(error){
-    const { error: insertError } = await sb.from('precios_proveedor').insert(rows);
-    if(insertError){
-      showProvMsg('Error al guardar: ' + insertError.message, 'error');
+    const data = await resp.json();
+
+    if(!resp.ok || !data.ok){
+      showProvMsg('Error al guardar: ' + (data.error || 'Inténtalo de nuevo'), 'error');
       btn.disabled = false;
       btn.textContent = 'Guardar precios';
       return;
     }
+
+    // Mensaje de resultado
+    let msg = `${data.precios_nuevos} precio${data.precios_nuevos !== 1 ? 's' : ''} nuevo${data.precios_nuevos !== 1 ? 's' : ''} añadido${data.precios_nuevos !== 1 ? 's' : ''}`;
+    if(data.precios_actualizados > 0){
+      msg += `, ${data.precios_actualizados} actualizado${data.precios_actualizados !== 1 ? 's' : ''}`;
+    }
+    if(data.alertas_generadas > 0){
+      msg += `. ⚠️ ${data.alertas_generadas} plato${data.alertas_generadas !== 1 ? 's' : ''} afectado${data.alertas_generadas !== 1 ? 's' : ''} — revisa las alertas.`;
+    }
+    msg += ' Se usarán en tus próximos escandallos.';
+
+    showProvMsg(msg, data.alertas_generadas > 0 ? 'error' : 'success');
+    extractedProducts = [];
+    document.getElementById('review-wrap').classList.remove('visible');
+
+    // Recargar precios y alertas
+    await cargarPreciosGuardados();
+    await cargarAlertas();
+
+  } catch(err) {
+    showProvMsg('Error de conexión. Inténtalo de nuevo.', 'error');
   }
 
-  showProvMsg(`${rows.length} precio${rows.length>1?'s':''} guardado${rows.length>1?'s':''}. Se usarán en tus próximos escandallos.`, 'success');
-  extractedProducts = [];
-  document.getElementById('review-wrap').classList.remove('visible');
   btn.disabled = false;
   btn.textContent = 'Guardar precios';
-
-  await cargarPreciosGuardados();
 }
 
 function normalizar(str){
@@ -694,6 +749,80 @@ async function eliminarPrecio(id){
   if(!confirm('¿Eliminar este precio de proveedor?')) return;
   await sb.from('precios_proveedor').delete().eq('id', id);
   await cargarPreciosGuardados();
+}
+
+// ========== ALERTAS ==========
+async function cargarAlertas(){
+  if(!restauranteId) return;
+
+  const {data: alertas} = await sb.from('alertas_precio')
+    .select('*')
+    .eq('restaurante_id', restauranteId)
+    .eq('vista', false)
+    .order('created_at', {ascending: false});
+
+  const section = document.getElementById('alertas-section');
+  const lista = document.getElementById('alertas-lista');
+
+  if(!alertas || alertas.length === 0){
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = 'block';
+  document.getElementById('alertas-header-title').textContent =
+    `${alertas.length} cambio${alertas.length !== 1 ? 's' : ''} de precio detectado${alertas.length !== 1 ? 's' : ''}`;
+  document.getElementById('alertas-header-sub').textContent =
+    `${alertas.length} plato${alertas.length !== 1 ? 's' : ''} con coste desactualizado — revisa el precio de venta`;
+
+  lista.innerHTML = '';
+  alertas.forEach(a => {
+    const subida = a.precio_nuevo > a.precio_anterior;
+    const diffPrecio = Math.abs(a.precio_nuevo - a.precio_anterior).toFixed(2);
+    const diffCoste = a.coste_racion_nuevo !== null && a.coste_racion_anterior !== null
+      ? (a.coste_racion_nuevo - a.coste_racion_anterior)
+      : null;
+
+    const div = document.createElement('div');
+    div.className = 'alerta-item';
+    div.dataset.id = a.id;
+
+    const diffCosteHtml = diffCoste !== null
+      ? `<span class="alerta-diff ${diffCoste <= 0 ? 'positiva' : ''}">${diffCoste > 0 ? '+' : ''}${diffCoste.toFixed(2)}€/ración</span>`
+      : '';
+
+    div.innerHTML = `
+      <span style="font-size:16px">${subida ? '📈' : '📉'}</span>
+      <div class="alerta-plato">
+        ${escapeHtml(a.escandallo_nombre)}
+        <small>${escapeHtml(a.ingrediente)} ${subida ? 'subió' : 'bajó'} ${diffPrecio}€ (${a.precio_anterior.toFixed(2)}€ → ${a.precio_nuevo.toFixed(2)}€)</small>
+      </div>
+      ${a.coste_racion_nuevo !== null ? `
+      <div class="alerta-coste">
+        <div class="alerta-coste-ant">${a.coste_racion_anterior?.toFixed(2)}€</div>
+        <div class="alerta-coste-new">${a.coste_racion_nuevo?.toFixed(2)}€</div>
+        ${diffCosteHtml}
+      </div>` : ''}
+      <a href="/escandallo" class="btn-revisar" onclick="abrirEscandallo('${a.escandallo_id}')">Revisar</a>
+    `;
+    lista.appendChild(div);
+  });
+}
+
+function abrirEscandallo(escId){
+  // Buscar el escandallo en sesión o navegar al dashboard
+  // Por ahora solo navega — se puede mejorar cargando el escandallo directamente
+  sessionStorage.setItem('qc_alerta_escandallo_id', escId);
+  window.location.href = '/escandallo?alerta=' + escId;
+}
+
+async function marcarTodasVistas(){
+  if(!restauranteId) return;
+  await sb.from('alertas_precio')
+    .update({vista: true})
+    .eq('restaurante_id', restauranteId)
+    .eq('vista', false);
+  document.getElementById('alertas-section').style.display = 'none';
 }
 
 function showProvMsg(txt, type){
