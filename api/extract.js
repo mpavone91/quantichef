@@ -130,23 +130,34 @@ Responde SOLO con un JSON válido, sin markdown, sin backticks:
   }
 }
 
-// ── LÓGICA DE COMPARACIÓN Y ALERTAS ──────────────────────────
+// ── LÓGICA DE COMPARACIÓN Y ALERTAS (ANTI-DUPLICADOS) ──────────────────────────
 async function guardarYCompararPrecios(productos, restaurante_id) {
   const alertasGeneradas = [];
   const preciosActualizados = [];
   const preciosNuevos = [];
 
-  for (const producto of productos) {
+  // 1. DEDUPLICAR PRODUCTOS DEL ALBARÁN (El muro de contención)
+  const productosUnicosMap = new Map();
+  for (const p of productos) {
+    const nombre_norm = normalizar(p.ingrediente_normalizado || p.nombre);
+    // Al usar Map, si hay otro producto con el mismo nombre_norm, lo sobreescribe. Nos quedamos solo con uno.
+    productosUnicosMap.set(nombre_norm, p);
+  }
+  const productosUnicos = Array.from(productosUnicosMap.values());
+
+  for (const producto of productosUnicos) {
     const nombre_norm = normalizar(producto.ingrediente_normalizado || producto.nombre);
     const precio_nuevo = parseFloat(producto.precio) || 0;
 
-    // Buscar precio anterior para este ingrediente en este restaurante
-    const { data: anterior } = await supabase
+    // 2. BUSCAR PRECIO ANTERIOR (Usando limit(1) para que no explote si ya tienes duplicados guardados de antes)
+    const { data: anteriores } = await supabase
       .from('precios_proveedor')
       .select('*')
       .eq('restaurante_id', restaurante_id)
       .eq('ingrediente_normalizado', nombre_norm)
-      .single();
+      .limit(1);
+
+    const anterior = anteriores && anteriores.length > 0 ? anteriores[0] : null;
 
     if (anterior && parseFloat(anterior.precio_kg) !== precio_nuevo) {
       const precio_anterior = parseFloat(anterior.precio_kg);
@@ -215,7 +226,7 @@ async function guardarYCompararPrecios(productos, restaurante_id) {
       preciosNuevos.push(nombre_norm);
     }
 
-    // Upsert precio en precios_proveedor
+    // 3. ACTUALIZAR O INSERTAR
     const row = {
       restaurante_id,
       ingrediente: producto.nombre,
