@@ -745,11 +745,10 @@ async function sugerir(){
   box.classList.add('visible');loading.style.display='flex';
   errorEl.style.display='none';list.innerHTML='';addBtn.style.display='none';
   document.getElementById('ai-note').style.display='none';
-  const prompt=`Eres un chef profesional experto en costes de cocina en España. Para el plato "${nombre}" (categoría: ${categoria}, ${raciones} raciones), dame ingredientes típicos con cantidades, precios y merma. Responde SOLO con un array JSON válido, sin texto adicional, sin markdown. Formato: [{"nombre":"Merluza fresca","cantidad":200,"unidad":"g","precio_kg":8.50,"merma":30}]. Unidades: g, kg, ml, l, ud. precio_kg = precio por kg o litro. merma = % pérdida al limpiar (0 si no hay). Máximo 10 ingredientes, cantidades útiles para ${raciones} raciones. Precios hostelería España 2024.`;
   try{
     const { data: { session: _sess } } = await sb.auth.getSession();
     const _token = _sess?.access_token || '';
-    const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_token},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:900,messages:[{role:'user',content:prompt}]})});
+    const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_token},body:JSON.stringify({plato:nombre,categoria:categoria,raciones:raciones})});
     const data=await res.json();
     if(!res.ok)throw new Error(data.error?.message||'Error API');
     const sugs=JSON.parse(data.content[0].text.trim().replace(/```json|```/g,'').trim());
