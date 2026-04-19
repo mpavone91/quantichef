@@ -181,7 +181,19 @@ footer a:hover{color:var(--accent)}
       </div>
       <div class="form-group">
         <label class="form-label">Teléfono móvil</label>
-        <input type="tel" class="form-input" id="reg-telefono" placeholder="+34 600 000 000" autocomplete="off" required>
+        <div style="display:flex;gap:8px">
+          <select id="reg-prefijo" style="padding:11px 10px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--surface);outline:none;cursor:pointer;flex-shrink:0;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+            <option value="+34">🇪🇸 +34</option>
+            <option value="+351">🇵🇹 +351</option>
+            <option value="+33">🇫🇷 +33</option>
+            <option value="+44">🇬🇧 +44</option>
+            <option value="+49">🇩🇪 +49</option>
+            <option value="+39">🇮🇹 +39</option>
+            <option value="+1">🇺🇸 +1</option>
+          </select>
+          <input type="tel" class="form-input" id="reg-telefono" placeholder="600 000 000" autocomplete="off" required maxlength="15" style="flex:1">
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">Introduce solo los dígitos, sin el prefijo del país</div>
       </div>
       <div class="form-group">
         <label class="form-label">Contraseña</label>
@@ -349,11 +361,17 @@ async function registro() {
   if (pass.length < 8) { showMsg('La contraseña debe tener al menos 8 caracteres.'); return; }
   if (pass !== pass2) { showMsg('Las contraseñas no coinciden.'); return; }
 
-  // Formatear teléfono — asegurar que empieza por +
-  let telefonoFormateado = telefono.replace(/\s/g, '');
-  if (!telefonoFormateado.startsWith('+')) {
-    telefonoFormateado = '+34' + telefonoFormateado.replace(/^0034/, '');
+  // Formatear teléfono — prefijo del selector + dígitos limpios
+  const prefijo = document.getElementById('reg-prefijo').value;
+  let digitosTelefono = telefono.replace(/[\s\-\(\)]/g, '').replace(/^\+?\d{1,3}/, ''); // quitar cualquier prefijo que hayan puesto
+  // Si empieza por 0, quitarlo (ej: 0034...)
+  digitosTelefono = digitosTelefono.replace(/^0+/, '');
+  // Si contiene el prefijo al principio (ej: pusieron 34600...), lo quitamos
+  const prefijoSinPlus = prefijo.replace('+', '');
+  if (digitosTelefono.startsWith(prefijoSinPlus)) {
+    digitosTelefono = digitosTelefono.slice(prefijoSinPlus.length);
   }
+  let telefonoFormateado = prefijo + digitosTelefono;
 
   setLoading('btn-registro', true, 'Crear cuenta gratis', 'Enviando código...');
   hideMsg();
