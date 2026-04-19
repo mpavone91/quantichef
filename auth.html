@@ -483,6 +483,25 @@ async function verificarCodigo() {
     return;
   }
 
+  // CRÍTICO: Re-autenticar con email/password para obtener un token fresco
+  // Sin esto, el token de SMS queda obsoleto y el backend devuelve 401
+  const { error: signInError } = await sb.auth.signInWithPassword({
+    email: registroData.email,
+    password: registroData.pass
+  });
+
+  if (signInError) {
+    // Si falla el auto-login, mandamos a login manual en lugar de dashboard roto
+    showMsg('¡Cuenta creada! Ahora inicia sesión con tu email y contraseña.', 'success');
+    setTimeout(() => {
+      document.getElementById('form-verify').style.display = 'none';
+      switchTab('login');
+      document.getElementById('login-email').value = registroData.email;
+      hideMsg();
+    }, 2000);
+    return;
+  }
+
   showMsg('¡Cuenta creada! Redirigiendo...', 'success');
   setTimeout(() => window.location.href = '/dashboard', 1500);
 }
