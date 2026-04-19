@@ -114,6 +114,116 @@
   .precios-guardados{margin-top:2rem}
   .precio-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;display:flex;align-items:center;gap:10px;margin-bottom:6px}
 
+  /* === EMPTY STATE === */
+  .empty-state { margin-top: .5rem; }
+
+  .empty-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .empty-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .empty-step.active {
+    border-color: var(--accent-mint);
+    background: var(--accent-light);
+  }
+  .empty-step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: .5rem;
+  }
+  .empty-step.active .empty-step-num { color: var(--accent-mint); }
+  .empty-step-title {
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: .2rem;
+  }
+  .empty-step-desc {
+    font-size: .72rem;
+    color: var(--text3);
+    line-height: 1.4;
+  }
+  .empty-step-arrow {
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    transform: translateY(-50%) rotate(45deg);
+    z-index: 2;
+  }
+  .empty-step:last-child .empty-step-arrow { display: none; }
+
+  .empty-checklist {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+  }
+  .empty-checklist-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: .75rem;
+  }
+  .empty-check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: .45rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: .85rem;
+  }
+  .empty-check-item:last-child { border-bottom: none; }
+  .check-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+  .check-icon.done { background: var(--accent); color: white; }
+  .check-icon.pending { background: var(--bg); border: 1.5px solid var(--border); color: var(--text3); }
+  .check-label { flex: 1; color: var(--text2); }
+  .check-label.done-label { color: var(--text3); text-decoration: line-through; }
+  .check-cta {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-light);
+    border: 1px solid var(--accent-mint);
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  /* Stats vacías */
+  .stat-empty { opacity: .45; }
+  .stat-hint { font-size: 10px; color: var(--text3); margin-top: 3px; font-style: italic; }
+
   /* Responsive Fixes */
   @media(max-width:768px){
     nav{padding:0.6rem 1rem}
@@ -125,6 +235,8 @@
     .stats .stat:last-child{grid-column:1/-1}
     .pro-banner { flex-direction: column; align-items: stretch; gap: 14px; }
     .btn-pro-manage { margin-left: 0; width: 100%; text-align: center; padding: 10px; font-size: 13px; }
+    .empty-steps { grid-template-columns: 1fr; }
+    .empty-step-arrow { display: none; }
     .cta-nueva { width: 100%; justify-content: center; }
   }
 </style>
@@ -337,7 +449,61 @@ function renderLista(lista){
 }
 
 function renderVacio(){
-  document.getElementById('lista-escandallos').innerHTML='<div style="text-align:center; padding:2rem; border:1px dashed var(--border); border-radius:12px; color:var(--text3)">Aún no tienes platos. Sube tu primer albarán arriba para empezar.</div>';
+  // Stats vacías con hint en lugar de ocultarlas
+  document.getElementById('stats').style.display = 'grid';
+  document.getElementById('stat-total').textContent = '0';
+  document.getElementById('stat-total').closest('.stat').classList.add('stat-empty');
+  document.getElementById('stat-fc').textContent = '—';
+  document.getElementById('stat-fc').closest('.stat').classList.add('stat-empty');
+  const hintHtml = '<div class="stat-hint">Añade tu primer plato</div>';
+  document.getElementById('stat-fc').insertAdjacentHTML('afterend', hintHtml);
+  document.getElementById('stat-top').textContent = '—';
+  document.getElementById('stat-top').closest('.stat').classList.add('stat-empty');
+
+  // Empty state principal
+  document.getElementById('lista-escandallos').innerHTML = `
+    <div class="empty-state">
+
+      <div class="empty-steps">
+        <div class="empty-step active">
+          <div class="empty-step-num">01</div>
+          <div class="empty-step-title">Sube tu albarán</div>
+          <div class="empty-step-desc">Foto, PDF o Excel — la IA extrae los precios al instante.</div>
+          <div class="empty-step-arrow"></div>
+        </div>
+        <div class="empty-step">
+          <div class="empty-step-num">02</div>
+          <div class="empty-step-title">Crea un escandallo</div>
+          <div class="empty-step-desc">La IA calcula ingredientes, mermas y food cost de cada plato.</div>
+          <div class="empty-step-arrow"></div>
+        </div>
+        <div class="empty-step">
+          <div class="empty-step-num">03</div>
+          <div class="empty-step-title">Controla tu margen</div>
+          <div class="empty-step-desc">Audita tu carta y recibe alertas cuando suban los precios.</div>
+        </div>
+      </div>
+
+      <div class="empty-checklist">
+        <div class="empty-checklist-title">Para empezar</div>
+        <div class="empty-check-item">
+          <div class="check-icon done">✓</div>
+          <div class="check-label done-label">Cuenta creada</div>
+        </div>
+        <div class="empty-check-item">
+          <div class="check-icon pending">○</div>
+          <div class="check-label">Sube tu primer albarán o factura de proveedor</div>
+          <span class="check-cta" onclick="document.getElementById('upload-area').click()">Subir</span>
+        </div>
+        <div class="empty-check-item">
+          <div class="check-icon pending">○</div>
+          <div class="check-label">Crea tu primer escandallo</div>
+          <span class="check-cta" onclick="nuevoEscandallo()">Crear</span>
+        </div>
+      </div>
+
+    </div>
+  `;
 }
 
 function nuevoEscandallo(){ sessionStorage.removeItem('qc_escandallo_editar'); window.location.href='/escandallo'; }
