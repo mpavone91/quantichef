@@ -160,8 +160,8 @@ let currentUser=null, currentRestaurante=null;
 const params=new URLSearchParams(window.location.search);
 if(params.get('pago')==='ok'){
   document.getElementById('pago-ok').classList.add('visible');
-  // Marcar como premium en localStorage
-  localStorage.setItem('qc_premium','true');
+  // Redirigir al dashboard directamente
+  setTimeout(()=>window.location.href='/dashboard', 3000);
 }
 
 sb.auth.onAuthStateChange(async (event,session)=>{
@@ -180,14 +180,18 @@ async function checkout(priceId, btn){
   btn.innerHTML=`<span class="spinner-sm"></span>Redirigiendo a Stripe...`;
 
   try{
+    // Obtener token de sesión — el backend infiere userId y restauranteId del token
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session?.access_token){window.location.href='/login';return;}
+
     const res=await fetch('/api/stripe-checkout',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        priceId,
-        userId:currentUser.id,
-        restauranteId:currentRestaurante
-      })
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+session.access_token
+      },
+      // Solo enviamos priceId — userId y restauranteId los obtiene el backend del token
+      body:JSON.stringify({priceId})
     });
     const data=await res.json();
     if(data.url){
