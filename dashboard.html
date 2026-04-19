@@ -648,7 +648,8 @@ async function guardarPrecios(){
 }
 
 async function abrirPortalCliente(){
-  const res = await fetch('/api/stripe-portal', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({restauranteId}) });
+  const { data: { session: _portalSess } } = await sb.auth.getSession();
+  const res = await fetch('/api/stripe-portal', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+(_portalSess?.access_token||'')}, body:JSON.stringify({}) });
   const data = await res.json();
   if(data.url) window.location.href = data.url;
 }
