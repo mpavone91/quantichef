@@ -621,7 +621,9 @@ async function processFile(file){
   reader.onload = async () => {
     const base64 = reader.result.split(',')[1];
     try {
-      const resp = await fetch('/api/extract', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({file_base64:base64, file_type:file.name.split('.').pop()}) });
+      const { data: { session: _sess1 } } = await sb.auth.getSession();
+      const _token1 = _sess1?.access_token || '';
+      const resp = await fetch('/api/extract', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+_token1}, body:JSON.stringify({file_base64:base64, file_type:file.name.split('.').pop()}) });
       const data = await resp.json();
       document.getElementById('extract-loading').style.display='none';
       if(data.productos) renderReviewTable(data.productos);
@@ -639,7 +641,9 @@ function renderReviewTable(prods){
 async function guardarPrecios(){
   const btn = document.getElementById('btn-guardar-precios');
   btn.disabled = true; btn.textContent = 'Guardando...';
-  await fetch('/api/extract', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({mode:'save_prices', restaurante_id:restauranteId, productos:extractedProducts}) });
+  const { data: { session: _sess2 } } = await sb.auth.getSession();
+  const _token2 = _sess2?.access_token || '';
+  await fetch('/api/extract', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+_token2}, body:JSON.stringify({mode:'save_prices', restaurante_id:restauranteId, productos:extractedProducts}) });
   window.location.reload();
 }
 
