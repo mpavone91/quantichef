@@ -661,6 +661,8 @@ async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/l
 async function handleFileUpload(e){ if(e.target.files.length > 0) processFile(e.target.files[0]); }
 async function processFile(file){
   document.getElementById('extract-loading').style.display='flex';
+  document.getElementById('prov-msg').style.display='none';
+  
   const reader = new FileReader();
   reader.readAsDataURL(file);
   reader.onload = async () => {
@@ -668,12 +670,46 @@ async function processFile(file){
     try {
       const { data: { session: _sess1 } } = await sb.auth.getSession();
       const _token1 = _sess1?.access_token || '';
-      const resp = await fetch('/api/extract', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+_token1}, body:JSON.stringify({file_base64:base64, file_type:file.name.split('.').pop()}) });
+      const resp = await fetch('/api/extract', { 
+        method:'POST', 
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+_token1}, 
+        body:JSON.stringify({file_base64:base64, file_type:file.name.split('.').pop()}) 
+      });
       const data = await resp.json();
       document.getElementById('extract-loading').style.display='none';
-      if(data.productos) renderReviewTable(data.productos);
-    } catch(err) { document.getElementById('extract-loading').style.display='none'; }
+      
+      if (!resp.ok) {
+        mostrarMsgProv(data.error || 'Error al procesar el documento. Inténtalo de nuevo.', 'error');
+        return;
+      }
+      
+      if (data.productos && data.productos.length > 0) {
+        renderReviewTable(data.productos);
+      } else if (data.error) {
+        mostrarMsgProv(data.error, 'error');
+      } else {
+        mostrarMsgProv('No encontramos productos en el documento. Prueba con una foto más nítida o un PDF del albarán.', 'error');
+      }
+    } catch(err) {
+      document.getElementById('extract-loading').style.display='none';
+      mostrarMsgProv('Error de conexión al subir el archivo. Comprueba tu internet e inténtalo de nuevo.', 'error');
+    }
   };
+}
+
+function mostrarMsgProv(texto, tipo) {
+  const el = document.getElementById('prov-msg');
+  el.textContent = texto;
+  el.style.display = 'block';
+  if (tipo === 'error') {
+    el.style.background = 'var(--danger-light)';
+    el.style.color = 'var(--danger)';
+    el.style.border = '1px solid rgba(139,26,26,.2)';
+  } else {
+    el.style.background = 'var(--accent-light)';
+    el.style.color = 'var(--accent)';
+    el.style.border = '1px solid var(--accent-mint)';
+  }
 }
 
 function renderReviewTable(prods){
