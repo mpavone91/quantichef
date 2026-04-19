@@ -33,7 +33,7 @@ export default async function handler(req, res) {
   const { plato, categoria, raciones } = req.body;
   if (!plato) return res.status(400).json({ error: 'Falta el nombre del plato' });
 
-  const prompt = `Eres un chef profesional experto en costes de cocina en España. Para el plato "${plato}" (categoría: ${categoria || 'general'}, ${raciones || 1} raciones), dame ingredientes típicos con cantidades, precios y merma. Responde SOLO con un array JSON válido, sin texto adicional, sin markdown. Formato: [{"nombre":"Merluza fresca","cantidad":200,"unidad":"g","precio_kg":8.50,"merma":30}]. Unidades: g, kg, ml, l, ud. precio_kg = precio por kg o litro. merma = % pérdida al limpiar (0 si no hay). Máximo 10 ingredientes, cantidades útiles para ${raciones || 1} raciones. Precios hostelería España 2026.`;
+  const prompt = `Eres un chef profesional experto en costes de cocina en España. Para el plato "${plato}" (categoría: ${categoria || 'general'}, ${raciones || 1} raciones), dame ingredientes típicos con cantidades, precios y merma. Responde SOLO con un array JSON válido, sin texto adicional, sin markdown. Formato: [{"nombre":"Merluza fresca","cantidad":200,"unidad":"g","precio_kg":8.50,"merma":30}]. Unidades: g, kg, ml, l, ud. precio_kg = precio por kg o litro. merma = % pérdida al limpiar (0 si no hay). Máximo 10 ingredientes, cantidades útiles para ${raciones || 1} raciones. Precios hostelería España 2024.`;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -51,8 +51,20 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    return res.status(response.status).json(data);
+
+    if (!response.ok) {
+      console.error('Anthropic API error:', response.status, JSON.stringify(data));
+      return res.status(500).json({ error: data?.error?.message || `API error ${response.status}` });
+    }
+
+    // Extraer solo el texto y devolverlo limpio — nunca exponer estructura interna
+    const texto = data.content?.[0]?.text;
+    if (!texto) return res.status(500).json({ error: 'Respuesta vacía de la IA' });
+
+    return res.status(200).json({ content: [{ text: texto }] });
+
   } catch (err) {
+    console.error('claude.js error:', err.message);
     return res.status(500).json({ error: err.message });
   }
 }
