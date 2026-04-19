@@ -96,12 +96,7 @@ footer a:hover{color:var(--accent)}
       <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
         <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
         <line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-        <line x1="9" y1="10" x2="9" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-        <line x1="12" y1="10" x2="12" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-        <line x1="15" y1="10" x2="15" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
         <path d="M9 14.5 Q12 17 15 14.5" fill="none" stroke="white" stroke-width="1.1" stroke-linecap="round"/>
-        <rect x="18" y="18.5" width="2.2" height="3.5" rx="1" fill="rgba(255,255,255,0.4)"/>
-        <rect x="21" y="16.5" width="2.2" height="5.5" rx="1" fill="rgba(255,255,255,0.65)"/>
         <rect x="24" y="14" width="2.2" height="8" rx="1" fill="white"/>
       </svg>
     </div>
@@ -123,12 +118,7 @@ footer a:hover{color:var(--accent)}
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
           <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.45)" stroke-width="1.2"/>
           <line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="9" y1="10" x2="9" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-          <line x1="12" y1="10" x2="12" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-          <line x1="15" y1="10" x2="15" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
           <path d="M9 14.5 Q12 17 15 14.5" fill="none" stroke="white" stroke-width="1.1" stroke-linecap="round"/>
-          <rect x="18" y="18.5" width="2.2" height="3.5" rx="1" fill="rgba(255,255,255,0.4)"/>
-          <rect x="21" y="16.5" width="2.2" height="5.5" rx="1" fill="rgba(255,255,255,0.65)"/>
           <rect x="24" y="14" width="2.2" height="8" rx="1" fill="white"/>
         </svg>
       </div>
@@ -239,21 +229,24 @@ const SUPABASE_KEY = 'sb_publishable_qXyYLpM1403nu66tczLNCA_0s5EE3Re';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// SOLUCIÓN AL BUCLE INFINITO
-// Comprobamos si hay sesión y si el usuario tiene su restaurante creado.
+// ==========================================
+// SOLUCIÓN AL BUCLE INFINITO (ESCUDO)
+// ==========================================
 sb.auth.getSession().then(async ({ data: { session } }) => {
   if (session) {
+    // Si hay sesión, comprobamos SI tiene restaurante
     const { data: rest } = await sb.from('restaurantes')
       .select('id')
       .eq('user_id', session.user.id)
       .single();
       
     if (rest) {
-      // Tiene restaurante, todo correcto, al dashboard
+      // Tiene restaurante, todo correcto, lo mandamos al dashboard
       window.location.href = '/dashboard';
     } else {
-      // Bucle infinito detectado: Usuario logueado pero sin restaurante (estado corrupto de pruebas).
-      // Cerramos sesión para que pueda rellenar el formulario limpiamente.
+      // Bucle infinito detectado: Logueado pero sin restaurante.
+      // Destruimos la sesión silenciosamente para que no pase al Dashboard.
+      console.log("Sesión corrupta (sin restaurante). Limpiando...");
       await sb.auth.signOut();
     }
   }
@@ -329,7 +322,6 @@ function togglePass(inputId, eyeId) {
   }
 }
 
-// Estado del registro en pasos
 let registroData = {};
 
 async function registro() {
@@ -341,55 +333,51 @@ async function registro() {
   const pass = document.getElementById('reg-pass').value;
   const pass2 = document.getElementById('reg-pass2').value;
 
-  if (!nombrePersona) { showMsg('Escribe tu nombre.'); return; }
-  if (!apellidos) { showMsg('Escribe tus apellidos.'); return; }
-  if (!nombreRestaurante) { showMsg('Escribe el nombre de tu restaurante.'); return; }
-  if (!email) { showMsg('Escribe tu email.'); return; }
-  if (!telefono) { showMsg('Escribe tu número de teléfono móvil.'); return; }
+  if (!nombrePersona || !apellidos || !nombreRestaurante || !email || !telefono) { 
+    showMsg('Rellena todos los campos.'); return; 
+  }
   if (pass.length < 8) { showMsg('La contraseña debe tener al menos 8 caracteres.'); return; }
   if (pass !== pass2) { showMsg('Las contraseñas no coinciden.'); return; }
 
-  // Formatear teléfono — asegurar que empieza por +
   let telefonoFormateado = telefono.replace(/\s/g, '');
   if (!telefonoFormateado.startsWith('+')) {
     telefonoFormateado = '+34' + telefonoFormateado.replace(/^0034/, '');
   }
 
-  setLoading('btn-registro', true, 'Crear cuenta gratis', 'Enviando código...');
+  setLoading('btn-registro', true, 'Crear cuenta gratis', 'Enviando código SMS...');
   hideMsg();
 
-  // Guardar datos para usar después de verificar
   registroData = { nombrePersona, apellidos, nombreRestaurante, email, pass, telefono: telefonoFormateado };
 
-  // Enviar OTP al móvil
+  // Envía el SMS de Twilio
   const { error } = await sb.auth.signInWithOtp({
     phone: telefonoFormateado
   });
 
   if (error) {
-    const msg = error.message.includes('already registered') || error.message.includes('already in use')
-      ? 'Este número de teléfono ya tiene una cuenta. Inicia sesión.'
-      : 'Error al enviar el código. Comprueba el número e inténtalo de nuevo.';
+    console.error(error);
+    const msg = error.message.includes('already')
+      ? 'Este número de teléfono ya está registrado. Inicia sesión.'
+      : 'Error al enviar el SMS. Revisa tu número.';
     showMsg(msg);
     setLoading('btn-registro', false, 'Crear cuenta gratis', '');
     return;
   }
 
-  // Mostrar formulario de verificación
   document.getElementById('form-registro').style.display = 'none';
   document.getElementById('form-verify').style.display = 'block';
-  showMsg('Código enviado a ' + telefonoFormateado + '. Revisa tu móvil.', 'success');
+  showMsg('Código SMS enviado a ' + telefonoFormateado + '.', 'success');
   setLoading('btn-registro', false, 'Crear cuenta gratis', '');
 }
 
 async function verificarCodigo() {
   const codigo = document.getElementById('verify-code').value.trim();
-  if (!codigo || codigo.length < 4) { showMsg('Introduce el código que te hemos enviado.'); return; }
+  if (!codigo || codigo.length < 4) { showMsg('Introduce el código de 6 dígitos.'); return; }
 
   setLoading('btn-verify', true, 'Verificar y crear cuenta', 'Verificando...');
   hideMsg();
 
-  // Verificar OTP
+  // Verifica el código SMS
   const { data, error } = await sb.auth.verifyOtp({
     phone: registroData.telefono,
     token: codigo,
@@ -397,13 +385,13 @@ async function verificarCodigo() {
   });
 
   if (error) {
-    showMsg('Código incorrecto o caducado. Inténtalo de nuevo.');
+    showMsg('Código incorrecto o caducado. Revisa tus SMS.');
     setLoading('btn-verify', false, 'Verificar y crear cuenta', '');
     return;
   }
 
-  // Vincular email y contraseña a la cuenta verificada por SMS
-  const { error: updateError } = await sb.auth.updateUser({
+  // Actualiza el usuario con el Email y la Contraseña elegida
+  await sb.auth.updateUser({
     email: registroData.email,
     password: registroData.pass,
     data: {
@@ -413,7 +401,7 @@ async function verificarCodigo() {
     }
   });
 
-  // Crear restaurante
+  // Crea el restaurante en la base de datos
   if (data.user) {
     await sb.from('restaurantes').insert({
       user_id: data.user.id,
@@ -421,22 +409,22 @@ async function verificarCodigo() {
     });
   }
 
-  showMsg('¡Cuenta creada! Redirigiendo...', 'success');
+  showMsg('¡Cuenta verificada y creada! Entrando a tu cocina...', 'success');
   setTimeout(() => window.location.href = '/dashboard', 1500);
 }
 
 async function reenviarCodigo() {
   if (!registroData.telefono) return;
   const { error } = await sb.auth.signInWithOtp({ phone: registroData.telefono });
-  if (!error) showMsg('Código reenviado a ' + registroData.telefono, 'success');
-  else showMsg('Error al reenviar. Inténtalo en unos segundos.');
+  if (!error) showMsg('Nuevo SMS enviado a ' + registroData.telefono, 'success');
+  else showMsg('Error al reenviar el SMS. Inténtalo en unos segundos.');
 }
 
-// Enter key en inputs
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
-    const loginVisible = document.getElementById('form-login').style.display !== 'none';
-    if (loginVisible) login(); else registro();
+    if (document.getElementById('form-login').style.display !== 'none') login(); 
+    else if (document.getElementById('form-registro').style.display !== 'none') registro();
+    else if (document.getElementById('form-verify').style.display !== 'none') verificarCodigo();
   }
 });
 </script>
