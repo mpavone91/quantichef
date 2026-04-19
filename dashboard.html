@@ -233,7 +233,6 @@
 </div>
 
 <script>
-// (Aquí va toda la lógica de JavaScript que ya teníamos en dashboard (1).html, preservando las funciones de guardado y alertas)
 const SUPABASE_URL='https://ilzntryzijdfnntwuthp.supabase.co';
 const SUPABASE_KEY='sb_publishable_qXyYLpM1403nu66tczLNCA_0s5EE3Re';
 const {createClient}=supabase;
@@ -251,36 +250,68 @@ async function init(){
   });
 }
 
+// ==========================================
+// CARGAR DATOS CON ESCUDO ANTI-BUCLES
+// ==========================================
 async function cargarDatos(session){
-  const {data:rest}=await sb.from('restaurantes').select('id,nombre,plan').eq('user_id',session.user.id).single();
-  if(!rest){window.location.href='/login';return;}
-  restauranteId=rest.id;
-  document.getElementById('nav-restaurante').textContent=rest.nombre;
-  document.getElementById('welcome-nombre').textContent=rest.nombre;
+  // 1. Buscamos el restaurante y posibles errores
+  const {data:rest, error} = await sb.from('restaurantes')
+    .select('id,nombre,plan')
+    .eq('user_id',session.user.id)
+    .single();
+
+  // 2. Si hay error o no existe el restaurante (sesión fantasma detectada)
+  if(error || !rest){
+    console.log("Restaurante no encontrado. Limpiando sesión fantasma...");
+    // MUY IMPORTANTE: Cerramos sesión ANTES de redirigir para matar el bucle
+    await sb.auth.signOut(); 
+    window.location.href='/login';
+    return;
+  }
+
+  // 3. Si todo está correcto, cargamos los datos del restaurante
+  restauranteId = rest.id;
+  document.getElementById('nav-restaurante').textContent = rest.nombre;
+  document.getElementById('welcome-nombre').textContent = rest.nombre;
 
   const esPro = rest.plan === 'pro';
   document.getElementById('pro-banner').style.display = esPro ? 'flex' : 'none';
   document.getElementById('plan-banner').style.display = esPro ? 'none' : 'flex';
   document.getElementById('btn-suscripcion-nav').style.display = esPro ? 'inline-block' : 'none';
 
-  const {data:escandallos}=await sb.from('escandallos').select('*').eq('restaurante_id',rest.id).order('updated_at',{ascending:false});
-  document.getElementById('loading').style.display='none';
-  document.getElementById('app').style.display='block';
+  const {data:escandallos} = await sb.from('escandallos')
+    .select('*')
+    .eq('restaurante_id', rest.id)
+    .order('updated_at', {ascending:false});
+    
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
 
   if(escandallos && escandallos.length > 0){
-    document.getElementById('stats').style.display='grid';
+    document.getElementById('stats').style.display = 'grid';
     renderStats(escandallos);
     renderLista(escandallos);
-  } else { renderVacio(); }
+  } else { 
+    renderVacio(); 
+  }
 
   await cargarPreciosGuardados();
   await cargarAlertas();
 }
 
-// (Siguen el resto de funciones: renderStats, renderLista, renderVacio, handleFileUpload, processFile, abrirPortalCliente, abrirEscandallo, etc.)
-// ... Las funciones permanecen idénticas a la versión anterior para mantener la funcionalidad de la IA y el portal ...
-
 function fmt(n){return Number(n).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';}
+
+function renderStats(lista){
+  document.getElementById('stat-total').textContent=lista.length;
+  const fcs=lista.filter(e=>e.food_cost_pct>0).map(e=>e.food_cost_pct);
+  if(fcs.length>0)document.getElementById('stat-fc').textContent=Math.round(fcs.reduce((a,b)=>a+b,0)/fcs.length)+'%';
+  const conPrecio=lista.filter(e=>e.precio_venta>0);
+  if(conPrecio.length>0){
+    const top=conPrecio.reduce((a,b)=>((b.precio_venta-b.coste_racion)/b.precio_venta)>((a.precio_venta-a.coste_racion)/a.precio_venta)?b:a);
+    const margen=top.precio_venta>0?Math.round((top.precio_venta-top.coste_racion)/top.precio_venta*100):0;
+    document.getElementById('stat-top').textContent=margen+'%';
+  }
+}
 
 function renderLista(lista){
   const c=document.getElementById('lista-escandallos');
@@ -311,6 +342,14 @@ function renderVacio(){
 
 function nuevoEscandallo(){ sessionStorage.removeItem('qc_escandallo_editar'); window.location.href='/escandallo'; }
 function editarEscandallo(e){ sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(e)); window.location.href='/escandallo'; }
+
+async function eliminar(id, evt){
+  evt.stopPropagation();
+  if(!confirm('¿Eliminar?')) return;
+  await sb.from('escandallos').delete().eq('id',id);
+  window.location.reload();
+}
+
 async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login'; }
 
 // Lógica de archivo
@@ -345,10 +384,43 @@ async function guardarPrecios(){
 }
 
 async function abrirPortalCliente(){
-  const {data:{session}} = await sb.auth.getSession();
   const res = await fetch('/api/stripe-portal', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({restauranteId}) });
   const data = await res.json();
   if(data.url) window.location.href = data.url;
+}
+
+// ALERTAS
+async function cargarAlertas(){
+  if(!restauranteId) return;
+  const {data: alertas} = await sb.from('alertas_precio').select('*').eq('restaurante_id', restauranteId).eq('vista', false).order('created_at', {ascending: false});
+  if(!alertas || alertas.length === 0) return;
+  document.getElementById('alertas-section').style.display = 'block';
+  const lista = document.getElementById('alertas-lista');
+  lista.innerHTML = alertas.map(a => {
+    const subida = a.precio_nuevo > a.precio_anterior;
+    return `<div class="alerta-item"><span>${subida?'📈':'📉'}</span><div style="flex:1"><b>${a.escandallo_nombre}</b><br><small>${a.ingrediente} subió a ${a.precio_nuevo}€</small></div><button class="btn-revisar" onclick="abrirEscandalloAlerta('${a.escandallo_id}')">Revisar</button></div>`;
+  }).join('');
+}
+
+async function abrirEscandalloAlerta(escId){
+  const { data: escandallo } = await sb.from('escandallos').select('*').eq('id', escId).single();
+  if (escandallo) {
+    sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(escandallo));
+    window.location.href = '/escandallo';
+  }
+}
+
+async function marcarTodasVistas(){
+  await sb.from('alertas_precio').update({vista: true}).eq('restaurante_id', restauranteId);
+  document.getElementById('alertas-section').style.display = 'none';
+}
+
+async function cargarPreciosGuardados(){
+  if(!restauranteId) return;
+  const {data: precios} = await sb.from('precios_proveedor').select('*').eq('restaurante_id', restauranteId).order('ingrediente_normalizado', {ascending: true});
+  const container = document.getElementById('precios-guardados');
+  if(!precios || precios.length === 0) return;
+  container.innerHTML = `<div style="font-size:12px;color:var(--text3);margin-bottom:.5rem">${precios.length} precios de proveedor activos</div>` + precios.map(p => `<div class="precio-card"><div style="flex:1"><b>${p.ingrediente_normalizado}</b></div><div>${fmt(p.precio_kg)}/${p.unidad}</div></div>`).join('');
 }
 
 init();
