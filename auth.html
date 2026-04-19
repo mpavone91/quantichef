@@ -423,8 +423,7 @@ async function verificarCodigo() {
     return;
   }
 
-  // PASO 2: Vincular email + contraseña via API server-side (sin confirmación de email)
-  // Usamos el endpoint admin que hace email_confirm: true directamente
+  // PASO 2: Vincular email + contraseña via API server-side
   const session = data.session;
   const userId = data.user?.id;
 
@@ -458,11 +457,18 @@ async function verificarCodigo() {
     return;
   }
 
-  // PASO 3: Crear restaurante en la base de datos
-  await sb.from('restaurantes').insert({
+  // PASO 3: Crear restaurante — AHORA verificamos errores
+  const { error: restErr } = await sb.from('restaurantes').insert({
     user_id: userId,
     nombre: registroData.nombreRestaurante
   });
+
+  if (restErr) {
+    console.error('Error creando restaurante:', restErr);
+    showMsg('Se ha creado tu cuenta pero hubo un problema al configurar tu restaurante. Escríbenos a hola@quantichef.com y lo resolvemos en minutos.');
+    setLoading('btn-verify', false, 'Verificar y crear cuenta', '');
+    return;
+  }
 
   showMsg('¡Cuenta creada! Redirigiendo...', 'success');
   setTimeout(() => window.location.href = '/dashboard', 1500);
