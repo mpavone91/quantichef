@@ -36,6 +36,23 @@ export default async function handler(req, res) {
     .single();
   if (!restaurante) return res.status(403).json({ error: 'Sin acceso' });
 
+  // ── ANTI-BURLA: validar límite de trial server-side ──────────
+  // Si no es Pro, contamos sus escandallos reales. Si ya tiene 5 o más, bloqueamos.
+  // Esto funciona aunque el usuario manipule el frontend — el backend es la verdad.
+  if (restaurante.plan !== 'pro') {
+    const { count } = await supabaseAdmin
+      .from('escandallos')
+      .select('id', { count: 'exact', head: true })
+      .eq('restaurante_id', restaurante.id);
+    
+    const MAX_FREE = 5;
+    if ((count || 0) >= MAX_FREE) {
+      return res.status(403).json({ 
+        error: 'Has alcanzado el límite de 5 escandallos de prueba. Activa tu plan para continuar.' 
+      });
+    }
+  }
+
   // ── RECIBIR SOLO DATOS, CONSTRUIR PROMPT EN EL SERVIDOR ──────
   const { plato, categoria, raciones } = req.body;
   if (!plato) return res.status(400).json({ error: 'Falta el nombre del plato' });
