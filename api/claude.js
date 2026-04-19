@@ -1,8 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
+// Cliente ANON para verificar la sesión del usuario
+const supabaseAuth = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
+);
+
+// Cliente SERVICE ROLE para leer restaurantes saltando RLS
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 export default async function handler(req, res) {
@@ -18,11 +25,11 @@ export default async function handler(req, res) {
   const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
   if (!token) return res.status(401).json({ error: 'No autorizado' });
 
-  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+  const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
   if (authError || !user) return res.status(401).json({ error: 'Sesión inválida o caducada' });
 
-  // ── VERIFICAR QUE TIENE RESTAURANTE ACTIVO ───────────────────
-  const { data: restaurante } = await supabase
+  // ── VERIFICAR QUE TIENE RESTAURANTE ACTIVO (service role para saltar RLS) ──
+  const { data: restaurante } = await supabaseAdmin
     .from('restaurantes')
     .select('id, plan')
     .eq('user_id', user.id)
@@ -33,7 +40,7 @@ export default async function handler(req, res) {
   const { plato, categoria, raciones } = req.body;
   if (!plato) return res.status(400).json({ error: 'Falta el nombre del plato' });
 
-  const prompt = `Eres un chef profesional experto en costes de cocina en España. Para el plato "${plato}" (categoría: ${categoria || 'general'}, ${raciones || 1} raciones), dame ingredientes típicos con cantidades, precios y merma. Responde SOLO con un array JSON válido, sin texto adicional, sin markdown. Formato: [{"nombre":"Merluza fresca","cantidad":200,"unidad":"g","precio_kg":8.50,"merma":30}]. Unidades: g, kg, ml, l, ud. precio_kg = precio por kg o litro. merma = % pérdida al limpiar (0 si no hay). Máximo 10 ingredientes, cantidades útiles para ${raciones || 1} raciones. Precios hostelería España 2024.`;
+  const prompt = `Eres un chef profesional experto en costes de cocina en España. Para el plato "${plato}" (categoría: ${categoria || 'general'}, ${raciones || 1} raciones), dame ingredientes típicos con cantidades, precios y merma. Responde SOLO con un array JSON válido, sin texto adicional, sin markdown. Formato: [{"nombre":"Merluza fresca","cantidad":200,"unidad":"g","precio_kg":8.50,"merma":30}]. Unidades: g, kg, ml, l, ud. precio_kg = precio por kg o litro. merma = % pérdida al limpiar (0 si no hay). Máximo 10 ingredientes, cantidades útiles para ${raciones || 1} raciones. Precios hostelería España 2026.`;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -57,7 +64,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: data?.error?.message || `API error ${response.status}` });
     }
 
-    // Extraer solo el texto y devolverlo limpio — nunca exponer estructura interna
+    // Extraer solo el texto — nunca exponer estructura interna de Anthropic
     const texto = data.content?.[0]?.text;
     if (!texto) return res.status(500).json({ error: 'Respuesta vacía de la IA' });
 
