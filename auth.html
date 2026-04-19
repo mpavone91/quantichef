@@ -363,13 +363,16 @@ async function registro() {
 
   // Formatear teléfono — prefijo del selector + dígitos limpios
   const prefijo = document.getElementById('reg-prefijo').value;
-  let digitosTelefono = telefono.replace(/[\s\-\(\)]/g, '').replace(/^\+?\d{1,3}/, ''); // quitar cualquier prefijo que hayan puesto
-  // Si empieza por 0, quitarlo (ej: 0034...)
-  digitosTelefono = digitosTelefono.replace(/^0+/, '');
-  // Si contiene el prefijo al principio (ej: pusieron 34600...), lo quitamos
-  const prefijoSinPlus = prefijo.replace('+', '');
-  if (digitosTelefono.startsWith(prefijoSinPlus)) {
-    digitosTelefono = digitosTelefono.slice(prefijoSinPlus.length);
+  // Quitar solo espacios, guiones y paréntesis — nada más
+  let digitosTelefono = telefono.replace(/[\s\-\(\)\.]/g, '');
+  // Si el usuario puso el + delante (ej: +34600...), quitamos todo hasta los dígitos locales
+  // Solo eliminamos el prefijo si lo escribieron explícitamente con +
+  if (digitosTelefono.startsWith('+')) {
+    const prefijoSinPlus = prefijo.replace('+', '');
+    digitosTelefono = digitosTelefono.replace(/^\+/, ''); // quitar el +
+    if (digitosTelefono.startsWith(prefijoSinPlus)) {
+      digitosTelefono = digitosTelefono.slice(prefijoSinPlus.length);
+    }
   }
   let telefonoFormateado = prefijo + digitosTelefono;
 
