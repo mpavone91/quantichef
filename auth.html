@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#1E4D2B">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QuantiChef — Acceder</title>
@@ -10,80 +17,243 @@
 :root{--bg:#F9F7F2;--surface:#FFFFFF;--border:#E0DDD6;--text:#1A1916;--text2:#4A4845;--text3:#8A8784;--accent:#1E4D2B;--accent-mid:#2D5A3D;--accent-light:#E8F2EC;--accent-mint:#C8E6D0;--gold:#C4943A;--gold-light:#FFF4E0;--danger:#8B1A1A;--danger-light:#FDEAEA}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+/* Nav */
 nav{background:var(--accent);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
 .nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
 .nav-logo-icon{width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center}
 .nav-logo-icon svg{width:15px;height:15px}
 .nav-logo-text{font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:600}
+.nav-back{font-size:13px;color:rgba(255,255,255,.7);text-decoration:none;display:flex;align-items:center;gap:5px}
+.nav-back:hover{color:#fff}
+
+/* Main */
 main{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem 1rem}
 .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2.5rem;width:100%;max-width:420px;box-shadow:0 8px 32px rgba(30,77,43,.06)}
+
+/* Logo centrado */
+.card-logo{text-align:center;margin-bottom:2rem}
+.card-logo-icon{width:52px;height:52px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem}
+.card-logo-icon svg{width:26px;height:26px}
+.card-logo-name{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--accent)}
+
+/* Tabs */
 .tabs{display:flex;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:1.75rem;gap:3px}
 .tab{flex:1;padding:9px;border:none;background:none;border-radius:7px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text3);cursor:pointer;transition:all .2s}
 .tab.active{background:var(--surface);color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+
+/* Form */
 .form-group{margin-bottom:1rem}
 .form-label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px}
-.form-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--surface);outline:none}
+.form-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s}
 .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,43,.08)}
-.btn-primary{width:100%;padding:13px;background:var(--accent);color:white;border:none;border-radius:9px;font-size:15px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:background .2s}
+.form-input.error{border-color:var(--danger);background:var(--danger-light)}
+
+/* Botón */
+.btn-primary{width:100%;padding:13px;background:var(--accent);color:white;border:none;border-radius:9px;font-size:15px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:background .2s;margin-top:.5rem}
 .btn-primary:hover{background:var(--accent-mid)}
+.btn-primary:disabled{background:var(--text3);cursor:not-allowed}
+
+/* Mensajes */
 .msg{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:1rem;display:none}
 .msg.error{background:var(--danger-light);color:var(--danger);border:1px solid rgba(139,26,26,.2);display:block}
 .msg.success{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-mint);display:block}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;color:var(--text3);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Trial info */
+.trial-info{background:var(--gold-light);border:1px solid rgba(196,148,58,.25);border-radius:9px;padding:.875rem 1rem;margin-top:1.25rem;font-size:12px;color:var(--text2);line-height:1.5;display:flex;gap:10px;align-items:flex-start}
+.trial-info svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;margin-top:1px}
+
+/* Footer */
+footer{text-align:center;padding:1.5rem;font-size:12px;color:var(--text3)}
+footer a{color:var(--text3);text-decoration:none}
+footer a:hover{color:var(--accent)}
+
+/* Loading spinner */
+.spinner-sm{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;margin-right:6px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Password field */
+.pass-wrap{position:relative}
+.pass-wrap .form-input{padding-right:42px}
+.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex;align-items:center;transition:color .15s}
+.eye-btn:hover{color:var(--accent)}
+.eye-btn svg{width:18px;height:18px}
+
+/* Forgot password link */
+.forgot-link{font-size:13px;color:var(--text3);text-decoration:none;transition:color .15s}
+.forgot-link:hover{color:var(--accent)}
 </style>
 </head>
 <body>
+
 <nav>
-  <a href="/" class="nav-logo">
-    <div class="nav-logo-icon">
+  <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+    <div style="width:32px;height:32px;background:rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
       <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
         <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
         <line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="9" y1="10" x2="9" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <line x1="12" y1="10" x2="12" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <line x1="15" y1="10" x2="15" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
         <path d="M9 14.5 Q12 17 15 14.5" fill="none" stroke="white" stroke-width="1.1" stroke-linecap="round"/>
+        <rect x="18" y="18.5" width="2.2" height="3.5" rx="1" fill="rgba(255,255,255,0.4)"/>
+        <rect x="21" y="16.5" width="2.2" height="5.5" rx="1" fill="rgba(255,255,255,0.65)"/>
         <rect x="24" y="14" width="2.2" height="8" rx="1" fill="white"/>
       </svg>
     </div>
-    <span class="nav-logo-text">QuantiChef</span>
+    <div>
+      <div style="font-family:'Fraunces',Georgia,serif;font-size:18px;color:#fff;font-weight:600;letter-spacing:-0.02em;line-height:1.1">QuantiChef</div>
+      <div style="font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:9px;color:#A8D5B5;letter-spacing:0.1em;text-transform:uppercase;font-weight:400">escandallo inteligente</div>
+    </div>
+  </a>
+  <a href="/" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Volver al inicio
   </a>
 </nav>
+
 <main>
   <div class="auth-card">
+    <div style="text-align:center;margin-bottom:2rem">
+      <div style="width:56px;height:56px;background:#1E4D2B;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 0.875rem">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.45)" stroke-width="1.2"/>
+          <line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="9" y1="10" x2="9" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="12" y1="10" x2="12" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="15" y1="10" x2="15" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M9 14.5 Q12 17 15 14.5" fill="none" stroke="white" stroke-width="1.1" stroke-linecap="round"/>
+          <rect x="18" y="18.5" width="2.2" height="3.5" rx="1" fill="rgba(255,255,255,0.4)"/>
+          <rect x="21" y="16.5" width="2.2" height="5.5" rx="1" fill="rgba(255,255,255,0.65)"/>
+          <rect x="24" y="14" width="2.2" height="8" rx="1" fill="white"/>
+        </svg>
+      </div>
+      <div style="font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:600;color:#1E4D2B;letter-spacing:-0.02em">QuantiChef</div>
+      <div style="font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:11px;color:#3D7A54;letter-spacing:0.1em;margin-top:3px">escandallo inteligente</div>
+    </div>
+
     <div class="tabs">
       <button class="tab active" onclick="switchTab('login')" id="tab-login">Iniciar sesión</button>
       <button class="tab" onclick="switchTab('registro')" id="tab-registro">Crear cuenta</button>
     </div>
+
     <div id="msg" class="msg"></div>
+
     <div id="form-login">
-      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="login-email" placeholder="tu@restaurante.com"></div>
-      <div class="form-group"><label class="form-label">Contraseña</label><input type="password" class="form-input" id="login-pass" placeholder="••••••••"></div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="login-email" placeholder="tu@restaurante.com" autocomplete="off" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input type="password" class="form-input" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+      </div>
       <button class="btn-primary" onclick="login()" id="btn-login">Entrar</button>
+      <p style="text-align:center;margin-top:.75rem">
+        <a href="#" onclick="resetPassword();return false;" class="forgot-link">¿Olvidaste tu contraseña?</a>
+      </p>
+      <div class="divider">o</div>
+      <p style="text-align:center;font-size:13px;color:var(--text3)">¿No tienes cuenta? <a href="#" onclick="switchTab('registro');return false;" style="color:var(--accent);font-weight:600">Créala gratis</a></p>
     </div>
+
     <div id="form-registro" style="display:none">
-      <div class="form-group"><label class="form-label">Nombre del restaurante</label><input type="text" class="form-input" id="reg-nombre" placeholder="Ej: Pizza Natura"></div>
-      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="reg-email" placeholder="tu@email.com"></div>
-      <div class="form-group"><label class="form-label">Teléfono móvil</label><input type="tel" class="form-input" id="reg-telefono" placeholder="600111222"></div>
-      <div class="form-group"><label class="form-label">Contraseña</label><input type="password" class="form-input" id="reg-pass" placeholder="Mínimo 8 caracteres"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-input" id="reg-nombre-persona" placeholder="Nombre" autocomplete="off" required>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Apellidos</label>
+          <input type="text" class="form-input" id="reg-apellidos" placeholder="Apellidos" autocomplete="off" required>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:10px">
+        <label class="form-label">Nombre del restaurante</label>
+        <input type="text" class="form-input" id="reg-nombre" placeholder="Nombre de tu restaurante" autocomplete="off" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="reg-email" placeholder="tu@restaurante.com" autocomplete="off" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Teléfono móvil</label>
+        <input type="tel" class="form-input" id="reg-telefono" placeholder="+34 600 000 000" autocomplete="off" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <div class="pass-wrap">
+          <input type="password" class="form-input" id="reg-pass" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+          <button type="button" class="eye-btn" onclick="togglePass('reg-pass', 'eye1')">
+            <svg id="eye1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar contraseña</label>
+        <div class="pass-wrap">
+          <input type="password" class="form-input" id="reg-pass2" placeholder="Repite la contraseña" autocomplete="new-password">
+          <button type="button" class="eye-btn" onclick="togglePass('reg-pass2', 'eye2')">
+            <svg id="eye2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
       <button class="btn-primary" onclick="registro()" id="btn-registro">Crear cuenta gratis</button>
+      <div class="trial-info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span><strong>3 días gratis · 5 escandallos</strong> — sin tarjeta de crédito. Verificación por SMS para proteger tu cuenta.</span>
+      </div>
     </div>
+
     <div id="form-verify" style="display:none">
-      <div class="form-group"><label class="form-label">Código SMS de 6 dígitos</label><input type="tel" class="form-input" id="verify-code" style="text-align:center;font-size:1.5rem;letter-spacing:0.3em" placeholder="123456"></div>
-      <button class="btn-primary" onclick="verificarCodigo()" id="btn-verify">Verificar cuenta</button>
+      <div style="text-align:center;margin-bottom:1.5rem">
+        <div style="width:52px;height:52px;background:var(--accent-light);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto .875rem">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.22 1.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.56-.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+        </div>
+        <p style="font-size:.92rem;color:var(--text2);line-height:1.6">Hemos enviado un código de 6 dígitos a tu móvil.<br>Introdúcelo para activar tu cuenta.</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Código de verificación</label>
+        <input type="tel" class="form-input" id="verify-code" placeholder="123456" maxlength="6" autocomplete="one-time-code" style="text-align:center;font-size:1.4rem;letter-spacing:.3em;font-weight:600">
+      </div>
+      <button class="btn-primary" onclick="verificarCodigo()" id="btn-verify">Verificar y crear cuenta</button>
+      <p style="text-align:center;font-size:13px;color:var(--text3);margin-top:1rem">
+        ¿No has recibido el código?
+        <a href="#" onclick="reenviarCodigo();return false;" style="color:var(--accent);font-weight:600">Reenviar</a>
+      </p>
     </div>
+
   </div>
 </main>
+
+<footer>
+<a href="/">QuantiChef</a> · <a href="/">Inicio</a> · <a href="/legal">Legal</a> · <a href="mailto:hola@quantichef.com">Contacto</a>
+</footer>
+
 <script>
 const SUPABASE_URL = 'https://ilzntryzijdfnntwuthp.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_qXyYLpM1403nu66tczLNCA_0s5EE3Re';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ESCUDO ANTI-BUCLES: Solo redirige si el restaurante existe
+// SOLUCIÓN AL BUCLE INFINITO
+// Comprobamos si hay sesión y si el usuario tiene su restaurante creado.
 sb.auth.getSession().then(async ({ data: { session } }) => {
   if (session) {
-    const { data: rest } = await sb.from('restaurantes').select('id').eq('user_id', session.user.id).single();
+    const { data: rest } = await sb.from('restaurantes')
+      .select('id')
+      .eq('user_id', session.user.id)
+      .single();
+      
     if (rest) {
+      // Tiene restaurante, todo correcto, al dashboard
       window.location.href = '/dashboard';
     } else {
-      console.log("Sesión activa pero sin restaurante. Limpiando para evitar bucles...");
+      // Bucle infinito detectado: Usuario logueado pero sin restaurante (estado corrupto de pruebas).
+      // Cerramos sesión para que pueda rellenar el formulario limpiamente.
       await sb.auth.signOut();
     }
   }
@@ -94,46 +264,181 @@ function switchTab(tab) {
   document.getElementById('form-registro').style.display = tab === 'registro' ? 'block' : 'none';
   document.getElementById('tab-login').classList.toggle('active', tab === 'login');
   document.getElementById('tab-registro').classList.toggle('active', tab === 'registro');
+  hideMsg();
 }
 
-function showMsg(txt, tipo='error') { const el = document.getElementById('msg'); el.textContent = txt; el.className = 'msg ' + tipo; }
+function showMsg(txt, tipo='error') {
+  const el = document.getElementById('msg');
+  el.textContent = txt;
+  el.className = 'msg ' + tipo;
+}
+
+function hideMsg() {
+  document.getElementById('msg').className = 'msg';
+}
+
+function setLoading(btnId, loading, textoOriginal, textoLoading) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  btn.innerHTML = loading ? `<span class="spinner-sm"></span>${textoLoading}` : textoOriginal;
+}
 
 async function login() {
-  const email = document.getElementById('login-email').value;
+  const email = document.getElementById('login-email').value.trim();
   const pass = document.getElementById('login-pass').value;
+  if (!email || !pass) { showMsg('Rellena email y contraseña.'); return; }
+  setLoading('btn-login', true, 'Entrar', 'Entrando...');
+  hideMsg();
   const { error } = await sb.auth.signInWithPassword({ email, password: pass });
-  if (error) showMsg('Email o contraseña incorrectos.'); else window.location.href = '/dashboard';
+  if (error) {
+    showMsg(error.message === 'Invalid login credentials'
+      ? 'Email o contraseña incorrectos.'
+      : 'Error al iniciar sesión. Inténtalo de nuevo.');
+    setLoading('btn-login', false, 'Entrar', '');
+    return;
+  }
+  window.location.href = '/dashboard';
 }
 
-let registroData = {};
-
-async function registro() {
-  const nombre = document.getElementById('reg-nombre').value;
-  const email = document.getElementById('reg-email').value;
-  const telefono = document.getElementById('reg-telefono').value.trim();
-  const pass = document.getElementById('reg-pass').value;
-
-  registroData = { nombre, email, pass, telefono };
-
-  const { error } = await sb.auth.signInWithOtp({ phone: telefono });
+async function resetPassword() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) {
+    showMsg('Escribe tu email primero y luego haz clic en "¿Olvidaste tu contraseña?"');
+    return;
+  }
+  hideMsg();
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/login'
+  });
   if (error) {
-    showMsg('Error al enviar SMS: ' + error.message);
+    showMsg('Error al enviar el email. Inténtalo de nuevo.');
   } else {
-    document.getElementById('form-registro').style.display = 'none';
-    document.getElementById('form-verify').style.display = 'block';
-    showMsg('Código enviado correctamente.', 'success');
+    showMsg('Te hemos enviado un email para restablecer tu contraseña. Revisa tu bandeja de entrada.', 'success');
   }
 }
 
-async function verificarCodigo() {
-  const code = document.getElementById('verify-code').value;
-  const { data, error } = await sb.auth.verifyOtp({ phone: registroData.telefono, token: code, type: 'sms' });
-  if (error) return showMsg('Código incorrecto.');
-
-  await sb.auth.updateUser({ email: registroData.email, password: registroData.pass });
-  await sb.from('restaurantes').insert({ user_id: data.user.id, nombre: registroData.nombre });
-  window.location.href = '/dashboard';
+function togglePass(inputId, eyeId) {
+  const input = document.getElementById(inputId);
+  const eye = document.getElementById(eyeId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    eye.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    input.type = 'password';
+    eye.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
 }
+
+// Estado del registro en pasos
+let registroData = {};
+
+async function registro() {
+  const nombrePersona = document.getElementById('reg-nombre-persona').value.trim();
+  const apellidos = document.getElementById('reg-apellidos').value.trim();
+  const nombreRestaurante = document.getElementById('reg-nombre').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const telefono = document.getElementById('reg-telefono').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+
+  if (!nombrePersona) { showMsg('Escribe tu nombre.'); return; }
+  if (!apellidos) { showMsg('Escribe tus apellidos.'); return; }
+  if (!nombreRestaurante) { showMsg('Escribe el nombre de tu restaurante.'); return; }
+  if (!email) { showMsg('Escribe tu email.'); return; }
+  if (!telefono) { showMsg('Escribe tu número de teléfono móvil.'); return; }
+  if (pass.length < 8) { showMsg('La contraseña debe tener al menos 8 caracteres.'); return; }
+  if (pass !== pass2) { showMsg('Las contraseñas no coinciden.'); return; }
+
+  // Formatear teléfono — asegurar que empieza por +
+  let telefonoFormateado = telefono.replace(/\s/g, '');
+  if (!telefonoFormateado.startsWith('+')) {
+    telefonoFormateado = '+34' + telefonoFormateado.replace(/^0034/, '');
+  }
+
+  setLoading('btn-registro', true, 'Crear cuenta gratis', 'Enviando código...');
+  hideMsg();
+
+  // Guardar datos para usar después de verificar
+  registroData = { nombrePersona, apellidos, nombreRestaurante, email, pass, telefono: telefonoFormateado };
+
+  // Enviar OTP al móvil
+  const { error } = await sb.auth.signInWithOtp({
+    phone: telefonoFormateado
+  });
+
+  if (error) {
+    const msg = error.message.includes('already registered') || error.message.includes('already in use')
+      ? 'Este número de teléfono ya tiene una cuenta. Inicia sesión.'
+      : 'Error al enviar el código. Comprueba el número e inténtalo de nuevo.';
+    showMsg(msg);
+    setLoading('btn-registro', false, 'Crear cuenta gratis', '');
+    return;
+  }
+
+  // Mostrar formulario de verificación
+  document.getElementById('form-registro').style.display = 'none';
+  document.getElementById('form-verify').style.display = 'block';
+  showMsg('Código enviado a ' + telefonoFormateado + '. Revisa tu móvil.', 'success');
+  setLoading('btn-registro', false, 'Crear cuenta gratis', '');
+}
+
+async function verificarCodigo() {
+  const codigo = document.getElementById('verify-code').value.trim();
+  if (!codigo || codigo.length < 4) { showMsg('Introduce el código que te hemos enviado.'); return; }
+
+  setLoading('btn-verify', true, 'Verificar y crear cuenta', 'Verificando...');
+  hideMsg();
+
+  // Verificar OTP
+  const { data, error } = await sb.auth.verifyOtp({
+    phone: registroData.telefono,
+    token: codigo,
+    type: 'sms'
+  });
+
+  if (error) {
+    showMsg('Código incorrecto o caducado. Inténtalo de nuevo.');
+    setLoading('btn-verify', false, 'Verificar y crear cuenta', '');
+    return;
+  }
+
+  // Vincular email y contraseña a la cuenta verificada por SMS
+  const { error: updateError } = await sb.auth.updateUser({
+    email: registroData.email,
+    password: registroData.pass,
+    data: {
+      nombre: registroData.nombrePersona,
+      apellidos: registroData.apellidos,
+      telefono: registroData.telefono
+    }
+  });
+
+  // Crear restaurante
+  if (data.user) {
+    await sb.from('restaurantes').insert({
+      user_id: data.user.id,
+      nombre: registroData.nombreRestaurante
+    });
+  }
+
+  showMsg('¡Cuenta creada! Redirigiendo...', 'success');
+  setTimeout(() => window.location.href = '/dashboard', 1500);
+}
+
+async function reenviarCodigo() {
+  if (!registroData.telefono) return;
+  const { error } = await sb.auth.signInWithOtp({ phone: registroData.telefono });
+  if (!error) showMsg('Código reenviado a ' + registroData.telefono, 'success');
+  else showMsg('Error al reenviar. Inténtalo en unos segundos.');
+}
+
+// Enter key en inputs
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const loginVisible = document.getElementById('form-login').style.display !== 'none';
+    if (loginVisible) login(); else registro();
+  }
+});
 </script>
 </body>
 </html>
