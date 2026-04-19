@@ -389,7 +389,7 @@ async function verificarCodigo() {
   setLoading('btn-verify', true, 'Verificar y crear cuenta', 'Verificando...');
   hideMsg();
 
-  // Verificar OTP
+  // PASO 1: Verificar OTP por SMS — crea la sesión con el teléfono
   const { data, error } = await sb.auth.verifyOtp({
     phone: registroData.telefono,
     token: codigo,
@@ -402,24 +402,46 @@ async function verificarCodigo() {
     return;
   }
 
-  // Vincular email y contraseña a la cuenta verificada por SMS
-  const { error: updateError } = await sb.auth.updateUser({
-    email: registroData.email,
-    password: registroData.pass,
-    data: {
+  // PASO 2: Vincular email + contraseña via API server-side (sin confirmación de email)
+  // Usamos el endpoint admin que hace email_confirm: true directamente
+  const session = data.session;
+  const userId = data.user?.id;
+
+  if (!userId || !session) {
+    showMsg('Error al obtener la sesión. Inténtalo de nuevo.');
+    setLoading('btn-verify', false, 'Verificar y crear cuenta', '');
+    return;
+  }
+
+  const linkRes = await fetch('/api/link-account', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + session.access_token
+    },
+    body: JSON.stringify({
+      userId,
+      email: registroData.email,
+      password: registroData.pass,
       nombre: registroData.nombrePersona,
       apellidos: registroData.apellidos,
       telefono: registroData.telefono
-    }
+    })
   });
 
-  // Crear restaurante
-  if (data.user) {
-    await sb.from('restaurantes').insert({
-      user_id: data.user.id,
-      nombre: registroData.nombreRestaurante
-    });
+  const linkData = await linkRes.json();
+
+  if (!linkRes.ok || !linkData.ok) {
+    showMsg(linkData.error || 'Error al vincular el email. Inténtalo de nuevo.');
+    setLoading('btn-verify', false, 'Verificar y crear cuenta', '');
+    return;
   }
+
+  // PASO 3: Crear restaurante en la base de datos
+  await sb.from('restaurantes').insert({
+    user_id: userId,
+    nombre: registroData.nombreRestaurante
+  });
 
   showMsg('¡Cuenta creada! Redirigiendo...', 'success');
   setTimeout(() => window.location.href = '/dashboard', 1500);
