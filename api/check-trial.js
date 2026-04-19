@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Fix: nombre correcto de la variable de entorno
 const sb = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -21,25 +20,35 @@ export default async function handler(req, res) {
     const { data: { user }, error: authError } = await sb.auth.getUser(token);
     if (authError || !user) return res.status(401).json({ error: 'Sesión inválida' });
 
+    // 1. Obtener restaurante (sin la columna inexistente)
     const { data: rest, error: restError } = await sb
       .from('restaurantes')
-      .select('id, plan, escandallos_count')
+      .select('id, plan')
       .eq('user_id', user.id)
       .single();
 
     if (restError || !rest) return res.status(404).json({ error: 'Restaurante no encontrado' });
 
+    // 2. Contar escandallos en tiempo real
+    const { count, error: countError } = await sb
+      .from('escandallos')
+      .select('id', { count: 'exact', head: true })
+      .eq('restaurante_id', rest.id);
+
+    if (countError) return res.status(500).json({ error: 'Error al contar escandallos' });
+
     const esPro = rest.plan === 'pro';
-    const count = rest.escandallos_count || 0;
+    const total = count || 0;
     const MAX_FREE = 5;
 
     return res.status(200).json({
       esPro,
-      count,
-      puedeCrear: esPro || count < MAX_FREE,
-      restantes: esPro ? null : Math.max(0, MAX_FREE - count)
+      count: total,
+      puedeCrear: esPro || total < MAX_FREE,
+      restantes: esPro ? null : Math.max(0, MAX_FREE - total)
     });
   } catch (err) {
+    console.error('check-trial error:', err);
     return res.status(500).json({ error: 'Error interno' });
   }
 }
