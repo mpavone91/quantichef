@@ -502,16 +502,33 @@ async function init(){
 // CARGAR DATOS CON ESCUDO ANTI-BUCLES
 // ==========================================
 async function cargarDatos(session){
-  // 1. Buscamos el restaurante y posibles errores
-  const {data:rest, error} = await sb.from('restaurantes')
-    .select('id,nombre,plan')
-    .eq('user_id',session.user.id)
-    .single();
+  // 1. Buscamos el restaurante — con reintento si falla la primera vez
+  // (puede ocurrir si el token se acaba de refrescar tras registro)
+  let rest = null;
+  let intentos = 0;
+  const maxIntentos = 3;
+  
+  while (!rest && intentos < maxIntentos) {
+    const { data, error } = await sb.from('restaurantes')
+      .select('id,nombre,plan')
+      .eq('user_id', session.user.id)
+      .maybeSingle();
+    
+    if (data) {
+      rest = data;
+      break;
+    }
+    
+    intentos++;
+    if (intentos < maxIntentos) {
+      // Esperar 500ms antes de reintentar (le damos tiempo al token)
+      await new Promise(r => setTimeout(r, 500));
+    }
+  }
 
-  // 2. Si hay error o no existe el restaurante (sesión fantasma detectada)
-  if(error || !rest){
-    console.log("Restaurante no encontrado. Limpiando sesión fantasma...");
-    // MUY IMPORTANTE: Cerramos sesión ANTES de redirigir para matar el bucle
+  // 2. Si tras 3 intentos sigue sin encontrar restaurante, es sesión fantasma real
+  if(!rest){
+    console.log("Restaurante no encontrado tras 3 intentos. Limpiando sesión...");
     await sb.auth.signOut(); 
     window.location.href='/login';
     return;
