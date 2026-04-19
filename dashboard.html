@@ -294,6 +294,31 @@
   .precios-all { display: none; }
   .precios-all.visible { display: block; }
 
+  /* === RANKING DE RENTABILIDAD === */
+  .ranking-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
+  .ranking-header{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1.2rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+  .ranking-header-title{font-size:13px;font-weight:700;color:var(--text)}
+  .ranking-header-sub{font-size:11px;color:var(--text3);margin-top:1px}
+  .ranking-tabs{display:flex;gap:4px}
+  .ranking-tab{font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--text3);transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif}
+  .ranking-tab.active{background:var(--accent);color:white;border-color:var(--accent)}
+  .ranking-row{display:flex;align-items:center;gap:12px;padding:.75rem 1.2rem;border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer}
+  .ranking-row:last-child{border-bottom:none}
+  .ranking-row:hover{background:var(--bg)}
+  .rank-num{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:300;color:var(--text3);width:28px;flex-shrink:0;text-align:center;line-height:1}
+  .rank-num.top{color:var(--accent)}
+  .rank-name{flex:1;font-size:13px;font-weight:600;color:var(--text);min-width:0}
+  .rank-cat{font-size:10px;color:var(--text3);font-weight:400;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rank-bar-wrap{flex:2;display:flex;align-items:center;gap:8px;min-width:80px}
+  .rank-bar-bg{flex:1;height:6px;border-radius:999px;background:var(--border);overflow:hidden}
+  .rank-bar-fill{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+  .rank-pct{font-family:'Fraunces',serif;font-size:1rem;font-weight:300;min-width:52px;text-align:right}
+  .rank-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.04em;flex-shrink:0;white-space:nowrap}
+  .rank-badge.badge-good{background:var(--accent-light);color:var(--accent)}
+  .rank-badge.badge-warn{background:#FFF3E0;color:#7A4F00}
+  .rank-badge.badge-bad{background:var(--danger-light);color:var(--danger)}
+  .ranking-empty{padding:2rem;text-align:center;font-size:13px;color:var(--text3)}
+
   /* Responsive Fixes */
   @media(max-width:768px){
     nav{padding:0.6rem 1rem}
@@ -308,6 +333,7 @@
     .empty-steps { grid-template-columns: 1fr; }
     .empty-step-arrow { display: none; }
     .cta-nueva { width: 100%; justify-content: center; }
+    .rank-bar-wrap { display: none; }
   }
 </style>
 </head>
@@ -428,6 +454,24 @@
       <div class="stat"><div class="stat-label">Margen más alto</div><div class="stat-value green" id="stat-top">—</div></div>
     </div>
 
+    <!-- RANKING DE RENTABILIDAD (solo Pro) -->
+    <div id="ranking-section" style="display:none">
+      <div class="section-title">Ranking de rentabilidad</div>
+      <div class="ranking-card">
+        <div class="ranking-header">
+          <div>
+            <div class="ranking-header-title">Tus platos por margen</div>
+            <div class="ranking-header-sub">Food cost real · basado en tus escandallos</div>
+          </div>
+          <div class="ranking-tabs">
+            <button class="ranking-tab active" onclick="setRankingTab('fc',this)">Food cost</button>
+            <button class="ranking-tab" onclick="setRankingTab('margen',this)">Margen €</button>
+          </div>
+        </div>
+        <div id="ranking-list"></div>
+      </div>
+    </div>
+
     <div class="section-title">Mis platos</div>
     <div id="lista-escandallos"></div>
 
@@ -496,6 +540,7 @@ async function cargarDatos(session){
     renderStats(escandallos);
     renderLista(escandallos);
     renderSaludCarta(escandallos);
+    initRanking(escandallos, esPro);
   } else { 
     renderVacio(); 
   }
@@ -820,6 +865,75 @@ function toggleSalud(){
   const chevron = document.getElementById('salud-chevron');
   const open = body.classList.toggle('open');
   chevron.classList.toggle('open', open);
+}
+
+// ── RANKING DE RENTABILIDAD ──────────────────────────────────
+let rankingData = [];
+let rankingModo = 'fc';
+
+function setRankingTab(modo, btn) {
+  rankingModo = modo;
+  document.querySelectorAll('.ranking-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderRanking();
+}
+
+function getRankingBadge(fc) {
+  if (fc <= 25) return { cls: 'badge-good', label: 'Excelente' };
+  if (fc <= 32) return { cls: 'badge-good', label: 'Rentable' };
+  if (fc <= 38) return { cls: 'badge-warn', label: 'Ajustado' };
+  return { cls: 'badge-bad', label: 'Revisar' };
+}
+
+function getRankingColor(fc) {
+  if (fc <= 25) return '#1E4D2B';
+  if (fc <= 32) return '#3D7A54';
+  if (fc <= 38) return '#C4943A';
+  return '#8B1A1A';
+}
+
+function renderRanking() {
+  const lista = document.getElementById('ranking-list');
+  const conPrecio = rankingData.filter(e => e.precio_venta > 0 && e.coste_racion > 0);
+  if (conPrecio.length === 0) {
+    lista.innerHTML = '<div class="ranking-empty">Añade precio de venta a tus escandallos para ver el ranking</div>';
+    return;
+  }
+  const sorted = [...conPrecio].sort((a, b) => {
+    if (rankingModo === 'fc') return (a.food_cost_pct || 0) - (b.food_cost_pct || 0);
+    return (b.precio_venta - b.coste_racion) - (a.precio_venta - a.coste_racion);
+  });
+  const maxVal = rankingModo === 'fc'
+    ? Math.max(...sorted.map(p => p.food_cost_pct || 0))
+    : Math.max(...sorted.map(p => p.precio_venta - p.coste_racion));
+  lista.innerHTML = sorted.map((e, i) => {
+    const fc = e.food_cost_pct || Math.round(e.coste_racion / e.precio_venta * 100);
+    const margen = e.precio_venta - e.coste_racion;
+    const val = rankingModo === 'fc' ? fc : margen;
+    const pct = maxVal > 0 ? Math.round((val / maxVal) * 100) : 0;
+    const badge = getRankingBadge(fc);
+    const color = getRankingColor(fc);
+    const label = rankingModo === 'fc'
+      ? fc + '%'
+      : margen.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '€';
+    return `
+      <div class="ranking-row" onclick="editarEscandallo(${JSON.stringify(e).replace(/"/g,'&quot;')})">
+        <div class="rank-num ${i < 3 ? 'top' : ''}">${i + 1}</div>
+        <div class="rank-name">${e.nombre_plato}<div class="rank-cat">${e.categoria || 'Sin categoría'}</div></div>
+        <div class="rank-bar-wrap">
+          <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+          <div class="rank-pct" style="color:${color}">${label}</div>
+        </div>
+        <span class="rank-badge ${badge.cls}">${badge.label}</span>
+      </div>`;
+  }).join('');
+}
+
+function initRanking(escandallos, esPro) {
+  if (!esPro) return;
+  rankingData = escandallos || [];
+  document.getElementById('ranking-section').style.display = 'block';
+  renderRanking();
 }
 
 init();
