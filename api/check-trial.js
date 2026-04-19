@@ -1,12 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Fix: nombre correcto de la variable de entorno
 const sb = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'https://www.quantichef.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -16,12 +17,10 @@ export default async function handler(req, res) {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ error: 'No autorizado' });
 
-    // Verify user token
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error: authError } = await sb.auth.getUser(token);
     if (authError || !user) return res.status(401).json({ error: 'Sesión inválida' });
 
-    // Get restaurante
     const { data: rest, error: restError } = await sb
       .from('restaurantes')
       .select('id, plan, escandallos_count')
@@ -41,6 +40,6 @@ export default async function handler(req, res) {
       restantes: esPro ? null : Math.max(0, MAX_FREE - count)
     });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: 'Error interno' });
   }
 }
