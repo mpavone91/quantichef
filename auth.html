@@ -387,9 +387,22 @@ async function registro() {
     phone: telefonoFormateado
   });
 
-  if (error) {
-    const msg = error.message.includes('already registered') || error.message.includes('already in use')
-      ? 'Este número de teléfono ya tiene una cuenta. Inicia sesión.'
+if (error) {
+    // Caso especial: el teléfono ya existe pero el registro pudo no completarse (usuario huérfano)
+    // Intentamos reenviar el OTP de todos modos para que pueda completar o iniciar sesión
+    const yaExiste = error.message.includes('already registered') || error.message.includes('already in use') || error.message.includes('rate limit');
+    
+    if (yaExiste && !error.message.includes('rate limit')) {
+      showMsg('Este número ya tiene una cuenta empezada. Si no completaste el registro antes, introduce el código que te llegará al móvil. Si ya tienes cuenta, inicia sesión.');
+      // No detenemos — dejamos que el usuario pruebe a verificar igualmente
+      document.getElementById('form-registro').style.display = 'none';
+      document.getElementById('form-verify').style.display = 'block';
+      setLoading('btn-registro', false, 'Crear cuenta gratis', '');
+      return;
+    }
+    
+    const msg = error.message.includes('rate limit')
+      ? 'Has pedido demasiados códigos seguidos. Espera 1 minuto y prueba otra vez.'
       : 'Error al enviar el código. Comprueba el número e inténtalo de nuevo.';
     showMsg(msg);
     setLoading('btn-registro', false, 'Crear cuenta gratis', '');
