@@ -37,12 +37,11 @@
   .plan-label{position: absolute; top: -12px; right: 20px; font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:white;background:var(--gold);padding:4px 12px;border-radius:20px;display:inline-block;}
   .plan-name{font-size:12px;font-weight:600;color:var(--text3);margin-bottom:.4rem; text-transform:uppercase; letter-spacing:1px;}
   .plan-card.destacado .plan-name{color:var(--accent-mid)}
-  .plan-price{font-family:'Fraunces',serif;font-size:3rem;font-weight:300;color:var(--text);line-height:1;margin-bottom:.25rem}
+  .plan-price-block { margin-bottom: 1.25rem; }
+  .plan-price{font-family:'Fraunces',serif;font-size:3rem;font-weight:300;color:var(--text);line-height:1;margin-bottom:.3rem}
   .plan-card.destacado .plan-price{color:var(--accent)}
-  .plan-period{font-size:13px;color:var(--text3);margin-bottom:1.5rem}
-  
-  /* Nuevo estilo para el subtexto de ahorro */
-  .plan-saving { font-size: 13px; font-weight: 600; color: var(--accent); margin-top: -1rem; margin-bottom: 1.5rem; display: block; }
+  .plan-period{font-size:13px;color:var(--text3);margin-bottom:.4rem}
+  .plan-saving { font-size: 12px; font-weight: 700; color: var(--accent); background: rgba(30,77,43,.1); display: inline-block; padding: 3px 10px; border-radius: 20px; letter-spacing: .02em; margin-bottom: 0; }
   
   .plan-features{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.75rem}
   .plan-feature{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)}
@@ -108,9 +107,10 @@
   <div class="plans">
     <div class="plan-card">
       <div class="plan-name">Pago Mensual</div>
-      <div class="plan-price">39<span style="font-size:1.2rem; font-family:'Plus Jakarta Sans', sans-serif; font-weight:400; color:var(--text3)">€/mes</span></div>
-      <div class="plan-period">Sin permanencia</div>
-      
+      <div class="plan-price-block">
+        <div class="plan-price">39<span style="font-size:1.2rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;color:var(--text3)">€/mes</span></div>
+        <div class="plan-period">Sin permanencia · cancela cuando quieras</div>
+      </div>
       <ul class="plan-features">
         <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Escandallos y mermas ilimitados</li>
         <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Lectura de albaranes (Foto/PDF)</li>
@@ -124,14 +124,19 @@
     <div class="plan-card destacado">
       <div class="plan-label">3 meses gratis</div>
       <div class="plan-name">Pago Anual</div>
-      <div class="plan-price">349<span style="font-size:1.2rem; font-family:'Plus Jakarta Sans', sans-serif; font-weight:400; color:var(--accent)">€/año</span></div>
-      <div class="plan-saving">Ahorras 119€ al año</div>
-      
+      <div class="plan-price-block">
+        <div class="plan-price">349<span style="font-size:1.2rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;color:var(--accent)">€/año</span></div>
+        <div class="plan-period">Equivale a 29€/mes</div>
+        <span class="plan-saving">✦ Ahorras 119€ al año</span>
+      </div>
       <ul class="plan-features">
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><strong>Todo el software sin restricciones</strong></li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Alertas de rentabilidad inmediatas</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Soporte prioritario por email</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Acceso a nuevas funciones (Stock)</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Escandallos y mermas ilimitados</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Lectura de albaranes (Foto/PDF)</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Análisis de precios en cascada</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Alertas de pérdida de margen</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Exportación a PDF</li>
+        <li class="plan-feature" style="font-weight:700;color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Soporte prioritario por email</li>
+        <li class="plan-feature" style="font-weight:700;color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Acceso anticipado al Módulo Stock</li>
       </ul>
       <button class="btn-plan primary" onclick="checkout('price_1TNhY8Q2tw1TGl0PpCFivavL', this)" id="btn-anual">Activar plan anual</button>
     </div>
