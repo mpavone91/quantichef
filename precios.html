@@ -166,7 +166,7 @@ if (params.get('pago') === 'ok') {
 async function verificarPagoReal() {
   // Esperamos un momento para dar tiempo al webhook de Stripe a procesar
   let intentos = 0;
-  const maxIntentos = 10; // 10 intentos x 1.5s = 15 segundos máximo
+  const maxIntentos = 20; // 20 intentos x 1.5s = 30 segundos máximo
   
   const chequear = async () => {
     const { data: { session } } = await sb.auth.getSession();
