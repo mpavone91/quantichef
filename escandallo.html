@@ -257,14 +257,14 @@
     <div class="modal-plans">
       <a href="/precios" class="modal-plan" style="text-decoration:none;cursor:pointer">
         <div class="modal-plan-name">Mensual</div>
-        <div class="modal-plan-price">29<span style="font-size:1rem">€</span></div>
+        <div class="modal-plan-price">39<span style="font-size:1rem">€</span></div>
         <div class="modal-plan-period">al mes</div>
       </a>
       <a href="/precios" class="modal-plan best" style="text-decoration:none;cursor:pointer">
         <div class="modal-plan-name">Anual</div>
-        <div class="modal-plan-price">249<span style="font-size:1rem">€</span></div>
+        <div class="modal-plan-price">349<span style="font-size:1rem">€</span></div>
         <div class="modal-plan-period">al año</div>
-        <div class="modal-plan-save">Ahorras 99€</div>
+        <div class="modal-plan-save">Ahorras 119€</div>
       </a>
     </div>
     <a href="/precios" class="btn-modal-cta">Activar ahora — acceso inmediato</a>
@@ -292,7 +292,7 @@
         <select id="categoria" onchange="calcular()"><option value="">Seleccionar...</option><option>Entrante</option><option>Principal</option><option>Postre</option><option>Bebida</option><option>Menú del día</option></select>
       </div>
       <div class="field">
-        <div class="field-label"><label>Nº de raciones</label><button class="help-btn" onclick="tt('tt-rac')">?</button><div class="tooltip" id="tt-rac">Para cuántas raciones calculas los ingredientes. El coste se divide automáticamente.</div></div>
+        <div class="field-label"><label>Raciones que salen</label><button class="help-btn" onclick="tt('tt-rac')">?</button><div class="tooltip" id="tt-rac">¿Cuántos platos o porciones salen con estos ingredientes? Pon 1 si calculas para un solo plato. Pon 10 si haces un brownie entero que da 10 porciones — el coste se divide automáticamente.</div></div>
         <input type="number" id="raciones" value="1" min="1" oninput="calcular()">
       </div>
       <div class="field">
@@ -349,7 +349,7 @@
     <div class="metric"><div class="metric-label">Coste total</div><div class="metric-value" id="m-coste">0,00 €</div></div>
     <div class="metric"><div class="metric-label">Coste por ración</div><div class="metric-value" id="m-racion">0,00 €</div></div>
     <div class="metric"><div class="metric-label">Precio mínimo</div><div class="metric-value good" id="m-pvp">0,00 €</div><div class="metric-sub" id="m-pvp-sub">cubre ingredientes</div></div>
-    <div class="metric"><div class="metric-label">Margen food cost</div><div class="metric-value" id="m-fc">—</div></div>
+    <div class="metric"><div class="metric-label">Coste de producto real</div><div class="metric-value" id="m-fc">—</div></div>
     <div class="metric premium-metric" id="m-neto-card">
       <div class="metric-label">Precio recomendado</div>
       <div class="metric-value gold" id="m-pvp-neto">—</div>
@@ -380,9 +380,9 @@
       <div>
         <div class="slider-row">
           <div class="slider-label-wrap">
-            <span class="slider-label">Food cost %</span>
+            <span class="slider-label">Coste de producto %</span>
             <button class="help-btn" onclick="tt('tt-fc')">?</button>
-            <div class="tooltip" id="tt-fc">% del precio de venta que representan los ingredientes. Estándar hostelería: 28–35%. A menor %, mayor precio mínimo de venta.</div>
+            <div class="tooltip" id="tt-fc">% del precio de venta que representan los ingredientes (coste de producto). Cuanto más bajo, más margen. Estándar hostelería: 28–35%.</div>
           </div>
           <input type="range" class="green-track" id="margen-fc" min="15" max="55" value="30" step="1" oninput="calcular()">
           <span class="slider-val green" id="val-fc">30%</span>
@@ -607,16 +607,13 @@ function calcular(){
   // Food cost real
   const fcReal=pvpMin>0?(por/pvpMin*100):0;
 
-  // Precio recomendado (food cost + margen neto)
-  const totalPct=(fc+neto)/100;
-  const pvpRec=totalPct<1&&totalPct>0?por/(1-neto/100-fc/100*(1-neto/100)):0;
-  // Simplificado: pvpRec = por / (fc/100) / (1 - neto/100)
+  // Precio recomendado: coste_ración / (fc% × (1 - neto%))
   const pvpRecomendado=fc>0&&neto<100?por/(fc/100)/(1-neto/100):0;
 
   document.getElementById('m-coste').textContent=fmt(tot);
   document.getElementById('m-racion').textContent=fmt(por);
   document.getElementById('m-pvp').textContent=fmt(pvpMin);
-  document.getElementById('m-pvp-sub').textContent='cubre ingredientes ('+fc+'% FC)';
+  document.getElementById('m-pvp-sub').textContent='con coste de producto al '+fc+'%';
 
   const mm=document.getElementById('m-fc');
   if(pvpMin>0){mm.textContent=fcReal.toFixed(1)+'%';mm.className='metric-value '+(fcReal<=35?'good':fcReal<=45?'warn':'bad');}
@@ -727,7 +724,11 @@ function buscarPrecioProveedor(nombreIngrediente){
   if(match) return match;
   match=preciosProveedor.find(p=>{
     const pn=p.ingrediente_normalizado||'';
-    return pn.includes(norm)||norm.includes(pn);
+    if(!pn||pn.length<4||!norm||norm.length<4) return false;
+    const palabrasNorm=norm.split(' ').filter(w=>w.length>=4);
+    const palabrasPn=pn.split(' ').filter(w=>w.length>=4);
+    if(palabrasNorm.length===0||palabrasPn.length===0) return false;
+    return palabrasNorm.every(w=>pn.includes(w))||palabrasPn.every(w=>norm.includes(w));
   });
   return match||null;
 }
@@ -799,8 +800,8 @@ function toggleSug(checkEl,i){
   cb.checked=!cb.checked;
   item.classList.toggle('selected',cb.checked);
 }
-function addSugeridos(){
-  if(!registrarEscandallo())return;
+async function addSugeridos(){
+  if(!await registrarEscandallo())return;
   const seleccionados=[];
   document.querySelectorAll('#sug-list input[type=checkbox]').forEach((cb,i)=>{
     if(cb.checked&&_sugs[i]){
