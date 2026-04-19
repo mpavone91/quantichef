@@ -173,9 +173,19 @@ async function guardarYCompararPrecios(productos, restaurante_id) {
           const ingredientes = esc.ingredientes || [];
           const ingAfectado = ingredientes.find(ing => {
             const ingNorm = normalizar(ing.nombre || '');
-            return ingNorm === nombre_norm ||
-                   ingNorm.includes(nombre_norm) ||
-                   nombre_norm.includes(ingNorm);
+            if (!ingNorm || ingNorm.length < 4) return false;
+            // 1. Coincidencia exacta (mejor caso)
+            if (ingNorm === nombre_norm) return true;
+            // 2. Match por palabras completas: todas las palabras del ingrediente del escandallo
+            //    deben aparecer en el nombre normalizado del proveedor, o viceversa
+            const palabrasIng = ingNorm.split(' ').filter(p => p.length >= 4);
+            const palabrasNorm = nombre_norm.split(' ').filter(p => p.length >= 4);
+            if (palabrasIng.length === 0 || palabrasNorm.length === 0) return false;
+            // El ingrediente del escandallo debe tener todas sus palabras clave en el nombre del proveedor
+            const matchForward = palabrasIng.every(p => nombre_norm.includes(p));
+            // O el nombre del proveedor debe tener todas sus palabras clave en el del escandallo
+            const matchBackward = palabrasNorm.every(p => ingNorm.includes(p));
+            return matchForward || matchBackward;
           });
 
           if (ingAfectado) {
