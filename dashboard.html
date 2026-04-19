@@ -224,6 +224,76 @@
   .stat-empty { opacity: .45; }
   .stat-hint { font-size: 10px; color: var(--text3); margin-top: 3px; font-style: italic; }
 
+
+  /* === TIP DEL DÍA === */
+  .tip-dia {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: .875rem 1.1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .tip-dia-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .tip-dia-label {
+    font-size: 9px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 3px;
+  }
+  .tip-dia-text { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+  /* === SALUD DE CARTA === */
+  .salud-carta {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  .salud-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .75rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .salud-header-left { display: flex; align-items: center; gap: 8px; }
+  .salud-title { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+  .salud-chevron { color: var(--text3); transition: transform .2s; font-size: 12px; }
+  .salud-chevron.open { transform: rotate(180deg); }
+  .salud-pills { display: flex; gap: 6px; flex-wrap: wrap; padding: .75rem 1.1rem; }
+  .salud-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 600; padding: 4px 10px;
+    border-radius: 20px; cursor: pointer; transition: opacity .15s;
+    text-decoration: none;
+  }
+  .salud-pill:hover { opacity: .8; }
+  .salud-pill.good { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-mint); }
+  .salud-pill.warn { background: #FFF3E0; color: #8B4A00; border: 1px solid #F5C47A; }
+  .salud-pill.bad { background: var(--danger-light); color: var(--danger); border: 1px solid rgba(139,26,26,.2); }
+  .salud-body { display: none; border-top: 1px solid var(--border); }
+  .salud-body.open { display: block; }
+  .salud-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: .6rem 1.1rem; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background .15s;
+  }
+  .salud-row:last-child { border-bottom: none; }
+  .salud-row:hover { background: var(--bg); }
+  .salud-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .salud-dot.good { background: var(--accent); }
+  .salud-dot.warn { background: #C4943A; }
+  .salud-dot.bad { background: var(--danger); }
+  .salud-row-nombre { flex: 1; font-size: 13px; font-weight: 600; color: var(--text); }
+  .salud-row-meta { font-size: 12px; color: var(--text3); }
+
+  /* === PRECIOS RECIENTES (reemplaza lista completa) === */
+  .precios-toggle { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; background: none; border: none; padding: 0; margin-top: .5rem; display: block; }
+  .precios-all { display: none; }
+  .precios-all.visible { display: block; }
+
   /* Responsive Fixes */
   @media(max-width:768px){
     nav{padding:0.6rem 1rem}
@@ -318,6 +388,28 @@
       <button class="btn-pro-manage" onclick="abrirPortalCliente()">Gestionar cuenta / Facturas</button>
     </div>
 
+
+    <!-- TIP DEL DÍA -->
+    <div class="tip-dia" id="tip-dia" style="display:none">
+      <div class="tip-dia-icon">💡</div>
+      <div>
+        <div class="tip-dia-label">Consejo del día</div>
+        <div class="tip-dia-text" id="tip-dia-text"></div>
+      </div>
+    </div>
+
+    <!-- SALUD DE CARTA -->
+    <div class="salud-carta" id="salud-carta" style="display:none">
+      <div class="salud-header" onclick="toggleSalud()">
+        <div class="salud-header-left">
+          <span class="salud-title">Salud de tu carta</span>
+          <div class="salud-pills" id="salud-pills" style="padding:0;border:none;background:none"></div>
+        </div>
+        <span class="salud-chevron" id="salud-chevron">▾</span>
+      </div>
+      <div class="salud-body" id="salud-body"></div>
+    </div>
+
     <div class="alertas-section" id="alertas-section" style="display:none">
       <div class="section-title">Alertas de rentabilidad</div>
       <div class="alertas-panel">
@@ -403,10 +495,12 @@ async function cargarDatos(session){
     document.getElementById('stats').style.display = 'grid';
     renderStats(escandallos);
     renderLista(escandallos);
+    renderSaludCarta(escandallos);
   } else { 
     renderVacio(); 
   }
 
+  renderTip(esPro);
   await cargarPreciosGuardados();
   await cargarAlertas();
 }
@@ -583,10 +677,144 @@ async function marcarTodasVistas(){
 
 async function cargarPreciosGuardados(){
   if(!restauranteId) return;
-  const {data: precios} = await sb.from('precios_proveedor').select('*').eq('restaurante_id', restauranteId).order('ingrediente_normalizado', {ascending: true});
+  // Cargamos ordenados por updated_at para mostrar los más recientes primero
+  const {data: precios} = await sb.from('precios_proveedor').select('*').eq('restaurante_id', restauranteId).order('updated_at', {ascending: false});
   const container = document.getElementById('precios-guardados');
   if(!precios || precios.length === 0) return;
-  container.innerHTML = `<div style="font-size:12px;color:var(--text3);margin-bottom:.5rem">${precios.length} precios de proveedor activos</div>` + precios.map(p => `<div class="precio-card"><div style="flex:1"><b>${p.ingrediente_normalizado}</b></div><div>${fmt(p.precio_kg)}/${p.unidad}</div></div>`).join('');
+
+  const recientes = precios.slice(0, 5);
+  const resto = precios.slice(5);
+
+  const fmtFecha = (iso) => {
+    if(!iso) return '';
+    const d = new Date(iso);
+    return d.toLocaleDateString('es-ES', {day:'numeric', month:'short'});
+  };
+
+  const renderPrecio = (p) => `
+    <div class="precio-card">
+      <div style="flex:1">
+        <b style="font-size:13px">${p.ingrediente_normalizado}</b>
+        ${p.updated_at ? `<span style="font-size:11px;color:var(--text3);margin-left:6px">${fmtFecha(p.updated_at)}</span>` : ''}
+      </div>
+      <div style="font-size:13px;font-weight:600;color:var(--accent)">${fmt(p.precio_kg)}/${p.unidad}</div>
+    </div>`;
+
+  container.innerHTML = `
+    <div style="font-size:12px;color:var(--text3);margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between">
+      <span>${precios.length} precio${precios.length!==1?'s':''} de proveedor activo${precios.length!==1?'s':''}</span>
+      ${precios.length > 0 ? '<span style="font-size:11px;color:var(--text3)">Últimos actualizados</span>' : ''}
+    </div>
+    ${recientes.map(renderPrecio).join('')}
+    ${resto.length > 0 ? `
+      <div class="precios-all" id="precios-all">
+        ${resto.map(renderPrecio).join('')}
+      </div>
+      <button class="precios-toggle" id="precios-toggle-btn" onclick="togglePrecios()">
+        Ver ${resto.length} más ▾
+      </button>
+    ` : ''}
+  `;
+}
+
+function togglePrecios(){
+  const el = document.getElementById('precios-all');
+  const btn = document.getElementById('precios-toggle-btn');
+  const open = el.classList.toggle('visible');
+  btn.textContent = open ? 'Ver menos ▴' : `Ver ${el.children.length} más ▾`;
+}
+
+
+// ── TIP DEL DÍA ─────────────────────────────────────────────
+const TIPS = [
+  'Un food cost del 28–32% es el objetivo en restauración. Por encima del 35% empieza a comprimir tu margen operativo.',
+  'Revisa los precios de tus proveedores al menos una vez al mes. Una subida del 10% en proteínas puede costarte cientos de euros al año.',
+  'El plato más rentable no siempre es el más caro. Busca el mejor ratio margen/popularidad.',
+  'La merma media de pescado fresco al limpiar es del 30–40%. Úsala en tu escandallo para no subestimar el coste real.',
+  'Los postres suelen tener el food cost más bajo de la carta (15–20%). Son aliados de tu rentabilidad.',
+  'Sube un albarán cada vez que recibes mercancía. QuantiChef te avisará automáticamente si algo sube de precio.',
+  'El pan de cortesía, el agua, el aceite... son costes invisibles. Inclúyelos en tu food cost general.',
+  'Un precio de carta bien calculado te protege ante subidas de proveedores. Sin escandallo, absorbes las subidas sin saberlo.',
+  'La merma de la carne al cocinar puede ser del 20–30% según el corte. La ternera pierde más que el cerdo.',
+  'Revisa tu carta cada temporada. Los precios de verduras y frutas varían hasta un 40% según la época.',
+  'El margen bruto ideal en hostelería está entre el 65–72%. Si estás por debajo, algo en tu carta necesita ajuste.',
+  'Los platos del día son una oportunidad: usa ingredientes de temporada baratos y ofrécelos con buen margen.',
+  'Negocia con tus proveedores al menos una vez al año. Volumen + fidelidad suele traducirse en mejores precios.',
+  'El coste de personal suele ser el 30–35% de la facturación. Contrólalo junto al food cost para ver tu margen neto real.',
+  'Ingredientes con merma alta (pescado, verdura de hoja) necesitan escandallo preciso. Un error del 10% en merma cambia el precio recomendado.',
+  'Un escandallo bien hecho te tarda 5 minutos. Una carta sin escandallos puede costarte miles de euros al año.',
+  'Si tu food cost sube pero no cambias precios, tu margen cae directamente. Las alertas de QuantiChef son tu primera línea de defensa.',
+  'El precio psicológico funciona: 12,90€ se percibe mucho más barato que 13€, aunque la diferencia sea de 10 céntimos.',
+  'El aceite de oliva, el marisco y las proteínas premium son los ingredientes con mayor volatilidad de precio. Escandalíalos siempre.',
+  'Los menús del día tienen food cost más alto porque incluyen muchos platos. Compénsalo con bebida y postre de buen margen.',
+  'Fotografiar los platos antes de servir ayuda a estandarizar raciones. Menos variación = food cost más predecible.',
+  'El take-away tiene menos coste de sala pero añade coste de packaging. Inclúyelo en el escandallo si ofreces servicio a domicilio.',
+  'Un plato con food cost del 25% y precio de 18€ te deja 13,50€ brutos por comensal. Con food cost del 40% y precio de 15€, solo 9€.',
+  'Las raciones generosas fidelizan, pero aumentan el food cost. Encuentra el equilibrio con tu escandallo.',
+  'El desperdicio alimentario es food cost invisible. Controla las mermas reales vs las teóricas del escandallo.',
+  'Las salsas y guarniciones tienen food cost muy bajo pero aportan valor percibido. Úsalas para justificar precios más altos.',
+  'Revisa tu plato menos rentable. ¿Puedes subir el precio? ¿Reducir una guarnición? ¿Eliminarlo de carta?',
+  'El queso, los frutos secos y el ibérico tienen precio por 100g muy alto. Pésalos siempre en el escandallo.',
+  'Cada 1€ que sube el precio de un ingrediente principal, el precio de venta recomendado puede subir 3–4€ dependiendo de tu food cost.',
+  'Un restaurante con 50 platos sin escandallar está volando a ciegas. Empieza por los 5 más vendidos.',
+];
+
+function renderTip(esPro) {
+  if(!esPro) return; // Solo para Pro
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+  const tip = TIPS[dayOfYear % TIPS.length];
+  document.getElementById('tip-dia-text').textContent = tip;
+  document.getElementById('tip-dia').style.display = 'flex';
+}
+
+// ── SALUD DE CARTA ───────────────────────────────────────────
+function renderSaludCarta(escandallos) {
+  if(!escandallos || escandallos.length === 0) return;
+
+  const con_precio = escandallos.filter(e => e.precio_venta > 0 && e.coste_racion > 0);
+  if(con_precio.length === 0) return;
+
+  // Clasificar cada plato
+  const buenos = [], ajustados = [], malos = [];
+  con_precio.forEach(e => {
+    const margen = (e.precio_venta - e.coste_racion) / e.precio_venta * 100;
+    const fc = e.food_cost_pct || (e.coste_racion / e.precio_venta * 100);
+    if(fc > 40 || margen < 50) malos.push(e);
+    else if(fc > 32 || margen < 65) ajustados.push(e);
+    else buenos.push(e);
+  });
+
+  // Pills resumen en el header
+  const pillsEl = document.getElementById('salud-pills');
+  pillsEl.innerHTML = '';
+  if(buenos.length) pillsEl.innerHTML += `<span class="salud-pill good">✓ ${buenos.length} rentable${buenos.length>1?'s':''}</span>`;
+  if(ajustados.length) pillsEl.innerHTML += `<span class="salud-pill warn">⚡ ${ajustados.length} ajustado${ajustados.length>1?'s':''}</span>`;
+  if(malos.length) pillsEl.innerHTML += `<span class="salud-pill bad">↓ ${malos.length} revisar</span>`;
+
+  // Body expandible con detalle
+  const body = document.getElementById('salud-body');
+  const todos = [...malos, ...ajustados, ...buenos]; // Orden: los que necesitan atención primero
+  body.innerHTML = todos.map(e => {
+    const fc = e.food_cost_pct || Math.round(e.coste_racion / e.precio_venta * 100);
+    const esMalo = malos.includes(e);
+    const esAjustado = ajustados.includes(e);
+    const clase = esMalo ? 'bad' : esAjustado ? 'warn' : 'good';
+    const label = esMalo ? `FC ${fc}% — revisar precio` : esAjustado ? `FC ${fc}% — ajustado` : `FC ${fc}% — rentable`;
+    return `<div class="salud-row" onclick="editarEscandallo(${JSON.stringify(e).replace(/"/g,'&quot;')})">
+      <div class="salud-dot ${clase}"></div>
+      <div class="salud-row-nombre">${e.nombre_plato}</div>
+      <div class="salud-row-meta">${label}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('salud-carta').style.display = 'block';
+}
+
+function toggleSalud(){
+  const body = document.getElementById('salud-body');
+  const chevron = document.getElementById('salud-chevron');
+  const open = body.classList.toggle('open');
+  chevron.classList.toggle('open', open);
 }
 
 init();
