@@ -33,7 +33,7 @@ export default async function handler(req, res) {
   const { plato, categoria, raciones } = req.body;
   if (!plato) return res.status(400).json({ error: 'Falta el nombre del plato' });
 
-  const prompt = `Eres un chef profesional experto en costes de cocina en España. Para el plato "${plato}" (categoría: ${categoria || 'general'}, ${raciones || 1} raciones), dame ingredientes típicos con cantidades, precios y merma. Responde SOLO con un array JSON válido, sin texto adicional, sin markdown. Formato: [{"nombre":"Merluza fresca","cantidad":200,"unidad":"g","precio_kg":8.50,"merma":30}]. Unidades: g, kg, ml, l, ud. precio_kg = precio por kg o litro. merma = % pérdida al limpiar (0 si no hay). Máximo 10 ingredientes, cantidades útiles para ${raciones || 1} raciones. Precios hostelería España 2024.`;
+  const prompt = `Eres un chef profesional experto en costes de cocina en España. Para el plato "${plato}" (categoría: ${categoria || 'general'}, ${raciones || 1} raciones), dame ingredientes típicos con cantidades, precios y merma. Responde SOLO con un array JSON válido, sin texto adicional, sin markdown. Formato: [{"nombre":"Merluza fresca","cantidad":200,"unidad":"g","precio_kg":8.50,"merma":30}]. Unidades: g, kg, ml, l, ud. precio_kg = precio por kg o litro. merma = % pérdida al limpiar (0 si no hay). Máximo 10 ingredientes, cantidades útiles para ${raciones || 1} raciones. Precios hostelería España 2026.`;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
