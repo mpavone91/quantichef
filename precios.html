@@ -156,12 +156,50 @@ const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let currentUser=null, currentRestaurante=null;
 
-// Mostrar banner si volvemos de pago exitoso
-const params=new URLSearchParams(window.location.search);
-if(params.get('pago')==='ok'){
-  document.getElementById('pago-ok').classList.add('visible');
-  // Redirigir al dashboard directamente
-  setTimeout(()=>window.location.href='/dashboard', 3000);
+// Mostrar banner SOLO si el pago está verificado en BD (no confiar en URL)
+const params = new URLSearchParams(window.location.search);
+if (params.get('pago') === 'ok') {
+  // Verificar en Supabase que el plan realmente es 'pro' antes de celebrar
+  verificarPagoReal();
+}
+
+async function verificarPagoReal() {
+  // Esperamos un momento para dar tiempo al webhook de Stripe a procesar
+  let intentos = 0;
+  const maxIntentos = 10; // 10 intentos x 1.5s = 15 segundos máximo
+  
+  const chequear = async () => {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = '/login'; return; }
+    
+    const { data: rest } = await sb
+      .from('restaurantes')
+      .select('plan')
+      .eq('user_id', session.user.id)
+      .single();
+    
+    if (rest?.plan === 'pro') {
+      // Pago confirmado por el webhook
+      document.getElementById('pago-ok').classList.add('visible');
+      setTimeout(() => window.location.href = '/dashboard', 2500);
+      return;
+    }
+    
+    intentos++;
+    if (intentos < maxIntentos) {
+      setTimeout(chequear, 1500);
+    } else {
+      // El webhook no llegó o falló — avisamos al usuario sin falsear éxito
+      const banner = document.getElementById('pago-ok');
+      banner.style.background = 'var(--gold-light)';
+      banner.style.borderColor = 'rgba(196,148,58,.3)';
+      banner.style.color = '#8B4A00';
+      banner.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Tu pago se está procesando. Si tu plan no aparece activo en 2 minutos, escríbenos a hola@quantichef.com';
+      banner.classList.add('visible');
+    }
+  };
+  
+  chequear();
 }
 
 sb.auth.onAuthStateChange(async (event,session)=>{
