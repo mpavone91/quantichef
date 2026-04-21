@@ -56,23 +56,24 @@ export default async function handler(req, res) {
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim()
-      .substring(0, 15000); // Reducido para dejar más espacio a la respuesta
+      .substring(0, 15000); 
   } catch (error) {
     return res.status(400).json({ error: 'No pudimos leer la URL. Comprueba que sea válida y pública.' });
   }
 
-  // ── 3. ENVIAR A CLAUDE (NOMBRES + RECETAS ESTIMADAS) ─────────────
+  // ── 3. ENVIAR A CLAUDE (NOMBRES + RECETAS ESTIMADAS + ALÉRGENOS) ──
   const prompt = `Eres un Chef Ejecutivo experto en rentabilidad. He extraído este texto de la carta digital de mi restaurante:
   "${htmlText}"
   
   Tu tarea:
   1. Extrae platos y sus precios de venta en carta.
   2. Para cada plato, genera su "escandallo" con 3 a 5 ingredientes principales, cantidades para 1 ración, unidad, precio estimado en España por KG o LITRO, y % de merma normal.
+  3. Identifica los alérgenos presentes. SOLO puedes usar estos exactos: "Gluten", "Crustáceos", "Huevos", "Pescado", "Cacahuetes", "Soja", "Lácteos", "Frutos secos", "Apio", "Mostaza", "Sésamo", "Sulfitos", "Altramuces", "Moluscos".
 
   REGLAS DE ORO:
   - NUNCA uses comillas dobles (") dentro de los textos. Usa simples (').
   - Devuelve EXCLUSIVAMENTE un JSON válido (array de objetos).
-  - EXTRAE UN MÁXIMO DE 15 PLATOS PRINCIPALES. Esta regla es estricta para evitar que tu respuesta se corte por límite de longitud.
+  - EXTRAE UN MÁXIMO DE 15 PLATOS PRINCIPALES. Esta regla es estricta para evitar cortes.
 
   FORMATO EXACTO:
   [
@@ -80,8 +81,10 @@ export default async function handler(req, res) {
       "nombre_plato": "Entrecot a la parrilla",
       "categoria": "Principal",
       "precio_carta": 22.50,
+      "alergenos": ["Lácteos", "Sulfitos"],
       "ingredientes": [
-        {"nombre": "Lomo de ternera", "cantidad": 300, "unidad": "g", "precio_kg": 18.50, "merma": 15}
+        {"nombre": "Lomo de ternera", "cantidad": 300, "unidad": "g", "precio_kg": 18.50, "merma": 15},
+        {"nombre": "Mantequilla", "cantidad": 20, "unidad": "g", "precio_kg": 6.00, "merma": 0}
       ]
     }
   ]`;
@@ -114,24 +117,17 @@ export default async function handler(req, res) {
     } catch (parseError) {
       console.warn("JSON cortado. Intentando rescate avanzado...");
       try {
-        // Buscamos el cierre del último objeto completo válido
         const lastValidEnd = raw_text.lastIndexOf('}');
         if (lastValidEnd !== -1) {
           let rescuedText = raw_text.substring(0, lastValidEnd + 1);
-          
-          // Asegurarnos de que el texto rescatado empiece con '['
           const firstBracket = rescuedText.indexOf('[');
           if (firstBracket !== -1) {
             rescuedText = rescuedText.substring(firstBracket);
           } else {
             rescuedText = '[' + rescuedText;
           }
-          
-          // Cerramos el array limpiamente
           rescuedText += ']';
-          
           platos = JSON.parse(rescuedText);
-          console.log(`¡Rescate exitoso! Salvamos ${platos.length} platos.`);
         } else {
           throw new Error('No se encontró estructura JSON recuperable.');
         }
@@ -171,6 +167,7 @@ export default async function handler(req, res) {
         categoria: p.categoria || 'General',
         precio_carta: parseFloat(p.precio_carta) || 0,
         raciones: 1,
+        alergenos: Array.isArray(p.alergenos) ? p.alergenos : [], // Guardamos los alérgenos
         ingredientes: ingredientesData,
         food_cost_pct: fc_pct,
         margen_neto_pct: neto_pct,
