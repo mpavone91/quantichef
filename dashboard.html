@@ -17,11 +17,9 @@
   :root{--bg:#F9F7F2;--surface:#FFFFFF;--border:#E0DDD6;--text:#1A1916;--text2:#4A4845;--text3:#8A8784;--accent:#1E4D2B;--accent-mid:#2D5A3D;--accent-light:#E8F2EC;--accent-mint:#C8E6D0;--gold:#C4943A;--gold-light:#FFF4E0;--danger:#8B1A1A;--danger-light:#FDEAEA}
   *{box-sizing:border-box;margin:0;padding:0}
   
-  /* Fix para barritas de margen en móvil */
   input[type="range"] { touch-action: pan-y; cursor: pointer; }
   html, body { position: relative; overflow-x: hidden; font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overscroll-behavior-x: none; }
 
-  /* Nav optimizado para móvil */
   nav{background:var(--accent);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;transition: padding 0.2s;}
   .nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
   .nav-logo-icon{width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center}
@@ -32,28 +30,21 @@
   .nav-logout{color:rgba(255,255,255,.5);cursor:pointer;background:none;border:none;display:flex;align-items:center;gap:5px;font-size:12px;padding:0}
   .nav-logout:hover{color:white}
   
-  .btn-suscripcion-nav {
-    display:none; color:rgba(255,255,255,.8); border:1.5px solid rgba(255,255,255,.3); background:none;
-    padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition: all .2s;
-  }
+  .btn-suscripcion-nav { display:none; color:rgba(255,255,255,.8); border:1.5px solid rgba(255,255,255,.3); background:none; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition: all .2s; }
   .btn-suscripcion-nav:hover { background: rgba(255,255,255,.1); border-color: white; color: white; }
 
-  /* Loading */
   .loading{display:flex;align-items:center;justify-content:center;min-height:80vh;gap:10px;font-size:14px;color:var(--text3)}
   .spinner{width:20px;height:20px;border:2px solid var(--accent-light);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* Container */
   .container{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem}
 
-  /* Bienvenida */
   .welcome{margin-bottom:2rem}
   .welcome-tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem}
   .welcome-title{font-family:'Fraunces',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:300;letter-spacing:-.02em;color:var(--text);line-height:1.2}
   .welcome-title em{font-style:italic;color:var(--accent)}
   .welcome-sub{font-size:.95rem;color:var(--text2);margin-top:.5rem;margin-bottom:1.5rem}
 
-  /* Upload area en el TOP */
   .upload-area{background:var(--surface);border:2px dashed var(--border);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:1.5rem}
   .upload-area:hover{border-color:var(--accent-mint);background:var(--accent-light)}
   .upload-area-icon{width:48px;height:48px;border-radius:12px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem}
@@ -61,12 +52,10 @@
   .upload-area-title{font-weight:600;font-size:.95rem;color:var(--text);margin-bottom:.25rem}
   .upload-area-sub{font-size:12px;color:var(--text3)}
   
-  /* Botón secundario ahora abajo de la subida */
   .cta-nueva{display:inline-flex;align-items:center;gap:10px;background:var(--accent-light);color:var(--accent);padding:12px 20px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:700;transition:all .2s;border:1px solid var(--accent-mint);cursor:pointer;width:auto}
   .cta-nueva:hover{background:var(--accent-mint);transform:translateY(-1px)}
   .cta-nueva svg{width:16px;height:16px}
 
-  /* Stats rápidas */
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:2rem}
   .stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.2rem}
   .stat-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.4rem}
@@ -74,7 +63,6 @@
   .stat-value.green{color:var(--accent)}
   .stat-sub{font-size:11px;color:var(--text3);margin-top:2px}
 
-  /* Lista escandallos */
   .section-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
   .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
@@ -89,20 +77,17 @@
   .card-del{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
   .card-del:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
 
-  /* Banners */
   .plan-banner{background:var(--gold-light);border:1px solid rgba(196,148,58,.25);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
   .pro-banner{background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap}
   .pro-badge{display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px}
   .btn-pro-manage { background: white; border: 1.5px solid var(--accent); color: var(--accent); font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px; cursor: pointer; margin-left: auto; }
 
-  /* ALERTAS */
   .alertas-section{margin-top:1.5rem; margin-bottom: 2rem;}
   .alertas-panel{background:#FEF2F2;border:1px solid rgba(220,38,38,.2);border-radius:12px;overflow:hidden}
   .alertas-header{display:flex;align-items:center;gap:10px;padding:1rem 1.2rem;background:rgba(220,38,38,.06);border-bottom:1px solid rgba(220,38,38,.12)}
   .alerta-item{display:flex;align-items:center;gap:12px;padding:.875rem 1.2rem;border-bottom:1px solid rgba(220,38,38,.08)}
   .btn-revisar{font-size:12px;color:#1E4D2B;background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:6px;padding:5px 10px;cursor:pointer;text-decoration:none}
 
-  /* Review table */
   .review-wrap{display:none;margin-top:1rem;margin-bottom:1.5rem}
   .review-wrap.visible{display:block}
   .review-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
@@ -110,176 +95,54 @@
   .review-table td{padding:6px 10px;border-bottom:1px solid var(--border);font-size:13px}
   .review-table input{width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px}
 
-  /* Precios guardados */
   .precios-guardados{margin-top:2rem}
   .precio-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;display:flex;align-items:center;gap:10px;margin-bottom:6px}
 
-  /* === EMPTY STATE === */
   .empty-state { margin-top: .5rem; }
-
-  .empty-steps {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 1.25rem;
-  }
-  .empty-step {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.1rem 1rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .empty-step.active {
-    border-color: var(--accent-mint);
-    background: var(--accent-light);
-  }
-  .empty-step-num {
-    font-family: 'Fraunces', serif;
-    font-size: 2rem;
-    font-weight: 300;
-    color: var(--border);
-    line-height: 1;
-    margin-bottom: .5rem;
-  }
+  .empty-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+  .empty-step { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.1rem 1rem; position: relative; overflow: hidden; }
+  .empty-step.active { border-color: var(--accent-mint); background: var(--accent-light); }
+  .empty-step-num { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 300; color: var(--border); line-height: 1; margin-bottom: .5rem; }
   .empty-step.active .empty-step-num { color: var(--accent-mint); }
-  .empty-step-title {
-    font-size: .8rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: .2rem;
-  }
-  .empty-step-desc {
-    font-size: .72rem;
-    color: var(--text3);
-    line-height: 1.4;
-  }
-  .empty-step-arrow {
-    position: absolute;
-    right: -6px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 12px;
-    height: 12px;
-    background: var(--bg);
-    border-top: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-    transform: translateY(-50%) rotate(45deg);
-    z-index: 2;
-  }
+  .empty-step-title { font-size: .8rem; font-weight: 700; color: var(--text); margin-bottom: .2rem; }
+  .empty-step-desc { font-size: .72rem; color: var(--text3); line-height: 1.4; }
+  .empty-step-arrow { position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: var(--bg); border-top: 1px solid var(--border); border-right: 1px solid var(--border); transform: translateY(-50%) rotate(45deg); z-index: 2; }
   .empty-step:last-child .empty-step-arrow { display: none; }
 
-  .empty-checklist {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem 1.2rem;
-  }
-  .empty-checklist-title {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: .75rem;
-  }
-  .empty-check-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: .45rem 0;
-    border-bottom: 1px solid var(--border);
-    font-size: .85rem;
-  }
+  .empty-checklist { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.2rem; }
+  .empty-checklist-title { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); margin-bottom: .75rem; }
+  .empty-check-item { display: flex; align-items: center; gap: 10px; padding: .45rem 0; border-bottom: 1px solid var(--border); font-size: .85rem; }
   .empty-check-item:last-child { border-bottom: none; }
-  .check-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-  }
+  .check-icon { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; }
   .check-icon.done { background: var(--accent); color: white; }
   .check-icon.pending { background: var(--bg); border: 1.5px solid var(--border); color: var(--text3); }
   .check-label { flex: 1; color: var(--text2); }
   .check-label.done-label { color: var(--text3); text-decoration: line-through; }
-  .check-cta {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--accent);
-    background: var(--accent-light);
-    border: 1px solid var(--accent-mint);
-    border-radius: 6px;
-    padding: 4px 10px;
-    cursor: pointer;
-    text-decoration: none;
-    white-space: nowrap;
-  }
+  .check-cta { font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-light); border: 1px solid var(--accent-mint); border-radius: 6px; padding: 4px 10px; cursor: pointer; text-decoration: none; white-space: nowrap; }
 
-  /* Stats vacías */
   .stat-empty { opacity: .45; }
   .stat-hint { font-size: 10px; color: var(--text3); margin-top: 3px; font-style: italic; }
 
-
-  /* === TIP DEL DÍA === */
-  .tip-dia {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: 10px;
-    padding: .875rem 1.1rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
+  .tip-dia { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: .875rem 1.1rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 10px; }
   .tip-dia-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-  .tip-dia-label {
-    font-size: 9px; font-weight: 700; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--accent); margin-bottom: 3px;
-  }
+  .tip-dia-label { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 3px; }
   .tip-dia-text { font-size: 13px; color: var(--text2); line-height: 1.5; }
 
-  /* === SALUD DE CARTA === */
-  .salud-carta {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    overflow: hidden;
-  }
-  .salud-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: .75rem 1.1rem;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-  }
+  .salud-carta { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
+  .salud-header { display: flex; align-items: center; justify-content: space-between; padding: .75rem 1.1rem; border-bottom: 1px solid var(--border); cursor: pointer; }
   .salud-header-left { display: flex; align-items: center; gap: 8px; }
   .salud-title { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
   .salud-chevron { color: var(--text3); transition: transform .2s; font-size: 12px; }
   .salud-chevron.open { transform: rotate(180deg); }
   .salud-pills { display: flex; gap: 6px; flex-wrap: wrap; padding: .75rem 1.1rem; }
-  .salud-pill {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 12px; font-weight: 600; padding: 4px 10px;
-    border-radius: 20px; cursor: pointer; transition: opacity .15s;
-    text-decoration: none;
-  }
+  .salud-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; cursor: pointer; transition: opacity .15s; text-decoration: none; }
   .salud-pill:hover { opacity: .8; }
   .salud-pill.good { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-mint); }
   .salud-pill.warn { background: #FFF3E0; color: #8B4A00; border: 1px solid #F5C47A; }
   .salud-pill.bad { background: var(--danger-light); color: var(--danger); border: 1px solid rgba(139,26,26,.2); }
   .salud-body { display: none; border-top: 1px solid var(--border); }
   .salud-body.open { display: block; }
-  .salud-row {
-    display: flex; align-items: center; gap: 10px;
-    padding: .6rem 1.1rem; border-bottom: 1px solid var(--border);
-    cursor: pointer; transition: background .15s;
-  }
+  .salud-row { display: flex; align-items: center; gap: 10px; padding: .6rem 1.1rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s; }
   .salud-row:last-child { border-bottom: none; }
   .salud-row:hover { background: var(--bg); }
   .salud-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -289,12 +152,10 @@
   .salud-row-nombre { flex: 1; font-size: 13px; font-weight: 600; color: var(--text); }
   .salud-row-meta { font-size: 12px; color: var(--text3); }
 
-  /* === PRECIOS RECIENTES (reemplaza lista completa) === */
   .precios-toggle { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; background: none; border: none; padding: 0; margin-top: .5rem; display: block; }
   .precios-all { display: none; }
   .precios-all.visible { display: block; }
 
-  /* === RANKING DE RENTABILIDAD === */
   .ranking-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
   .ranking-header{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1.2rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
   .ranking-header-title{font-size:13px;font-weight:700;color:var(--text)}
@@ -319,7 +180,6 @@
   .rank-badge.badge-bad{background:var(--danger-light);color:var(--danger)}
   .ranking-empty{padding:2rem;text-align:center;font-size:13px;color:var(--text3)}
 
-  /* Responsive Fixes */
   @media(max-width:768px){
     nav{padding:0.6rem 1rem}
     .nav-btns{gap:4px}
@@ -385,6 +245,14 @@
       </button>
     </div>
 
+    <div class="plan-banner" id="aviso-estimados" style="display:none; background:#FFF3E0; border-color:#F5C47A; color:#8B4A00;">
+      <span style="font-size:18px">💡</span>
+      <div style="flex:1">
+        <strong>Tus escandallos usan precios estimados de mercado.</strong> 
+        Sube una factura (arriba) para que el sistema aprenda tus precios reales y sea 100% exacto.
+      </div>
+    </div>
+
     <div class="extract-loading" id="extract-loading" style="display:none; background:var(--accent-light); padding:1rem; border-radius:10px; margin-bottom:1rem; align-items:center; gap:10px;">
       <div class="spinner"></div><span>Analizando documento...</span>
     </div>
@@ -415,7 +283,6 @@
     </div>
 
 
-    <!-- TIP DEL DÍA -->
     <div class="tip-dia" id="tip-dia" style="display:none">
       <div class="tip-dia-icon">💡</div>
       <div>
@@ -424,7 +291,6 @@
       </div>
     </div>
 
-    <!-- SALUD DE CARTA -->
     <div class="salud-carta" id="salud-carta" style="display:none">
       <div class="salud-header" onclick="toggleSalud()">
         <div class="salud-header-left">
@@ -454,7 +320,6 @@
       <div class="stat"><div class="stat-label">Margen más alto</div><div class="stat-value green" id="stat-top">—</div></div>
     </div>
 
-    <!-- RANKING DE RENTABILIDAD (solo Pro) -->
     <div id="ranking-section" style="display:none">
       <div class="section-title">Ranking de rentabilidad</div>
       <div class="ranking-card">
@@ -488,7 +353,6 @@ const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let restauranteId=null;
 let extractedProducts=[];
-
 async function init(){
   sb.auth.onAuthStateChange(async (event, session) => {
     if(event==='INITIAL_SESSION'){
@@ -498,12 +362,7 @@ async function init(){
   });
 }
 
-// ==========================================
-// CARGAR DATOS CON ESCUDO ANTI-BUCLES
-// ==========================================
 async function cargarDatos(session){
-  // 1. Buscamos el restaurante — con reintento si falla la primera vez
-  // (puede ocurrir si el token se acaba de refrescar tras registro)
   let rest = null;
   let intentos = 0;
   const maxIntentos = 3;
@@ -513,7 +372,6 @@ async function cargarDatos(session){
       .select('id,nombre,plan')
       .eq('user_id', session.user.id)
       .maybeSingle();
-    
     if (data) {
       rest = data;
       break;
@@ -521,12 +379,10 @@ async function cargarDatos(session){
     
     intentos++;
     if (intentos < maxIntentos) {
-      // Esperar 500ms antes de reintentar (le damos tiempo al token)
       await new Promise(r => setTimeout(r, 500));
     }
   }
 
-  // 2. Si tras 3 intentos sigue sin encontrar restaurante, es sesión fantasma real
   if(!rest){
     console.log("Restaurante no encontrado tras 3 intentos. Limpiando sesión...");
     await sb.auth.signOut(); 
@@ -534,7 +390,6 @@ async function cargarDatos(session){
     return;
   }
 
-  // 3. Si todo está correcto, cargamos los datos del restaurante
   restauranteId = rest.id;
   document.getElementById('nav-restaurante').textContent = rest.nombre;
   document.getElementById('welcome-nombre').textContent = rest.nombre;
@@ -543,7 +398,7 @@ async function cargarDatos(session){
   document.getElementById('pro-banner').style.display = esPro ? 'flex' : 'none';
   document.getElementById('plan-banner').style.display = esPro ? 'none' : 'flex';
   document.getElementById('btn-suscripcion-nav').style.display = esPro ? 'inline-block' : 'none';
-
+  
   const {data:escandallos} = await sb.from('escandallos')
     .select('*')
     .eq('restaurante_id', rest.id)
@@ -558,6 +413,15 @@ async function cargarDatos(session){
     renderLista(escandallos);
     renderSaludCarta(escandallos);
     initRanking(escandallos, esPro);
+    
+    // Lógica para mostrar banner de precios estimados
+    const { count: preciosCount } = await sb.from('precios_proveedor')
+      .select('id', { count: 'exact', head: true })
+      .eq('restaurante_id', rest.id);
+      
+    if(preciosCount === 0) {
+      document.getElementById('aviso-estimados').style.display = 'flex';
+    }
   } else { 
     renderVacio(); 
   }
@@ -605,7 +469,6 @@ function renderLista(lista){
 }
 
 function renderVacio(){
-  // Stats vacías con hint en lugar de ocultarlas
   document.getElementById('stats').style.display = 'grid';
   document.getElementById('stat-total').textContent = '0';
   document.getElementById('stat-total').closest('.stat').classList.add('stat-empty');
@@ -615,8 +478,6 @@ function renderVacio(){
   document.getElementById('stat-fc').insertAdjacentHTML('afterend', hintHtml);
   document.getElementById('stat-top').textContent = '—';
   document.getElementById('stat-top').closest('.stat').classList.add('stat-empty');
-
-  // Empty state principal
   document.getElementById('lista-escandallos').innerHTML = `
     <div class="empty-state">
 
@@ -736,6 +597,11 @@ function renderReviewTable(prods){
   document.getElementById('review-wrap').classList.add('visible');
 }
 
+function cancelarReview() {
+  document.getElementById('review-wrap').classList.remove('visible');
+  document.getElementById('file-input').value = '';
+}
+
 async function guardarPrecios(){
   const btn = document.getElementById('btn-guardar-precios');
   btn.disabled = true; btn.textContent = 'Guardando...';
@@ -780,14 +646,12 @@ async function marcarTodasVistas(){
 
 async function cargarPreciosGuardados(){
   if(!restauranteId) return;
-  // Cargamos ordenados por updated_at para mostrar los más recientes primero
   const {data: precios} = await sb.from('precios_proveedor').select('*').eq('restaurante_id', restauranteId).order('updated_at', {ascending: false});
   const container = document.getElementById('precios-guardados');
   if(!precios || precios.length === 0) return;
 
   const recientes = precios.slice(0, 5);
   const resto = precios.slice(5);
-
   const fmtFecha = (iso) => {
     if(!iso) return '';
     const d = new Date(iso);
@@ -802,7 +666,6 @@ async function cargarPreciosGuardados(){
       </div>
       <div style="font-size:13px;font-weight:600;color:var(--accent)">${fmt(p.precio_kg)}/${p.unidad}</div>
     </div>`;
-
   container.innerHTML = `
     <div style="font-size:12px;color:var(--text3);margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between">
       <span>${precios.length} precio${precios.length!==1?'s':''} de proveedor activo${precios.length!==1?'s':''}</span>
@@ -827,8 +690,6 @@ function togglePrecios(){
   btn.textContent = open ? 'Ver menos ▴' : `Ver ${el.children.length} más ▾`;
 }
 
-
-// ── TIP DEL DÍA ─────────────────────────────────────────────
 const TIPS = [
   'Un food cost del 28–32% es el objetivo en restauración. Por encima del 35% empieza a comprimir tu margen operativo.',
   'Revisa los precios de tus proveedores al menos una vez al mes. Una subida del 10% en proteínas puede costarte cientos de euros al año.',
@@ -863,21 +724,17 @@ const TIPS = [
 ];
 
 function renderTip(esPro) {
-  if(!esPro) return; // Solo para Pro
+  if(!esPro) return;
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(),0,0)) / 86400000);
   const tip = TIPS[dayOfYear % TIPS.length];
   document.getElementById('tip-dia-text').textContent = tip;
   document.getElementById('tip-dia').style.display = 'flex';
 }
 
-// ── SALUD DE CARTA ───────────────────────────────────────────
 function renderSaludCarta(escandallos) {
   if(!escandallos || escandallos.length === 0) return;
-
   const con_precio = escandallos.filter(e => e.precio_venta > 0 && e.coste_racion > 0);
   if(con_precio.length === 0) return;
-
-  // Clasificar cada plato
   const buenos = [], ajustados = [], malos = [];
   con_precio.forEach(e => {
     const margen = (e.precio_venta - e.coste_racion) / e.precio_venta * 100;
@@ -886,17 +743,14 @@ function renderSaludCarta(escandallos) {
     else if(fc > 32 || margen < 65) ajustados.push(e);
     else buenos.push(e);
   });
-
-  // Pills resumen en el header
   const pillsEl = document.getElementById('salud-pills');
   pillsEl.innerHTML = '';
   if(buenos.length) pillsEl.innerHTML += `<span class="salud-pill good">✓ ${buenos.length} rentable${buenos.length>1?'s':''}</span>`;
   if(ajustados.length) pillsEl.innerHTML += `<span class="salud-pill warn">⚡ ${ajustados.length} ajustado${ajustados.length>1?'s':''}</span>`;
   if(malos.length) pillsEl.innerHTML += `<span class="salud-pill bad">↓ ${malos.length} revisar</span>`;
 
-  // Body expandible con detalle
   const body = document.getElementById('salud-body');
-  const todos = [...malos, ...ajustados, ...buenos]; // Orden: los que necesitan atención primero
+  const todos = [...malos, ...ajustados, ...buenos];
   body.innerHTML = todos.map(e => {
     const fc = e.food_cost_pct || Math.round(e.coste_racion / e.precio_venta * 100);
     const esMalo = malos.includes(e);
@@ -920,10 +774,8 @@ function toggleSalud(){
   chevron.classList.toggle('open', open);
 }
 
-// ── RANKING DE RENTABILIDAD ──────────────────────────────────
 let rankingData = [];
 let rankingModo = 'fc';
-
 function setRankingTab(modo, btn) {
   rankingModo = modo;
   document.querySelectorAll('.ranking-tab').forEach(t => t.classList.remove('active'));
