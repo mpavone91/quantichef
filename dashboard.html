@@ -20,7 +20,7 @@
   input[type="range"] { touch-action: pan-y; cursor: pointer; }
   html, body { position: relative; overflow-x: hidden; font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overscroll-behavior-x: none; }
 
-  /* Nav optimizado */
+  /* Nav */
   nav{background:var(--accent);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;transition: padding 0.2s;}
   .nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
   .nav-logo-icon{width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center}
@@ -37,6 +37,7 @@
   /* Loading */
   .loading{display:flex;align-items:center;justify-content:center;min-height:80vh;gap:10px;font-size:14px;color:var(--text3)}
   .spinner{width:20px;height:20px;border:2px solid var(--accent-light);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+  .spinner-sm{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
   @keyframes spin{to{transform:rotate(360deg)}}
 
   .container{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem}
@@ -60,8 +61,30 @@
   .btns-row { display:flex; gap:10px; flex-wrap:wrap; }
   .cta-nueva{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent-light);color:var(--accent);padding:12px 20px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:700;transition:all .2s;border:1px solid var(--accent-mint);cursor:pointer;}
   .cta-nueva:hover{background:var(--accent-mint);transform:translateY(-1px)}
-  .btn-importar { background:var(--gold-light); color:var(--warn); border-color:var(--gold); }
-  .btn-importar:hover { background:#FFF; box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+  
+  /* NUEVO BOTÓN PRO ELEGANTE */
+  .btn-pro-magic {
+    background: linear-gradient(135deg, #1A1916 0%, #2A2824 100%);
+    color: #F5C47A;
+    border: 1px solid rgba(245, 196, 122, 0.3);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+  .btn-pro-magic:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(196, 148, 58, 0.2);
+    border-color: #F5C47A;
+    color: #FFF4E0;
+  }
 
   /* Stats */
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:2rem}
@@ -93,7 +116,7 @@
   /* Modales */
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
   .modal-overlay.visible{display:flex}
-  .modal{background:var(--surface);border-radius:16px;padding:2.5rem 2rem;max-width:420px;width:100%;text-align:center;animation:fadeIn .2s ease}
+  .modal{background:var(--surface);border-radius:16px;padding:2.5rem 2rem;max-width:420px;width:100%;text-align:center;animation:fadeIn .2s ease; position:relative;}
   .modal-icon{width:56px;height:56px;background:var(--gold-light);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem}
   .modal-icon svg{width:28px;height:28px;color:var(--gold)}
   .modal h3{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:var(--text);margin-bottom:.5rem}
@@ -145,7 +168,7 @@
     .nav-logo-text{font-size:16px}
     .container{padding:1.5rem 1rem}
     .btns-row { flex-direction: column; }
-    .cta-nueva { width: 100%; justify-content: center; }
+    .cta-nueva, .btn-pro-magic { width: 100%; justify-content: center; }
     .stats{grid-template-columns:1fr 1fr}
     .stats .stat:last-child{grid-column:1/-1}
     .rank-bar-wrap { display: none; }
@@ -212,8 +235,8 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Nuevo plato manual
         </button>
-        <button class="cta-nueva btn-importar" onclick="mostrarUrlModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+        <button class="btn-pro-magic" onclick="mostrarUrlModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
           Importar Carta (URL) <span id="dash-upsell-lock" style="margin-left:4px">🔒</span>
         </button>
       </div>
@@ -235,6 +258,25 @@
     <div class="pro-banner" id="pro-banner" style="display:none">
       <div class="pro-badge">Plan Pro Activo</div>
       <button class="btn-pro-manage" onclick="abrirPortalCliente()">Gestionar cuenta / Facturas</button>
+    </div>
+
+    <div class="extract-loading" id="extract-loading" style="display:none; background:var(--accent-light); padding:1rem; border-radius:10px; margin-bottom:1rem; align-items:center; gap:10px;">
+      <div class="spinner"></div><span style="color:var(--accent); font-weight:600;">Analizando documento...</span>
+    </div>
+    <div class="prov-msg" id="prov-msg" style="margin-bottom:1rem; display:none; padding:10px; border-radius:8px;"></div>
+
+    <div class="review-wrap" id="review-wrap">
+      <div style="font-size:13px; font-weight:700; margin-bottom:10px; color:var(--accent)">Revisa los precios extraídos</div>
+      <div style="overflow-x:auto">
+        <table class="review-table">
+          <thead><tr><th>Ingrediente</th><th>Precio</th><th>Unidad</th><th></th></tr></thead>
+          <tbody id="review-body"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:1rem; display:flex; gap:10px">
+        <button class="btn-revisar" id="btn-guardar-precios" onclick="guardarPrecios()" style="background:var(--accent); color:white; padding:10px 20px; font-weight:700">Guardar precios</button>
+        <button class="btn-revisar" onclick="cancelarReview()" style="background:none; border:1px solid var(--border)">Cancelar</button>
+      </div>
     </div>
 
     <div class="stats" id="stats" style="display:none">
@@ -284,6 +326,7 @@ const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let restauranteId=null;
 let esPremium = false;
+let extractedProducts = [];
 
 async function init(){
   sb.auth.onAuthStateChange(async (event, session) => {
@@ -320,7 +363,12 @@ async function cargarDatos(session){
   document.getElementById('pro-banner').style.display = esPremium ? 'flex' : 'none';
   document.getElementById('plan-banner').style.display = esPremium ? 'none' : 'flex';
   document.getElementById('btn-suscripcion-nav').style.display = esPremium ? 'inline-block' : 'none';
-  document.getElementById('dash-upsell-lock').style.display = esPremium ? 'none' : 'inline';
+  
+  // Cambia el icono de candado a una chispa mágica si es Pro
+  const lockIcon = document.getElementById('dash-upsell-lock');
+  if (lockIcon) {
+    lockIcon.textContent = esPremium ? '✨' : '🔒';
+  }
   
   const {data:escandallos} = await sb.from('escandallos').select('*').eq('restaurante_id', rest.id).order('updated_at', {ascending:false});
     
@@ -461,9 +509,10 @@ function nuevoEscandallo(){ sessionStorage.removeItem('qc_escandallo_editar'); w
 function editarEscandallo(e){ sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(e)); window.location.href='/escandallo'; }
 async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login'; }
 
-// ── IMPORTACIÓN MÁGICA URL ──────────────────────────────────
+// ── IMPORTACIÓN MÁGICA URL (CON MODAL) ──────────────────────
 function mostrarUrlModal() {
   if (!esPremium) { window.location.href = '/precios'; return; }
+  document.getElementById('url-input').value = '';
   document.getElementById('modal-url').classList.add('visible');
 }
 
@@ -480,7 +529,7 @@ async function ejecutarImportacionUrl() {
   const btn = document.getElementById('btn-import-confirm');
   const btnOriginal = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite; margin-right:6px; vertical-align:middle;"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Extrayendo Platos...`;
+  btn.innerHTML = `<span class="spinner-sm"></span> Extrayendo Platos...`;
 
   try {
     const { data: { session } } = await sb.auth.getSession();
@@ -490,7 +539,8 @@ async function ejecutarImportacionUrl() {
       body: JSON.stringify({ url })
     });
 
-    const result = await response.json();
+    let result;
+    try { result = await response.json(); } catch(e) { throw new Error("Error del servidor al leer la carta. Inténtalo de nuevo."); }
 
     if (!response.ok) throw new Error(result.error || 'Error desconocido');
 
@@ -502,6 +552,103 @@ async function ejecutarImportacionUrl() {
     btn.disabled = false;
     btn.innerHTML = btnOriginal;
   }
+}
+
+// ── LÓGICA DE SUBIDA DE ALBARÁN (BLINDADA) ──────────────────
+async function handleFileUpload(e){ 
+  if(e.target.files.length > 0) processFile(e.target.files[0]); 
+}
+
+async function processFile(file){
+  document.getElementById('extract-loading').style.display='flex';
+  document.getElementById('prov-msg').style.display='none';
+  
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async () => {
+    try {
+      const base64 = reader.result.split(',')[1];
+      const { data: { session } } = await sb.auth.getSession();
+      
+      const resp = await fetch('/api/extract', { 
+        method:'POST', 
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+ (session?.access_token || '')}, 
+        body:JSON.stringify({file_base64:base64, file_type:file.name.split('.').pop()}) 
+      });
+      
+      let data;
+      try {
+        data = await resp.json();
+      } catch(e) {
+        throw new Error('El archivo es demasiado grande o el servidor tardó mucho en responder.');
+      }
+
+      document.getElementById('extract-loading').style.display='none';
+      
+      if (!resp.ok) {
+        mostrarMsgProv(data.error || 'Error al procesar el documento. Inténtalo de nuevo.', 'error');
+        return;
+      }
+      
+      if (data.productos && data.productos.length > 0) {
+        renderReviewTable(data.productos);
+      } else {
+        mostrarMsgProv(data.error || 'No encontramos precios legibles en esta imagen.', 'error');
+      }
+    } catch(err) {
+      document.getElementById('extract-loading').style.display='none';
+      mostrarMsgProv(err.message || 'Error de conexión. Inténtalo de nuevo.', 'error');
+    } finally {
+      // Limpiamos el input para permitir subir la misma foto de nuevo si falló
+      document.getElementById('file-input').value = ''; 
+    }
+  };
+}
+
+function mostrarMsgProv(texto, tipo) {
+  const el = document.getElementById('prov-msg');
+  el.textContent = texto;
+  el.style.display = 'block';
+  if (tipo === 'error') {
+    el.style.background = 'var(--danger-light)';
+    el.style.color = 'var(--danger)';
+    el.style.border = '1px solid rgba(139,26,26,.2)';
+  } else {
+    el.style.background = 'var(--accent-light)';
+    el.style.color = 'var(--accent)';
+    el.style.border = '1px solid var(--accent-mint)';
+  }
+}
+
+function renderReviewTable(prods){
+  extractedProducts = prods;
+  const body = document.getElementById('review-body');
+  body.innerHTML = prods.map((p,i)=>`<tr><td><input class="form-input" style="padding:6px; font-size:13px;" value="${p.nombre}" onchange="extractedProducts[${i}].nombre=this.value"></td><td><input type="number" class="form-input" style="padding:6px; font-size:13px;" value="${p.precio}" onchange="extractedProducts[${i}].precio=this.value"></td><td style="font-size:13px;">${p.unidad||'kg'}</td><td><button style="background:var(--danger-light); color:var(--danger); border:none; border-radius:50%; width:24px; height:24px; cursor:pointer;" onclick="extractedProducts.splice(${i},1);renderReviewTable(extractedProducts)">×</button></td></tr>`).join('');
+  document.getElementById('review-wrap').classList.add('visible');
+}
+
+function cancelarReview() {
+  document.getElementById('review-wrap').classList.remove('visible');
+  document.getElementById('file-input').value = '';
+}
+
+async function guardarPrecios(){
+  const btn = document.getElementById('btn-guardar-precios');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  const { data: { session } } = await sb.auth.getSession();
+  await fetch('/api/extract', { 
+    method:'POST', 
+    headers:{'Content-Type':'application/json','Authorization':'Bearer ' + (session?.access_token||'')}, 
+    body:JSON.stringify({mode:'save_prices', restaurante_id:restauranteId, productos:extractedProducts}) 
+  });
+  window.location.reload();
+}
+
+async function abrirPortalCliente(){
+  const { data: { session } } = await sb.auth.getSession();
+  const res = await fetch('/api/stripe-portal', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+(session?.access_token||'')}, body:JSON.stringify({}) });
+  const data = await res.json();
+  if(data.url) window.location.href = data.url;
 }
 
 // ── RANKING DE RENTABILIDAD (Margen por defecto) ─────────────
