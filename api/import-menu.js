@@ -56,7 +56,7 @@ export default async function handler(req, res) {
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim()
-      .substring(0, 20000); // Tope de seguridad
+      .substring(0, 15000); // Reducido para dejar más espacio a la respuesta
   } catch (error) {
     return res.status(400).json({ error: 'No pudimos leer la URL. Comprueba que sea válida y pública.' });
   }
@@ -66,13 +66,13 @@ export default async function handler(req, res) {
   "${htmlText}"
   
   Tu tarea:
-  1. Extrae los platos y sus precios de venta en carta.
-  2. Para cada plato, genera su "escandallo" con los 3 a 6 ingredientes principales, cantidades para 1 ración, unidad, precio estimado en España por KG o LITRO, y % de merma normal.
+  1. Extrae platos y sus precios de venta en carta.
+  2. Para cada plato, genera su "escandallo" con 3 a 5 ingredientes principales, cantidades para 1 ración, unidad, precio estimado en España por KG o LITRO, y % de merma normal.
 
-  REGLAS DE ORO (CRÍTICAS PARA EVITAR ERRORES DE SISTEMA):
-  - NUNCA uses comillas dobles (") dentro de los textos. Usa comillas simples (') si es necesario. (Ej: 'Hamburguesa La Jefa').
-  - Devuelve EXCLUSIVAMENTE un JSON válido que sea un array de objetos. NO escribas texto fuera del JSON.
-  - Si la carta es inmensa, extrae solo un máximo de 35 platos para asegurar que el JSON no se corte a medias.
+  REGLAS DE ORO:
+  - NUNCA uses comillas dobles (") dentro de los textos. Usa simples (').
+  - Devuelve EXCLUSIVAMENTE un JSON válido (array de objetos).
+  - EXTRAE UN MÁXIMO DE 15 PLATOS PRINCIPALES. Esta regla es estricta para evitar que tu respuesta se corte por límite de longitud.
 
   FORMATO EXACTO:
   [
@@ -96,7 +96,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 4096, // Máximo permitido
+        max_tokens: 4096,
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -107,24 +107,36 @@ export default async function handler(req, res) {
     let raw_text = data.content?.[0]?.text || '[]';
     raw_text = raw_text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
     
-    // ── EL SALVAVIDAS: PARSEO ROBUSTO DE JSON ───────────────────────
+    // ── EL SALVAVIDAS AVANZADO ───────────────────────
     let platos = [];
     try {
       platos = JSON.parse(raw_text);
     } catch (parseError) {
-      console.warn("JSON cortado o malformado detectado. Intentando rescatar la estructura...");
-      // Si se cortó el JSON al final, buscamos la última llave de objeto que cierra '}' y cerramos el array.
-      const lastValidEnd = raw_text.lastIndexOf('}');
-      if (lastValidEnd !== -1) {
-        const rescuedText = raw_text.substring(0, lastValidEnd + 1) + ']';
-        try {
+      console.warn("JSON cortado. Intentando rescate avanzado...");
+      try {
+        // Buscamos el cierre del último objeto completo válido
+        const lastValidEnd = raw_text.lastIndexOf('}');
+        if (lastValidEnd !== -1) {
+          let rescuedText = raw_text.substring(0, lastValidEnd + 1);
+          
+          // Asegurarnos de que el texto rescatado empiece con '['
+          const firstBracket = rescuedText.indexOf('[');
+          if (firstBracket !== -1) {
+            rescuedText = rescuedText.substring(firstBracket);
+          } else {
+            rescuedText = '[' + rescuedText;
+          }
+          
+          // Cerramos el array limpiamente
+          rescuedText += ']';
+          
           platos = JSON.parse(rescuedText);
           console.log(`¡Rescate exitoso! Salvamos ${platos.length} platos.`);
-        } catch (rescueErr) {
-          throw new Error('La IA generó caracteres incompatibles. Detalles: ' + parseError.message);
+        } else {
+          throw new Error('No se encontró estructura JSON recuperable.');
         }
-      } else {
-        throw new Error('Error crítico al procesar la receta: ' + parseError.message);
+      } catch (rescueErr) {
+        throw new Error('La IA generó demasiados datos y se colapsó. Inténtalo de nuevo.');
       }
     }
 
@@ -155,7 +167,7 @@ export default async function handler(req, res) {
 
       return {
         restaurante_id: restaurante.id,
-        nombre_plato: p.nombre_plato || 'Plato sin nombre',
+        nombre_plato: p.nombre_plato || 'Plato importado',
         categoria: p.categoria || 'General',
         precio_carta: parseFloat(p.precio_carta) || 0,
         raciones: 1,
@@ -177,6 +189,6 @@ export default async function handler(req, res) {
 
   } catch (err) {
     console.error('import-menu error:', err.message);
-    return res.status(500).json({ error: 'Error procesando el menú. ' + err.message });
+    return res.status(500).json({ error: err.message });
   }
 }
