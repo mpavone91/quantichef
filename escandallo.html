@@ -10,583 +10,583 @@
 <meta name="theme-color" content="#1E4D2B">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QuantiChef — Escandallo inteligente</title>
+<title>QuantiChef — Mi cocina</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root{--bg:#F9F7F2;--surface:#FFFFFF;--surface2:#F2EFE9;--border:#E0DDD6;--text:#1A1916;--text2:#4A4845;--text3:#8A8784;--accent:#1E4D2B;--accent-mid:#2D5A3D;--accent-light:#E8F2EC;--accent-mint:#C8E6D0;--gold:#C4943A;--gold-light:#FFF4E0;--warn:#8B4A00;--warn-light:#FFF3E0;--danger:#8B1A1A;--danger-light:#FDEAEA}
+  :root{--bg:#F9F7F2;--surface:#FFFFFF;--border:#E0DDD6;--text:#1A1916;--text2:#4A4845;--text3:#8A8784;--accent:#1E4D2B;--accent-mid:#2D5A3D;--accent-light:#E8F2EC;--accent-mint:#C8E6D0;--gold:#C4943A;--gold-light:#FFF4E0;--danger:#8B1A1A;--danger-light:#FDEAEA}
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:4rem}
-  header{background:var(--accent);padding:1.1rem 1.2rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .logo-wrap{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:1;min-width:0;overflow:hidden}
-  .logo-icon{width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center}
-  .logo-icon svg{width:15px;height:15px}
-  .logo-text{font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:600;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .logo-text small{color:#A8D5B5;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;display:block;letter-spacing:.06em;text-transform:uppercase;margin-top:-2px}
-  .header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:nowrap}
-  .trial-badge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:12px;padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:6px}
-  .trial-badge strong{color:#ffd700}
-  .trial-badge.agotado{background:rgba(139,26,26,.3);border-color:rgba(255,100,100,.3)}
-  .btn-upgrade{background:var(--gold);color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:7px;text-decoration:none;white-space:nowrap}
+  
+  input[type="range"] { touch-action: pan-y; cursor: pointer; }
+  html, body { position: relative; overflow-x: hidden; font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overscroll-behavior-x: none; }
 
-  /* Modal */
-  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem}
+  /* Nav optimizado */
+  nav{background:var(--accent);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;transition: padding 0.2s;}
+  .nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+  .nav-logo-icon{width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center}
+  .nav-logo-icon svg{width:15px;height:15px}
+  .nav-logo-text{font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:600}
+  .nav-right{display:flex;align-items:center;gap:12px}
+  .nav-restaurante{font-size:13px;color:rgba(255,255,255,.65)}
+  .nav-logout{color:rgba(255,255,255,.5);cursor:pointer;background:none;border:none;display:flex;align-items:center;gap:5px;font-size:12px;padding:0}
+  .nav-logout:hover{color:white}
+  
+  .btn-suscripcion-nav { display:none; color:rgba(255,255,255,.8); border:1.5px solid rgba(255,255,255,.3); background:none; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition: all .2s; }
+  .btn-suscripcion-nav:hover { background: rgba(255,255,255,.1); border-color: white; color: white; }
+
+  /* Loading */
+  .loading{display:flex;align-items:center;justify-content:center;min-height:80vh;gap:10px;font-size:14px;color:var(--text3)}
+  .spinner{width:20px;height:20px;border:2px solid var(--accent-light);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+  .spinner-sm{width:16px;height:16px;border:2px solid rgba(30,77,43,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .container{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem}
+
+  /* Bienvenida */
+  .welcome{margin-bottom:2rem}
+  .welcome-tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem}
+  .welcome-title{font-family:'Fraunces',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:300;letter-spacing:-.02em;color:var(--text);line-height:1.2}
+  .welcome-title em{font-style:italic;color:var(--accent)}
+  .welcome-sub{font-size:.95rem;color:var(--text2);margin-top:.5rem;margin-bottom:1.5rem}
+
+  /* Upload area */
+  .upload-area{background:var(--surface);border:2px dashed var(--border);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:1.5rem}
+  .upload-area:hover{border-color:var(--accent-mint);background:var(--accent-light)}
+  .upload-area-icon{width:48px;height:48px;border-radius:12px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem}
+  .upload-area-icon svg{width:22px;height:22px;color:var(--accent)}
+  .upload-area-title{font-weight:600;font-size:.95rem;color:var(--text);margin-bottom:.25rem}
+  .upload-area-sub{font-size:12px;color:var(--text3)}
+  
+  /* Botones principales */
+  .btns-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .cta-nueva{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent-light);color:var(--accent);padding:12px 20px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:700;transition:all .2s;border:1px solid var(--accent-mint);cursor:pointer;}
+  .cta-nueva:hover{background:var(--accent-mint);transform:translateY(-1px)}
+  
+  /* BOTÓN IMPORTAR MÁGICO */
+  .cta-nueva.btn-magico { background: #F4FAF6; border: 1px solid #D5E8DD; color: var(--accent); }
+  .cta-nueva.btn-magico:hover { background: var(--gold-light); border-color: var(--gold); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(196, 148, 58, 0.15); }
+  .cta-nueva.btn-magico svg { color: var(--gold); }
+
+  /* Banners */
+  .plan-banner{background:var(--gold-light);border:1px solid rgba(196,148,58,.25);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
+  .pro-banner{background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap}
+  .pro-badge{display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px}
+  .btn-pro-manage { background: white; border: 1.5px solid var(--accent); color: var(--accent); font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px; cursor: pointer; margin-left: auto; }
+
+  /* REVIEW TABLE */
+  .review-wrap { margin-bottom: 2rem; animation: fadeIn 0.3s ease; }
+  .review-card { background: var(--surface); border: 1px solid var(--accent-mint); border-radius: 12px; padding: 1.5rem; box-shadow: 0 8px 24px rgba(30,77,43,0.06); }
+  .review-title { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+  .review-desc { font-size: 13px; color: var(--text2); margin-bottom: 1rem; }
+  .review-table-container { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .review-table { width: 100%; border-collapse: collapse; background: white; }
+  .review-table th { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--border); background: var(--surface2); text-align: left; }
+  .review-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .review-table tr:last-child td { border-bottom: none; }
+  .review-table input { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+  .review-table input:focus { border-color: var(--accent); }
+  .review-actions { display: flex; gap: 10px; margin-top: 1.25rem; justify-content: flex-end; }
+  .btn-outline { background: white; border: 1px solid var(--border); color: var(--text2); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; }
+  .btn-outline:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-light); }
+  .btn-fill { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; transition: background 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+  .btn-fill:hover { background: var(--accent-mid); }
+  .btn-del-row { background: var(--danger-light); color: var(--danger); border: none; border-radius: 6px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px; }
+  .btn-del-row:hover { background: var(--danger); color: white; }
+
+  /* ZONA RESTAURADA: ALERTAS Y PRECIOS GUARDADOS */
+  .alertas-section{margin-bottom: 2rem;}
+  .alertas-panel{background:#FEF2F2;border:1px solid rgba(220,38,38,.2);border-radius:12px;overflow:hidden}
+  .alertas-header{display:flex;align-items:center;gap:10px;padding:1rem 1.2rem;background:rgba(220,38,38,.06);border-bottom:1px solid rgba(220,38,38,.12)}
+  .alerta-item{display:flex;align-items:center;gap:12px;padding:.875rem 1.2rem;border-bottom:1px solid rgba(220,38,38,.08)}
+  .btn-revisar{font-size:12px;color:#1E4D2B;background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:6px;padding:5px 10px;cursor:pointer;text-decoration:none}
+  
+  .precios-guardados{margin-top:2.5rem; margin-bottom: 2rem;}
+  .precio-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .precios-toggle { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; background: none; border: none; padding: 0; margin-top: .5rem; display: block; }
+  .precios-all { display: none; }
+  .precios-all.visible { display: block; }
+
+  /* Stats */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:2rem}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.2rem}
+  .stat-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.4rem}
+  .stat-value{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:300;color:var(--text)}
+  .stat-value.green{color:var(--accent)}
+
+  /* Lista escandallos */
+  .section-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:8px; justify-content: space-between;}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+  .escandallos-grid{display:flex;flex-direction:column;gap:.625rem}
+  .escandallo-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:1rem;transition:all .2s;cursor:pointer;text-decoration:none;color:inherit}
+  .escandallo-card:hover{border-color:var(--accent-mint);box-shadow:0 4px 16px rgba(30,77,43,.07)}
+  .card-info{flex:1;min-width:0}
+  .card-nombre{font-weight:600;font-size:.95rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card-metrics{display:flex;gap:.75rem;flex-shrink:0}
+  .card-metric{text-align:right}
+  .card-metric-val{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:300}
+  .card-del{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .card-del:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+  
+  /* Bulk delete checkboxes */
+  .card-checkbox { display:none; margin-right:5px; }
+  .card-checkbox input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
+
+  /* Modales */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
   .modal-overlay.visible{display:flex}
-  .modal{background:var(--surface);border-radius:16px;padding:2rem;max-width:420px;width:100%;text-align:center;animation:fadeIn .2s ease}
+  .modal{background:var(--surface);border-radius:16px;padding:2.5rem 2rem;max-width:420px;width:100%;text-align:center;animation:fadeIn .2s ease; position:relative;}
   .modal-icon{width:56px;height:56px;background:var(--gold-light);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem}
   .modal-icon svg{width:28px;height:28px;color:var(--gold)}
   .modal h3{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:var(--text);margin-bottom:.5rem}
   .modal p{font-size:.92rem;color:var(--text2);line-height:1.6;margin-bottom:1.5rem}
-  .modal-plans{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.2rem}
-  .modal-plan{border:1.5px solid var(--border);border-radius:10px;padding:1rem;text-align:left}
-  .modal-plan.best{border-color:var(--accent);background:var(--accent-light)}
-  .modal-plan-name{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem}
-  .modal-plan.best .modal-plan-name{color:var(--accent)}
-  .modal-plan-price{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:300;color:var(--text);line-height:1}
-  .modal-plan-period{font-size:11px;color:var(--text3)}
-  .modal-plan-save{font-size:11px;font-weight:700;color:var(--gold);margin-top:.25rem}
-  .btn-modal-cta{display:block;background:var(--accent);color:white;padding:12px;border-radius:9px;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:.75rem}
-  .modal-close{font-size:13px;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline}
+  .form-input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:#FAFAF8;outline:none;transition:border-color .15s}
+  .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,43,.08)}
 
-  /* Layout */
-  .container{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:.875rem}
-  .card-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
-  .card-title::after{content:'';flex:1;height:1px;background:var(--border)}
-  .grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
-  .field{position:relative}
-  .field-label{display:flex;align-items:center;gap:5px;margin-bottom:5px}
-  .field-label label{font-size:12px;font-weight:600;color:var(--text2)}
-  .help-btn{width:16px;height:16px;border-radius:50%;border:1px solid var(--text3);background:none;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif;padding:0}
-  .help-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
-  .tooltip{display:none;position:absolute;top:calc(100% + 6px);left:0;background:var(--text);color:#fff;font-size:12px;line-height:1.5;padding:8px 12px;border-radius:8px;width:260px;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,.15)}
-  .tooltip::before{content:'';position:absolute;top:-5px;left:14px;width:10px;height:10px;background:var(--text);transform:rotate(45deg);border-radius:2px}
-  .tooltip.visible{display:block}
-  input,select{width:100%;padding:9px 12px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s;-webkit-appearance:none}
-  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,43,.08)}
-  input[type=number]{-moz-appearance:textfield}
-  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-
-  /* Upsell Banner (NUEVO) */
-  .import-upsell-banner {
-    background: linear-gradient(135deg, #1E4D2B 0%, #2D5A3D 100%);
-    border-radius: 12px;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    box-shadow: 0 8px 24px rgba(30,77,43,0.15);
-    color: white;
-  }
-  .upsell-content { flex: 1; }
-  .upsell-title { font-size: 15px; font-weight: 700; color: var(--accent-mint); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-  .upsell-content p { font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.5; }
-  .btn-upsell-url {
-    background: var(--gold-light);
-    color: var(--warn);
-    border: 1px solid var(--gold);
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    white-space: nowrap;
-    transition: all 0.2s;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-  }
-  .btn-upsell-url:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-
-  /* Toggle */
-  .toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding:10px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);position:relative}
-  .toggle-label{font-size:13px;font-weight:600;color:var(--text2);flex:1}
-  .toggle-label small{display:block;font-size:11px;font-weight:400;color:var(--text3);margin-top:1px}
-  .toggle{position:relative;width:36px;height:20px;flex-shrink:0}
-  .toggle input{opacity:0;width:0;height:0}
-  .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--border);border-radius:20px;transition:.2s}
-  .toggle-slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}
-  .toggle input:checked+.toggle-slider{background:var(--accent)}
-  .toggle input:checked+.toggle-slider:before{transform:translateX(16px)}
-  .premium-tag{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);background:var(--gold-light);padding:2px 7px;border-radius:4px;flex-shrink:0}
-  .lock-overlay{position:absolute;inset:0;background:rgba(249,247,242,.92);border-radius:8px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;z-index:10}
-  .lock-overlay svg{width:14px;height:14px;color:var(--gold);flex-shrink:0}
-  .lock-overlay span{font-size:12px;font-weight:600;color:var(--gold)}
-
-  /* Ingredientes */
-  .ing-header{display:grid;gap:6px;margin-bottom:6px}
-  .ing-header.sin-merma{grid-template-columns:2.5fr .7fr .7fr 80px 28px}
-  .ing-header.con-merma{grid-template-columns:2.2fr .6fr .6fr 70px 60px 28px}
-  .ing-header span{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
-  .ing-row{display:grid;gap:6px;align-items:center;margin-bottom:6px;animation:fadeIn .2s ease}
-  .ing-row.sin-merma{grid-template-columns:2.5fr .7fr .7fr 80px 28px}
-  .ing-row.con-merma{grid-template-columns:2.2fr .6fr .6fr 70px 60px 28px}
-  .merma-cell{position:relative}
-  .merma-input{padding-right:22px!important}
-  .merma-pct{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
-  .btn-del{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;flex-shrink:0}
-  .btn-del:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
-  .btn-add-manual{width:100%;padding:9px;border:1px dashed var(--border);border-radius:8px;background:none;color:var(--text2);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .15s;margin-top:4px}
-  .btn-add-manual:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
-
-  /* AI */
-  .ai-row{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
-  .btn-ai{display:flex;align-items:center;gap:7px;padding:9px 16px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:background .15s;white-space:nowrap}
-  .btn-ai:hover{background:var(--accent-mid)}
-  .btn-ai:disabled{background:var(--text3);cursor:not-allowed}
-  .ai-hint{font-size:12px;color:var(--text3);line-height:1.4}
-  .ai-box{display:none;background:var(--accent-light);border:1px solid var(--accent);border-radius:10px;padding:1rem;margin-top:10px;animation:fadeIn .2s ease}
-  .ai-box.visible{display:block}
-  .ai-box-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-  .sug-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
-  .sug-item{display:flex;align-items:center;gap:8px;background:white;border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:13px}
-  .sug-item.selected{border-color:var(--accent);background:var(--accent-light)}
+  /* RANKING DE RENTABILIDAD */
+  .ranking-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
+  .ranking-header{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1.2rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+  .ranking-header-title{font-size:13px;font-weight:700;color:var(--text)}
+  .ranking-header-sub{font-size:11px;color:var(--text3);margin-top:1px}
+  .ranking-tabs{display:flex;gap:4px}
+  .ranking-tab{font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--text3);transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif}
+  .ranking-tab.active{background:var(--accent);color:white;border-color:var(--accent)}
+  .ranking-row{display:flex;align-items:center;gap:12px;padding:.75rem 1.2rem;border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer}
+  .ranking-row:last-child{border-bottom:none}
+  .ranking-row:hover{background:var(--bg)}
+  .rank-num{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:300;color:var(--text3);width:28px;flex-shrink:0;text-align:center;line-height:1}
+  .rank-num.top{color:var(--accent)}
+  .rank-name{flex:1;font-size:13px;font-weight:600;color:var(--text);min-width:0}
+  .rank-cat{font-size:10px;color:var(--text3);font-weight:400;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rank-bar-wrap{flex:2;display:flex;align-items:center;gap:8px;min-width:80px}
+  .rank-bar-bg{flex:1;height:6px;border-radius:999px;background:var(--border);overflow:hidden}
+  .rank-bar-fill{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+  .rank-pct{font-family:'Fraunces',serif;font-size:1rem;font-weight:300;min-width:52px;text-align:right}
+  .rank-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.04em;flex-shrink:0;white-space:nowrap}
+  .rank-badge.badge-good{background:var(--accent-light);color:var(--accent)}
+  .rank-badge.badge-warn{background:#FFF3E0;color:#7A4F00}
+  .rank-badge.badge-bad{background:var(--danger-light);color:var(--danger)}
   
-  /* ESTILO PARA PRECIO DE PROVEEDOR VERIFICADO */
-  .sug-item.is-provider {border: 2px solid var(--accent);background: #f0fdf4;}
+  /* NUEVO: Clases para ranking expandible */
+  .ranking-all { display: none; }
+  .ranking-all.visible { display: block; border-top:1px solid var(--border); }
+  .ranking-toggle-btn { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; background: none; border: none; padding: 12px; width: 100%; text-align: center; border-top: 1px solid var(--border); display: block; transition: background 0.2s; font-family:'Plus Jakarta Sans',sans-serif; }
+  .ranking-toggle-btn:hover { background: var(--surface2); }
 
-  .sug-check{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);background:white;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}.sug-item.selected .sug-check{background:var(--accent);border-color:var(--accent)}.sug-check-icon{display:none;width:10px;height:10px}.sug-item.selected .sug-check-icon{display:block}.sug-item input[type=checkbox]{display:none}
-  .sug-name{font-weight:600;color:var(--text);flex:1}
-  .sug-qty{font-size:12px;color:var(--text2);background:var(--surface2);padding:2px 7px;border-radius:4px;white-space:nowrap}
-  .sug-price{font-size:12px;color:var(--accent);background:var(--accent-light);border:1px solid rgba(30,77,43,.15);padding:2px 7px;border-radius:4px;white-space:nowrap;font-weight:600}
-  .sug-merma{font-size:12px;color:var(--warn);background:var(--warn-light);padding:2px 7px;border-radius:4px;white-space:nowrap;font-weight:600}
-  .sug-prov{font-size:11px;color:#1E4D2B;background:#C8E6D0;border:1px solid rgba(30,77,43,.25);padding:2px 7px;border-radius:4px;white-space:nowrap;font-weight:700}
-  .sug-est{font-size:11px;color:var(--text3);background:var(--surface2);padding:2px 7px;border-radius:4px;white-space:nowrap}
-  .btn-add-sel{padding:8px 16px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer}
-  .ai-loading{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--accent);padding:4px 0}
-  .spinner{width:18px;height:18px;border:2px solid var(--accent-light);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-  .ai-error{font-size:12px;color:var(--danger);padding:6px 0}
-  .ai-note{font-size:11px;color:var(--accent);margin-top:8px;padding:6px 10px;background:white;border-radius:6px;border:1px solid rgba(30,77,43,.15)}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
 
-  /* Estado del plato */
-  .plato-status{display:none;border-radius:10px;padding:12px 16px;margin-bottom:.875rem;align-items:center;gap:10px;font-size:13px;font-weight:600;line-height:1.4;animation:fadeIn .25s ease}
-  .plato-status.visible{display:flex}
-  .plato-status.status-good{background:var(--accent-light);border:1px solid var(--accent-mint);color:var(--accent)}
-  .plato-status.status-mid{background:var(--warn-light);border:1px solid rgba(139,74,0,.2);color:var(--warn)}
-  .plato-status.status-bad{background:var(--danger-light);border:1px solid rgba(139,26,26,.2);color:var(--danger)}
-  .plato-status-icon{font-size:18px;flex-shrink:0;line-height:1}
-  .plato-status-text{flex:1}
-  .plato-status-text small{display:block;font-weight:400;font-size:12px;margin-top:2px;opacity:.8}
-
-  /* Métricas */
-  .metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:.875rem}
-  .metric{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center}
-  .metric.premium-metric{border-color:rgba(196,148,58,.3);background:var(--gold-light)}
-  .metric-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;line-height:1.3}
-  .metric.premium-metric .metric-label{color:var(--warn)}
-  .metric-value{font-family:'Fraunces',serif;font-size:20px;color:var(--text);font-weight:300}
-  .metric-value.good{color:var(--accent)}.metric-value.warn{color:var(--warn)}.metric-value.bad{color:var(--danger)}
-  .metric-value.gold{color:var(--gold)}
-  .metric-sub{font-size:10px;color:var(--text3);margin-top:2px}
-
-  /* Sliders */
-  .sliders-wrap{display:flex;flex-direction:column;gap:1rem}
-  .slider-row{display:flex;align-items:center;gap:14px}
-  .slider-label-wrap{display:flex;align-items:center;gap:5px;position:relative;white-space:nowrap}
-  .slider-label{font-size:12px;font-weight:600;color:var(--text2)}
-  .slider-val{font-size:15px;font-weight:700;min-width:40px;text-align:right}
-  .slider-val.green{color:var(--accent)}
-  .slider-val.gold{color:var(--gold)}
-  input[type=range]{flex:1;height:4px;padding:0;border:none;background:none;box-shadow:none;-webkit-appearance:none;cursor:pointer;touch-action:pan-y;min-width:0}
-  input[type=range].green-track::-webkit-slider-runnable-track{height:4px;background:var(--border);border-radius:2px}
-  input[type=range].green-track::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);margin-top:-7px;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.2)}
-  input[type=range].gold-track::-webkit-slider-runnable-track{height:4px;background:rgba(196,148,58,.2);border-radius:2px}
-  input[type=range].gold-track::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);margin-top:-7px;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.15)}
-  input[type=range]:focus{box-shadow:none;border:none}
-  .slider-divider{height:1px;background:var(--border);margin:.25rem 0}
-  .margen-hint{font-size:11px;color:var(--text3);margin-top:.5rem;line-height:1.5;padding:8px 10px;background:var(--surface2);border-radius:6px}
-  .margen-hint strong{color:var(--text2)}
-
-  /* Alérgenos */
-  .alergenos{display:flex;flex-wrap:wrap;gap:7px}
-  .alg{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer;padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);user-select:none;transition:all .15s}
-  .alg:hover{border-color:var(--gold);color:var(--warn)}
-  .alg.active{background:var(--warn-light);border-color:var(--gold);color:var(--warn)}
-  .alg input{display:none}
-  .alg-dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:none}
-  .alg.active .alg-dot{display:inline-block}
-  .alg-list{margin-top:10px;padding:9px 13px;background:var(--warn-light);border-radius:8px;border:1px solid rgba(196,148,58,.3);display:none}
-  .alg-list.visible{display:block}
-  .alg-list p{font-size:12px;font-weight:700;color:var(--warn)}
-  .hint{font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5}
-
-  .btn-print{display:flex;align-items:center;gap:8px;margin:0 auto;padding:11px 28px;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;border:none;border-radius:8px;cursor:pointer}
-  .btn-print:hover{background:var(--accent-mid)}
-
-  .limit-banner{background:var(--gold-light);border:1px solid rgba(196,148,58,.3);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;display:none;align-items:center;gap:12px}
-  .limit-banner.visible{display:flex}
-  .limit-banner p{font-size:13px;color:var(--warn);flex:1;line-height:1.5}
-  .limit-banner strong{font-weight:700}
-  .btn-limit{background:var(--gold);color:white;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif}
-
-  @media(max-width:640px){
-    header{padding:1rem 1.2rem}.container{padding:1rem}
-    .grid-4{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}
-    .metrics .metric:last-child{grid-column:1/-1}
-    .ing-header{display:none!important}.ing-row{grid-template-columns:1fr 1fr!important;gap:6px}
-    .ing-row>input:first-child{grid-column:1/-1}.btn-del{justify-self:end}
-    .trial-badge span{display:none}
-    .import-upsell-banner { flex-direction: column; align-items: flex-start; }
-    .btn-upsell-url { width: 100%; justify-content: center; }
-  }
-  @media print{
-    body{background:white}header{background:var(--accent)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .btn-add-manual,.btn-del,.btn-print,.btn-ai,.ai-box,.ai-row,.help-btn,.tooltip,.toggle-row,.limit-banner,.modal-overlay,.header-right,.plato-status,.import-upsell-banner{display:none!important}
-    .alg.active{background:#fff3e0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .metrics{grid-template-columns:repeat(5,1fr)!important}
+  /* Responsive Fixes */
+  @media(max-width:768px){
+    nav{padding:0.6rem 1rem}
+    .nav-btns{gap:4px}
+    .nav-logo-icon{width:28px;height:28px}
+    .nav-logo-text{font-size:16px}
+    .container{padding:1.5rem 1rem}
+    .btns-row { flex-direction: column; }
+    .cta-nueva { width: 100%; justify-content: center; }
+    .stats{grid-template-columns:1fr 1fr}
+    .stats .stat:last-child{grid-column:1/-1}
+    .rank-bar-wrap { display: none; }
   }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-<div id="auth-loading" style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Plus Jakarta Sans,sans-serif;color:#8A8784;font-size:14px;gap:10px"><div style="width:20px;height:20px;border:2px solid #E8F2EC;border-top-color:#1E4D2B;border-radius:50%;animation:spin .7s linear infinite"></div>Cargando...</div>
-<div id="app-content" style="display:none">
-<header>
-<a href="/dashboard" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:1;min-width:0;overflow:hidden">
-    <div style="width:32px;height:32px;background:rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+<nav>
+  <a href="/dashboard" class="nav-logo">
+    <div class="nav-logo-icon">
       <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
         <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
         <line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-        <line x1="9" y1="10" x2="9" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-        <line x1="12" y1="10" x2="12" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-        <line x1="15" y1="10" x2="15" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
         <path d="M9 14.5 Q12 17 15 14.5" fill="none" stroke="white" stroke-width="1.1" stroke-linecap="round"/>
-        <rect x="18" y="18.5" width="2.2" height="3.5" rx="1" fill="rgba(255,255,255,0.4)"/>
-        <rect x="21" y="16.5" width="2.2" height="5.5" rx="1" fill="rgba(255,255,255,0.65)"/>
         <rect x="24" y="14" width="2.2" height="8" rx="1" fill="white"/>
       </svg>
     </div>
-    <div>
-      <div style="font-family:'Fraunces',Georgia,serif;font-size:18px;color:#fff;font-weight:600;letter-spacing:-0.02em;line-height:1.1">QuantiChef</div>
-      <div style="font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:9px;color:#A8D5B5;letter-spacing:0.1em;text-transform:uppercase;font-weight:400">escandallo inteligente</div>
-    </div>
+    <span class="nav-logo-text">QuantiChef</span>
   </a>
-  <div class="header-right">
-    <a href="/dashboard" style="font-size:12px;color:rgba(255,255,255,.6);text-decoration:none;display:flex;align-items:center;gap:5px;padding:6px 10px;border:1px solid rgba(255,255,255,.2);border-radius:7px;transition:all .15s" onmouseover="this.style.color='white';this.style.borderColor='rgba(255,255,255,.4)'" onmouseout="this.style.color='rgba(255,255,255,.6)';this.style.borderColor='rgba(255,255,255,.2)'">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      Mi cocina
-    </a>
-    <span style="font-size:12px;color:rgba(255,255,255,.6);display:none" id="restaurante-nombre-wrap">📍 <span id="restaurante-nombre"></span></span>
-    <div class="trial-badge" id="trial-badge">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      <span>Prueba · <strong id="trial-count">5 de 5</strong></span>
-    </div>
-    <a href="/precios" class="btn-upgrade" id="btn-upgrade-header">Activar plan</a>
-    <a href="#" onclick="cerrarSesion();return false;" style="font-size:12px;color:rgba(255,255,255,.5);text-decoration:none;padding:5px 0" title="Cerrar sesión">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-    </a>
+  <div class="nav-right">
+    <span class="nav-restaurante" id="nav-restaurante"></span>
+    <button class="btn-suscripcion-nav" id="btn-suscripcion-nav" onclick="abrirPortalCliente()">Suscripción</button>
+    <button class="nav-logout" onclick="cerrarSesion()">Salir</button>
   </div>
-</header>
+</nav>
 
-<div class="modal-overlay" id="modal-overlay" onclick="hideModal(event)">
+<div id="loading" class="loading">
+  <div class="spinner"></div>Cargando tu cocina...
+</div>
+
+<div class="modal-overlay" id="modal-url" onclick="hideUrlModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    <div class="modal-icon" style="background:var(--gold-light); color:var(--gold);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
     </div>
-    <h3 id="modal-title">Activa tu plan</h3>
-    <p id="modal-desc">Desbloquea escandallos ilimitados, cálculo de mermas, margen neto y acceso completo.</p>
-    <div class="modal-plans">
-      <a href="/precios" class="modal-plan" style="text-decoration:none;cursor:pointer">
-        <div class="modal-plan-name">Mensual</div>
-        <div class="modal-plan-price">39<span style="font-size:1rem">€</span></div>
-        <div class="modal-plan-period">al mes</div>
-      </a>
-      <a href="/precios" class="modal-plan best" style="text-decoration:none;cursor:pointer">
-        <div class="modal-plan-name">Anual</div>
-        <div class="modal-plan-price">349<span style="font-size:1rem">€</span></div>
-        <div class="modal-plan-period">al año</div>
-        <div class="modal-plan-save">Ahorras 119€</div>
-      </a>
-    </div>
-    <a href="/precios" class="btn-modal-cta">Activar ahora — acceso inmediato</a>
-    <button class="modal-close" onclick="hideModal()">Seguir con la prueba gratuita</button>
+    <h3>Importar Carta Mágica</h3>
+    <p>Pega el enlace de tu menú online y extraeremos todos tus platos en segundos.</p>
+    <input type="url" id="url-input" class="form-input" placeholder="ej: www.turestaurante.com/carta" style="margin-bottom: 1.5rem; text-align: center;">
+    <button class="btn-fill" style="width:100%; padding:14px; font-size:14px;" onclick="ejecutarImportacionUrl()" id="btn-import-confirm">Importar Carta Completa</button>
+    <button onclick="hideUrlModal()" style="margin-top: 15px; background:none; border:none; color:var(--text3); font-size:13px; font-weight:600; cursor:pointer; text-decoration:underline;">Cancelar</button>
   </div>
 </div>
 
-<div class="container">
+<div id="app" style="display:none">
+  <div class="container">
 
-  <div class="import-upsell-banner" id="import-upsell-banner">
-    <div class="upsell-content">
-      <div class="upsell-title">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Ahorra horas de trabajo manual
-      </div>
-      <p>¿Cansado de añadir platos uno a uno? Pega el enlace de tu menú digital y QuantiChef creará los escandallos de TODOS tus platos al instante.</p>
-    </div>
-    <button class="btn-upsell-url" onclick="verificarImportacionUrl()">
-      Importar Carta Completa <span id="upsell-lock" style="margin-left:5px">🔒</span>
-    </button>
-  </div>
-
-  <div class="limit-banner" id="limit-banner">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-    <p><strong>Has usado tus 5 escandallos de prueba.</strong> Activa tu plan para escandallos ilimitados, mermas y margen neto.</p>
-    <button class="btn-limit" onclick="window.location.href='/precios'">Activar plan</button>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Datos del plato</div>
-    <div class="grid-4">
-      <div class="field">
-        <div class="field-label"><label>Nombre del plato</label><button class="help-btn" onclick="tt('tt-nombre')">?</button><div class="tooltip" id="tt-nombre">Escribe el nombre tal como aparece en carta. Cuanto más específico, mejor sugerencia de la IA.</div></div>
-        <input type="text" id="nombre" placeholder="Ej: Merluza a la bilbaína" oninput="calcular()">
-      </div>
-      <div class="field">
-        <div class="field-label"><label>Categoría</label><button class="help-btn" onclick="tt('tt-cat')">?</button><div class="tooltip" id="tt-cat">Clasifica el plato. Ayuda a la IA a sugerir ingredientes más precisos.</div></div>
-        <select id="categoria" onchange="calcular()"><option value="">Seleccionar...</option><option>Entrante</option><option>Principal</option><option>Postre</option><option>Bebida</option><option>Menú del día</option></select>
-      </div>
-      <div class="field">
-        <div class="field-label"><label>Raciones que salen</label><button class="help-btn" onclick="tt('tt-rac')">?</button><div class="tooltip" id="tt-rac">¿Cuántos platos o porciones salen con estos ingredientes? Pon 1 si calculas para un solo plato. Pon 10 si haces un brownie entero que da 10 porciones — el coste se divide automáticamente.</div></div>
-        <input type="number" id="raciones" value="1" min="1" oninput="calcular()">
-      </div>
-      <div class="field">
-        <div class="field-label">
-          <label>Precio en carta</label>
-          <button class="help-btn" onclick="tt('tt-pcarta')">?</button>
-          <div class="tooltip" id="tt-pcarta" style="left:auto;right:0">¿A cuánto vendes este plato hoy? (Opcional). Sirve para auditar si tu precio actual es rentable.</div>
+    <div class="welcome">
+      <div class="welcome-tag">Mi cocina</div>
+      <h1 class="welcome-title">Hola, <em id="welcome-nombre">chef</em> 👋</h1>
+      <p class="welcome-sub" id="welcome-sub">Actualiza tus precios con una foto o importa tu menú.</p>
+      
+      <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+        <div class="upload-area-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         </div>
-        <input type="number" id="precio-carta" placeholder="Ej: 14,00" min="0" step="0.01" oninput="calcular()" onfocus="this.select()">
+        <div class="upload-area-title">Sube tu albarán o factura</div>
+        <div class="upload-area-sub">Aceptamos Fotos (JPG, PNG), PDFs y Excels.</div>
+        <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleFileUpload(event)" style="display:none">
+      </div>
+
+      <div class="btns-row">
+        <button class="cta-nueva" onclick="nuevoEscandallo()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nuevo plato manual
+        </button>
+        <button class="cta-nueva btn-magico" onclick="mostrarUrlModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Importar Carta Mágica <span id="dash-upsell-lock" style="margin-left:4px; font-size:11px;">🔒</span>
+        </button>
       </div>
     </div>
-    <div class="ai-row">
-      <button class="btn-ai" onclick="sugerir()" id="btn-ia">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        Calcular ingredientes y costes
-      </button>
-      <span class="ai-hint">Calculamos ingredientes, cantidades, precios y merma para tu plato.</span>
-    </div>
-    <div class="ai-box" id="ai-box">
-      <div class="ai-box-title"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Sugerencia IA — selecciona los que quieres añadir</div>
-      <div id="ai-loading" class="ai-loading" style="display:none"><div class="spinner"></div>Analizando plato, precios y mermas...</div>
-      <div id="ai-error" class="ai-error" style="display:none"></div>
-      <div class="sug-list" id="sug-list"></div>
-      <button class="btn-add-sel" id="btn-add-sel" onclick="addSugeridos()" style="display:none">Añadir seleccionados a la ficha</button>
-      <p class="ai-note" id="ai-note" style="display:none">Precios y mermas aproximados según mercado español. Ajústalos con los de tu proveedor.</p>
-    </div>
-  </div>
 
-  <div class="card">
-    <div class="card-title">Ingredientes</div>
-    <div class="toggle-row" id="merma-row">
-      <div class="toggle-label">Activar cálculo de mermas<small>Para platos con pérdida al limpiar o cocinar</small></div>
-      <span class="premium-tag">Premium</span>
-      <button class="help-btn" onclick="tt('tt-merma')">?</button>
-      <div class="tooltip" id="tt-merma" style="left:auto;right:0">La merma es el % que se pierde al limpiar o cocinar. Ej: merluza pierde 30% al limpiar.</div>
-      <label class="toggle"><input type="checkbox" id="toggle-merma" onchange="handleMermaToggle()"><span class="toggle-slider"></span></label>
-      <div class="lock-overlay" id="merma-lock" onclick="window.location.href='/precios'">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        <span>Función Premium — Activar plan</span>
+    <div class="plan-banner" id="aviso-estimados" style="display:none; background:#FFF3E0; border-color:#F5C47A; color:#8B4A00;">
+      <span style="font-size:18px">💡</span>
+      <div style="flex:1">
+        <strong>Tus escandallos usan precios estimados de mercado.</strong> 
+        Sube una factura (arriba) para que el sistema aprenda tus precios reales y sea 100% exacto.
       </div>
     </div>
-    <div class="ing-header sin-merma" id="ing-header">
-      <span>Ingrediente</span><span>Cantidad</span><span>Unidad</span>
-      <div style="display:flex;align-items:center;gap:4px;position:relative"><span>€/unidad</span><button class="help-btn" onclick="tt('tt-precio')">?</button><div class="tooltip" id="tt-precio" style="left:auto;right:0">Precio al proveedor por kg, litro o unidad.</div></div>
-      <span></span>
+
+    <div class="plan-banner" id="plan-banner" style="display:none">
+      <p>Estás en <strong>prueba gratuita</strong>. Pásate al Pro para tener alertas e importación ilimitada.</p>
+      <a href="/precios" style="background:var(--gold); color:white; padding:8px 16px; border-radius:7px; text-decoration:none; font-size:13px; font-weight:700">Planes</a>
     </div>
-    <div id="ingredientes"></div>
-    <button class="btn-add-manual" onclick="addIng()">+ Añadir ingrediente manualmente</button>
-    <p class="hint" id="merma-hint" style="display:none">Con mermas activas: coste = cantidad bruta real × precio (cantidad útil ÷ (1 − merma%)).</p>
-    <p class="hint">Calcula automáticamente o añade manualmente. Edita los precios con los de tu proveedor real.</p>
-  </div>
 
-  <div class="metrics">
-    <div class="metric"><div class="metric-label">Coste total</div><div class="metric-value" id="m-coste">0,00 €</div></div>
-    <div class="metric"><div class="metric-label">Coste por ración</div><div class="metric-value" id="m-racion">0,00 €</div></div>
-    <div class="metric"><div class="metric-label">Precio mínimo</div><div class="metric-value good" id="m-pvp">0,00 €</div><div class="metric-sub" id="m-pvp-sub">cubre ingredientes</div></div>
-    <div class="metric"><div class="metric-label">Coste de producto real</div><div class="metric-value" id="m-fc">—</div></div>
-    <div class="metric premium-metric" id="m-neto-card">
-      <div class="metric-label">Precio recomendado</div>
-      <div class="metric-value gold" id="m-pvp-neto">—</div>
-      <div class="metric-sub" id="m-neto-sub">activa margen neto</div>
+    <div class="pro-banner" id="pro-banner" style="display:none">
+      <div class="pro-badge">Plan Pro Activo</div>
+      <button class="btn-pro-manage" onclick="abrirPortalCliente()">Gestionar cuenta / Facturas</button>
     </div>
-  </div>
 
-  <div id="auditoria-box" style="display:none; border-radius:10px; padding:14px 16px; margin-bottom:.875rem; align-items:center; gap:12px; animation:fadeIn .25s ease;">
-    <div style="font-size:24px" id="audit-icon">🚨</div>
-    <div style="flex:1">
-      <div style="font-size:13px; font-weight:700; margin-bottom:2px" id="audit-title">Auditoría</div>
-      <div style="font-size:12px; line-height:1.4" id="audit-desc"></div>
+    <div class="extract-loading" id="extract-loading" style="display:none; background:var(--accent-light); padding:1rem; border-radius:10px; margin-bottom:1rem; align-items:center; gap:10px;">
+      <div class="spinner"></div><span style="color:var(--accent); font-weight:600; font-size:14px;">Leyendo albarán con Inteligencia Artificial...</span>
     </div>
-  </div>
+    <div class="prov-msg" id="prov-msg" style="margin-bottom:1.5rem; display:none; padding:12px; border-radius:8px; font-weight:500; font-size:13px;"></div>
 
-  <div class="plato-status" id="plato-status">
-    <span class="plato-status-icon" id="plato-status-icon"></span>
-    <div class="plato-status-text">
-      <span id="plato-status-title"></span>
-      <small id="plato-status-desc"></small>
+    <div class="review-wrap" id="review-wrap" style="display:none;">
+      <div class="review-card">
+        <h3 class="review-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Revisa los precios extraídos
+        </h3>
+        <p class="review-desc">Ajusta los nombres o cantidades si la IA ha cometido algún error al leer tu factura antes de guardarlos.</p>
+        
+        <div class="review-table-container">
+          <table class="review-table">
+            <thead>
+              <tr>
+                <th>Ingrediente</th>
+                <th style="width:100px">Precio (€)</th>
+                <th style="width:80px; text-align:center;">Unidad</th>
+                <th style="width:50px; text-align:center;">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="review-body"></tbody>
+          </table>
+        </div>
+        
+        <div class="review-actions">
+          <button class="btn-outline" onclick="cancelarReview()">Cancelar y descartar</button>
+          <button class="btn-fill" id="btn-guardar-precios" onclick="guardarPrecios()">Guardar precios en mi cocina</button>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="card-title">Márgenes y precio de venta</div>
-    <div class="sliders-wrap">
+    <div class="alertas-section" id="alertas-section" style="display:none">
+      <div class="section-title">Alertas de rentabilidad</div>
+      <div class="alertas-panel">
+        <div class="alertas-header">
+          <span style="font-size:18px">🚨</span>
+          <div style="flex:1"><div style="font-size:14px; font-weight:700; color:#991B1B">Se han detectado subidas de precio</div></div>
+          <button onclick="marcarTodasVistas()" style="font-size:12px; background:none; border:1px solid rgba(220,38,38,.3); padding:5px 10px; border-radius:6px; cursor:pointer; color:#991B1B">Marcar como vistas</button>
+        </div>
+        <div id="alertas-lista"></div>
+      </div>
+    </div>
 
-      <div>
-        <div class="slider-row">
-          <div class="slider-label-wrap">
-            <span class="slider-label">Coste de producto %</span>
-            <button class="help-btn" onclick="tt('tt-fc')">?</button>
-            <div class="tooltip" id="tt-fc" style="width:220px">% del precio de venta que va en ingredientes. Cuanto más bajo, más margen. Hostelería: 28–35%.</div>
+    <div class="stats" id="stats" style="display:none">
+      <div class="stat"><div class="stat-label">Escandallos</div><div class="stat-value green" id="stat-total">0</div></div>
+      <div class="stat"><div class="stat-label">Food cost medio</div><div class="stat-value" id="stat-fc">—</div></div>
+      <div class="stat"><div class="stat-label">Margen más alto</div><div class="stat-value green" id="stat-top">—</div></div>
+    </div>
+
+    <div id="ranking-section" style="display:none">
+      <div class="section-title">Ranking de rentabilidad</div>
+      <div class="ranking-card">
+        <div class="ranking-header">
+          <div>
+            <div class="ranking-header-title">Tus platos por margen</div>
+            <div class="ranking-header-sub">Basado en tus escandallos y precios actuales</div>
           </div>
-          <input type="range" class="green-track" id="margen-fc" min="15" max="55" value="30" step="1" oninput="calcular()">
-          <span class="slider-val green" id="val-fc">30%</span>
-        </div>
-      </div>
-
-      <div class="slider-divider"></div>
-
-      <div class="toggle-row" id="neto-row" style="flex-direction:column;align-items:stretch;gap:.75rem">
-        <div style="display:flex;align-items:center;gap:10px">
-          <div class="toggle-label">Margen neto objetivo<small>Incluye costes fijos y beneficio — para conocer el precio de venta real</small></div>
-          <span class="premium-tag">Premium</span>
-          <button class="help-btn" onclick="tt('tt-neto')">?</button>
-          <div class="tooltip" id="tt-neto" style="left:auto;right:0">El margen neto es lo que queda después de cubrir ingredientes, alquiler, personal y todos los costes del negocio. Si quieres ganar un 20% neto y tu food cost es el 30%, tu precio de venta debe cubrir ambos. QuantiChef lo calcula solo.</div>
-          <label class="toggle"><input type="checkbox" id="toggle-neto" onchange="handleNetoToggle()"><span class="toggle-slider"></span></label>
-        </div>
-        <div id="neto-slider-wrap" style="display:none">
-          <div class="slider-row">
-            <div class="slider-label-wrap">
-              <span class="slider-label" style="color:var(--warn)">Beneficio neto %</span>
-            </div>
-            <input type="range" class="gold-track" id="margen-neto" min="5" max="40" value="20" step="1" oninput="calcular()">
-            <span class="slider-val gold" id="val-neto">20%</span>
+          <div class="ranking-tabs">
+            <button class="ranking-tab" onclick="setRankingTab('fc',this)">Food cost</button>
+            <button class="ranking-tab active" onclick="setRankingTab('margen',this)">Margen €</button>
           </div>
         </div>
-        <div class="lock-overlay" id="neto-lock" onclick="window.location.href='/precios'">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          <span>Función Premium — Activar plan</span>
-        </div>
+        <div id="ranking-list"></div>
       </div>
-
-      <div id="precio-explicacion" class="margen-hint" style="display:none"></div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="card-title">Alérgenos
-      <button class="help-btn" onclick="tt('tt-alg')" style="margin-top:0;margin-left:-4px">?</button>
-      <div class="tooltip" id="tt-alg">Obligatorio por ley (Reglamento EU 1169/2011). Marca todos los alérgenos presentes.</div>
+    <div class="section-title" style="justify-content: space-between;">
+      <div style="display:flex; align-items:center; gap:8px;">Mis platos</div>
+      <button id="btn-toggle-borrado" onclick="toggleModoBorrado()" style="font-size:11px; font-weight:600; color:var(--text3); background:none; border:1px solid var(--border); padding:5px 10px; border-radius:6px; cursor:pointer; transition:all 0.2s;">Seleccionar varios</button>
     </div>
-    <div class="alergenos" id="alergenos"></div>
-    <div class="alg-list" id="alg-list"><p>⚠ Alérgenos presentes: <span id="alg-resumen"></span></p></div>
-    <p class="hint">Marca todos los alérgenos del plato. Requerido por normativa europea.</p>
-  </div>
+    
+    <div id="lista-escandallos"></div>
 
-  <button class="btn-save" id="btn-save" onclick="guardarEscandallo()" style="display:flex;align-items:center;gap:8px;margin:0 auto 12px;padding:11px 28px;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:Plus Jakarta Sans,sans-serif;border:none;border-radius:8px;cursor:pointer">
-    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-    Guardar escandallo
-  </button>
-  <button class="btn-print" onclick="window.print()">
-    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
-    Imprimir / Guardar PDF
-  </button>
-  <p class="hint" style="text-align:center;margin-top:1rem">QuantiChef · v3.0 · <a href="/" style="color:var(--text3)">Volver al inicio</a></p>
+    <div class="precios-guardados" id="precios-guardados"></div>
+
+  </div>
+</div>
+
+<div id="bulk-delete-bar" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--text); color:white; padding:12px 24px; border-radius:12px; z-index:100; align-items:center; gap:15px; box-shadow:0 8px 32px rgba(0,0,0,0.25);">
+  <span id="bulk-count" style="font-size:13px; font-weight:600; white-space:nowrap;">0 seleccionados</span>
+  <button id="btn-bulk-delete" onclick="confirmarBorradoMultiple()" style="background:var(--danger); color:white; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;">Borrar platos</button>
+  <button onclick="toggleModoBorrado()" style="background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; text-decoration:underline; font-size:13px;">Cancelar</button>
 </div>
 
 <script>
-// ── TRIAL — SERVER SIDE (no burlarle) ────────────────────────
-const MAX_FREE = 5;
+const SUPABASE_URL='https://ilzntryzijdfnntwuthp.supabase.co';
+const SUPABASE_KEY='sb_publishable_qXyYLpM1403nu66tczLNCA_0s5EE3Re';
+const {createClient}=supabase;
+const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let restauranteId=null;
 let esPremium = false;
-let trialCount = 0;
-let authToken = null;
+let extractedProducts = [];
 
-async function checkTrial() {
-  try {
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) return;
-    authToken = session.access_token;
-
-    // Get restaurante plan
-    const { data: rest } = await sb.from('restaurantes')
-      .select('id, plan')
-      .eq('user_id', session.user.id)
-      .single();
-
-    if (!rest) return;
-    esPremium = rest.plan === 'pro';
-
-    if (!esPremium) {
-      // Count real escandallos from DB — no localStorage tricks possible
-      const { count } = await sb.from('escandallos')
-        .select('id', { count: 'exact', head: true })
-        .eq('restaurante_id', rest.id);
-
-      trialCount = count || 0;
-      const restantes = Math.max(0, MAX_FREE - trialCount);
-      document.getElementById('trial-count').textContent = restantes + ' de ' + MAX_FREE;
-      if (restantes === 0) {
-        document.getElementById('trial-badge').classList.add('agotado');
-        document.getElementById('limit-banner').classList.add('visible');
-      }
-    } else {
-      document.getElementById('trial-badge').style.display = 'none';
-      document.getElementById('merma-lock').style.display = 'none';
-      document.getElementById('neto-lock').style.display = 'none';
-      // NUEVO: Ocultar el candado del banner de importación si es premium
-      const upsellLock = document.getElementById('upsell-lock');
-      if(upsellLock) upsellLock.style.display = 'none';
-      
-      const btnUpgrade = document.getElementById('btn-upgrade-header');
-      if(btnUpgrade) btnUpgrade.style.display = 'none';
+async function init(){
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if(event==='INITIAL_SESSION'){
+      if(!session) window.location.href='/login';
+      else await cargarDatos(session);
     }
-  } catch (err) {
-    console.log('Trial check error:', err);
-  }
+  });
 }
 
-function updateTrialBadge(data) {
-  if (esPremium) { 
-    document.getElementById('trial-badge').style.display = 'none'; 
-    const btnUpgrade = document.getElementById('btn-upgrade-header');
-    if(btnUpgrade) btnUpgrade.style.display = 'none';
-    return; 
-  }
-  const restantes = data ? data.restantes : Math.max(0, MAX_FREE - trialCount);
-  document.getElementById('trial-count').textContent = restantes + ' de ' + MAX_FREE;
-  if (restantes === 0) {
-    document.getElementById('trial-badge').classList.add('agotado');
-    document.getElementById('limit-banner').classList.add('visible');
-  }
-}
-
-// ── IMPORTACIÓN DE MENÚ (NUEVO) ──────────────────────────────
-async function verificarImportacionUrl() {
-  if (!esPremium) { 
-    window.location.href = '/precios'; 
-    return; 
-  }
+async function cargarDatos(session){
+  let rest = null;
+  let intentos = 0;
+  const maxIntentos = 3;
   
-  const url = prompt("Pega la URL de tu carta digital (ej: www.turestaurante.com/carta):");
-  if (!url) return;
+  while (!rest && intentos < maxIntentos) {
+    const { data } = await sb.from('restaurantes').select('id,nombre,plan').eq('user_id', session.user.id).maybeSingle();
+    if (data) { rest = data; break; }
+    intentos++;
+    if (intentos < maxIntentos) await new Promise(r => setTimeout(r, 500));
+  }
 
-  const btn = document.querySelector('.btn-upsell-url');
+  if(!rest){
+    await sb.auth.signOut(); 
+    window.location.href='/login';
+    return;
+  }
+
+  restauranteId = rest.id;
+  document.getElementById('nav-restaurante').textContent = rest.nombre;
+  document.getElementById('welcome-nombre').textContent = rest.nombre;
+
+  esPremium = rest.plan === 'pro';
+  document.getElementById('pro-banner').style.display = esPremium ? 'flex' : 'none';
+  document.getElementById('plan-banner').style.display = esPremium ? 'none' : 'flex';
+  document.getElementById('btn-suscripcion-nav').style.display = esPremium ? 'inline-block' : 'none';
+  
+  // Cambia el icono de candado en el botón mágico
+  const lockIcon = document.getElementById('dash-upsell-lock');
+  if (lockIcon) { lockIcon.style.display = esPremium ? 'none' : 'inline'; }
+  
+  const {data:escandallos} = await sb.from('escandallos').select('*').eq('restaurante_id', rest.id).order('updated_at', {ascending:false});
+    
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  if(escandallos && escandallos.length > 0){
+    document.getElementById('stats').style.display = 'grid';
+    renderStats(escandallos);
+    renderLista(escandallos);
+    initRanking(escandallos, esPremium);
+    
+    // Si tiene platos pero nunca ha subido un albarán, mostramos el aviso
+    const { count: preciosCount } = await sb.from('precios_proveedor').select('id', { count: 'exact', head: true }).eq('restaurante_id', rest.id);
+    if(preciosCount === 0) document.getElementById('aviso-estimados').style.display = 'flex';
+  } else { 
+    document.getElementById('lista-escandallos').innerHTML = '<div style="padding:3rem; text-align:center; color:var(--text3); border:1.5px dashed var(--border); border-radius:12px; font-size:14px;">Aún no tienes platos. Crea uno o importa tu menú.</div>';
+  }
+
+  await cargarAlertas();
+  await cargarPreciosGuardados();
+}
+
+function fmt(n){return Number(n).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';}
+
+function renderStats(lista){
+  document.getElementById('stat-total').textContent=lista.length;
+  const fcs=lista.filter(e=>e.food_cost_pct>0).map(e=>e.food_cost_pct);
+  if(fcs.length>0)document.getElementById('stat-fc').textContent=Math.round(fcs.reduce((a,b)=>a+b,0)/fcs.length)+'%';
+  const conPrecio=lista.filter(e=>e.precio_venta>0);
+  if(conPrecio.length>0){
+    const top=conPrecio.reduce((a,b)=>((b.precio_venta-b.coste_racion)/b.precio_venta)>((a.precio_venta-a.coste_racion)/a.precio_venta)?b:a);
+    const margen=top.precio_venta>0?Math.round((top.precio_venta-top.coste_racion)/top.precio_venta*100):0;
+    document.getElementById('stat-top').textContent=margen+'%';
+  }
+}
+
+function renderLista(lista){
+  const c = document.getElementById('lista-escandallos');
+  c.innerHTML = '';
+  const grid = document.createElement('div'); 
+  grid.className = 'escandallos-grid';
+  
+  lista.forEach(e => {
+    const card = document.createElement('div'); 
+    card.className = 'escandallo-card';
+    card.innerHTML = `
+      <div class="card-checkbox">
+        <input type="checkbox" class="bulk-cb" value="${e.id}">
+      </div>
+      <div class="card-info">
+        <div class="card-nombre">${e.nombre_plato}</div>
+        <div style="font-size:12px; color:var(--text3)">${e.categoria||'S/C'} · FC ${e.food_cost_pct}%</div>
+      </div>
+      <div class="card-metrics">
+        <div class="card-metric"><div class="card-metric-val">${fmt(e.coste_racion)}</div><div style="font-size:9px; color:var(--text3)">coste</div></div>
+        <div class="card-metric"><div class="card-metric-val" style="color:var(--accent)">${fmt(e.precio_venta)}</div><div style="font-size:9px; color:var(--text3)">venta</div></div>
+      </div>
+      <button class="card-del" onclick="eliminarUnico('${e.id}',event)">×</button>
+    `;
+    
+    card.onclick = (evt) => {
+      if(modoBorrado) {
+        const cb = card.querySelector('.bulk-cb');
+        if(evt.target !== cb) cb.checked = !cb.checked;
+        actualizarContadorBorrado();
+      } else {
+        editarEscandallo(e);
+      }
+    };
+    grid.appendChild(card);
+  });
+  c.appendChild(grid);
+}
+
+let modoBorrado = false;
+
+function toggleModoBorrado() {
+  modoBorrado = !modoBorrado;
+  const cbs = document.querySelectorAll('.card-checkbox');
+  const dels = document.querySelectorAll('.card-del');
+  const btnToggle = document.getElementById('btn-toggle-borrado');
+  const bar = document.getElementById('bulk-delete-bar');
+
+  cbs.forEach(cb => {
+    cb.style.display = modoBorrado ? 'block' : 'none';
+    cb.querySelector('input').checked = false;
+  });
+  dels.forEach(d => d.style.display = modoBorrado ? 'none' : 'flex');
+  
+  bar.style.display = modoBorrado ? 'flex' : 'none';
+  
+  if (modoBorrado) {
+    btnToggle.textContent = 'Cancelar selección';
+    btnToggle.style.background = 'var(--surface2)';
+  } else {
+    btnToggle.textContent = 'Seleccionar varios';
+    btnToggle.style.background = 'none';
+  }
+  actualizarContadorBorrado();
+}
+
+function actualizarContadorBorrado() {
+  const count = document.querySelectorAll('.bulk-cb:checked').length;
+  document.getElementById('bulk-count').textContent = count + (count === 1 ? ' seleccionado' : ' seleccionados');
+  document.getElementById('btn-bulk-delete').disabled = count === 0;
+  document.getElementById('btn-bulk-delete').style.opacity = count === 0 ? '0.5' : '1';
+}
+
+async function confirmarBorradoMultiple() {
+  const checked = document.querySelectorAll('.bulk-cb:checked');
+  if(checked.length === 0) return;
+  if(!confirm(`¿Estás seguro de borrar ${checked.length} platos de tu cocina? Esta acción es irreversible.`)) return;
+  
+  const ids = Array.from(checked).map(cb => cb.value);
+  const btn = document.getElementById('btn-bulk-delete');
+  btn.textContent = 'Borrando...';
+  btn.disabled = true;
+
+  const { error } = await sb.from('escandallos').delete().in('id', ids);
+  if(error) {
+    alert('Error al borrar: ' + error.message);
+    btn.textContent = 'Borrar platos';
+    btn.disabled = false;
+  } else {
+    window.location.reload();
+  }
+}
+
+async function eliminarUnico(id, evt){
+  evt.stopPropagation();
+  if(!confirm('¿Eliminar plato?')) return;
+  await sb.from('escandallos').delete().eq('id',id);
+  window.location.reload();
+}
+
+function nuevoEscandallo(){ sessionStorage.removeItem('qc_escandallo_editar'); window.location.href='/escandallo'; }
+function editarEscandallo(e){ sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(e)); window.location.href='/escandallo'; }
+async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login'; }
+
+function mostrarUrlModal() {
+  if (!esPremium) { window.location.href = '/precios'; return; }
+  document.getElementById('url-input').value = '';
+  document.getElementById('modal-url').classList.add('visible');
+}
+
+function hideUrlModal(e) {
+  if (!e || e.target === document.getElementById('modal-url')) {
+    document.getElementById('modal-url').classList.remove('visible');
+  }
+}
+
+async function ejecutarImportacionUrl() {
+  const url = document.getElementById('url-input').value.trim();
+  if (!url) { alert("Por favor, escribe una URL válida"); return; }
+
+  const btn = document.getElementById('btn-import-confirm');
   const btnOriginal = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite; margin-right:6px"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Extrayendo platos...`;
+  btn.innerHTML = `<span class="spinner-sm"></span> Extrayendo Platos...`;
 
   try {
     const { data: { session } } = await sb.auth.getSession();
     const response = await fetch('/api/import-menu', {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
       body: JSON.stringify({ url })
     });
 
-    const result = await response.json();
+    let result;
+    try { result = await response.json(); } catch(e) { throw new Error("Error del servidor al leer la carta. Inténtalo de nuevo."); }
 
-    if (!response.ok) {
-      throw new Error(result.error || 'Error desconocido');
-    }
+    if (!response.ok) throw new Error(result.error || 'Error desconocido al importar.');
 
-    alert(`¡Éxito! Hemos importado ${result.cantidad} platos de tu carta. Vamos al panel para verlos.`);
-    window.location.href = '/dashboard';
+    alert(`¡Éxito! Hemos importado ${result.cantidad} platos de tu carta.`);
+    window.location.reload();
 
   } catch (error) {
     alert(`Error: ${error.message}`);
@@ -595,574 +595,295 @@ async function verificarImportacionUrl() {
   }
 }
 
-async function registrarEscandallo() {
-  if (esPremium) return true;
-  // Re-check server before allowing
-  try {
-    const res = await fetch('/api/check-trial', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken }
-    });
-    const data = await res.json();
-    esPremium = data.esPro || false;
-    trialCount = data.count || 0;
-    if (!data.puedeCrear) { window.location.href='/precios'; return false; }
-    return true;
-  } catch (err) {
-    return true; // En caso de error de red, permitir pero el servidor lo controla al guardar
-  }
+async function handleFileUpload(e){ 
+  if(e.target.files.length > 0) processFile(e.target.files[0]); 
 }
 
-function showModal(tipo){
-  const titles={merma:'Cálculo de mermas — Premium',neto:'Margen neto — Premium',limite:'Has usado tus 5 escandallos gratis'};
-  const descs={merma:'Calcula el coste real considerando la pérdida de cada ingrediente al limpiar o cocinar.',neto:'Conoce el precio de venta real que cubre ingredientes, costes fijos y beneficio. Lo más potente de QuantiChef.',limite:'Activa tu plan para crear escandallos ilimitados y desbloquear mermas y margen neto.'};
-  document.getElementById('modal-title').textContent=titles[tipo]||'Activa tu plan';
-  document.getElementById('modal-desc').textContent=descs[tipo]||'Desbloquea todas las funciones premium.';
-  document.getElementById('modal-overlay').classList.add('visible');
-}
-function hideModal(e){if(!e||e.target===document.getElementById('modal-overlay'))document.getElementById('modal-overlay').classList.remove('visible');}
-
-// ── PREMIUM: MERMAS ──────────────────────────────────────────
-let mermasOn=false;
-function handleMermaToggle(){
-  const t=document.getElementById('toggle-merma');
-  if(!esPremium){t.checked=false;window.location.href='/precios';return;}
-  mermasOn=t.checked;
-  const hdr=document.getElementById('ing-header');
-  hdr.className='ing-header '+(mermasOn?'con-merma':'sin-merma');
-  if(mermasOn){hdr.innerHTML='<span>Ingrediente</span><span>Cantidad útil</span><span>Unidad</span><div style="display:flex;align-items:center;gap:4px"><span>€/unidad</span></div><span style="text-align:center">Merma %</span><span></span>';}
-  else{hdr.innerHTML='<span>Ingrediente</span><span>Cantidad</span><span>Unidad</span><div style="display:flex;align-items:center;gap:4px;position:relative"><span>€/unidad</span></div><span></span>';}
-  document.getElementById('merma-hint').style.display=mermasOn?'block':'none';
-  renderIngs();
-}
-
-// ── PREMIUM: MARGEN NETO ─────────────────────────────────────
-let netoOn=false;
-function handleNetoToggle(){
-  const t=document.getElementById('toggle-neto');
-  if(!esPremium){t.checked=false;window.location.href='/precios';return;}
-  netoOn=t.checked;
-  document.getElementById('neto-slider-wrap').style.display=netoOn?'block':'none';
-  calcular();
-}
-
-// ── TOOLTIPS ─────────────────────────────────────────────────
-function tt(id){document.querySelectorAll('.tooltip').forEach(t=>{if(t.id!==id)t.classList.remove('visible');});document.getElementById(id).classList.toggle('visible');}
-document.addEventListener('click',e=>{if(!e.target.classList.contains('help-btn'))document.querySelectorAll('.tooltip').forEach(t=>t.classList.remove('visible'));});
-
-// ── ALÉRGENOS ────────────────────────────────────────────────
-const ALGS=["Gluten","Crustáceos","Huevos","Pescado","Cacahuetes","Soja","Lácteos","Frutos secos","Apio","Mostaza","Sésamo","Sulfitos","Altramuces","Moluscos"];
-function initAlergenos(){const c=document.getElementById('alergenos');ALGS.forEach(a=>{const l=document.createElement('label');l.className='alg';l.innerHTML=`<input type="checkbox" onchange="calcular()"><span class="alg-dot"></span>${a}`;l.addEventListener('click',function(){setTimeout(()=>{this.classList.toggle('active',this.querySelector('input').checked);calcular();},0);});c.appendChild(l);});}
-
-// ── INGREDIENTES ─────────────────────────────────────────────
-const UNITS=["g","kg","ml","l","ud","ración"];
-let ings=[],_sugs=[];
-let preciosProveedor=[];
-function addIng(n='',q='',u='g',p='',m=''){const id=Date.now()+Math.random();ings.push({id,n,q,u,p,m});renderIngs();}
-function removeIng(id){ings=ings.filter(i=>i.id!==id);renderIngs();}
-function renderIngs(){
-  const c=document.getElementById('ingredientes');
-  const v={};ings.forEach(i=>{v[i.id]={n:document.getElementById('n'+i.id)?.value??i.n,q:document.getElementById('q'+i.id)?.value??i.q,u:document.getElementById('u'+i.id)?.value??i.u,p:document.getElementById('p'+i.id)?.value??i.p,m:document.getElementById('m'+i.id)?.value??i.m};});
-  c.innerHTML='';
-  ings.forEach(i=>{
-    const x=v[i.id]||{n:i.n,q:i.q,u:i.u,p:i.p,m:i.m};
-    const d=document.createElement('div');d.className='ing-row '+(mermasOn?'con-merma':'sin-merma');
-    const mc=mermasOn?`<div class="merma-cell"><input type="number" class="merma-input" placeholder="0" min="0" max="99" step="1" id="m${i.id}" value="${x.m}" oninput="calcular()" onfocus="this.select()"><span class="merma-pct">%</span></div>`:'';
-    d.innerHTML=`<input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()" onfocus="this.select()"><input type="number" placeholder="0" min="0" step="0.001" id="q${i.id}" value="${x.q}" oninput="calcular()" onfocus="this.select()"><select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><input type="number" placeholder="0,00" min="0" step="0.01" id="p${i.id}" value="${x.p}" oninput="calcular()" onfocus="this.select()">${mc}<button class="btn-del" onclick="removeIng(${i.id})">×</button>`;
-    c.appendChild(d);
-  });calcular();
-}
-
-// ── CÁLCULO ──────────────────────────────────────────────────
-function fmt(n){return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
-function calcular(){
-  const rac=Math.max(parseFloat(document.getElementById('raciones').value)||1,1);
-  const fc=parseFloat(document.getElementById('margen-fc').value)||30;
-  const neto=parseFloat(document.getElementById('margen-neto').value)||20;
-  const pCarta=parseFloat(document.getElementById('precio-carta').value)||0; // CAMPO NUEVO
+async function processFile(file){
+  document.getElementById('extract-loading').style.display='flex';
+  document.getElementById('prov-msg').style.display='none';
+  document.getElementById('review-wrap').style.display='none';
   
-  document.getElementById('val-fc').textContent=fc+'%';
-  document.getElementById('val-neto').textContent=neto+'%';
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async () => {
+    try {
+      const base64 = reader.result.split(',')[1];
+      const { data: { session } } = await sb.auth.getSession();
+      
+      const resp = await fetch('/api/extract', { 
+        method:'POST', 
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+ (session?.access_token || '')}, 
+        body:JSON.stringify({file_base64:base64, file_type:file.name.split('.').pop()}) 
+      });
+      
+      let data;
+      try {
+        data = await resp.json();
+      } catch(e) {
+        throw new Error('El archivo es demasiado grande o el servidor tardó mucho en responder. Prueba con una foto más ligera.');
+      }
 
-  // Coste total con mermas
-  let tot=0;
-  ings.forEach(i=>{
-    const q=parseFloat(document.getElementById('q'+i.id)?.value)||0;
-    const p=parseFloat(document.getElementById('p'+i.id)?.value)||0;
-    let merma=0;
-    if(mermasOn)merma=Math.min(parseFloat(document.getElementById('m'+i.id)?.value)||0,99)/100;
-    tot+=(merma>0?q/(1-merma):q)*p;
-  });
-
-  const por=tot/rac;
-
-  // Precio mínimo (solo food cost)
-  const pvpMin=fc>0?por/(fc/100):0;
-  // Food cost real
-  const fcReal=pvpMin>0?(por/pvpMin*100):0;
-
-  // Precio recomendado: coste_ración / (fc% × (1 - neto%))
-  const pvpRecomendado=fc>0&&neto<100?por/(fc/100)/(1-neto/100):0;
-
-  document.getElementById('m-coste').textContent=fmt(tot);
-  document.getElementById('m-racion').textContent=fmt(por);
-  document.getElementById('m-pvp').textContent=fmt(pvpMin);
-  document.getElementById('m-pvp-sub').textContent='con coste de producto al '+fc+'%';
-
-  const mm=document.getElementById('m-fc');
-  if(pvpMin>0){mm.textContent=fcReal.toFixed(1)+'%';mm.className='metric-value '+(fcReal<=35?'good':fcReal<=45?'warn':'bad');}
-  else{mm.textContent='—';mm.className='metric-value';}
-
-  // Métrica precio recomendado
-  const mNeto=document.getElementById('m-pvp-neto');
-  const mNetoSub=document.getElementById('m-neto-sub');
-  if(netoOn&&pvpRecomendado>0){
-    mNeto.textContent=fmt(pvpRecomendado);
-    mNeto.className='metric-value gold';
-    mNetoSub.textContent='+'+neto+'% beneficio neto';
-    // Explicación
-    const expl=document.getElementById('precio-explicacion');
-    expl.style.display='block';
-    expl.innerHTML=`<strong>Cómo se calcula el precio recomendado:</strong> Tu coste por ración es ${fmt(por)}. Con un food cost del ${fc}% el precio mínimo es ${fmt(pvpMin)}. Añadiendo un ${neto}% de beneficio neto sobre el precio de venta, el precio recomendado es <strong>${fmt(pvpRecomendado)}</strong> — que te deja ${fmt(pvpRecomendado-por)} de beneficio bruto por ración tras cubrir todos los costes.`;
-  } else if(!netoOn){
-    mNeto.textContent='—';mNeto.className='metric-value gold';
-    mNetoSub.textContent='activa margen neto';
-    document.getElementById('precio-explicacion').style.display='none';
-  }
-
-  const act=Array.from(document.querySelectorAll('.alg input:checked')).map(i=>i.closest('.alg').textContent.trim());
-  document.getElementById('alg-resumen').textContent=act.join(', ');
-  document.getElementById('alg-list').classList.toggle('visible',act.length>0);
-
-  // Lógica de Auditoría (Precio real vs Precio ideal)
-  const auditBox = document.getElementById('auditoria-box');
-  const auditTitle = document.getElementById('audit-title');
-  const auditDesc = document.getElementById('audit-desc');
-  const auditIcon = document.getElementById('audit-icon');
-
-  if (pCarta > 0 && por > 0) {
-    auditBox.style.display = 'flex';
-    const realFcPct = (por / pCarta) * 100;
-    // Si tiene el Premium activado usa el pvpRecomendado, si no, el pvpMin
-    const targetPvp = (netoOn && pvpRecomendado > 0) ? pvpRecomendado : pvpMin;
-
-    if (pCarta < targetPvp) {
-      // ESTÁ PERDIENDO MARGEN
-      auditBox.style.background = 'var(--danger-light)';
-      auditBox.style.border = '1px solid rgba(139, 26, 26, 0.2)';
-      auditTitle.style.color = 'var(--danger)';
-      auditDesc.style.color = 'var(--danger)';
-      auditIcon.textContent = '🚨';
-      auditTitle.textContent = 'Estás perdiendo margen frente a tu objetivo';
-      const diff = targetPvp - pCarta;
-      auditDesc.innerHTML = `Vendes a <strong>${fmt(pCarta)}</strong> pero para tu objetivo deberías vender a <strong>${fmt(targetPvp)}</strong>. Estás dejando de ganar <strong>${fmt(diff)} por ración</strong>. Tu Food Cost real es del ${realFcPct.toFixed(1)}%.`;
-    } else {
-      // RENTABILIDAD SUPERADA
-      auditBox.style.background = 'var(--accent-light)';
-      auditBox.style.border = '1px solid var(--accent-mint)';
-      auditTitle.style.color = 'var(--accent)';
-      auditDesc.style.color = 'var(--accent)';
-      auditIcon.textContent = '✅';
-      auditTitle.textContent = 'Precio actual excelente';
-      const extra = pCarta - targetPvp;
-      auditDesc.innerHTML = `Vendes a <strong>${fmt(pCarta)}</strong>, superando tu objetivo. Tienes un colchón extra de <strong>${fmt(extra)} por ración</strong>. Tu Food Cost real es del fantástico ${realFcPct.toFixed(1)}%.`;
-    }
-  } else {
-    auditBox.style.display = 'none';
-  }
-
-  // Estado del plato
-  const statusEl=document.getElementById('plato-status');
-  const statusIcon=document.getElementById('plato-status-icon');
-  const statusTitle=document.getElementById('plato-status-title');
-  const statusDesc=document.getElementById('plato-status-desc');
-  if(tot>0&&por>0&&pvpMin>0){
-    statusEl.classList.add('visible');
-    const margenPct=((pvpMin-por)/pvpMin*100);
-    const margenStr=margenPct.toFixed(1);
-    if(margenPct<0){
-      statusEl.className='plato-status visible status-bad';
-      statusIcon.textContent='\uD83D\uDCB8';
-      statusTitle.textContent='Estás perdiendo dinero';
-      statusDesc.textContent=`Margen del ${margenStr}% \u2014 el precio no cubre los costes.`;
-    } else if(margenPct>=70){
-      statusEl.className='plato-status visible status-good';
-      statusIcon.textContent='\u2705';
-      statusTitle.textContent='Plato rentable';
-      statusDesc.textContent=`Tienes un margen del ${margenStr}% \u2014 buen equilibrio entre coste e ingreso.`;
-    } else if(margenPct>=50){
-      statusEl.className='plato-status visible status-mid';
-      statusIcon.textContent='\u26A1';
-      statusTitle.textContent='Margen ajustado';
-      statusDesc.textContent=`Margen del ${margenStr}% \u2014 podrías mejorar el precio de venta o reducir algún coste.`;
-    } else {
-      statusEl.className='plato-status visible status-bad';
-      statusIcon.textContent='\u26A0\uFE0F';
-      statusTitle.textContent='Margen bajo';
-      statusDesc.textContent=`Margen del ${margenStr}% \u2014 estás ganando poco por ración. Revisa ingredientes o sube el precio.`;
-    }
-  } else {
-    statusEl.classList.remove('visible');
-  }
-}
-
-// ── IA ───────────────────────────────────────────────────────
-function normalizarNombre(str){
-  return (str||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim();
-}
-
-function buscarPrecioProveedor(nombreIngrediente){
-  if(!preciosProveedor||preciosProveedor.length===0) return null;
-  const norm=normalizarNombre(nombreIngrediente);
-  let match=preciosProveedor.find(p=>p.ingrediente_normalizado===norm);
-  if(match) return match;
-  match=preciosProveedor.find(p=>{
-    const pn=p.ingrediente_normalizado||'';
-    if(!pn||pn.length<4||!norm||norm.length<4) return false;
-    const palabrasNorm=norm.split(' ').filter(w=>w.length>=4);
-    const palabrasPn=pn.split(' ').filter(w=>w.length>=4);
-    if(palabrasNorm.length===0||palabrasPn.length===0) return false;
-    return palabrasNorm.every(w=>pn.includes(w))||palabrasPn.every(w=>norm.includes(w));
-  });
-  return match||null;
-}
-
-async function sugerir(){
-  const nombre=document.getElementById('nombre').value.trim();
-  const raciones=parseInt(document.getElementById('raciones').value)||1;
-  const categoria=document.getElementById('categoria').value||'plato';
-  if(!nombre){alert('Escribe primero el nombre del plato.');return;}
-
-  const btn=document.getElementById('btn-ia'),box=document.getElementById('ai-box');
-  const loading=document.getElementById('ai-loading'),errorEl=document.getElementById('ai-error');
-  const list=document.getElementById('sug-list'),addBtn=document.getElementById('btn-add-sel');
-
-  // 🔥 NUEVO: Bloqueo elegante del límite ANTES de llamar a la IA
-  if (!esPremium && trialCount >= 5) {
-    box.classList.add('visible');
-    loading.style.display = 'none';
-    list.innerHTML = '';
-    
-    // Aplicamos estilos de "Upsell" (Advertencia amigable)
-    errorEl.style.display = 'block';
-    errorEl.style.color = '#8B4A00'; 
-    errorEl.style.background = '#FFF3E0'; 
-    errorEl.style.padding = '12px 14px';
-    errorEl.style.borderRadius = '8px';
-    errorEl.style.border = '1px solid #F5C47A';
-    errorEl.innerHTML = '¡Has usado tus escandallos gratuitos! <a href="/precios" style="color:#8B4A00; text-decoration:underline; font-weight:700;">Pásate al plan Pro</a> para tener escandallos ilimitados.';
-    return; // Detenemos la ejecución aquí para no gastar recursos
-  }
-
-  // Restaurar estilos por defecto por si viene de un error previo de API real
-  errorEl.style.color = 'var(--danger)';
-  errorEl.style.background = 'transparent';
-  errorEl.style.padding = '6px 0';
-  errorEl.style.border = 'none';
-
-  btn.disabled=true;btn.textContent='Calculando...';
-  box.classList.add('visible');loading.style.display='flex';
-  errorEl.style.display='none';list.innerHTML='';addBtn.style.display='none';
-  document.getElementById('ai-note').style.display='none';
-  try{
-    const { data: { session: _sess } } = await sb.auth.getSession();
-    const _token = _sess?.access_token || '';
-    const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_token},body:JSON.stringify({plato:nombre,categoria:categoria,raciones:raciones})});
-    const data=await res.json();
-    if(!res.ok)throw new Error(data.error?.message||'Error API');
-    const sugs=JSON.parse(data.content[0].text.trim().replace(/```json|```/g,'').trim());
-    loading.style.display='none';
-
-    sugs.forEach((s,i)=>{
-      const provMatch=buscarPrecioProveedor(s.nombre);
-      if(provMatch){
-        s._precio_original=s.precio_kg;
-        s.precio_kg=parseFloat(provMatch.precio_kg)||s.precio_kg;
-        s._es_proveedor=true;
-        s._proveedor_nombre=provMatch.proveedor||'tu proveedor';
-        if(provMatch.unidad&&provMatch.unidad!=='kg') s._unidad_prov=provMatch.unidad;
+      document.getElementById('extract-loading').style.display='none';
+      
+      if (!resp.ok) {
+        mostrarMsgProv(data.error || 'Error al procesar el documento. Inténtalo de nuevo.', 'error');
+        return;
+      }
+      
+      if (data.productos && data.productos.length > 0) {
+        renderReviewTable(data.productos);
       } else {
-        s._es_proveedor=false;
+        mostrarMsgProv(data.error || 'No encontramos precios legibles en esta imagen. Asegúrate de que los números se ven claros.', 'error');
       }
-
-      const item=document.createElement('div');
-      item.className = s._es_proveedor ? 'sug-item selected is-provider' : 'sug-item selected';
-      
-      const pc=s.unidad==='ud'?`${s.precio_kg.toFixed(2)}€/ud`:`${s.precio_kg.toFixed(2)}€/kg`;
-      const mt=s.merma>0?`<span class="sug-merma">Merma ${s.merma}%</span>`:'';
-      const provBadge=s._es_proveedor
-        ?`<span class="sug-prov">✓ Precio proveedor</span>`
-        :`<span class="sug-est">Precio estimado</span>`;
-      item.innerHTML=`<input type="checkbox" id="sc${i}" checked style="display:none"><div class="sug-check" onclick="toggleSug(this,${i})"><svg class="sug-check-icon" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div><label for="sc${i}" style="display:flex;align-items:center;gap:6px;flex:1;cursor:pointer;margin:0;flex-wrap:wrap" onclick="toggleSug(this.previousElementSibling,${i})"><span class="sug-name">${s.nombre}</span><span class="sug-qty">${s.cantidad} ${s.unidad}</span><span class="sug-price">${pc}</span>${mt}${provBadge}</label>`;
-      list.appendChild(item);
-    });
-    _sugs=sugs;addBtn.style.display='inline-block';document.getElementById('ai-note').style.display='block';
-
-    const conProv=sugs.filter(s=>s._es_proveedor).length;
-    const noteEl=document.getElementById('ai-note');
-    if(conProv>0){
-      noteEl.innerHTML=`<strong>${conProv} ingrediente${conProv>1?'s':''}</strong> con precio de tu proveedor. El resto son precios estimados — ajústalos si es necesario.`;
-    } else if(preciosProveedor.length>0){
-      noteEl.textContent='No se encontraron coincidencias con tus precios de proveedor. Precios estimados según mercado español.';
-    } else {
-      noteEl.textContent='Precios y mermas aproximados según mercado español. Sube un albarán en el dashboard para usar precios reales.';
+    } catch(err) {
+      document.getElementById('extract-loading').style.display='none';
+      mostrarMsgProv(err.message || 'Error de conexión. Revisa tu internet e inténtalo de nuevo.', 'error');
+    } finally {
+      document.getElementById('file-input').value = ''; 
     }
-  }catch(err){
-    loading.style.display='none';errorEl.style.display='block';
-    errorEl.textContent='No se pudo conectar con la IA. Añade manualmente. ('+err.message+')';
-  }
-  btn.disabled=false;
-  btn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Calcular ingredientes y costes`;
-}
-function toggleSug(checkEl,i){
-  const item=checkEl.closest('.sug-item');
-  const cb=item.querySelector('input[type=checkbox]');
-  cb.checked=!cb.checked;
-  item.classList.toggle('selected',cb.checked);
-}
-async function addSugeridos(){
-  if(!await registrarEscandallo())return;
-  const seleccionados=[];
-  document.querySelectorAll('#sug-list input[type=checkbox]').forEach((cb,i)=>{
-    if(cb.checked&&_sugs[i]){
-      const s=_sugs[i];let p=s.precio_kg;
-      if(s.unidad==='g')p/=1000;else if(s.unidad==='ml')p/=1000;
-      seleccionados.push({n:s.nombre,q:s.cantidad,u:s.unidad,p:p.toFixed(4),m:s.merma||0});
-    }
-  });
-  // Rellenar primero los campos vacíos existentes, luego añadir nuevos
-  let si=0;
-  for(let i=0;i<ings.length&&si<seleccionados.length;i++){
-    const ing=ings[i];
-    const nombre=document.getElementById('n'+ing.id)?.value||'';
-    const cantidad=document.getElementById('q'+ing.id)?.value||'';
-    if(!nombre&&(!cantidad||cantidad==='0')){
-      const s=seleccionados[si];
-      document.getElementById('n'+ing.id).value=s.n;
-      document.getElementById('q'+ing.id).value=s.q;
-      document.getElementById('u'+ing.id).value=s.u;
-      document.getElementById('p'+ing.id).value=s.p;
-      if(mermasOn&&document.getElementById('m'+ing.id))document.getElementById('m'+ing.id).value=s.m;
-      si++;
-    }
-  }
-  // Los que no cupieron en campos vacíos, añadirlos como nuevos
-  for(;si<seleccionados.length;si++){
-    const s=seleccionados[si];
-    addIng(s.n,s.q,s.u,s.p,s.m);
-  }
-  calcular();
-  document.getElementById('ai-box').classList.remove('visible');
-  document.getElementById('btn-add-sel').style.display='none';
-  document.getElementById('ai-note').style.display='none';
+  };
 }
 
-// ── SUPABASE AUTH ───────────────────────────────────────────
-const SUPABASE_URL='https://ilzntryzijdfnntwuthp.supabase.co';
-const SUPABASE_KEY='sb_publishable_qXyYLpM1403nu66tczLNCA_0s5EE3Re';
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
-async function initAuth(){
-  sb.auth.onAuthStateChange(async (event, session) => {
-    if(event==='INITIAL_SESSION'){
-      if(!session){
-        window.location.href='/login';
-      } else if(document.getElementById('auth-loading').style.display!=='none'){
-        await cargarApp(session);
-      }
-    }
-    if(event==='SIGNED_OUT'){
-      window.location.href='/login';
-    }
-  });
-}
-
-async function cargarApp(session){
-  // Mostrar nombre del restaurante
-  const {data:rest}=await sb.from('restaurantes').select('id,nombre').eq('user_id',session.user.id).single();
-  if(rest){
-    document.getElementById('restaurante-nombre').textContent=rest.nombre;
-    document.getElementById('restaurante-nombre-wrap').style.display='inline';
-    // Cargar precios de proveedor
-    const {data:precios}=await sb.from('precios_proveedor').select('*').eq('restaurante_id',rest.id);
-    if(precios) preciosProveedor=precios;
-  }
-  document.getElementById('auth-loading').style.display='none';
-  document.getElementById('app-content').style.display='block';
-  // Check trial from server — no localStorage
-  await checkTrial();
-
-  // Cargar datos si venimos de editar un escandallo existente
-  const editData=sessionStorage.getItem('qc_escandallo_editar');
-  if(editData){
-    try{
-      const e=JSON.parse(editData);
-      cargarEscandallo(e);
-    }catch(err){console.log('Error cargando escandallo:',err);}
+function mostrarMsgProv(texto, tipo) {
+  const el = document.getElementById('prov-msg');
+  el.textContent = texto;
+  el.style.display = 'block';
+  if (tipo === 'error') {
+    el.style.background = 'var(--danger-light)';
+    el.style.color = 'var(--danger)';
+    el.style.border = '1px solid rgba(139,26,26,.2)';
   } else {
-    // Si es un escandallo NUEVO y el usuario es Premium, lo activamos por defecto
-    if(esPremium){
-      document.getElementById('toggle-merma').checked = true;
-      handleMermaToggle();
-      
-      document.getElementById('toggle-neto').checked = true;
-      handleNetoToggle();
-    }
+    el.style.background = 'var(--accent-light)';
+    el.style.color = 'var(--accent)';
+    el.style.border = '1px solid var(--accent-mint)';
   }
 }
 
-function cargarEscandallo(e){
-  // Datos básicos
-  document.getElementById('nombre').value=e.nombre_plato||'';
-  document.getElementById('categoria').value=e.categoria||'';
-  document.getElementById('raciones').value=e.raciones||1;
-
-  // Restaurar precio en carta si lo hubiera guardado
-  if(e.precio_carta) {
-    document.getElementById('precio-carta').value = e.precio_carta;
-  }
-
-  // Sliders
-  if(e.food_cost_pct){
-    document.getElementById('margen-fc').value=e.food_cost_pct;
-    document.getElementById('val-fc').textContent=e.food_cost_pct+'%';
-  }
-  if(e.margen_neto_pct&&e.margen_neto_pct>0&&esPremium){
-    document.getElementById('toggle-neto').checked=true;
-    netoOn=true;
-    document.getElementById('neto-slider-wrap').style.display='block';
-    document.getElementById('margen-neto').value=e.margen_neto_pct;
-    document.getElementById('val-neto').textContent=e.margen_neto_pct+'%';
-  }
-
-  // Alérgenos
-  if(e.alergenos&&e.alergenos.length>0){
-    document.querySelectorAll('.alg').forEach(label=>{
-      const nombre=label.textContent.trim();
-      if(e.alergenos.includes(nombre)){
-        label.querySelector('input').checked=true;
-        label.classList.add('active');
-      }
-    });
-  }
-
-  // Ingredientes — limpiar los vacíos y cargar los guardados
-  ings=[];
-  if(e.ingredientes&&e.ingredientes.length>0){
-    e.ingredientes.forEach(ing=>{
-      addIng(ing.nombre||'', ing.cantidad||'', ing.unidad||'g', ing.precio||'', ing.merma||0);
-    });
-  } else {
-    addIng();addIng();addIng();
-  }
-
-  calcular();
+function renderReviewTable(prods){
+  extractedProducts = prods;
+  const body = document.getElementById('review-body');
+  body.innerHTML = prods.map((p,i)=>`
+    <tr>
+      <td><input class="form-input" style="padding:8px 10px;" value="${p.nombre}" onchange="extractedProducts[${i}].nombre=this.value"></td>
+      <td><input type="number" step="0.01" class="form-input" style="padding:8px 10px;" value="${p.precio}" onchange="extractedProducts[${i}].precio=this.value"></td>
+      <td style="font-size:13px; font-weight:600; color:var(--text3); text-align:center;">${p.unidad||'kg'}</td>
+      <td style="text-align:center;"><button class="btn-del-row" onclick="extractedProducts.splice(${i},1);renderReviewTable(extractedProducts)">×</button></td>
+    </tr>`).join('');
+  document.getElementById('review-wrap').style.display = 'block';
 }
 
+function cancelarReview() {
+  document.getElementById('review-wrap').style.display = 'none';
+  document.getElementById('file-input').value = '';
+}
 
-async function guardarEscandallo(){
-  const nombre=document.getElementById('nombre').value.trim();
-  if(!nombre){alert('Escribe el nombre del plato antes de guardar.');return;}
-  const btn=document.getElementById('btn-save');
-  const btnOriginal=btn.innerHTML;
-  btn.disabled=true;
-  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin .7s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Guardando...';
+async function guardarPrecios(){
+  const btn = document.getElementById('btn-guardar-precios');
+  btn.disabled = true; 
+  btn.innerHTML = '<span class="spinner-sm" style="border-top-color:white;"></span> Guardando...';
+  
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const resp = await fetch('/api/extract', { 
+      method:'POST', 
+      headers:{'Content-Type':'application/json','Authorization':'Bearer ' + (session?.access_token||'')}, 
+      body:JSON.stringify({mode:'save_prices', restaurante_id:restauranteId, productos:extractedProducts}) 
+    });
+    
+    if(!resp.ok) throw new Error('Falló el servidor al guardar');
+    
+    window.location.reload();
+  } catch(err) {
+    alert("Error al guardar. Inténtalo de nuevo.");
+    btn.disabled = false;
+    btn.textContent = 'Guardar precios en mi cocina';
+  }
+}
 
-  const ingredientesData=ings.map(i=>({
-    nombre:document.getElementById('n'+i.id)?.value||'',
-    cantidad:parseFloat(document.getElementById('q'+i.id)?.value)||0,
-    unidad:document.getElementById('u'+i.id)?.value||'g',
-    precio:parseFloat(document.getElementById('p'+i.id)?.value)||0,
-    merma:mermasOn?(parseFloat(document.getElementById('m'+i.id)?.value)||0):0
-  })).filter(i=>i.nombre);
+async function abrirPortalCliente(){
+  const { data: { session } } = await sb.auth.getSession();
+  const res = await fetch('/api/stripe-portal', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+(session?.access_token||'')}, body:JSON.stringify({}) });
+  const data = await res.json();
+  if(data.url) window.location.href = data.url;
+}
 
-  const alergenos=Array.from(document.querySelectorAll('.alg input:checked')).map(i=>i.closest('.alg').textContent.trim());
-  const fc=parseFloat(document.getElementById('margen-fc').value)||30;
-  const neto=netoOn?(parseFloat(document.getElementById('margen-neto').value)||0):0;
-  const precioCarta = parseFloat(document.getElementById('precio-carta').value)||null; // NUEVO
+async function cargarAlertas(){
+  if(!restauranteId) return;
+  const {data: alertas} = await sb.from('alertas_precio').select('*').eq('restaurante_id', restauranteId).eq('vista', false).order('created_at', {ascending: false});
+  if(!alertas || alertas.length === 0) return;
+  
+  document.getElementById('alertas-section').style.display = 'block';
+  const lista = document.getElementById('alertas-lista');
+  lista.innerHTML = alertas.map(a => {
+    const subida = a.precio_nuevo > a.precio_anterior;
+    return `<div class="alerta-item">
+              <span style="font-size:18px">${subida?'📈':'📉'}</span>
+              <div style="flex:1">
+                <b style="font-size:13px">${a.escandallo_nombre}</b><br>
+                <small style="color:var(--text3)">${a.ingrediente} subió a <strong style="color:#991B1B">${fmt(a.precio_nuevo)}</strong></small>
+              </div>
+              <button class="btn-revisar" onclick="abrirEscandalloAlerta('${a.escandallo_id}')">Revisar plato</button>
+            </div>`;
+  }).join('');
+}
 
-  // Leer valores numéricos de las métricas
-  const mCoste=document.getElementById('m-coste').textContent.replace(/[^0-9,.]/g,'').replace(',','.');
-  const mRacion=document.getElementById('m-racion').textContent.replace(/[^0-9,.]/g,'').replace(',','.');
-  const mPvp=document.getElementById('m-pvp').textContent.replace(/[^0-9,.]/g,'').replace(',','.');
+async function abrirEscandalloAlerta(escId){
+  const { data: escandallo } = await sb.from('escandallos').select('*').eq('id', escId).single();
+  if (escandallo) {
+    sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(escandallo));
+    window.location.href = '/escandallo';
+  }
+}
 
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='/login';return;}
+async function marcarTodasVistas(){
+  await sb.from('alertas_precio').update({vista: true}).eq('restaurante_id', restauranteId);
+  document.getElementById('alertas-section').style.display = 'none';
+}
 
-  const {data:rest}=await sb.from('restaurantes').select('id').eq('user_id',session.user.id).single();
-  if(!rest){btn.disabled=false;btn.innerHTML=btnOriginal;return;}
+async function cargarPreciosGuardados(){
+  if(!restauranteId) return;
+  const {data: precios} = await sb.from('precios_proveedor').select('*').eq('restaurante_id', restauranteId).order('updated_at', {ascending: false});
+  const container = document.getElementById('precios-guardados');
+  if(!precios || precios.length === 0) return;
 
-  const editData=sessionStorage.getItem('qc_escandallo_editar');
-  const editId=editData?JSON.parse(editData).id:null;
-
-  const payload={
-    restaurante_id:rest.id,
-    nombre_plato:nombre,
-    categoria:document.getElementById('categoria').value||null,
-    raciones:parseInt(document.getElementById('raciones').value)||1,
-    precio_carta: precioCarta, // NUEVO (requerirá que añadas esta columna a tu BD Supabase si quieres guardarlo)
-    food_cost_pct:fc,
-    margen_neto_pct:neto,
-    ingredientes:ingredientesData,
-    alergenos,
-    coste_total:parseFloat(mCoste)||0,
-    coste_racion:parseFloat(mRacion)||0,
-    precio_venta:parseFloat(mPvp)||0,
-    updated_at:new Date().toISOString()
+  const recientes = precios.slice(0, 5);
+  const resto = precios.slice(5);
+  const fmtFecha = (iso) => {
+    if(!iso) return '';
+    const d = new Date(iso);
+    return d.toLocaleDateString('es-ES', {day:'numeric', month:'short'});
   };
 
-  let error;
-  if(editId){
-    ({error}=await sb.from('escandallos').update(payload).eq('id',editId));
-  } else {
-    ({error}=await sb.from('escandallos').insert(payload));
-  }
+  const renderPrecio = (p) => `
+    <div class="precio-card">
+      <div style="flex:1">
+        <b style="font-size:13px; color:var(--text)">${p.ingrediente_normalizado}</b>
+        ${p.updated_at ? `<span style="font-size:11px;color:var(--text3);margin-left:6px">${fmtFecha(p.updated_at)}</span>` : ''}
+      </div>
+      <div style="font-size:13px;font-weight:600;color:var(--accent)">${fmt(p.precio_kg)} / ${p.unidad}</div>
+    </div>`;
+    
+  container.innerHTML = `
+    <div class="section-title">Mis precios de proveedor</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
+      <span>${precios.length} precio${precios.length!==1?'s':''} guardado${precios.length!==1?'s':''}</span>
+    </div>
+    ${recientes.map(renderPrecio).join('')}
+    ${resto.length > 0 ? `
+      <div class="precios-all" id="precios-all">
+        ${resto.map(renderPrecio).join('')}
+      </div>
+      <button class="precios-toggle" id="precios-toggle-btn" onclick="togglePrecios()">
+        Ver ${resto.length} más ▾
+      </button>
+    ` : ''}
+  `;
+}
 
-  if(error){
-    console.error('Save error:', error);
-    alert('Error al guardar: ' + (error.message || 'Inténtalo de nuevo.'));
-    btn.disabled=false;
-    btn.innerHTML=btnOriginal;
+function togglePrecios(){
+  const el = document.getElementById('precios-all');
+  const btn = document.getElementById('precios-toggle-btn');
+  const open = el.classList.toggle('visible');
+  btn.textContent = open ? 'Ver menos ▴' : `Ver ${el.children.length} más ▾`;
+}
+
+// ── RANKING DE RENTABILIDAD EXPANDIBLE ───────────────────────
+let rankingData = [];
+let rankingModo = 'margen'; // Margen € por defecto
+
+function setRankingTab(modo, btn) {
+  rankingModo = modo;
+  document.querySelectorAll('.ranking-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderRanking();
+}
+
+function getRankingBadge(fc) {
+  if (fc <= 25) return { cls: 'badge-good', label: 'Excelente' };
+  if (fc <= 32) return { cls: 'badge-good', label: 'Rentable' };
+  if (fc <= 38) return { cls: 'badge-warn', label: 'Ajustado' };
+  return { cls: 'badge-bad', label: 'Revisar' };
+}
+
+function getRankingColor(fc) {
+  if (fc <= 25) return '#1E4D2B';
+  if (fc <= 32) return '#3D7A54';
+  if (fc <= 38) return '#C4943A';
+  return '#8B1A1A';
+}
+
+function renderRanking() {
+  const lista = document.getElementById('ranking-list');
+  const conPrecio = rankingData.filter(e => e.precio_venta > 0 && e.coste_racion > 0);
+  
+  if (conPrecio.length === 0) {
+    lista.innerHTML = '<div style="padding:2.5rem;text-align:center;font-size:13px;color:var(--text3)">Añade precio en carta a tus platos para ver el ranking</div>';
     return;
   }
 
-  sessionStorage.removeItem('qc_escandallo_editar');
-  sessionStorage.setItem('qc_guardando', 'true'); // Evita que salte la alerta de salir de la página
-  
-  btn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> ¡Guardado!';
-  btn.style.backgroundColor = '#2D5A3D'; // Verde oscuro de confirmación
-  
-  setTimeout(() => {
-    window.location.href = '/dashboard';
-  }, 800); // Espera casi 1 segundo para que el usuario vea el mensaje
-}
-
-async function cerrarSesion(){
-  await sb.auth.signOut();
-  window.location.href='/login';
-}
-  
-// ── PREVENIR SALIDA ACCIDENTAL ──────────────────────────────
-window.addEventListener('beforeunload', function (e) {
-  // Comprobamos si hay algún ingrediente con el nombre relleno
-  const hayDatos = ings.some(i => {
-    const inputNombre = document.getElementById('n'+i.id);
-    return inputNombre && inputNombre.value.trim() !== '';
+  const sorted = [...conPrecio].sort((a, b) => {
+    if (rankingModo === 'fc') return (a.food_cost_pct || 0) - (b.food_cost_pct || 0);
+    return (b.precio_venta - b.coste_racion) - (a.precio_venta - a.coste_racion);
   });
   
-  if (hayDatos && !sessionStorage.getItem('qc_guardando')) {
-    e.preventDefault();
-    e.returnValue = ''; // Muestra la alerta nativa del navegador
+  const maxVal = rankingModo === 'fc'
+    ? Math.max(...sorted.map(p => p.food_cost_pct || 0))
+    : Math.max(...sorted.map(p => p.precio_venta - p.coste_racion));
+
+  const renderRow = (e, idx) => {
+    const fc = e.food_cost_pct || Math.round(e.coste_racion / e.precio_venta * 100);
+    const margen = e.precio_venta - e.coste_racion;
+    const val = rankingModo === 'fc' ? fc : margen;
+    const pct = maxVal > 0 ? Math.round((val / maxVal) * 100) : 0;
+    const badge = getRankingBadge(fc);
+    const color = getRankingColor(fc);
+    const label = rankingModo === 'fc'
+      ? fc + '%'
+      : margen.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '€';
+      
+    return `
+      <div class="ranking-row" onclick="editarEscandallo(${JSON.stringify(e).replace(/"/g,'&quot;')})">
+        <div class="rank-num ${idx < 3 ? 'top' : ''}">${idx + 1}</div>
+        <div class="rank-name">${e.nombre_plato}<div class="rank-cat">${e.categoria || 'Sin categoría'}</div></div>
+        <div class="rank-bar-wrap">
+          <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+          <div class="rank-pct" style="color:${color}; font-weight:700;">${label}</div>
+        </div>
+        <span class="rank-badge ${badge.cls}">${badge.label}</span>
+      </div>`;
+  };
+
+  const top3 = sorted.slice(0, 3);
+  const resto = sorted.slice(3);
+
+  let html = top3.map((e, i) => renderRow(e, i)).join('');
+
+  if (resto.length > 0) {
+    html += `<div class="ranking-all" id="ranking-all">`;
+    html += resto.map((e, i) => renderRow(e, i + 3)).join('');
+    html += `</div>`;
+    html += `<button class="ranking-toggle-btn" id="ranking-toggle-btn" onclick="toggleRankingList()">Ver ${resto.length} más ▾</button>`;
   }
-  
-});
-// ── INIT ─────────────────────────────────────────────────────
-initAlergenos();
-// Solo añadir filas vacías si no hay escandallo para editar
-const _editCheck=sessionStorage.getItem('qc_escandallo_editar');
-if(!_editCheck){addIng();addIng();addIng();}
-initAuth();
+
+  lista.innerHTML = html;
+}
+
+function toggleRankingList() {
+  const el = document.getElementById('ranking-all');
+  const btn = document.getElementById('ranking-toggle-btn');
+  const open = el.classList.toggle('visible');
+  btn.textContent = open ? 'Ver menos ▴' : `Ver ${el.children.length} más ▾`;
+}
+
+function initRanking(escandallos, esPro) {
+  if (!esPro) return;
+  rankingData = escandallos || [];
+  document.getElementById('ranking-section').style.display = 'block';
+  renderRanking();
+}
+
+init();
 </script>
-</div>
 </body>
 </html>
