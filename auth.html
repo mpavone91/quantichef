@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -93,7 +93,7 @@ footer a:hover{color:var(--accent)}
 <nav>
 <a href="/" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
   <div style="width:34px;height:34px;background:linear-gradient(135deg, #C4943A 0%, #E6B755 100%);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 10px rgba(196,148,58,0.25);">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E4D2B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1A1916" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M22 17H2a1 1 0 0 0 0 2h20a1 1 0 0 0 0-2Z"></path>
       <path d="M4 17a8 8 0 0 1 16 0H4Z"></path>
       <circle cx="12" cy="5" r="1.5"></circle>
@@ -105,7 +105,7 @@ footer a:hover{color:var(--accent)}
   </div>
 </a>
   <a href="/" class="nav-back">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7"/></svg>
     Volver al inicio
   </a>
 </nav>
@@ -240,7 +240,6 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // SOLUCIÓN AL BUCLE INFINITO
-// Comprobamos si hay sesión y si el usuario tiene su restaurante creado.
 sb.auth.getSession().then(async ({ data: { session } }) => {
   if (session) {
     const { data: rest } = await sb.from('restaurantes')
@@ -249,15 +248,25 @@ sb.auth.getSession().then(async ({ data: { session } }) => {
       .single();
       
     if (rest) {
-      // Tiene restaurante, todo correcto, al dashboard
       window.location.href = '/dashboard';
     } else {
-      // Bucle infinito detectado: Usuario logueado pero sin restaurante (estado corrupto de pruebas).
-      // Cerramos sesión para que pueda rellenar el formulario limpiamente.
       await sb.auth.signOut();
     }
   }
 });
+
+// Función de envío de email NO bloqueante
+const sendWelcomeEmail = async (email, nombre) => {
+  try {
+    await fetch('/api/send-welcome-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, nombre })
+    });
+  } catch (error) {
+    console.error('Email error (no bloqueante):', error);
+  }
+};
 
 function switchTab(tab) {
   document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
@@ -329,7 +338,6 @@ function togglePass(inputId, eyeId) {
   }
 }
 
-// Estado del registro en pasos
 let registroData = {};
 
 async function registro() {
@@ -349,15 +357,11 @@ async function registro() {
   if (pass.length < 8) { showMsg('La contraseña debe tener al menos 8 caracteres.'); return; }
   if (pass !== pass2) { showMsg('Las contraseñas no coinciden.'); return; }
 
-  // Formatear teléfono — prefijo del selector + dígitos limpios
   const prefijo = document.getElementById('reg-prefijo').value;
-  // Quitar solo espacios, guiones y paréntesis — nada más
   let digitosTelefono = telefono.replace(/[\s\-\(\)\.]/g, '');
-  // Si el usuario puso el + delante (ej: +34600...), quitamos todo hasta los dígitos locales
-  // Solo eliminamos el prefijo si lo escribieron explícitamente con +
   if (digitosTelefono.startsWith('+')) {
     const prefijoSinPlus = prefijo.replace('+', '');
-    digitosTelefono = digitosTelefono.replace(/^\+/, ''); // quitar el +
+    digitosTelefono = digitosTelefono.replace(/^\+/, '');
     if (digitosTelefono.startsWith(prefijoSinPlus)) {
       digitosTelefono = digitosTelefono.slice(prefijoSinPlus.length);
     }
@@ -367,22 +371,17 @@ async function registro() {
   setLoading('btn-registro', true, 'Crear cuenta gratis', 'Enviando código...');
   hideMsg();
 
-  // Guardar datos para usar después de verificar
   registroData = { nombrePersona, apellidos, nombreRestaurante, email, pass, telefono: telefonoFormateado };
 
-  // Enviar OTP al móvil
   const { error } = await sb.auth.signInWithOtp({
     phone: telefonoFormateado
   });
 
-if (error) {
-    // Caso especial: el teléfono ya existe pero el registro pudo no completarse (usuario huérfano)
-    // Intentamos reenviar el OTP de todos modos para que pueda completar o iniciar sesión
+  if (error) {
     const yaExiste = error.message.includes('already registered') || error.message.includes('already in use') || error.message.includes('rate limit');
     
     if (yaExiste && !error.message.includes('rate limit')) {
       showMsg('Este número ya tiene una cuenta empezada. Si no completaste el registro antes, introduce el código que te llegará al móvil. Si ya tienes cuenta, inicia sesión.');
-      // No detenemos — dejamos que el usuario pruebe a verificar igualmente
       document.getElementById('form-registro').style.display = 'none';
       document.getElementById('form-verify').style.display = 'block';
       setLoading('btn-registro', false, 'Crear cuenta gratis', '');
@@ -397,7 +396,6 @@ if (error) {
     return;
   }
 
-  // Mostrar formulario de verificación
   document.getElementById('form-registro').style.display = 'none';
   document.getElementById('form-verify').style.display = 'block';
   showMsg('Código enviado a ' + telefonoFormateado + '. Revisa tu móvil.', 'success');
@@ -411,7 +409,6 @@ async function verificarCodigo() {
   setLoading('btn-verify', true, 'Verificar y crear cuenta', 'Verificando...');
   hideMsg();
 
-  // PASO 1: Verificar OTP por SMS — crea la sesión con el teléfono
   const { data, error } = await sb.auth.verifyOtp({
     phone: registroData.telefono,
     token: codigo,
@@ -424,7 +421,6 @@ async function verificarCodigo() {
     return;
   }
 
-  // PASO 2: Vincular email + contraseña via API server-side
   const session = data.session;
   const userId = data.user?.id;
 
@@ -458,7 +454,6 @@ async function verificarCodigo() {
     return;
   }
 
-  // PASO 3: Crear restaurante — AHORA verificamos errores
   const { error: restErr } = await sb.from('restaurantes').insert({
     user_id: userId,
     nombre: registroData.nombreRestaurante
@@ -471,15 +466,15 @@ async function verificarCodigo() {
     return;
   }
 
-  // CRÍTICO: Re-autenticar con email/password para obtener un token fresco
-  // Sin esto, el token de SMS queda obsoleto y el backend devuelve 401
+  // DISPARAR EMAIL (Sin await para no bloquear)
+  sendWelcomeEmail(registroData.email, registroData.nombrePersona);
+
   const { error: signInError } = await sb.auth.signInWithPassword({
     email: registroData.email,
     password: registroData.pass
   });
 
   if (signInError) {
-    // Si falla el auto-login, mandamos a login manual en lugar de dashboard roto
     showMsg('¡Cuenta creada! Ahora inicia sesión con tu email y contraseña.', 'success');
     setTimeout(() => {
       document.getElementById('form-verify').style.display = 'none';
@@ -501,7 +496,6 @@ async function reenviarCodigo() {
   else showMsg('Error al reenviar. Inténtalo en unos segundos.');
 }
 
-// Enter key en inputs
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     const loginVisible = document.getElementById('form-login').style.display !== 'none';
