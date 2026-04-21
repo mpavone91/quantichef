@@ -5,5 +5,11 @@
     { "source": "/login", "destination": "/auth.html" },
     { "source": "/precios", "destination": "/precios.html" },
     { "source": "/legal", "destination": "/legal.html" }
+  ],
+  "crons": [
+    {
+      "path": "/api/send-trial-reminder",
+      "schedule": "0 10 * * *"
+    }
   ]
 }
