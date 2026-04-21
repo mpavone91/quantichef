@@ -200,17 +200,19 @@
 <body>
 
 <nav>
-  <a href="/dashboard" class="nav-logo">
-    <div class="nav-logo-icon">
-      <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
-        <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
-        <line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M9 14.5 Q12 17 15 14.5" fill="none" stroke="white" stroke-width="1.1" stroke-linecap="round"/>
-        <rect x="24" y="14" width="2.2" height="8" rx="1" fill="white"/>
-      </svg>
-    </div>
-    <span class="nav-logo-text">QuantiChef</span>
-  </a>
+  <a href="/dashboard" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:1;min-width:0;overflow:hidden">
+  <div style="width:34px;height:34px;background:linear-gradient(135deg, var(--gold, #C4943A) 0%, #E6B755 100%);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E4D2B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 17H2a1 1 0 0 0 0 2h20a1 1 0 0 0 0-2Z"></path>
+      <path d="M4 17a8 8 0 0 1 16 0H4Z"></path>
+      <circle cx="12" cy="5" r="1.5"></circle>
+    </svg>
+  </div>
+  <div>
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:18px;color:#fff;font-weight:600;letter-spacing:-0.02em;line-height:1.1">QuantiChef</div>
+    <div style="font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:9px;color:#F5C47A;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;margin-top:1px;">Cocina Rentable</div>
+  </div>
+</a>
   <div class="nav-right">
     <span class="nav-restaurante" id="nav-restaurante"></span>
     <button class="btn-suscripcion-nav" id="btn-suscripcion-nav" onclick="abrirPortalCliente()">Suscripción</button>
