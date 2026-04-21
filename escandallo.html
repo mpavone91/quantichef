@@ -738,9 +738,34 @@ async function sugerir(){
   const raciones=parseInt(document.getElementById('raciones').value)||1;
   const categoria=document.getElementById('categoria').value||'plato';
   if(!nombre){alert('Escribe primero el nombre del plato.');return;}
+
   const btn=document.getElementById('btn-ia'),box=document.getElementById('ai-box');
   const loading=document.getElementById('ai-loading'),errorEl=document.getElementById('ai-error');
   const list=document.getElementById('sug-list'),addBtn=document.getElementById('btn-add-sel');
+
+  // 🔥 NUEVO: Bloqueo elegante del límite ANTES de llamar a la IA
+  if (!esPremium && trialCount >= 5) {
+    box.classList.add('visible');
+    loading.style.display = 'none';
+    list.innerHTML = '';
+    
+    // Aplicamos estilos de "Upsell" (Advertencia amigable)
+    errorEl.style.display = 'block';
+    errorEl.style.color = '#8B4A00'; 
+    errorEl.style.background = '#FFF3E0'; 
+    errorEl.style.padding = '12px 14px';
+    errorEl.style.borderRadius = '8px';
+    errorEl.style.border = '1px solid #F5C47A';
+    errorEl.innerHTML = '¡Has usado tus escandallos gratuitos! <a href="/precios" style="color:#8B4A00; text-decoration:underline; font-weight:700;">Pásate al plan Pro</a> para tener escandallos ilimitados.';
+    return; // Detenemos la ejecución aquí para no gastar recursos
+  }
+
+  // Restaurar estilos por defecto por si viene de un error previo de API real
+  errorEl.style.color = 'var(--danger)';
+  errorEl.style.background = 'transparent';
+  errorEl.style.padding = '6px 0';
+  errorEl.style.border = 'none';
+
   btn.disabled=true;btn.textContent='Calculando...';
   box.classList.add('visible');loading.style.display='flex';
   errorEl.style.display='none';list.innerHTML='';addBtn.style.display='none';
