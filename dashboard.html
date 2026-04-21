@@ -67,6 +67,47 @@
   .cta-nueva.btn-magico:hover { background: var(--gold-light); border-color: var(--gold); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(196, 148, 58, 0.15); }
   .cta-nueva.btn-magico svg { color: var(--gold); }
 
+  /* Banners */
+  .plan-banner{background:var(--gold-light);border:1px solid rgba(196,148,58,.25);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
+  .pro-banner{background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap}
+  .pro-badge{display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px}
+  .btn-pro-manage { background: white; border: 1.5px solid var(--accent); color: var(--accent); font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px; cursor: pointer; margin-left: auto; }
+
+  /* REVIEW TABLE (REDISEÑADA Y BONITA) */
+  .review-wrap { margin-bottom: 2rem; animation: fadeIn 0.3s ease; }
+  .review-card { background: var(--surface); border: 1px solid var(--accent-mint); border-radius: 12px; padding: 1.5rem; box-shadow: 0 8px 24px rgba(30,77,43,0.06); }
+  .review-title { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+  .review-desc { font-size: 13px; color: var(--text2); margin-bottom: 1rem; }
+  .review-table-container { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .review-table { width: 100%; border-collapse: collapse; background: white; }
+  .review-table th { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--border); background: var(--surface2); text-align: left; }
+  .review-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .review-table tr:last-child td { border-bottom: none; }
+  .review-table input { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+  .review-table input:focus { border-color: var(--accent); }
+  .review-actions { display: flex; gap: 10px; margin-top: 1.25rem; justify-content: flex-end; }
+  .btn-outline { background: white; border: 1px solid var(--border); color: var(--text2); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; }
+  .btn-outline:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-light); }
+  .btn-fill { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; transition: background 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+  .btn-fill:hover { background: var(--accent-mid); }
+  .btn-del-row { background: var(--danger-light); color: var(--danger); border: none; border-radius: 6px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px; }
+  .btn-del-row:hover { background: var(--danger); color: white; }
+
+  /* ──────────────────────────────────────────────────────────
+     ZONA RESTAURADA: ALERTAS Y PRECIOS GUARDADOS
+     ────────────────────────────────────────────────────────── */
+  .alertas-section{margin-bottom: 2rem;}
+  .alertas-panel{background:#FEF2F2;border:1px solid rgba(220,38,38,.2);border-radius:12px;overflow:hidden}
+  .alertas-header{display:flex;align-items:center;gap:10px;padding:1rem 1.2rem;background:rgba(220,38,38,.06);border-bottom:1px solid rgba(220,38,38,.12)}
+  .alerta-item{display:flex;align-items:center;gap:12px;padding:.875rem 1.2rem;border-bottom:1px solid rgba(220,38,38,.08)}
+  .btn-revisar{font-size:12px;color:#1E4D2B;background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:6px;padding:5px 10px;cursor:pointer;text-decoration:none}
+  
+  .precios-guardados{margin-top:2.5rem; margin-bottom: 2rem;}
+  .precio-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .precios-toggle { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; background: none; border: none; padding: 0; margin-top: .5rem; display: block; }
+  .precios-all { display: none; }
+  .precios-all.visible { display: block; }
+
   /* Stats */
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:2rem}
   .stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.2rem}
@@ -101,38 +142,8 @@
   .modal-icon svg{width:28px;height:28px;color:var(--gold)}
   .modal h3{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:var(--text);margin-bottom:.5rem}
   .modal p{font-size:.92rem;color:var(--text2);line-height:1.6;margin-bottom:1.5rem}
-  
   .form-input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:#FAFAF8;outline:none;transition:border-color .15s}
   .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,43,.08)}
-  .btn-primary{width:100%;padding:13px;background:var(--accent);color:white;border:none;border-radius:9px;font-size:14px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .2s;}
-  .btn-primary:hover{background:var(--accent-mid); transform:translateY(-1px);}
-  .btn-primary:disabled{background:var(--text3);cursor:not-allowed;transform:none;}
-
-  /* Banners */
-  .plan-banner{background:var(--gold-light);border:1px solid rgba(196,148,58,.25);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
-  .pro-banner{background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap}
-  .pro-badge{display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px}
-  .btn-pro-manage { background: white; border: 1.5px solid var(--accent); color: var(--accent); font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px; cursor: pointer; margin-left: auto; }
-
-  /* REVIEW TABLE (REDISEÑADA Y BONITA) */
-  .review-wrap { margin-bottom: 2rem; animation: fadeIn 0.3s ease; }
-  .review-card { background: var(--surface); border: 1px solid var(--accent-mint); border-radius: 12px; padding: 1.5rem; box-shadow: 0 8px 24px rgba(30,77,43,0.06); }
-  .review-title { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
-  .review-desc { font-size: 13px; color: var(--text2); margin-bottom: 1rem; }
-  .review-table-container { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
-  .review-table { width: 100%; border-collapse: collapse; background: white; }
-  .review-table th { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--border); background: var(--surface2); text-align: left; }
-  .review-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
-  .review-table tr:last-child td { border-bottom: none; }
-  .review-table input { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.2s; }
-  .review-table input:focus { border-color: var(--accent); }
-  .review-actions { display: flex; gap: 10px; margin-top: 1.25rem; justify-content: flex-end; }
-  .btn-outline { background: white; border: 1px solid var(--border); color: var(--text2); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; }
-  .btn-outline:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-light); }
-  .btn-fill { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; transition: background 0.2s; display: inline-flex; align-items: center; justify-content: center; }
-  .btn-fill:hover { background: var(--accent-mid); }
-  .btn-del-row { background: var(--danger-light); color: var(--danger); border: none; border-radius: 6px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px; }
-  .btn-del-row:hover { background: var(--danger); color: white; }
 
   /* RANKING DE RENTABILIDAD */
   .ranking-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
@@ -205,10 +216,10 @@
     <div class="modal-icon" style="background:var(--gold-light); color:var(--gold);">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
     </div>
-    <h3>Importar Carta Digital</h3>
+    <h3>Importar Carta Mágica</h3>
     <p>Pega el enlace de tu menú online y extraeremos todos tus platos en segundos.</p>
     <input type="url" id="url-input" class="form-input" placeholder="ej: www.turestaurante.com/carta" style="margin-bottom: 1.5rem; text-align: center;">
-    <button class="btn-primary" onclick="ejecutarImportacionUrl()" id="btn-import-confirm">Importar Carta Completa</button>
+    <button class="btn-fill" style="width:100%; padding:14px; font-size:14px;" onclick="ejecutarImportacionUrl()" id="btn-import-confirm">Importar Carta Completa</button>
     <button onclick="hideUrlModal()" style="margin-top: 15px; background:none; border:none; color:var(--text3); font-size:13px; font-weight:600; cursor:pointer; text-decoration:underline;">Cancelar</button>
   </div>
 </div>
@@ -219,7 +230,7 @@
     <div class="welcome">
       <div class="welcome-tag">Mi cocina</div>
       <h1 class="welcome-title">Hola, <em id="welcome-nombre">chef</em> 👋</h1>
-      <p class="welcome-sub" id="welcome-sub">Sube una factura para extraer los precios reales de tus ingredientes.</p>
+      <p class="welcome-sub" id="welcome-sub">Actualiza tus precios con una foto o importa tu menú.</p>
       
       <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
         <div class="upload-area-icon">
@@ -261,7 +272,7 @@
     </div>
 
     <div class="extract-loading" id="extract-loading" style="display:none; background:var(--accent-light); padding:1rem; border-radius:10px; margin-bottom:1rem; align-items:center; gap:10px;">
-      <div class="spinner"></div><span style="color:var(--accent); font-weight:600; font-size:14px;">Leyendo albarán y extrayendo los precios de los productos...</span>
+      <div class="spinner"></div><span style="color:var(--accent); font-weight:600; font-size:14px;">Leyendo albarán con Inteligencia Artificial...</span>
     </div>
     <div class="prov-msg" id="prov-msg" style="margin-bottom:1.5rem; display:none; padding:12px; border-radius:8px; font-weight:500; font-size:13px;"></div>
 
@@ -271,7 +282,7 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Revisa los precios extraídos
         </h3>
-        <p class="review-desc">Ajusta los nombres o cantidades si hemos cometido algún error al leer tu factura antes de guardarlos.</p>
+        <p class="review-desc">Ajusta los nombres o cantidades si la IA ha cometido algún error al leer tu factura antes de guardarlos.</p>
         
         <div class="review-table-container">
           <table class="review-table">
@@ -279,7 +290,7 @@
               <tr>
                 <th>Ingrediente</th>
                 <th style="width:100px">Precio (€)</th>
-                <th style="width:80px">Unidad</th>
+                <th style="width:80px; text-align:center;">Unidad</th>
                 <th style="width:50px; text-align:center;">Acción</th>
               </tr>
             </thead>
@@ -291,6 +302,18 @@
           <button class="btn-outline" onclick="cancelarReview()">Cancelar y descartar</button>
           <button class="btn-fill" id="btn-guardar-precios" onclick="guardarPrecios()">Guardar precios en mi cocina</button>
         </div>
+      </div>
+    </div>
+
+    <div class="alertas-section" id="alertas-section" style="display:none">
+      <div class="section-title">Alertas de rentabilidad</div>
+      <div class="alertas-panel">
+        <div class="alertas-header">
+          <span style="font-size:18px">🚨</span>
+          <div style="flex:1"><div style="font-size:14px; font-weight:700; color:#991B1B">Se han detectado subidas de precio</div></div>
+          <button onclick="marcarTodasVistas()" style="font-size:12px; background:none; border:1px solid rgba(220,38,38,.3); padding:5px 10px; border-radius:6px; cursor:pointer; color:#991B1B">Marcar como vistas</button>
+        </div>
+        <div id="alertas-lista"></div>
       </div>
     </div>
 
@@ -323,6 +346,8 @@
     </div>
     
     <div id="lista-escandallos"></div>
+
+    <div class="precios-guardados" id="precios-guardados"></div>
 
   </div>
 </div>
@@ -400,6 +425,10 @@ async function cargarDatos(session){
   } else { 
     document.getElementById('lista-escandallos').innerHTML = '<div style="padding:3rem; text-align:center; color:var(--text3); border:1.5px dashed var(--border); border-radius:12px; font-size:14px;">Aún no tienes platos. Crea uno o importa tu menú.</div>';
   }
+
+  // ── RESTAURADO: CARGAR ALERTAS Y PRECIOS GUARDADOS ──
+  await cargarAlertas();
+  await cargarPreciosGuardados();
 }
 
 function fmt(n){return Number(n).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';}
@@ -640,8 +669,8 @@ function renderReviewTable(prods){
   const body = document.getElementById('review-body');
   body.innerHTML = prods.map((p,i)=>`
     <tr>
-      <td><input class="form-input" value="${p.nombre}" onchange="extractedProducts[${i}].nombre=this.value"></td>
-      <td><input type="number" step="0.01" class="form-input" value="${p.precio}" onchange="extractedProducts[${i}].precio=this.value"></td>
+      <td><input class="form-input" style="padding:8px 10px;" value="${p.nombre}" onchange="extractedProducts[${i}].nombre=this.value"></td>
+      <td><input type="number" step="0.01" class="form-input" style="padding:8px 10px;" value="${p.precio}" onchange="extractedProducts[${i}].precio=this.value"></td>
       <td style="font-size:13px; font-weight:600; color:var(--text3); text-align:center;">${p.unidad||'kg'}</td>
       <td style="text-align:center;"><button class="btn-del-row" onclick="extractedProducts.splice(${i},1);renderReviewTable(extractedProducts)">×</button></td>
     </tr>`).join('');
@@ -656,15 +685,18 @@ function cancelarReview() {
 async function guardarPrecios(){
   const btn = document.getElementById('btn-guardar-precios');
   btn.disabled = true; 
-  btn.innerHTML = '<span class="spinner-sm" style="border-top-color:#1E4D2B;"></span> Guardando...';
+  btn.innerHTML = '<span class="spinner-sm" style="border-top-color:white;"></span> Guardando...';
   
   try {
     const { data: { session } } = await sb.auth.getSession();
-    await fetch('/api/extract', { 
+    const resp = await fetch('/api/extract', { 
       method:'POST', 
       headers:{'Content-Type':'application/json','Authorization':'Bearer ' + (session?.access_token||'')}, 
       body:JSON.stringify({mode:'save_prices', restaurante_id:restauranteId, productos:extractedProducts}) 
     });
+    
+    if(!resp.ok) throw new Error('Falló el servidor al guardar');
+    
     window.location.reload();
   } catch(err) {
     alert("Error al guardar. Inténtalo de nuevo.");
@@ -678,6 +710,87 @@ async function abrirPortalCliente(){
   const res = await fetch('/api/stripe-portal', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+(session?.access_token||'')}, body:JSON.stringify({}) });
   const data = await res.json();
   if(data.url) window.location.href = data.url;
+}
+
+// ── LÓGICA RESTAURADA DE ALERTAS Y PRECIOS ──────────────────
+async function cargarAlertas(){
+  if(!restauranteId) return;
+  const {data: alertas} = await sb.from('alertas_precio').select('*').eq('restaurante_id', restauranteId).eq('vista', false).order('created_at', {ascending: false});
+  if(!alertas || alertas.length === 0) return;
+  
+  document.getElementById('alertas-section').style.display = 'block';
+  const lista = document.getElementById('alertas-lista');
+  lista.innerHTML = alertas.map(a => {
+    const subida = a.precio_nuevo > a.precio_anterior;
+    return `<div class="alerta-item">
+              <span style="font-size:18px">${subida?'📈':'📉'}</span>
+              <div style="flex:1">
+                <b style="font-size:13px">${a.escandallo_nombre}</b><br>
+                <small style="color:var(--text3)">${a.ingrediente} subió a <strong style="color:#991B1B">${fmt(a.precio_nuevo)}</strong></small>
+              </div>
+              <button class="btn-revisar" onclick="abrirEscandalloAlerta('${a.escandallo_id}')">Revisar plato</button>
+            </div>`;
+  }).join('');
+}
+
+async function abrirEscandalloAlerta(escId){
+  const { data: escandallo } = await sb.from('escandallos').select('*').eq('id', escId).single();
+  if (escandallo) {
+    sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(escandallo));
+    window.location.href = '/escandallo';
+  }
+}
+
+async function marcarTodasVistas(){
+  await sb.from('alertas_precio').update({vista: true}).eq('restaurante_id', restauranteId);
+  document.getElementById('alertas-section').style.display = 'none';
+}
+
+async function cargarPreciosGuardados(){
+  if(!restauranteId) return;
+  const {data: precios} = await sb.from('precios_proveedor').select('*').eq('restaurante_id', restauranteId).order('updated_at', {ascending: false});
+  const container = document.getElementById('precios-guardados');
+  if(!precios || precios.length === 0) return;
+
+  const recientes = precios.slice(0, 5);
+  const resto = precios.slice(5);
+  const fmtFecha = (iso) => {
+    if(!iso) return '';
+    const d = new Date(iso);
+    return d.toLocaleDateString('es-ES', {day:'numeric', month:'short'});
+  };
+
+  const renderPrecio = (p) => `
+    <div class="precio-card">
+      <div style="flex:1">
+        <b style="font-size:13px; color:var(--text)">${p.ingrediente_normalizado}</b>
+        ${p.updated_at ? `<span style="font-size:11px;color:var(--text3);margin-left:6px">${fmtFecha(p.updated_at)}</span>` : ''}
+      </div>
+      <div style="font-size:13px;font-weight:600;color:var(--accent)">${fmt(p.precio_kg)} / ${p.unidad}</div>
+    </div>`;
+    
+  container.innerHTML = `
+    <div class="section-title">Mis precios de proveedor</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
+      <span>${precios.length} precio${precios.length!==1?'s':''} guardado${precios.length!==1?'s':''}</span>
+    </div>
+    ${recientes.map(renderPrecio).join('')}
+    ${resto.length > 0 ? `
+      <div class="precios-all" id="precios-all">
+        ${resto.map(renderPrecio).join('')}
+      </div>
+      <button class="precios-toggle" id="precios-toggle-btn" onclick="togglePrecios()">
+        Ver ${resto.length} más ▾
+      </button>
+    ` : ''}
+  `;
+}
+
+function togglePrecios(){
+  const el = document.getElementById('precios-all');
+  const btn = document.getElementById('precios-toggle-btn');
+  const open = el.classList.toggle('visible');
+  btn.textContent = open ? 'Ver menos ▴' : `Ver ${el.children.length} más ▾`;
 }
 
 // ── RANKING DE RENTABILIDAD (Margen por defecto) ─────────────
