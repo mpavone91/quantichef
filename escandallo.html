@@ -66,6 +66,39 @@
   input[type=number]{-moz-appearance:textfield}
   input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 
+  /* Upsell Banner (NUEVO) */
+  .import-upsell-banner {
+    background: linear-gradient(135deg, #1E4D2B 0%, #2D5A3D 100%);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    box-shadow: 0 8px 24px rgba(30,77,43,0.15);
+    color: white;
+  }
+  .upsell-content { flex: 1; }
+  .upsell-title { font-size: 15px; font-weight: 700; color: var(--accent-mint); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .upsell-content p { font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.5; }
+  .btn-upsell-url {
+    background: var(--gold-light);
+    color: var(--warn);
+    border: 1px solid var(--gold);
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    transition: all 0.2s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .btn-upsell-url:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
   /* Toggle */
   .toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding:10px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);position:relative}
   .toggle-label{font-size:13px;font-weight:600;color:var(--text2);flex:1}
@@ -138,7 +171,7 @@
   .plato-status-text{flex:1}
   .plato-status-text small{display:block;font-weight:400;font-size:12px;margin-top:2px;opacity:.8}
 
-  /* Métricas — ahora 5 con la nueva */
+  /* Métricas */
   .metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:.875rem}
   .metric{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center}
   .metric.premium-metric{border-color:rgba(196,148,58,.3);background:var(--gold-light)}
@@ -196,10 +229,12 @@
     .ing-header{display:none!important}.ing-row{grid-template-columns:1fr 1fr!important;gap:6px}
     .ing-row>input:first-child{grid-column:1/-1}.btn-del{justify-self:end}
     .trial-badge span{display:none}
+    .import-upsell-banner { flex-direction: column; align-items: flex-start; }
+    .btn-upsell-url { width: 100%; justify-content: center; }
   }
   @media print{
     body{background:white}header{background:var(--accent)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .btn-add-manual,.btn-del,.btn-print,.btn-ai,.ai-box,.ai-row,.help-btn,.tooltip,.toggle-row,.limit-banner,.modal-overlay,.header-right,.plato-status{display:none!important}
+    .btn-add-manual,.btn-del,.btn-print,.btn-ai,.ai-box,.ai-row,.help-btn,.tooltip,.toggle-row,.limit-banner,.modal-overlay,.header-right,.plato-status,.import-upsell-banner{display:none!important}
     .alg.active{background:#fff3e0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .metrics{grid-template-columns:repeat(5,1fr)!important}
   }
@@ -273,6 +308,19 @@
 </div>
 
 <div class="container">
+
+  <div class="import-upsell-banner" id="import-upsell-banner">
+    <div class="upsell-content">
+      <div class="upsell-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Ahorra horas de trabajo manual
+      </div>
+      <p>¿Cansado de añadir platos uno a uno? Pega el enlace de tu menú digital y QuantiChef creará los escandallos de TODOS tus platos al instante.</p>
+    </div>
+    <button class="btn-upsell-url" onclick="verificarImportacionUrl()">
+      Importar Carta Completa <span id="upsell-lock" style="margin-left:5px">🔒</span>
+    </button>
+  </div>
 
   <div class="limit-banner" id="limit-banner">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -478,6 +526,10 @@ async function checkTrial() {
       document.getElementById('trial-badge').style.display = 'none';
       document.getElementById('merma-lock').style.display = 'none';
       document.getElementById('neto-lock').style.display = 'none';
+      // NUEVO: Ocultar el candado del banner de importación si es premium
+      const upsellLock = document.getElementById('upsell-lock');
+      if(upsellLock) upsellLock.style.display = 'none';
+      
       const btnUpgrade = document.getElementById('btn-upgrade-header');
       if(btnUpgrade) btnUpgrade.style.display = 'none';
     }
@@ -498,6 +550,48 @@ function updateTrialBadge(data) {
   if (restantes === 0) {
     document.getElementById('trial-badge').classList.add('agotado');
     document.getElementById('limit-banner').classList.add('visible');
+  }
+}
+
+// ── IMPORTACIÓN DE MENÚ (NUEVO) ──────────────────────────────
+async function verificarImportacionUrl() {
+  if (!esPremium) { 
+    window.location.href = '/precios'; 
+    return; 
+  }
+  
+  const url = prompt("Pega la URL de tu carta digital (ej: www.turestaurante.com/carta):");
+  if (!url) return;
+
+  const btn = document.querySelector('.btn-upsell-url');
+  const btnOriginal = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite; margin-right:6px"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Extrayendo platos...`;
+
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const response = await fetch('/api/import-menu', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`
+      },
+      body: JSON.stringify({ url })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Error desconocido');
+    }
+
+    alert(`¡Éxito! Hemos importado ${result.cantidad} platos de tu carta. Vamos al panel para verlos.`);
+    window.location.href = '/dashboard';
+
+  } catch (error) {
+    alert(`Error: ${error.message}`);
+    btn.disabled = false;
+    btn.innerHTML = btnOriginal;
   }
 }
 
