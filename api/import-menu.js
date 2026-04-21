@@ -1,10 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Cliente ANON para verificar la sesión
 const supabaseAuth = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
 
+// Cliente SERVICE ROLE para leer y escribir saltando RLS
 const supabaseAdmin = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -54,7 +56,7 @@ export default async function handler(req, res) {
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim()
-      .substring(0, 20000); 
+      .substring(0, 20000); // Tope de seguridad
   } catch (error) {
     return res.status(400).json({ error: 'No pudimos leer la URL. Comprueba que sea válida y pública.' });
   }
@@ -64,23 +66,25 @@ export default async function handler(req, res) {
   "${htmlText}"
   
   Tu tarea:
-  1. Extrae TODOS los platos y sus precios de venta en carta.
-  2. Para cada plato, genera su "escandallo" (receta) con los ingredientes principales, cantidades para 1 ración, unidad, precio estimado en España por KG o LITRO, y % de merma normal al limpiar/cocinar.
+  1. Extrae los platos y sus precios de venta en carta.
+  2. Para cada plato, genera su "escandallo" con los 3 a 6 ingredientes principales, cantidades para 1 ración, unidad, precio estimado en España por KG o LITRO, y % de merma normal.
 
-  Devuelve EXCLUSIVAMENTE un JSON válido con este formato:
+  REGLAS DE ORO (CRÍTICAS PARA EVITAR ERRORES DE SISTEMA):
+  - NUNCA uses comillas dobles (") dentro de los textos. Usa comillas simples (') si es necesario. (Ej: 'Hamburguesa La Jefa').
+  - Devuelve EXCLUSIVAMENTE un JSON válido que sea un array de objetos. NO escribas texto fuera del JSON.
+  - Si la carta es inmensa, extrae solo un máximo de 35 platos para asegurar que el JSON no se corte a medias.
+
+  FORMATO EXACTO:
   [
     {
       "nombre_plato": "Entrecot a la parrilla",
       "categoria": "Principal",
       "precio_carta": 22.50,
       "ingredientes": [
-        {"nombre": "Lomo de ternera", "cantidad": 300, "unidad": "g", "precio_kg": 18.50, "merma": 15},
-        {"nombre": "Patata agria", "cantidad": 150, "unidad": "g", "precio_kg": 1.20, "merma": 20},
-        {"nombre": "Aceite de oliva", "cantidad": 20, "unidad": "ml", "precio_kg": 8.00, "merma": 0}
+        {"nombre": "Lomo de ternera", "cantidad": 300, "unidad": "g", "precio_kg": 18.50, "merma": 15}
       ]
     }
-  ]
-  Reglas: unidades solo "g", "ml", "ud". Mermas reales. No inventes platos que no estén en el texto. NO uses markdown, solo el JSON puro.`;
+  ]`;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -92,7 +96,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 4000,
+        max_tokens: 4096, // Máximo permitido
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -102,9 +106,31 @@ export default async function handler(req, res) {
 
     let raw_text = data.content?.[0]?.text || '[]';
     raw_text = raw_text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
-    const platos = JSON.parse(raw_text);
+    
+    // ── EL SALVAVIDAS: PARSEO ROBUSTO DE JSON ───────────────────────
+    let platos = [];
+    try {
+      platos = JSON.parse(raw_text);
+    } catch (parseError) {
+      console.warn("JSON cortado o malformado detectado. Intentando rescatar la estructura...");
+      // Si se cortó el JSON al final, buscamos la última llave de objeto que cierra '}' y cerramos el array.
+      const lastValidEnd = raw_text.lastIndexOf('}');
+      if (lastValidEnd !== -1) {
+        const rescuedText = raw_text.substring(0, lastValidEnd + 1) + ']';
+        try {
+          platos = JSON.parse(rescuedText);
+          console.log(`¡Rescate exitoso! Salvamos ${platos.length} platos.`);
+        } catch (rescueErr) {
+          throw new Error('La IA generó caracteres incompatibles. Detalles: ' + parseError.message);
+        }
+      } else {
+        throw new Error('Error crítico al procesar la receta: ' + parseError.message);
+      }
+    }
 
-    if (platos.length === 0) return res.status(400).json({ error: 'No encontramos platos en esa URL.' });
+    if (!Array.isArray(platos) || platos.length === 0) {
+      return res.status(400).json({ error: 'No encontramos platos estructurados en esa URL.' });
+    }
 
     // ── 4. CALCULAR MATEMÁTICAS EN EL SERVIDOR ────────────────────
     const insertData = platos.map(p => {
@@ -112,7 +138,6 @@ export default async function handler(req, res) {
       
       const ingredientesData = (p.ingredientes || []).map(ing => {
         let pUnidad = parseFloat(ing.precio_kg) || 0;
-        // Si la unidad es g o ml, el precio guardado debe ser por gramo/ml para que la app lo lea bien
         if (ing.unidad === 'g' || ing.unidad === 'ml') pUnidad = pUnidad / 1000;
         
         let q = parseFloat(ing.cantidad) || 0;
@@ -130,7 +155,7 @@ export default async function handler(req, res) {
 
       return {
         restaurante_id: restaurante.id,
-        nombre_plato: p.nombre_plato,
+        nombre_plato: p.nombre_plato || 'Plato sin nombre',
         categoria: p.categoria || 'General',
         precio_carta: parseFloat(p.precio_carta) || 0,
         raciones: 1,
@@ -138,7 +163,7 @@ export default async function handler(req, res) {
         food_cost_pct: fc_pct,
         margen_neto_pct: neto_pct,
         coste_total: coste_total,
-        coste_racion: coste_total, // raciones = 1
+        coste_racion: coste_total,
         precio_venta: precio_minimo, 
         updated_at: new Date().toISOString()
       };
