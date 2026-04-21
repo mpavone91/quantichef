@@ -51,7 +51,7 @@ export default async function handler(req, res) {
           </div>
           
           <p style="color: #8A8784; font-size: 14px; text-align: center; margin-top: 30px; line-height: 1.6;">
-            ¿Preguntas? Responde directamente a este email.<br>Soy Marco, fundador de QuantiChef.
+            ¿Preguntas? Responde directamente a este email.<br>Soy Massimo, fundador de QuantiChef.
           </p>
         </div>
         `
