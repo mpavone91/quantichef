@@ -93,7 +93,7 @@
   .btn-del-row { background: var(--danger-light); color: var(--danger); border: none; border-radius: 6px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px; }
   .btn-del-row:hover { background: var(--danger); color: white; }
 
-  /* ALERTAS Y PRECIOS GUARDADOS */
+  /* ZONA RESTAURADA: ALERTAS Y PRECIOS GUARDADOS */
   .alertas-section{margin-bottom: 2rem;}
   .alertas-panel{background:#FEF2F2;border:1px solid rgba(220,38,38,.2);border-radius:12px;overflow:hidden}
   .alertas-header{display:flex;align-items:center;gap:10px;padding:1rem 1.2rem;background:rgba(220,38,38,.06);border-bottom:1px solid rgba(220,38,38,.12)}
@@ -102,9 +102,11 @@
   
   .precios-guardados{margin-top:2.5rem; margin-bottom: 2rem;}
   .precio-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;display:flex;align-items:center;gap:10px;margin-bottom:6px}
-  .precios-toggle { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; background: none; border: none; padding: 0; margin-top: .5rem; display: block; }
-  .precios-all { display: none; }
-  .precios-all.visible { display: block; }
+  .precios-all { display: none; flex-direction: column; gap: 6px; margin-top: 6px; }
+  .precios-all.visible { display: flex; }
+  /* Mismo estilo de botón "Ver más" para precios que para platos */
+  .precios-toggle { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; background: none; border: 1px solid var(--border); padding: 12px; border-radius: 8px; width: 100%; text-align: center; display: block; transition: background 0.2s; font-family:'Plus Jakarta Sans',sans-serif; margin-top: .625rem; }
+  .precios-toggle:hover { background: var(--surface2); }
 
   /* Stats */
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:2rem}
@@ -132,7 +134,7 @@
   .card-checkbox { display:none; margin-right:5px; }
   .card-checkbox input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
 
-  /* Ver más Escandallos (NUEVO) */
+  /* Ver más Escandallos */
   .escandallos-all { display: none; flex-direction: column; gap: .625rem; margin-top: .625rem; }
   .escandallos-all.visible { display: flex; }
   .escandallos-toggle-btn { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; background: none; border: 1px solid var(--border); padding: 12px; border-radius: 8px; width: 100%; text-align: center; display: block; transition: background 0.2s; font-family:'Plus Jakarta Sans',sans-serif; margin-top: .625rem; }
@@ -198,7 +200,7 @@
 <body>
 
 <nav>
-  <a href="/dashboard.html" class="nav-logo">
+  <a href="/dashboard" class="nav-logo">
     <div class="nav-logo-icon">
       <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
         <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
@@ -272,7 +274,7 @@
 
     <div class="plan-banner" id="plan-banner" style="display:none">
       <p>Estás en <strong>prueba gratuita</strong>. Pásate al Pro para tener alertas e importación ilimitada.</p>
-      <a href="/precios.html" style="background:var(--gold); color:white; padding:8px 16px; border-radius:7px; text-decoration:none; font-size:13px; font-weight:700">Planes</a>
+      <a href="/precios" style="background:var(--gold); color:white; padding:8px 16px; border-radius:7px; text-decoration:none; font-size:13px; font-weight:700">Planes</a>
     </div>
 
     <div class="pro-banner" id="pro-banner" style="display:none">
@@ -380,7 +382,7 @@ let extractedProducts = [];
 async function init(){
   sb.auth.onAuthStateChange(async (event, session) => {
     if(event==='INITIAL_SESSION'){
-      if(!session) window.location.href='/login.html';
+      if(!session) window.location.href='/login';
       else await cargarDatos(session);
     }
   });
@@ -400,7 +402,7 @@ async function cargarDatos(session){
 
   if(!rest){
     await sb.auth.signOut(); 
-    window.location.href='/login.html';
+    window.location.href='/login';
     return;
   }
 
@@ -517,7 +519,6 @@ function renderLista(lista){
   }
 }
 
-// ── BORRADO MÚLTIPLE ─────────────────────────────────────────
 let modoBorrado = false;
 
 function toggleModoBorrado() {
@@ -527,8 +528,6 @@ function toggleModoBorrado() {
   const btnToggle = document.getElementById('btn-toggle-borrado');
   const bar = document.getElementById('bulk-delete-bar');
 
-  // Si estamos en modo borrado y hay platos ocultos, los mostramos automáticamente
-  // para que el usuario pueda seleccionarlos
   if (modoBorrado) {
     const allContainer = document.getElementById('escandallos-all');
     const toggleBtn = document.getElementById('escandallos-toggle-btn');
@@ -590,13 +589,13 @@ async function eliminarUnico(id, evt){
   window.location.reload();
 }
 
-// CORRECCIÓN: REDIRECCIÓN LOCAL A .HTML
-function nuevoEscandallo(){ sessionStorage.removeItem('qc_escandallo_editar'); window.location.href='/escandallo.html'; }
-function editarEscandallo(e){ sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(e)); window.location.href='/escandallo.html'; }
-async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login.html'; }
+// CORRECCIÓN: RUTAS LIMPIAS (Producción)
+function nuevoEscandallo(){ sessionStorage.removeItem('qc_escandallo_editar'); window.location.href='/escandallo'; }
+function editarEscandallo(e){ sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(e)); window.location.href='/escandallo'; }
+async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login'; }
 
 function mostrarUrlModal() {
-  if (!esPremium) { window.location.href = '/precios.html'; return; }
+  if (!esPremium) { window.location.href = '/precios'; return; }
   document.getElementById('url-input').value = '';
   document.getElementById('modal-url').classList.add('visible');
 }
@@ -776,7 +775,7 @@ async function abrirEscandalloAlerta(escId){
   const { data: escandallo } = await sb.from('escandallos').select('*').eq('id', escId).single();
   if (escandallo) {
     sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(escandallo));
-    window.location.href = '/escandallo.html';
+    window.location.href = '/escandallo';
   }
 }
 
