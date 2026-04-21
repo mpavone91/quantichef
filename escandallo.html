@@ -1067,7 +1067,26 @@ async function guardarEscandallo(){
     btn.innerHTML=btnOriginal;
     return;
   }
-
+  
+// --- INICIO TRIGGER EMAIL 5º ESCANDALLO ---
+  if (!esPremium && !editId) { 
+    const { count } = await sb.from('escandallos')
+      .select('id', { count: 'exact', head: true })
+      .eq('restaurante_id', rest.id);
+      
+    if (count === 5) {
+      fetch('/api/send-fifth-dish-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: session.user.email, 
+          nombre: rest.nombre 
+        })
+      }).catch(e => console.error("Error disparando email 5to plato:", e));
+    }
+  }
+  // --- FIN TRIGGER EMAIL ---
+  
   sessionStorage.removeItem('qc_escandallo_editar');
   sessionStorage.setItem('qc_guardando', 'true');
   
