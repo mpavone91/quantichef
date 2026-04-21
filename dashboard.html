@@ -20,7 +20,7 @@
   input[type="range"] { touch-action: pan-y; cursor: pointer; }
   html, body { position: relative; overflow-x: hidden; font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overscroll-behavior-x: none; }
 
-  /* Nav */
+  /* Nav optimizado */
   nav{background:var(--accent);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;transition: padding 0.2s;}
   .nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
   .nav-logo-icon{width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center}
@@ -57,11 +57,12 @@
   .upload-area-title{font-weight:600;font-size:.95rem;color:var(--text);margin-bottom:.25rem}
   .upload-area-sub{font-size:12px;color:var(--text3)}
   
-  /* Botones principales optimizados */
-  .btns-row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:1rem; }
-  .cta-nueva{flex:1; display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent-light);color:var(--accent);padding:14px 20px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:700;transition:all .2s;border:1px solid var(--accent-mint);cursor:pointer; min-width:240px;}
+  /* Botones principales */
+  .btns-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .cta-nueva{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent-light);color:var(--accent);padding:12px 20px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:700;transition:all .2s;border:1px solid var(--accent-mint);cursor:pointer;}
   .cta-nueva:hover{background:var(--accent-mint);transform:translateY(-1px)}
   
+  /* BOTÓN IMPORTAR MÁGICO */
   .cta-nueva.btn-magico { background: #F4FAF6; border: 1px solid #D5E8DD; color: var(--accent); }
   .cta-nueva.btn-magico:hover { background: var(--gold-light); border-color: var(--gold); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(196, 148, 58, 0.15); }
   .cta-nueva.btn-magico svg { color: var(--gold); }
@@ -72,7 +73,7 @@
   .pro-badge{display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px}
   .btn-pro-manage { background: white; border: 1.5px solid var(--accent); color: var(--accent); font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px; cursor: pointer; margin-left: auto; }
 
-  /* REVIEW TABLE */
+  /* REVIEW TABLE (REDISEÑADA Y BONITA) */
   .review-wrap { margin-bottom: 2rem; animation: fadeIn 0.3s ease; }
   .review-card { background: var(--surface); border: 1px solid var(--accent-mint); border-radius: 12px; padding: 1.5rem; box-shadow: 0 8px 24px rgba(30,77,43,0.06); }
   .review-title { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
@@ -92,7 +93,7 @@
   .btn-del-row { background: var(--danger-light); color: var(--danger); border: none; border-radius: 6px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px; }
   .btn-del-row:hover { background: var(--danger); color: white; }
 
-  /* ZONA: ALERTAS Y PRECIOS GUARDADOS */
+  /* ZONA RESTAURADA: ALERTAS Y PRECIOS GUARDADOS */
   .alertas-section{margin-bottom: 2rem;}
   .alertas-panel{background:#FEF2F2;border:1px solid rgba(220,38,38,.2);border-radius:12px;overflow:hidden}
   .alertas-header{display:flex;align-items:center;gap:10px;padding:1rem 1.2rem;background:rgba(220,38,38,.06);border-bottom:1px solid rgba(220,38,38,.12)}
@@ -173,15 +174,15 @@
 
   @keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
 
-  /* Responsive Fixes - CORRECCIÓN DE TAMAÑO DE BOTONES MÓVIL */
+  /* Responsive Fixes */
   @media(max-width:768px){
     nav{padding:0.6rem 1rem}
     .nav-btns{gap:4px}
     .nav-logo-icon{width:28px;height:28px}
     .nav-logo-text{font-size:16px}
     .container{padding:1.5rem 1rem}
-    .btns-row { flex-direction: column; gap:10px; }
-    .cta-nueva { width: 100%; padding: 12px 16px; font-size: 13px; }
+    .btns-row { flex-direction: column; }
+    .cta-nueva { width: 100%; justify-content: center; }
     .stats{grid-template-columns:1fr 1fr}
     .stats .stat:last-child{grid-column:1/-1}
     .rank-bar-wrap { display: none; }
@@ -221,8 +222,8 @@
     <h3>Importar Carta Mágica</h3>
     <p>Pega el enlace de tu menú online y extraeremos todos tus platos en segundos.</p>
     <input type="url" id="url-input" class="form-input" placeholder="ej: www.turestaurante.com/carta" style="margin-bottom: 1.5rem; text-align: center;">
-    <button type="button" class="btn-fill" style="width:100%; padding:14px; font-size:14px;" onclick="ejecutarImportacionUrl()" id="btn-import-confirm">Importar Carta Completa</button>
-    <button type="button" onclick="hideUrlModal()" style="margin-top: 15px; background:none; border:none; color:var(--text3); font-size:13px; font-weight:600; cursor:pointer; text-decoration:underline;">Cancelar</button>
+    <button class="btn-fill" style="width:100%; padding:14px; font-size:14px;" onclick="ejecutarImportacionUrl()" id="btn-import-confirm">Importar Carta Completa</button>
+    <button onclick="hideUrlModal()" style="margin-top: 15px; background:none; border:none; color:var(--text3); font-size:13px; font-weight:600; cursor:pointer; text-decoration:underline;">Cancelar</button>
   </div>
 </div>
 
@@ -244,12 +245,12 @@
       </div>
 
       <div class="btns-row">
-        <button type="button" class="cta-nueva" onclick="nuevoEscandallo()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <button class="cta-nueva" onclick="nuevoEscandallo()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Nuevo plato manual
         </button>
-        <button type="button" class="cta-nueva btn-magico" onclick="mostrarUrlModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <button class="cta-nueva btn-magico" onclick="mostrarUrlModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           Importar Carta Mágica <span id="dash-upsell-lock" style="margin-left:4px; font-size:11px;">🔒</span>
         </button>
       </div>
@@ -265,7 +266,7 @@
 
     <div class="plan-banner" id="plan-banner" style="display:none">
       <p>Estás en <strong>prueba gratuita</strong>. Pásate al Pro para tener alertas e importación ilimitada.</p>
-      <a href="/precios" style="background:var(--gold); color:white; padding:8px 16px; border-radius:7px; text-decoration:none; font-size:13px; font-weight:700">Planes</a>
+      <a href="/precios.html" style="background:var(--gold); color:white; padding:8px 16px; border-radius:7px; text-decoration:none; font-size:13px; font-weight:700">Planes</a>
     </div>
 
     <div class="pro-banner" id="pro-banner" style="display:none">
@@ -301,8 +302,8 @@
         </div>
         
         <div class="review-actions">
-          <button type="button" class="btn-outline" onclick="cancelarReview()">Cancelar y descartar</button>
-          <button type="button" class="btn-fill" id="btn-guardar-precios" onclick="guardarPrecios()">Guardar precios en mi cocina</button>
+          <button class="btn-outline" onclick="cancelarReview()">Cancelar y descartar</button>
+          <button class="btn-fill" id="btn-guardar-precios" onclick="guardarPrecios()">Guardar precios en mi cocina</button>
         </div>
       </div>
     </div>
@@ -344,7 +345,7 @@
 
     <div class="section-title" style="justify-content: space-between;">
       <div style="display:flex; align-items:center; gap:8px;">Mis platos</div>
-      <button type="button" id="btn-toggle-borrado" onclick="toggleModoBorrado()" style="font-size:11px; font-weight:600; color:var(--text3); background:none; border:1px solid var(--border); padding:5px 10px; border-radius:6px; cursor:pointer; transition:all 0.2s;">Seleccionar varios</button>
+      <button id="btn-toggle-borrado" onclick="toggleModoBorrado()" style="font-size:11px; font-weight:600; color:var(--text3); background:none; border:1px solid var(--border); padding:5px 10px; border-radius:6px; cursor:pointer; transition:all 0.2s;">Seleccionar varios</button>
     </div>
     
     <div id="lista-escandallos"></div>
@@ -356,8 +357,8 @@
 
 <div id="bulk-delete-bar" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--text); color:white; padding:12px 24px; border-radius:12px; z-index:100; align-items:center; gap:15px; box-shadow:0 8px 32px rgba(0,0,0,0.25);">
   <span id="bulk-count" style="font-size:13px; font-weight:600; white-space:nowrap;">0 seleccionados</span>
-  <button type="button" id="btn-bulk-delete" onclick="confirmarBorradoMultiple()" style="background:var(--danger); color:white; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;">Borrar platos</button>
-  <button type="button" onclick="toggleModoBorrado()" style="background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; text-decoration:underline; font-size:13px;">Cancelar</button>
+  <button id="btn-bulk-delete" onclick="confirmarBorradoMultiple()" style="background:var(--danger); color:white; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;">Borrar platos</button>
+  <button onclick="toggleModoBorrado()" style="background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; text-decoration:underline; font-size:13px;">Cancelar</button>
 </div>
 
 <script>
@@ -373,7 +374,7 @@ let extractedProducts = [];
 async function init(){
   sb.auth.onAuthStateChange(async (event, session) => {
     if(event==='INITIAL_SESSION'){
-      if(!session) window.location.href='/login';
+      if(!session) window.location.href='/login.html';
       else await cargarDatos(session);
     }
   });
@@ -393,7 +394,7 @@ async function cargarDatos(session){
 
   if(!rest){
     await sb.auth.signOut(); 
-    window.location.href='/login';
+    window.location.href='/login.html';
     return;
   }
 
@@ -406,6 +407,7 @@ async function cargarDatos(session){
   document.getElementById('plan-banner').style.display = esPremium ? 'none' : 'flex';
   document.getElementById('btn-suscripcion-nav').style.display = esPremium ? 'inline-block' : 'none';
   
+  // Cambia el icono de candado en el botón mágico
   const lockIcon = document.getElementById('dash-upsell-lock');
   if (lockIcon) { lockIcon.style.display = esPremium ? 'none' : 'inline'; }
   
@@ -420,6 +422,7 @@ async function cargarDatos(session){
     renderLista(escandallos);
     initRanking(escandallos, esPremium);
     
+    // Si tiene platos pero nunca ha subido un albarán, mostramos el aviso
     const { count: preciosCount } = await sb.from('precios_proveedor').select('id', { count: 'exact', head: true }).eq('restaurante_id', rest.id);
     if(preciosCount === 0) document.getElementById('aviso-estimados').style.display = 'flex';
   } else { 
@@ -444,6 +447,7 @@ function renderStats(lista){
   }
 }
 
+// ── RENDER LISTA CON CHECKBOXES ─────────────────────────────
 function renderLista(lista){
   const c = document.getElementById('lista-escandallos');
   c.innerHTML = '';
@@ -543,12 +547,13 @@ async function eliminarUnico(id, evt){
   window.location.reload();
 }
 
-function nuevoEscandallo(){ sessionStorage.removeItem('qc_escandallo_editar'); window.location.href='/escandallo'; }
-function editarEscandallo(e){ sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(e)); window.location.href='/escandallo'; }
-async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login'; }
+// CORRECCIÓN: REDIRECCIÓN LOCAL A .HTML
+function nuevoEscandallo(){ sessionStorage.removeItem('qc_escandallo_editar'); window.location.href='/escandallo.html'; }
+function editarEscandallo(e){ sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(e)); window.location.href='/escandallo.html'; }
+async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login.html'; }
 
 function mostrarUrlModal() {
-  if (!esPremium) { window.location.href = '/precios'; return; }
+  if (!esPremium) { window.location.href = '/precios.html'; return; }
   document.getElementById('url-input').value = '';
   document.getElementById('modal-url').classList.add('visible');
 }
@@ -728,7 +733,7 @@ async function abrirEscandalloAlerta(escId){
   const { data: escandallo } = await sb.from('escandallos').select('*').eq('id', escId).single();
   if (escandallo) {
     sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(escandallo));
-    window.location.href = '/escandallo';
+    window.location.href = '/escandallo.html';
   }
 }
 
@@ -784,8 +789,9 @@ function togglePrecios(){
   btn.textContent = open ? 'Ver menos ▴' : `Ver ${el.children.length} más ▾`;
 }
 
+// ── RANKING DE RENTABILIDAD EXPANDIBLE ───────────────────────
 let rankingData = [];
-let rankingModo = 'margen'; 
+let rankingModo = 'margen'; // Margen € por defecto
 
 function setRankingTab(modo, btn) {
   rankingModo = modo;
