@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "stripe": "^14",
-    "@supabase/supabase-js": "^2"
+    "@supabase/supabase-js": "^2",
+    "resend": "^3.2.0"
   }
 }
