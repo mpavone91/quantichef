@@ -43,14 +43,23 @@ export default async function handler(req, res) {
       return res.status(200).json(result);
     }
 
-    // ── MODO EXTRACCIÓN ──────────────────────────────────────────
+    // ── MODO EXTRACCIÓN (FACTURAS O ETIQUETAS) ───────────────────
     if (!file_base64 || !file_type) {
       return res.status(400).json({ error: 'Falta el archivo o el tipo' });
     }
 
-    let content_block;
-    const ext = file_type.toLowerCase();
+    let ext = file_type.toLowerCase();
+    let isLabelScan = false;
 
+    // Detectamos si la foto viene del Escandallo (Cámara)
+    if (ext === 'label_scan') {
+      isLabelScan = true;
+      ext = 'jpeg'; // Asumimos que la cámara manda una foto JPEG
+    }
+
+    let content_block;
+
+    // Preparar la imagen/documento para Anthropic
     if (ext === 'pdf') {
       content_block = {
         type: 'document',
@@ -68,7 +77,57 @@ export default async function handler(req, res) {
         text: `Contenido del archivo ${file_name}:\n\n${text_content}`
       };
     } else {
-      return res.status(400).json({ error: 'Formato no soportado. Usa PDF, imagen, CSV o Excel.' });
+      return res.status(400).json({ error: 'Formato no soportado.' });
+    }
+
+    // Seleccionamos el Prompt según de dónde venga la foto
+    let promptDinamico = "";
+
+    if (isLabelScan) {
+      // PROMPT PARA ESCANEAR RECETAS / ETIQUETAS (Desde el escandallo)
+      promptDinamico = `Eres un asistente experto para chefs profesionales. 
+      Te voy a pasar una foto de una receta escrita, una etiqueta de un producto o una ficha técnica. 
+      Tu trabajo es:
+      1. Extraer los ingredientes con su cantidad y unidad. (Si no hay cantidad, pon 0 y unidad "ud").
+      2. Detectar los alérgenos presentes. Opciones válidas estrictas: "Gluten", "Crustáceos", "Huevos", "Pescado", "Cacahuetes", "Soja", "Lácteos", "Frutos secos", "Apio", "Mostaza", "Sésamo", "Sulfitos", "Altramuces", "Moluscos".
+      
+      Devuelve ÚNICAMENTE un JSON válido con esta estructura estricta y sin texto fuera del JSON:
+      {
+        "ingredientes": [
+          { "nombre": "Harina de trigo", "cantidad": 500, "unidad": "g" }
+        ],
+        "alergenos": ["Gluten"]
+      }`;
+    } else {
+      // PROMPT ORIGINAL PARA FACTURAS (Desde el Dashboard)
+      promptDinamico = `Eres un asistente experto en hostelería española. Analiza este documento de proveedor (albarán, factura, lista de precios o catálogo) y extrae TODOS los productos alimentarios con sus precios.
+
+      Para cada producto, devuelve:
+      - nombre: el nombre del producto tal como aparece
+      - ingrediente_normalizado: nombre simplificado y genérico en minúsculas, sin tildes, sin marcas comerciales (ej: "PECHUGA POLLO FRESCA CAT.A" → "pechuga de pollo")
+      - precio: el precio numérico (solo el número, sin símbolo €)
+      - unidad: la unidad de medida (kg, l, ud, caja, docena, etc.)
+      - proveedor: el nombre del proveedor si aparece en el documento
+
+      IMPORTANTE:
+      - Si el precio es por caja/bolsa, calcula el precio por kg o por unidad si hay información suficiente
+      - Si no puedes determinar la unidad, pon "ud"
+      - Ignora productos no alimentarios (limpieza, envases, etc.)
+      - Si hay varios precios (con/sin IVA), usa el precio SIN IVA
+
+      Responde SOLO con un JSON válido, sin markdown, sin backticks:
+      {
+        "proveedor": "Nombre del proveedor",
+        "fecha_documento": "YYYY-MM-DD o null si no aparece",
+        "productos": [
+          {
+            "nombre": "nombre original",
+            "ingrediente_normalizado": "nombre simplificado",
+            "precio": 0.00,
+            "unidad": "kg"
+          }
+        ]
+      }`;
     }
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -79,7 +138,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'claude-3-haiku-20240307', // He puesto el modelo real de Haiku para evitar fallos de API
         max_tokens: 4096,
         messages: [{
           role: 'user',
@@ -87,34 +146,7 @@ export default async function handler(req, res) {
             content_block,
             {
               type: 'text',
-              text: `Eres un asistente experto en hostelería española. Analiza este documento de proveedor (albarán, factura, lista de precios o catálogo) y extrae TODOS los productos alimentarios con sus precios.
-
-Para cada producto, devuelve:
-- nombre: el nombre del producto tal como aparece
-- ingrediente_normalizado: nombre simplificado y genérico en minúsculas, sin tildes, sin marcas comerciales (ej: "PECHUGA POLLO FRESCA CAT.A" → "pechuga de pollo")
-- precio: el precio numérico (solo el número, sin símbolo €)
-- unidad: la unidad de medida (kg, l, ud, caja, docena, etc.)
-- proveedor: el nombre del proveedor si aparece en el documento
-
-IMPORTANTE:
-- Si el precio es por caja/bolsa, calcula el precio por kg o por unidad si hay información suficiente
-- Si no puedes determinar la unidad, pon "ud"
-- Ignora productos no alimentarios (limpieza, envases, etc.)
-- Si hay varios precios (con/sin IVA), usa el precio SIN IVA
-
-Responde SOLO con un JSON válido, sin markdown, sin backticks:
-{
-  "proveedor": "Nombre del proveedor",
-  "fecha_documento": "YYYY-MM-DD o null si no aparece",
-  "productos": [
-    {
-      "nombre": "nombre original",
-      "ingrediente_normalizado": "nombre simplificado",
-      "precio": 0.00,
-      "unidad": "kg"
-    }
-  ]
-}`
+              text: promptDinamico
             }
           ]
         }]
@@ -135,7 +167,7 @@ Responde SOLO con un JSON válido, sin markdown, sin backticks:
       parsed = JSON.parse(clean_text);
     } catch {
       return res.status(200).json({
-        error: 'No se pudo interpretar el documento. Asegúrate de que es un albarán o lista de precios legible.',
+        error: 'No se pudo interpretar el documento. Asegúrate de que es un albarán, receta o etiqueta legible.',
         raw: raw_text
       });
     }
