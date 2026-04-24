@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BBXNWHTD8Y"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBXNWHTD8Y"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -660,12 +659,8 @@ function renderIngs(){
 function fmt(n){return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
 function calcular(){
   const rac=Math.max(parseFloat(document.getElementById('raciones').value)||1,1);
-  const fc=parseFloat(document.getElementById('margen-fc').value)||30;
   const neto=parseFloat(document.getElementById('margen-neto').value)||20;
   const pCarta=parseFloat(document.getElementById('precio-carta').value)||0; 
-  
-  document.getElementById('val-fc').textContent=fc+'%';
-  document.getElementById('val-neto').textContent=neto+'%';
 
   let tot=0;
   ings.forEach(i=>{
@@ -677,6 +672,21 @@ function calcular(){
   });
 
   const por=tot/rac;
+
+  let fc;
+  if (pCarta > 0 && por > 0) {
+    fc = (por / pCarta) * 100;
+    document.getElementById('margen-fc').value = fc;
+    document.getElementById('val-fc').textContent = fc.toFixed(1) + '%';
+    document.getElementById('val-fc').style.color = 'var(--accent)';
+  } else {
+    fc = parseFloat(document.getElementById('margen-fc').value) || 30;
+    document.getElementById('val-fc').textContent = fc + '%';
+    document.getElementById('val-fc').style.color = 'var(--text2)';
+  }
+  
+  document.getElementById('val-neto').textContent=neto+'%';
+
   const pvpMin=fc>0?por/(fc/100):0;
   const fcReal=pvpMin>0?(por/pvpMin*100):0;
   const pvpRecomendado=fc>0&&neto<100?por/(fc/100)/(1-neto/100):0;
@@ -684,7 +694,7 @@ function calcular(){
   document.getElementById('m-coste').textContent=fmt(tot);
   document.getElementById('m-racion').textContent=fmt(por);
   document.getElementById('m-pvp').textContent=fmt(pvpMin);
-  document.getElementById('m-pvp-sub').textContent='con coste de producto al '+fc+'%';
+  document.getElementById('m-pvp-sub').textContent='con coste de producto al '+ (Number.isInteger(fc) ? fc : fc.toFixed(1)) +'%';
 
   const mm=document.getElementById('m-fc');
   if(pvpMin>0){mm.textContent=fcReal.toFixed(1)+'%';mm.className='metric-value '+(fcReal<=35?'good':fcReal<=45?'warn':'bad');}
@@ -698,7 +708,7 @@ function calcular(){
     mNetoSub.textContent='+'+neto+'% beneficio neto';
     const expl=document.getElementById('precio-explicacion');
     expl.style.display='block';
-    expl.innerHTML=`<strong>Cómo se calcula el precio recomendado:</strong> Tu coste por ración es ${fmt(por)}. Con un food cost del ${fc}% el precio mínimo es ${fmt(pvpMin)}. Añadiendo un ${neto}% de beneficio neto sobre el precio de venta, el precio recomendado es <strong>${fmt(pvpRecomendado)}</strong> — que te deja ${fmt(pvpRecomendado-por)} de beneficio bruto por ración tras cubrir todos los costes.`;
+    expl.innerHTML=`<strong>Cómo se calcula el precio recomendado:</strong> Tu coste por ración es ${fmt(por)}. Con un food cost del ${fc.toFixed(1)}% el precio mínimo es ${fmt(pvpMin)}. Añadiendo un ${neto}% de beneficio neto sobre el precio de venta, el precio recomendado es <strong>${fmt(pvpRecomendado)}</strong> — que te deja ${fmt(pvpRecomendado-por)} de beneficio bruto por ración tras cubrir todos los costes.`;
   } else if(!netoOn){
     mNeto.textContent='—';mNeto.className='metric-value gold';
     mNetoSub.textContent='activa margen neto';
