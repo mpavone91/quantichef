@@ -88,13 +88,14 @@
 
     .hero-eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
-      background: var(--dorado-suave); color: var(--dorado);
+      background: var(--verde-suave); color: var(--verde);
       padding: 6px 16px; border-radius: 20px;
       font-size: 12px; font-weight: 700;
       margin-bottom: 2rem;
-      border: 1px solid rgba(196,148,58,0.2);
+      border: 1px solid rgba(30,77,43,0.15);
       animation: fadeUp .5s ease both;
     }
+    .hero-eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--verde); }
 
     .hero h1 {
       font-family: 'Fraunces', serif;
@@ -292,13 +293,14 @@
   </div>
   <div class="nav-btns">
     <a href="/login" class="nav-login">Acceder</a>
-    <a href="/login" class="nav-cta">Escandallar mi carta</a>
+    <a href="/login" class="nav-cta">Probar gratis</a>
   </div>
 </nav>
 
 <section class="hero">
   <div class="hero-eyebrow">
-    Auditores de rentabilidad 24/7
+    <span class="hero-eyebrow-dot"></span>
+    Auditoría de rentabilidad 24/7
   </div>
   <h1>Convierte tu carta digital en una <em>máquina de generar beneficio.</em></h1>
   <p class="hero-sub">No más Excels obsoletos. Pega la URL de tu menú o sube una foto de tu factura. QuantiChef audita tus márgenes en tiempo real y te avisa cuando dejas de ganar dinero.</p>
