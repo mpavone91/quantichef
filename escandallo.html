@@ -450,7 +450,7 @@
     </div>
   </div>
 
-  <div class="plato-status" id="plato-status">
+  <div class="plato-status" id="plato-status" style="display:none !important;">
     <span class="plato-status-icon" id="plato-status-icon"></span>
     <div class="plato-status-text">
       <span id="plato-status-title"></span>
@@ -747,65 +747,52 @@ function calcular(){
   const auditDesc = document.getElementById('audit-desc');
   const auditIcon = document.getElementById('audit-icon');
 
-  if (pCarta > 0 && por > 0) {
+  if (por > 0) {
     auditBox.style.display = 'flex';
-    const realFcPct = (por / pCarta) * 100;
-    const targetPvp = (netoOn && pvpRecomendado > 0) ? pvpRecomendado : pvpMin;
+    
+    if (pCarta > 0) {
+      const realFcPct = (por / pCarta) * 100;
+      const targetPvp = (netoOn && pvpRecomendado > 0) ? pvpRecomendado : pvpMin;
 
-    if (pCarta < targetPvp) {
-      auditBox.style.background = 'var(--danger-light)';
-      auditBox.style.border = '1px solid rgba(139, 26, 26, 0.2)';
-      auditTitle.style.color = 'var(--danger)';
-      auditDesc.style.color = 'var(--danger)';
-      auditIcon.textContent = '🚨';
-      auditTitle.textContent = 'Estás perdiendo margen frente a tu objetivo';
-      const diff = targetPvp - pCarta;
-      auditDesc.innerHTML = `Vendes a <strong>${fmt(pCarta)}</strong> pero para tu objetivo deberías vender a <strong>${fmt(targetPvp)}</strong>. Estás dejando de ganar <strong>${fmt(diff)} por ración</strong>. Tu Food Cost real es del ${realFcPct.toFixed(1)}%.`;
+      if (realFcPct >= 40) { 
+        auditBox.style.background = 'var(--danger-light)';
+        auditBox.style.border = '1px solid rgba(139, 26, 26, 0.2)';
+        auditTitle.style.color = 'var(--danger)';
+        auditDesc.style.color = 'var(--text2)';
+        auditIcon.textContent = '🚨';
+        auditTitle.textContent = 'Alerta: Coste de producto muy elevado';
+        auditDesc.innerHTML = `Tu coste es del <strong>${realFcPct.toFixed(1)}%</strong>, lo que deja poco margen para cubrir gastos fijos. <br><span style="color:var(--danger); font-size:11px; font-weight:700;">💡 TIP: Sube un poco el precio, busca alternativas para los ingredientes más caros, o aumenta el número de raciones si la receta lo permite.</span>`;
+      } 
+      else if (pCarta < targetPvp) { 
+        auditBox.style.background = 'var(--gold-light)';
+        auditBox.style.border = '1px solid rgba(196,148,58,.3)';
+        auditTitle.style.color = 'var(--warn)';
+        auditDesc.style.color = 'var(--text2)';
+        auditIcon.textContent = '💡';
+        auditTitle.textContent = 'Plato rentable con potencial de mejora';
+        auditDesc.innerHTML = `Tienes un Food Cost excelente (<strong>${realFcPct.toFixed(1)}%</strong>). Sin embargo, según tu objetivo de margen neto, este plato tiene potencial para venderse a <strong>${fmt(targetPvp)}</strong>. ¡Plantéate subirlo un poco para maximizar tus ganancias!`;
+      } 
+      else { 
+        auditBox.style.background = 'var(--accent-light)';
+        auditBox.style.border = '1px solid var(--accent-mint)';
+        auditTitle.style.color = 'var(--accent)';
+        auditDesc.style.color = 'var(--text2)';
+        auditIcon.textContent = '🏆';
+        auditTitle.textContent = 'Rentabilidad excelente';
+        const extra = pCarta - targetPvp;
+        auditDesc.innerHTML = `¡Gran trabajo! Vendes a <strong>${fmt(pCarta)}</strong>, superando tu meta. Tienes un colchón extra de <strong>${fmt(extra)} por ración</strong> y un Food Cost ideal del <strong>${realFcPct.toFixed(1)}%</strong>.`;
+      }
     } else {
-      auditBox.style.background = 'var(--accent-light)';
-      auditBox.style.border = '1px solid var(--accent-mint)';
-      auditTitle.style.color = 'var(--accent)';
-      auditDesc.style.color = 'var(--accent)';
-      auditIcon.textContent = '✅';
-      auditTitle.textContent = 'Precio actual excelente';
-      const extra = pCarta - targetPvp;
-      auditDesc.innerHTML = `Vendes a <strong>${fmt(pCarta)}</strong>, superando tu objetivo. Tienes un colchón extra de <strong>${fmt(extra)} por ración</strong>. Tu Food Cost real es del fantástico ${realFcPct.toFixed(1)}%.`;
+      auditBox.style.background = 'var(--surface2)';
+      auditBox.style.border = '1px solid var(--border)';
+      auditTitle.style.color = 'var(--text2)';
+      auditDesc.style.color = 'var(--text3)';
+      auditIcon.textContent = 'ℹ️';
+      auditTitle.textContent = 'Añade tu precio en carta';
+      auditDesc.innerHTML = `Introduce tu precio de venta actual arriba para ver la auditoría real. El precio sugerido para cubrir un ${fc.toFixed(1)}% de coste es <strong>${fmt(pvpMin)}</strong>.`;
     }
   } else {
     auditBox.style.display = 'none';
-  }
-
-  const statusEl=document.getElementById('plato-status');
-  const statusIcon=document.getElementById('plato-status-icon');
-  const statusTitle=document.getElementById('plato-status-title');
-  const statusDesc=document.getElementById('plato-status-desc');
-  if(tot>0&&por>0&&pvpMin>0){
-    statusEl.classList.add('visible');
-    const margenPct=((pvpMin-por)/pvpMin*100);
-    const margenStr=margenPct.toFixed(1);
-    if(margenPct<0){
-      statusEl.className='plato-status visible status-bad';
-      statusIcon.textContent='\uD83D\uDCB8';
-      statusTitle.textContent='Estás perdiendo dinero';
-      statusDesc.textContent=`Margen del ${margenStr}% \u2014 el precio no cubre los costes.`;
-    } else if(margenPct>=70){
-      statusEl.className='plato-status visible status-good';
-      statusIcon.textContent='\u2705';
-      statusTitle.textContent='Plato rentable';
-      statusDesc.textContent=`Tienes un margen del ${margenStr}% \u2014 buen equilibrio entre coste e ingreso.`;
-    } else if(margenPct>=50){
-      statusEl.className='plato-status visible status-mid';
-      statusIcon.textContent='\u26A1';
-      statusTitle.textContent='Margen ajustado';
-      statusDesc.textContent=`Margen del ${margenStr}% \u2014 podrías mejorar el precio de venta o reducir algún coste.`;
-    } else {
-      statusEl.className='plato-status visible status-bad';
-      statusIcon.textContent='\u26A0\uFE0F';
-      statusTitle.textContent='Margen bajo';
-      statusDesc.textContent=`Margen del ${margenStr}% \u2014 estás ganando poco por ración. Revisa ingredientes o sube el precio.`;
-    }
-  } else {
-    statusEl.classList.remove('visible');
   }
 }
 
