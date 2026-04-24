@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BBXNWHTD8Y"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBXNWHTD8Y"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -19,9 +18,9 @@
   <meta name="theme-color" content="#1E4D2B">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuantiChef — Escandallos Inteligentes y Control de Margen</title>
-  <meta name="description" content="Calcula el coste real de tus platos al instante con la foto de tu albarán. Controla tu margen de beneficio sin usar Excel.">
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>QuantiChef — Tu carta bajo control. Rentabilidad real para hostelería.</title>
+  <meta name="description" content="Deja de perder dinero por las subidas de precios. QuantiChef escandalla tu carta por URL y audita tu beneficio real al instante.">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --verde: #1E4D2B;
@@ -58,16 +57,15 @@
       border-bottom: 1px solid rgba(30,77,43,0.08);
     }
     .nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; flex-shrink: 0; }
-    .nav-logo-icon { width: 32px; height: 32px; background: var(--verde); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-    .nav-logo-icon svg { width: 16px; height: 16px; }
-    .nav-logo-text { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; color: var(--verde); letter-spacing: -0.02em; }
+    .nav-logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--dorado) 0%, #E6B755 100%); border-radius: 9px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(196,148,58,0.2); }
+    .nav-logo-text { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; color: var(--texto); letter-spacing: -0.02em; }
 
     .nav-links { display: flex; align-items: center; gap: 1.5rem; }
     .nav-links a { font-size: 14px; color: var(--texto2); text-decoration: none; font-weight: 500; transition: color .2s; }
     .nav-links a:hover { color: var(--verde); }
 
     .nav-btns { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .nav-cta { background: var(--verde); color: white; padding: 8px 14px; border-radius: var(--radio); font-size: 12px; font-weight: 600; text-decoration: none; transition: all .2s; white-space: nowrap; }
+    .nav-cta { background: var(--verde); color: white; padding: 8px 16px; border-radius: var(--radio); font-size: 12px; font-weight: 700; text-decoration: none; transition: all .2s; white-space: nowrap; }
     .nav-cta:hover { background: var(--verde-medio); transform: translateY(-1px); }
     .nav-login { color: var(--texto2); padding: 8px 10px; border-radius: var(--radio); font-size: 12px; font-weight: 500; text-decoration: none; transition: all .2s; white-space: nowrap; border: 1.5px solid #DDD9D0; }
     .nav-login:hover { border-color: var(--verde-mint); color: var(--verde); background: var(--verde-suave); }
@@ -90,202 +88,191 @@
 
     .hero-eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
-      background: var(--verde-suave); color: var(--verde);
+      background: var(--dorado-suave); color: var(--dorado);
       padding: 6px 16px; border-radius: 20px;
       font-size: 12px; font-weight: 700;
       margin-bottom: 2rem;
-      border: 1px solid rgba(30,77,43,0.15);
+      border: 1px solid rgba(196,148,58,0.2);
       animation: fadeUp .5s ease both;
     }
-    .hero-eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--verde); }
 
     .hero h1 {
       font-family: 'Fraunces', serif;
-      font-size: clamp(2.3rem, 6vw, 4.5rem);
+      font-size: clamp(2.3rem, 6vw, 4.2rem);
       font-weight: 300;
-      line-height: 1.08;
+      line-height: 1.05;
       letter-spacing: -0.03em;
       color: var(--texto);
       margin-bottom: 1.5rem;
-      max-width: 960px;
+      max-width: 1000px;
       animation: fadeUp .5s .1s ease both;
     }
     .hero h1 em { font-style: italic; color: var(--verde); }
-    .hero h1 strong { font-weight: 600; }
+    .hero h1 strong { font-weight: 600; color: var(--dorado); }
 
     .hero-sub {
-      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-size: clamp(1rem, 2vw, 1.25rem);
       color: var(--texto2);
-      max-width: 600px;
+      max-width: 650px;
       margin: 0 auto 2.5rem;
-      line-height: 1.7;
+      line-height: 1.6;
       animation: fadeUp .5s .2s ease both;
     }
 
     .hero-cta-wrap {
-      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-      margin-bottom: 1.5rem;
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 2rem;
       animation: fadeUp .5s .3s ease both;
     }
     .btn-primary {
       background: var(--verde); color: white;
-      padding: 15px 32px; border-radius: var(--radio);
-      font-size: 16px; font-weight: 600;
+      padding: 18px 36px; border-radius: var(--radio);
+      font-size: 16px; font-weight: 700;
       text-decoration: none; transition: all .2s;
-      display: inline-flex; align-items: center; gap: 9px;
-      box-shadow: 0 4px 20px rgba(30,77,43,0.2);
+      display: inline-flex; align-items: center; gap: 10px;
+      box-shadow: 0 10px 30px rgba(30,77,43,0.2);
     }
-    .btn-primary:hover { background: var(--verde-medio); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(30,77,43,0.28); }
+    .btn-primary:hover { background: var(--verde-medio); transform: translateY(-2px); box-shadow: 0 15px 35px rgba(30,77,43,0.3); }
     .btn-secondary {
-      background: transparent; color: var(--texto);
-      padding: 15px 32px; border-radius: var(--radio);
-      font-size: 16px; font-weight: 500;
+      background: var(--blanco); color: var(--texto);
+      padding: 18px 36px; border-radius: var(--radio);
+      font-size: 16px; font-weight: 600;
       text-decoration: none; transition: all .2s;
       border: 1.5px solid #DDD9D0;
     }
-    .btn-secondary:hover { border-color: var(--verde-mint); background: var(--verde-suave); color: var(--verde); }
+    .btn-secondary:hover { border-color: var(--verde); background: var(--verde-suave); }
 
     .hero-bullets {
-      display: flex; justify-content: center; gap: 20px;
-      font-size: 13px; color: var(--texto3); font-weight: 500;
-      margin-bottom: 3.5rem;
+      display: flex; justify-content: center; gap: 24px;
+      font-size: 13px; color: var(--texto2); font-weight: 600;
+      margin-bottom: 4rem;
       animation: fadeUp .5s .35s ease both;
     }
-    .hero-bullets span { display: flex; align-items: center; gap: 6px; }
-    .hero-bullets svg { color: var(--verde); }
+    .hero-bullets span { display: flex; align-items: center; gap: 8px; }
+    .hero-bullets svg { color: var(--dorado); flex-shrink: 0; }
 
     .hero-preview {
-      width: 100%; max-width: 780px;
+      width: 100%; max-width: 820px;
       background: var(--blanco);
       border-radius: var(--radio-lg);
       border: 1px solid rgba(30,77,43,0.1);
-      box-shadow: 0 40px 100px rgba(30,77,43,0.1);
+      box-shadow: 0 40px 120px rgba(30,77,43,0.12);
       overflow: hidden;
       animation: fadeUp .6s .5s ease both;
+      position: relative;
     }
-    .preview-bar { background: var(--verde); padding: 13px 18px; display: flex; align-items: center; justify-content: space-between; }
-    .preview-logo-text { font-family: 'Fraunces', serif; font-size: 14px; color: white; font-weight: 600; text-align: left; }
-    .preview-logo-text small { color: #A8D5B5; font-size: 9px; display: block; text-transform: uppercase; margin-top: -1px; }
-    .preview-badge { background: rgba(255,255,255,.15); color: white; font-size: 10px; padding: 3px 9px; border-radius: 20px; }
-    .preview-body { padding: 18px; }
-    .preview-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
-    .preview-field label { font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--texto3); display: block; margin-bottom: 4px; }
-    .preview-field input { width: 100%; padding: 7px 9px; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; border: 1px solid #E0DDD6; border-radius: 6px; background: #FAFAF8; color: var(--texto); outline: none; }
+    .preview-bar { background: var(--verde); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .preview-logo-text { font-family: 'Fraunces', serif; font-size: 15px; color: white; font-weight: 600; text-align: left; }
+    .preview-logo-text small { color: var(--verde-mint); font-size: 9px; display: block; text-transform: uppercase; margin-top: -1px; font-weight: 700; letter-spacing: 0.05em; }
+    .preview-badge { background: var(--dorado); color: white; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+    .preview-body { padding: 24px; text-align: left; }
+    .preview-row { display: grid; grid-template-columns: 2fr 1fr 1.2fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .preview-field label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--texto3); display: block; margin-bottom: 6px; letter-spacing: 0.05em; }
+    .preview-field input { width: 100%; padding: 10px; font-size: 13px; font-weight: 600; border: 1.5px solid #E0DDD6; border-radius: 8px; background: #FAFAF8; color: var(--texto); outline: none; }
     
-    .preview-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--verde); color: white; padding: 8px 14px; border-radius: 7px; font-size: 11px; font-weight: 600; border: none; margin-bottom: 10px; }
-    
-    .preview-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; }
-    .preview-metric { background: #FAFAF8; border: 1px solid #E0DDD6; border-radius: 7px; padding: 9px; text-align: center; }
-    .preview-metric-label { font-size: 8px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--texto3); margin-bottom: 3px; }
-    .preview-metric-val { font-family: 'Fraunces', serif; font-size: 16px; color: var(--texto); }
+    .preview-audit { background: var(--dorado-suave); border: 1.5px solid rgba(196,148,58,0.2); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .preview-audit-icon { font-size: 24px; }
+    .preview-audit-text b { font-size: 14px; color: var(--dorado); display: block; }
+    .preview-audit-text p { font-size: 12px; color: var(--texto2); line-height: 1.4; }
+
+    .preview-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+    .preview-metric { background: #FAFAF8; border: 1px solid #E0DDD6; border-radius: 10px; padding: 12px 8px; text-align: center; }
+    .preview-metric-label { font-size: 9px; font-weight: 800; text-transform: uppercase; color: var(--texto3); margin-bottom: 4px; }
+    .preview-metric-val { font-family: 'Fraunces', serif; font-size: 18px; color: var(--texto); font-weight: 400; }
 
     /* DOLOR */
-    .dolor-section { padding: 6rem 2rem; background: var(--texto); text-align: center; }
+    .dolor-section { padding: 8rem 2rem; background: var(--texto); color: white; text-align: center; }
     .dolor-inner { max-width: 1000px; margin: 0 auto; }
-    .dolor-title { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 300; color: white; margin-bottom: 1.5rem; letter-spacing: -0.02em; line-height: 1.2; }
-    .dolor-title em { font-style: italic; color: #A8D5B5; }
-    .dolor-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3.5rem; }
-    .dolor-card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radio-lg); padding: 2rem; text-align: left; }
-    .dolor-card-num { font-family: 'Fraunces', serif; font-size: 2.4rem; font-weight: 300; color: var(--verde-mint); opacity: 0.3; margin-bottom: .5rem; line-height: 1; }
-    .dolor-card h3 { font-size: 1.1rem; font-weight: 600; color: white; margin-bottom: 0.75rem; }
-    .dolor-card p { font-size: .92rem; color: rgba(255,255,255,.5); line-height: 1.7; }
+    .dolor-title { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; margin-bottom: 2rem; letter-spacing: -0.02em; line-height: 1.1; }
+    .dolor-title em { font-style: italic; color: var(--verde-mint); }
+    .dolor-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; margin-top: 4rem; }
+    .dolor-card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radio-lg); padding: 2.5rem; text-align: left; }
+    .dolor-card-num { font-family: 'Fraunces', serif; font-size: 3rem; font-weight: 300; color: var(--dorado); opacity: 0.4; margin-bottom: 0.5rem; line-height: 1; }
+    .dolor-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: white; }
+    .dolor-card p { font-size: 1rem; color: rgba(255,255,255,.6); line-height: 1.6; }
 
     /* SECCIONES COMUNES */
-    .section { padding: 7rem 2rem; }
+    .section { padding: 8rem 2rem; }
     .section-inner { max-width: 1100px; margin: 0 auto; }
-    .section-tag { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--verde); margin-bottom: 1rem; }
-    .section-title { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; letter-spacing: -0.02em; line-height: 1.2; color: var(--texto); margin-bottom: 1rem; }
+    .section-tag { font-size: 13px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; color: var(--dorado); margin-bottom: 1.2rem; display: block; }
+    .section-title { font-family: 'Fraunces', serif; font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 300; letter-spacing: -0.02em; line-height: 1.1; color: var(--texto); margin-bottom: 1.5rem; }
     .section-title em { font-style: italic; color: var(--verde); }
-    .section-sub { font-size: 1.1rem; color: var(--texto2); max-width: 600px; line-height: 1.7; margin-bottom: 4rem; }
+    .section-sub { font-size: 1.2rem; color: var(--texto2); max-width: 700px; line-height: 1.6; margin-bottom: 5rem; }
 
-    .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 3rem; }
-    .step-num { width: 44px; height: 44px; border-radius: 50%; background: var(--verde); color: white; font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
-    .step h3 { font-size: 1.2rem; font-weight: 600; color: var(--texto); margin-bottom: 0.75rem; line-height: 1.3; }
-    .step p { font-size: .95rem; color: var(--texto2); line-height: 1.7; }
+    .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 4rem; }
+    .step-num { width: 50px; height: 50px; border-radius: 50%; background: var(--verde); color: white; font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; box-shadow: 0 8px 20px rgba(30,77,43,0.25); }
+    .step h3 { font-size: 1.4rem; font-weight: 700; color: var(--texto); margin-bottom: 1rem; line-height: 1.2; }
+    .step p { font-size: 1.05rem; color: var(--texto2); line-height: 1.6; }
 
-    /* EJEMPLO REAL */
-    .ejemplo-section { background: var(--crema-oscura); padding: 7rem 2rem; }
-    .ejemplo-card { max-width: 680px; margin: 0 auto; background: var(--blanco); border-radius: var(--radio-lg); border: 1px solid #E0DDD6; padding: 2.5rem; box-shadow: 0 8px 32px rgba(0,0,0,0.05); }
-    .ejemplo-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--texto3); margin-bottom: 1.25rem; }
-    .ejemplo-row { display: flex; align-items: center; justify-content: space-between; padding: .85rem 0; border-bottom: 1px solid #F0EDE4; }
-    .ejemplo-row:last-of-type { border-bottom: none; }
-    .ejemplo-label { font-size: .95rem; color: var(--texto2); }
-    .ejemplo-val { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 400; }
-    .ejemplo-val.malo { color: var(--rojo); font-weight: 600; }
-
-    .audit-example { margin-top: 1.5rem; border-radius: var(--radio); padding: 1.5rem; display: flex; align-items: center; gap: 16px; text-align: left; }
-    .audit-example.warning { background: var(--rojo-suave); border: 1px solid rgba(220,38,38,0.1); color: var(--rojo); }
-    .audit-example p { font-size: .95rem; line-height: 1.5; color: var(--texto); }
-
-    /* FEATURES */
-    .features-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem; }
-    .feature-card { background: var(--blanco); border: 1px solid #E8E5DE; border-radius: var(--radio-lg); padding: 2rem; transition: all .2s; }
-    .feature-card:hover { border-color: var(--verde-mint); box-shadow: 0 12px 40px rgba(30,77,43,0.08); transform: translateY(-3px); }
-    .feature-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--verde-suave); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
-    .feature-icon svg { width: 22px; height: 22px; color: var(--verde); }
-    .feature-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: .5rem; color: var(--texto); }
-    .feature-card p { font-size: .95rem; color: var(--texto2); line-height: 1.7; }
+    /* FEATURES GRID */
+    .features-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 2rem; }
+    .feature-card { background: var(--blanco); border: 1.5px solid #E8E5DE; border-radius: var(--radio-lg); padding: 3rem; transition: all .3s cubic-bezier(.4,0,.2,1); }
+    .feature-card:hover { border-color: var(--verde); box-shadow: 0 20px 50px rgba(30,77,43,0.1); transform: translateY(-5px); }
+    .feature-icon { width: 56px; height: 56px; border-radius: 14px; background: var(--verde-suave); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
+    .feature-icon svg { width: 28px; height: 28px; color: var(--verde); }
+    .feature-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--texto); }
+    .feature-card p { font-size: 1rem; color: var(--texto2); line-height: 1.6; }
 
     /* PRICING */
-    .pricing-section { background: var(--verde); padding: 7rem 2rem; color: white; text-align: center; }
-    .pricing-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 760px; margin: 3rem auto; }
-    .pricing-card { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: var(--radio-lg); padding: 2.5rem; text-align: left; position: relative; }
-    .pricing-card.destacado { background: white; color: var(--texto); border-color: white; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-    .pricing-label { position: absolute; top: -12px; right: 20px; background: var(--dorado); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-    .pricing-card.destacado .pricing-price { color: var(--verde); }
-    .pricing-price { font-family: 'Fraunces', serif; font-size: 3.2rem; font-weight: 300; line-height: 1; margin: 0.75rem 0; }
-    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: .75rem; margin-bottom: 2rem; }
-    .pricing-feature { display: flex; align-items: center; gap: 10px; font-size: 14px; }
-    .pricing-feature svg { width: 16px; height: 16px; color: var(--verde-mint); flex-shrink: 0; }
+    .pricing-section { background: var(--verde); padding: 8rem 2rem; color: white; text-align: center; }
+    .pricing-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 860px; margin: 4rem auto; }
+    .pricing-card { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: var(--radio-lg); padding: 3.5rem 2.5rem; text-align: left; position: relative; }
+    .pricing-card.destacado { background: white; color: var(--texto); border-color: white; box-shadow: 0 30px 80px rgba(0,0,0,0.3); transform: scale(1.05); }
+    .pricing-label { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--dorado); color: white; padding: 6px 18px; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase; white-space: nowrap; }
+    .pricing-price { font-family: 'Fraunces', serif; font-size: 4rem; font-weight: 300; line-height: 1; margin: 1rem 0; }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; }
+    .pricing-feature { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 500; }
+    .pricing-feature svg { width: 18px; height: 18px; color: var(--verde-mint); flex-shrink: 0; }
     .pricing-card.destacado .pricing-feature svg { color: var(--verde); }
-    .pricing-btn { display: block; text-align: center; text-decoration: none; padding: 14px; border-radius: var(--radio); font-size: 15px; font-weight: 700; background: rgba(255,255,255,.12); color: white; transition: all .2s; }
+    .pricing-btn { display: block; text-align: center; text-decoration: none; padding: 18px; border-radius: var(--radio); font-size: 16px; font-weight: 800; background: rgba(255,255,255,.15); color: white; transition: all .2s; }
     .pricing-card.destacado .pricing-btn { background: var(--verde); color: white; }
 
     /* FAQ */
-    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
-    .faq-list { display: flex; flex-direction: column; gap: 1rem; }
-    .faq-item { background: var(--blanco); border: 1px solid #E8E5DE; border-radius: var(--radio); overflow: hidden; }
-    .faq-q { width: 100%; padding: 1.25rem 1.5rem; text-align: left; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 1rem; font-size: 1rem; font-weight: 600; color: var(--texto); font-family: 'Plus Jakarta Sans', sans-serif; }
-    .faq-q svg { width: 20px; height: 20px; color: var(--texto3); transition: transform .2s; }
-    .faq-item.open .faq-q svg { transform: rotate(45deg); }
-    .faq-a { display: none; padding: 0 1.5rem 1.25rem; font-size: .95rem; color: var(--texto2); line-height: 1.7; }
+    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .faq-list { display: flex; flex-direction: column; gap: 1.25rem; }
+    .faq-item { background: var(--blanco); border: 1.5px solid #E8E5DE; border-radius: var(--radio); overflow: hidden; }
+    .faq-q { width: 100%; padding: 1.5rem; text-align: left; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 1rem; font-size: 1.1rem; font-weight: 700; color: var(--texto); font-family: inherit; }
+    .faq-q svg { width: 20px; height: 20px; color: var(--texto3); transition: transform .3s; }
+    .faq-item.open .faq-q svg { transform: rotate(45deg); color: var(--verde); }
+    .faq-a { display: none; padding: 0 1.5rem 1.5rem; font-size: 1rem; color: var(--texto2); line-height: 1.6; }
     .faq-item.open .faq-a { display: block; }
 
     /* CTA FINAL */
-    .cta-section { padding: 8rem 2rem; text-align: center; background: white; }
-    .cta-inner { max-width: 700px; margin: 0 auto; }
-    .cta-title { font-family: 'Fraunces', serif; font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 300; letter-spacing: -0.02em; color: var(--texto); margin-bottom: 1.5rem; line-height: 1.15; }
-    .cta-title em { font-style: italic; color: var(--verde); }
-    .cta-sub { font-size: 1.15rem; color: var(--texto2); margin-bottom: 3rem; line-height: 1.7; }
+    .cta-section { padding: 10rem 2rem; text-align: center; background: white; position: relative; }
+    .cta-inner { max-width: 800px; margin: 0 auto; }
+    .cta-title { font-family: 'Fraunces', serif; font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 300; color: var(--texto); margin-bottom: 2rem; line-height: 1; }
+    .cta-sub { font-size: 1.3rem; color: var(--texto2); margin-bottom: 3.5rem; }
 
     /* FOOTER */
-    footer { background: var(--texto); padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; gap: 2rem; border-top: 1px solid rgba(255,255,255,0.05); }
-    .footer-top { width: 100%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
-    .footer-logo { font-family: 'Fraunces', serif; font-size: 22px; color: white; font-weight: 600; }
-    
-    .footer-links { display: flex; gap: 1.5rem; align-items: center; }
-    .footer-links a { font-size: 14px; color: rgba(255,255,255,.5); text-decoration: none; transition: color 0.2s; }
+    footer { background: var(--texto); padding: 5rem 2rem; color: rgba(255,255,255,0.5); }
+    .footer-top { width: 100%; max-width: 1100px; margin: 0 auto 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; }
+    .footer-logo { font-family: 'Fraunces', serif; font-size: 24px; color: white; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    .footer-links { display: flex; gap: 2rem; align-items: center; }
+    .footer-links a { font-size: 14px; color: inherit; text-decoration: none; transition: color 0.2s; }
     .footer-links a:hover { color: white; }
-    .footer-sep { color: rgba(255,255,255,0.2); font-size: 12px; }
-    
-    .footer-copy { font-size: 13px; color: rgba(255,255,255,.3); text-align: center; }
+    .footer-copy { text-align: center; font-size: 13px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 2rem; width: 100%; max-width: 1100px; margin: 0 auto; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { opacity: 0; }
+    .fade-up.visible { animation: fadeUp .6s ease both; }
 
     @media(max-width:768px) {
       .nav-links { display: none; }
       .hero h1 { font-size: 2.8rem; }
-      .hero-bullets { flex-direction: column; align-items: center; gap: 10px; }
+      .hero-bullets { flex-direction: column; align-items: center; gap: 12px; }
       .dolor-grid, .steps, .pricing-cards, .faq-grid { grid-template-columns: 1fr; gap: 2rem; }
       .features-grid { grid-template-columns: 1fr; }
-      .preview-row, .preview-metrics { grid-template-columns: repeat(2, 1fr); }
-      .footer-top { flex-direction: column; text-align: center; }
+      .preview-row { grid-template-columns: 1fr 1fr; }
+      .preview-metrics { grid-template-columns: 1fr 1fr; }
+      .pricing-card.destacado { transform: scale(1); margin: 1rem 0; }
     }
   </style>
 </head>
 <body>
 
 <nav>
-<a href="/" class="nav-logo" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
-  <div class="nav-logo-icon" style="width:34px;height:34px;background:linear-gradient(135deg, var(--dorado, #C4943A) 0%, #E6B755 100%);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 10px rgba(196,148,58,0.25);">
+<a href="/" class="nav-logo">
+  <div class="nav-logo-icon">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1A1916" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M22 17H2a1 1 0 0 0 0 2h20a1 1 0 0 0 0-2Z"></path>
       <path d="M4 17a8 8 0 0 1 16 0H4Z"></path>
@@ -293,62 +280,69 @@
     </svg>
   </div>
   <div style="display:flex; flex-direction:column;">
-    <span class="nav-logo-text" style="font-family:'Fraunces', serif; font-size:18px; color:var(--texto, #1A1916); font-weight:600; letter-spacing:-0.02em; line-height:1.1;">QuantiChef</span>
-    <span style="font-family:'Plus Jakarta Sans', sans-serif; font-size:9px; color:var(--dorado, #C4943A); letter-spacing:0.12em; text-transform:uppercase; font-weight:700; margin-top:2px;">Cocina Rentable</span>
+    <span class="nav-logo-text">QuantiChef</span>
+    <span style="font-family:'Plus Jakarta Sans', sans-serif; font-size:9px; color:var(--dorado); letter-spacing:0.12em; text-transform:uppercase; font-weight:700; margin-top:2px;">Cocina Rentable</span>
   </div>
 </a>
   <div class="nav-links">
     <a href="#como-funciona">Cómo funciona</a>
-    <a href="#funcionalidades">Funcionalidades</a>
-    <a href="#precios">Precios</a>
-    <a href="#faq">FAQ</a>
+    <a href="#funcionalidades">Herramientas</a>
+    <a href="#precios">Inversión</a>
+    <a href="#faq">Dudas</a>
   </div>
   <div class="nav-btns">
     <a href="/login" class="nav-login">Acceder</a>
-    <a href="/login" class="nav-cta">Probar gratis</a>
+    <a href="/login" class="nav-cta">Escandallar mi carta</a>
   </div>
 </nav>
 
 <section class="hero">
   <div class="hero-eyebrow">
-    <span class="hero-eyebrow-dot"></span>
-    Gestión inteligente de costes
+    Auditores de rentabilidad 24/7
   </div>
-  <h1>El único software que escandalla toda tu carta <em>pegando una URL.</em></h1>
-  <p class="hero-sub">Pega la URL de tu menú digital o sube la factura de tu proveedor. QuantiChef extrae los datos y analiza la rentabilidad de cada plato al instante.</p>
+  <h1>Convierte tu carta digital en una <em>máquina de generar beneficio.</em></h1>
+  <p class="hero-sub">No más Excels obsoletos. Pega la URL de tu menú o sube una foto de tu factura. QuantiChef audita tus márgenes en tiempo real y te avisa cuando dejas de ganar dinero.</p>
   
   <div class="hero-cta-wrap">
     <a href="/login" class="btn-primary">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Importar carta y probar gratis
+      Escandallar toda mi carta por URL
     </a>
-    <a href="#como-funciona" class="btn-secondary">Ver cómo extrae los datos</a>
+    <a href="#como-funciona" class="btn-secondary">Ver cómo funciona la IA</a>
   </div>
 
   <div class="hero-bullets">
-    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Importación de carta digital por URL</span>
-    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Extracción desde fotos de albarán, PDFs o csv</span>
-    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Alertas automáticas de rentabilidad</span>
+    <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Importación instantánea por URL</span>
+    <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Auditoría de márgenes con Semáforo</span>
+    <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Escaneo de Alérgenos por foto</span>
   </div>
 
   <div class="hero-preview">
     <div class="preview-bar">
-      <div class="preview-logo-text">QuantiChef<small>escandallo inteligente</small></div>
-      <div class="preview-badge">Demo en vivo</div>
+      <div class="preview-logo-text">QuantiChef<small>Auditor de cocina</small></div>
+      <div class="preview-badge">Inteligencia Real</div>
     </div>
     <div class="preview-body">
       <div class="preview-row">
-        <div class="preview-field"><label>Plato</label><input value="Entrecot madurado" readonly></div>
+        <div class="preview-field"><label>Plato detectado</label><input value="Presa Ibérica con Idiazábal" readonly></div>
         <div class="preview-field"><label>Raciones</label><input value="1" readonly></div>
-        <div class="preview-field"><label>Precio Carta</label><input value="22,50 €" readonly></div>
-        <div class="preview-field"><label>Food Cost Obj.</label><input value="30%" readonly></div>
+        <div class="preview-field"><label>Precio Real</label><input value="24,50 €" readonly></div>
+        <div class="preview-field"><label>Food Cost</label><input value="32.4%" readonly></div>
       </div>
-      <div class="preview-btn">✓ Albarán detectado: Distribuciones S&H</div>
+      
+      <div class="preview-audit">
+        <div class="preview-audit-icon">💡</div>
+        <div class="preview-audit-text">
+          <b>Plato rentable con potencial de mejora</b>
+          <p>Tu coste ha subido un 4%. Podrías vender este plato a 26,00€ para mantener tu beneficio neto del 20%.</p>
+        </div>
+      </div>
+
       <div class="preview-metrics">
-        <div class="preview-metric"><div class="preview-metric-label">Coste Anterior</div><div class="preview-metric-val">6,10 €</div></div>
-        <div class="preview-metric" style="background:var(--rojo-suave); border-color:var(--rojo)"><div class="preview-metric-label" style="color:var(--rojo)">Coste Actual</div><div class="preview-metric-val" style="color:var(--rojo)">7,45 €</div></div>
-        <div class="preview-metric"><div class="preview-metric-label">Margen Real</div><div class="preview-metric-val" style="color:var(--rojo)">66.8%</div></div>
-        <div class="preview-metric"><div class="preview-metric-label">PVP Sugerido</div><div class="preview-metric-val" style="color:var(--verde)">24,80 €</div></div>
+        <div class="preview-metric"><div class="preview-metric-label">Coste Ración</div><div class="preview-metric-val">7,94 €</div></div>
+        <div class="preview-metric"><div class="preview-metric-label">Beneficio ración</div><div class="preview-metric-val" style="color:var(--verde)">+16,56 €</div></div>
+        <div class="preview-metric" style="border-color:var(--dorado)"><div class="preview-metric-label" style="color:var(--dorado)">PVP Objetivo</div><div class="preview-metric-val" style="color:var(--dorado)">26,00 €</div></div>
+        <div class="preview-metric"><div class="preview-metric-label">Alérgenos</div><div class="preview-metric-val" style="font-size:11px; font-weight:700;">Lácteos, Carne</div></div>
       </div>
     </div>
   </div>
@@ -356,22 +350,22 @@
 
 <section class="dolor-section">
   <div class="dolor-inner">
-    <h2 class="dolor-title fade-up">Hacer un escandallo en Excel es fácil. <em>Mantenerlo al día es imposible.</em></h2>
+    <h2 class="dolor-title fade-up">El mercado sube precios cada semana.<br><em>¿Tu carta se ha quedado congelada?</em></h2>
     <div class="dolor-grid">
       <div class="dolor-card fade-up">
         <div class="dolor-card-num">01</div>
-        <h3>Horas perdidas picando datos</h3>
-        <p>Pasas tus ratos libres escribiendo precios de facturas arrugadas en una hoja de cálculo que queda obsoleta mañana.</p>
+        <h3>Márgenes que se esfuman</h3>
+        <p>Ese plato que era tu "estrella" hoy te está haciendo perder dinero porque el aceite, la luz o el solomillo han subido y no lo has visto.</p>
       </div>
       <div class="dolor-card fade-up">
         <div class="dolor-card-num">02</div>
-        <h3>Márgenes que desaparecen</h3>
-        <p>Un plato rentable ayer te da pérdidas hoy porque el proveedor ha subido precios y no tienes tiempo de recalcularlo.</p>
+        <h3>El cementerio de tickets</h3>
+        <p>Tienes facturas acumuladas que nunca pasas al Excel. Pierdes horas de vida picando datos que mañana ya no servirán.</p>
       </div>
       <div class="dolor-card fade-up">
         <div class="dolor-card-num">03</div>
-        <h3>Miedo a subir precios</h3>
-        <p>No ajustas tu carta por miedo a perder clientes, cuando la realidad es que podrías estar pagando por trabajar.</p>
+        <h3>Miedo a subir el precio</h3>
+        <p>Dudas si subir un euro porque no sabes si es necesario. Con QuantiChef, los datos te dan la seguridad de que estás cobrando lo justo.</p>
       </div>
     </div>
   </div>
@@ -379,45 +373,23 @@
 
 <section class="section" id="como-funciona">
   <div class="section-inner">
-    <p class="section-tag fade-up">Flujo de trabajo</p>
-    <h2 class="section-title fade-up">Del menú a tu beneficio <em>en 3 pasos automáticos</em></h2>
+    <p class="section-tag fade-up">Tu nuevo flujo de trabajo</p>
+    <h2 class="section-title fade-up">De una foto a un negocio <em>100% rentable</em></h2>
     <div class="steps">
       <div class="step fade-up">
         <div class="step-num">1</div>
-        <h3>Importa tu Carta (URL)</h3>
-        <p>Pega la <strong>URL de tu menú digital</strong>. QuantiChef extrae automáticamente todos tus platos y precios de venta. <strong style="color:var(--verde)">(Función PRO)</strong></p>
+        <h3>Vuelca tu carta</h3>
+        <p>Pega el enlace de tu menú online. Nuestra IA crea todos tus platos y precios en segundos. Sin teclear una sola palabra.</p>
       </div>
       <div class="step fade-up">
         <div class="step-num">2</div>
-        <h3>Sube tus Albaranes</h3>
-        <p>Sube una foto o PDF. Nuestra IA extrae los ingredientes y actualiza tus costes base sin picar datos a mano.</p>
+        <h3>Dispara al ticket</h3>
+        <p>Haz una foto a la factura del proveedor. QuantiChef extrae los precios y actualiza el coste de todos tus platos afectados automáticamente.</p>
       </div>
       <div class="step fade-up">
         <div class="step-num">3</div>
-        <h3>Rentabilidad Instantánea</h3>
-        <p>Al cruzar tu carta con tus facturas, recibirás alertas rojas instantáneas si un plato deja de ser rentable.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="ejemplo-section">
-  <div class="section-inner">
-    <p class="section-tag fade-up" style="text-align:center">Caso Real</p>
-    <h2 class="section-title fade-up" style="text-align:center;margin-bottom:.5rem">Lo que no mides, <em>te lo cobra el mercado</em></h2>
-    <p class="section-sub fade-up" style="text-align:center;margin:0 auto 3rem">Mismo plato. Mismo precio de venta. Margen invisible.</p>
-    <div class="ejemplo-card fade-up">
-      <div class="ejemplo-title">Bacalao Confitado — PVP 18,50 €</div>
-      <div class="ejemplo-row"><span class="ejemplo-label">Coste Ingredientes (Enero)</span><span class="ejemplo-val">5,20 €</span></div>
-      <div class="ejemplo-row"><span class="ejemplo-label">Coste Ingredientes (Hoy tras subidas)</span><span class="ejemplo-val malo">6,95 €</span></div>
-      <div class="ejemplo-row"><span><strong>Pérdida de margen neto por ración</strong></span><span class="ejemplo-val malo"><strong>- 1,75 €</strong></span></div>
-      
-      <div class="audit-example warning">
-        <div style="font-size:24px">⚠️</div>
-        <div>
-          <div style="font-weight:700">Rentabilidad en peligro</div>
-          <p>Has perdido un 10% de beneficio sin darte cuenta. QuantiChef te lo muestra al instante al subir el albarán.</p>
-        </div>
+        <h3>Toma decisiones</h3>
+        <p>Recibe alertas automáticas. Sabrás qué platos generan oro, cuáles tienen potencial y cuáles tienes que cambiar hoy mismo.</p>
       </div>
     </div>
   </div>
@@ -425,28 +397,28 @@
 
 <section class="section" id="funcionalidades">
   <div class="section-inner">
-    <p class="section-tag fade-up">Herramientas Operativas</p>
-    <h2 class="section-title fade-up">Todo lo que necesitas para dominar <em>tu Food Cost</em></h2>
+    <p class="section-tag fade-up">Tecnología de Vanguardia</p>
+    <h2 class="section-title fade-up">Diseñado para la vida <em>dentro de una cocina</em></h2>
     <div class="features-grid">
       <div class="feature-card fade-up">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-        <h3>Alertas de Rentabilidad</h3>
-        <p>Si tu proveedor sube el precio de la patata, el sistema recalcula tus platos y te lanza una alerta roja si el margen cae. Nunca más venderás a pérdidas.</p>
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></div>
+        <h3>Sub-recetas y Producciones</h3>
+        <p>¿Haces tu propia masa o salsa base? Escandállala una vez y úsala como ingrediente en otros platos. El coste se anida solo.</p>
       </div>
       <div class="feature-card fade-up">
         <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
-        <h3>Lectura OCR Inteligente</h3>
-        <p>Olvídate de teclear precios. Sincroniza las tarifas de tus proveedores directamente desde sus facturas y albaranes con una simple foto.</p>
+        <h3>Cámara de Alérgenos</h3>
+        <p>Saca una foto a la etiqueta de cualquier producto. Nuestra IA detecta los alérgenos y marca la ficha técnica por ti. Seguridad legal sin esfuerzo.</p>
       </div>
       <div class="feature-card fade-up">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg></div>
-        <h3>Mermas y Porcionado</h3>
-        <p>Calcula el coste real del producto útil. El desperdicio al limpiar carnes o pescados ya no será un coste oculto que no controlas.</p>
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></div>
+        <h3>Márgenes Netos Reales</h3>
+        <p>No te conformes con el Food Cost. Introduce tu objetivo de beneficio neto y QuantiChef te dirá a cuánto DEBERÍAS vender para que el negocio sea sano.</p>
       </div>
       <div class="feature-card fade-up">
         <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
-        <h3>Fichas Técnicas PDF</h3>
-        <p>Exporta recetas profesionales con fotos y procesos para que tu equipo cocine siempre con la misma precisión y rentabilidad.</p>
+        <h3>Fichas Técnicas Pro</h3>
+        <p>Exporta PDFs con fotos, pasos y costes para que tu equipo cocine siempre igual. La consistencia es el secreto de la rentabilidad.</p>
       </div>
     </div>
   </div>
@@ -454,37 +426,38 @@
 
 <section class="pricing-section" id="precios">
   <div class="pricing-inner">
-    <p class="section-tag fade-up" style="color:var(--verde-mint)">Inversión</p>
-    <h2 class="section-title fade-up" style="color:white">Recuperas la cuota con el primer plato que corrijas</h2>
+    <p class="section-tag fade-up" style="color:var(--verde-mint)">Control total</p>
+    <h2 class="section-title fade-up" style="color:white">Un precio ridículo para el dinero que vas a salvar</h2>
     <p class="section-sub fade-up" style="color:rgba(255,255,255,0.7); text-align:center; margin:0 auto 3rem; max-width:600px;">
-      Todas las funcionalidades premium incluidas. Elige solo cómo prefieres pagarlo.
+      Acceso completo a todas las funciones inteligentes desde el primer día.
     </p>
 
     <div class="pricing-cards">
       <div class="pricing-card fade-up">
-        <p style="font-size:12px; opacity:0.7; font-weight:600; text-transform:uppercase; letter-spacing:1px;">Pago Mensual</p>
+        <p style="font-size:12px; opacity:0.8; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Plan Flexible</p>
         <div class="pricing-price">39€<span style="font-size:1rem; font-family:'Plus Jakarta Sans', sans-serif; font-weight:400; opacity:0.7">/mes</span></div>
-        <p style="font-size:13px; color:rgba(255,255,255,0.6); margin-bottom:1.5rem;">Sin permanencia. Cancela cuando quieras.</p>
+        <p style="font-size:14px; color:rgba(255,255,255,0.6); margin-bottom:2rem;">Ideal para controlar el día a día sin ataduras. Cancela cuando quieras.</p>
         
         <ul class="pricing-features">
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Escandallos y mermas ilimitados</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Lectura OCR de albaranes y facturas</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><strong>Extracción de Carta Digital por URL</strong></li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Alertas de pérdida de margen</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Escandallos e IA ilimitados</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Lectura OCR de facturas</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Importación por URL</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Alertas de rentabilidad</li>
         </ul>
-        <a href="/login" class="pricing-btn">Empezar 3 días gratis</a>
+        <a href="/login" class="pricing-btn">Empezar ahora</a>
       </div>
 
       <div class="pricing-card destacado fade-up">
-        <div class="pricing-label">3 meses gratis</div>
-        <p style="font-size:12px; color:var(--texto3); font-weight:600; text-transform:uppercase; letter-spacing:1px;">Pago Anual</p>
+        <div class="pricing-label">Ahorras 119€ al año</div>
+        <p style="font-size:12px; color:var(--texto3); font-weight:800; text-transform:uppercase; letter-spacing:1px;">Plan Cocina Rentable</p>
         <div class="pricing-price">349€<span style="font-size:1rem; font-family:'Plus Jakarta Sans', sans-serif; font-weight:400; color:var(--texto3)">/año</span></div>
-        <p style="font-size:13px; color:var(--verde); font-weight:600; margin-bottom:1.5rem;">Ahorras 119€ al año (Te sale a 29€/mes)</p>
+        <p style="font-size:14px; color:var(--verde); font-weight:700; margin-bottom:2rem;">El plan favorito de los restaurantes que crecen. (29€/mes)</p>
         
         <ul class="pricing-features">
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Todo el software sin restricciones</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Exportación de fichas técnicas</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Actualizaciones automáticas</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Todo el software incluido</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Actualizaciones prioritarias</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Exportación ilimitada de PDF</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Soporte personalizado</li>
         </ul>
         <a href="/login" class="pricing-btn">Activar plan anual</a>
       </div>
@@ -497,24 +470,24 @@
     <div class="faq-grid">
       <div>
         <p class="section-tag fade-up">Resolviendo dudas</p>
-        <h2 class="section-title fade-up">Preguntas<br>Frecuentes</h2>
+        <h2 class="section-title fade-up">Hablamos el idioma<br>de la hostelería</h2>
       </div>
       <div class="faq-list fade-up">
         <div class="faq-item">
           <button class="faq-q" onclick="toggleFaq(this)">¿Tengo que meter todos mis precios a mano? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
-          <div class="faq-a">No. Solo tienes que hacerle una foto a tu albarán o subir el PDF. El sistema lee los ingredientes y actualiza los precios base por ti para ese escandallo.</div>
+          <div class="faq-a">No. Esa es la magia de QuantiChef. Hazle una foto al albarán y el sistema lee los productos y actualiza los precios base por ti.</div>
         </div>
         <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">¿Sirve si mis ingredientes tienen mucha merma? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
-          <div class="faq-a">Por supuesto. QuantiChef incluye cálculo de mermas para que el coste refleje el producto útil real tras limpiar carnes o pescados.</div>
+          <button class="faq-q" onclick="toggleFaq(this)">¿Cómo funciona la importación por URL? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a">Simplemente pega el enlace de tu carta digital (o la de tu competencia). Nuestra IA leerá los nombres de los platos y sus precios de venta para que no tengas que crearlos uno a uno.</div>
         </div>
         <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">¿Puedo imprimir las fichas para cocina? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
-          <div class="faq-a">Sí. Con un clic exportas Fichas Técnicas limpias en PDF, ideales para que tu equipo cocine siempre con las mismas cantidades.</div>
+          <button class="faq-q" onclick="toggleFaq(this)">¿Es seguro usar IA para mi negocio? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a">Totalmente. La IA solo se encarga de leer los datos de tus fotos y organizarlos. Tú siempre tienes el control final para validar o corregir cualquier cantidad.</div>
         </div>
         <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">¿Es difícil de usar? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
-          <div class="faq-a">Si sabes mandar un WhatsApp, sabes usar QuantiChef. Está diseñado por hosteleros para hosteleros, sin complicaciones técnicas.</div>
+          <button class="faq-q" onclick="toggleFaq(this)">¿Puedo gestionar mis salsas y masas base? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a">Sí. Con la función de Sub-recetas puedes crear un escandallo para una producción grande y luego añadir "1 ración" de esa receta como ingrediente en otros platos.</div>
         </div>
       </div>
     </div>
@@ -523,24 +496,27 @@
 
 <section class="cta-section">
   <div class="cta-inner">
-    <h2 class="cta-title fade-up">Tu carta puede estar perdiendo dinero <em>ahora mismo.</em></h2>
-    <p class="cta-sub fade-up">No necesitas vender más. Necesitas calcular mejor. Toma el control de tu beneficio en menos de 2 minutos.</p>
-    <a href="/login" class="btn-primary fade-up">Calcular mi primer plato gratis</a>
+    <h2 class="cta-title fade-up">Si no mides tus costes,<br><em>estás trabajando para el mercado.</em></h2>
+    <p class="cta-sub fade-up">Toma el control de tu beneficio hoy mismo. Empieza a escandallar tu carta gratis.</p>
+    <a href="/login" class="btn-primary fade-up" style="padding: 20px 45px; font-size: 18px;">Probar QuantiChef gratis</a>
   </div>
 </section>
 
 <footer>
   <div class="footer-top">
-    <div class="footer-logo">QuantiChef</div>
+    <div class="footer-logo">
+      <div style="width:28px;height:28px;background:var(--dorado);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M22 17H2a1 1 0 0 0 0 2h20a1 1 0 0 0 0-2Z"></path><path d="M4 17a8 8 0 0 1 16 0H4Z"></path><circle cx="12" cy="5" r="1.5"></circle></svg>
+      </div>
+      QuantiChef
+    </div>
     <div class="footer-links">
-      <a href="/">Inicio</a>
-      <span class="footer-sep">·</span>
-      <a href="/legal">Aviso Legal</a>
-      <span class="footer-sep">·</span>
-      <a href="mailto:hola@quantichef.com">Contacto</a>
+      <a href="#como-funciona">Metodología</a>
+      <a href="/legal">Privacidad</a>
+      <a href="mailto:hola@quantichef.com">Soporte</a>
     </div>
   </div>
-  <div class="footer-copy">© 2026 QuantiChef · Herramientas de precisión para la hostelería real</div>
+  <div class="footer-copy">© 2026 QuantiChef · Tecnología para la rentabilidad hostelera real.</div>
 </footer>
 
 <script>
