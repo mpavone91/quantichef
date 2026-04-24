@@ -139,6 +139,10 @@
   .btn-del:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
   .btn-add-manual{width:100%;padding:9px;border:1px dashed var(--border);border-radius:8px;background:none;color:var(--text2);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .15s;margin-top:4px}
   .btn-add-manual:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+  
+  .price-wrap { position: relative; display: flex; align-items: center; }
+  .price-wrap input { padding-right: 22px !important; width: 100%; }
+  .price-symbol { position: absolute; right: 8px; font-size: 13px; color: var(--text3); pointer-events: none; font-weight: 600; }
 
   /* AI */
   .ai-row{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
@@ -321,6 +325,19 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modal-subrecetas" onclick="hideSubrecetasModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-icon" style="background:var(--accent-light); color:var(--accent);">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg>
+    </div>
+    <h3>Añadir Sub-receta</h3>
+    <p>Selecciona una preparación previa para añadirla como ingrediente a este plato.</p>
+    <div id="lista-subrecetas" style="max-height: 250px; overflow-y: auto; text-align: left; margin-bottom: 15px; display:flex; flex-direction:column; gap:8px;">
+      </div>
+    <button onclick="hideSubrecetasModal()" style="background:none; border:none; color:var(--text3); font-size:13px; font-weight:600; cursor:pointer; text-decoration:underline;">Cancelar</button>
+  </div>
+</div>
+
 <div class="container">
 
   <div class="import-upsell-banner" id="import-upsell-banner">
@@ -402,7 +419,13 @@
       <span></span>
     </div>
     <div id="ingredientes"></div>
-    <button class="btn-add-manual" onclick="addIng()">+ Añadir ingrediente manualmente</button>
+    <div style="display:flex; gap:8px; margin-top:8px;">
+      <button class="btn-add-manual" style="flex:1; margin-top:0;" onclick="addIng()">+ Añadir ingrediente</button>
+      <button class="btn-add-manual" id="btn-add-sub" style="flex:1; margin-top:0; border-color:var(--gold); color:var(--warn); background:var(--gold-light);" onclick="abrirModalSubrecetas()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px; margin-top:-2px;"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg>
+        Añadir sub-receta
+      </button>
+    </div>
     <p class="hint" id="merma-hint" style="display:none">Con mermas activas: coste = cantidad bruta real × precio (cantidad útil ÷ (1 − merma%)).</p>
     <p class="hint">Calcula automáticamente o añade manualmente. Edita los precios con los de tu proveedor real.</p>
   </div>
@@ -651,7 +674,7 @@ function renderIngs(){
     const x=v[i.id]||{n:i.n,q:i.q,u:i.u,p:i.p,m:i.m};
     const d=document.createElement('div');d.className='ing-row '+(mermasOn?'con-merma':'sin-merma');
     const mc=mermasOn?`<div class="merma-cell"><input type="number" class="merma-input" placeholder="0" min="0" max="99" step="1" id="m${i.id}" value="${x.m}" oninput="calcular()" onfocus="this.select()"><span class="merma-pct">%</span></div>`:'';
-    d.innerHTML=`<input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()" onfocus="this.select()"><input type="number" placeholder="0" min="0" step="0.001" id="q${i.id}" value="${x.q}" oninput="calcular()" onfocus="this.select()"><select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><input type="number" placeholder="0,00" min="0" step="0.01" id="p${i.id}" value="${x.p}" oninput="calcular()" onfocus="this.select()">${mc}<button class="btn-del" onclick="removeIng(${i.id})">×</button>`;
+    d.innerHTML=`<input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()" onfocus="this.select()"><input type="number" placeholder="0" min="0" step="0.001" id="q${i.id}" value="${x.q}" oninput="calcular()" onfocus="this.select()"><select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><div class="price-wrap"><input type="number" placeholder="0,00" min="0" step="0.01" id="p${i.id}" value="${x.p}" oninput="calcular()" onfocus="this.select()"><span class="price-symbol">€</span></div>${mc}<button class="btn-del" onclick="removeIng(${i.id})">×</button>`;
     c.appendChild(d);
   });calcular();
 }
@@ -1087,7 +1110,6 @@ async function guardarEscandallo(){
     return;
   }
   
-// --- INICIO TRIGGER EMAIL 5º ESCANDALLO ---
   if (!esPremium && !editId) { 
     const { count } = await sb.from('escandallos')
       .select('id', { count: 'exact', head: true })
@@ -1104,7 +1126,6 @@ async function guardarEscandallo(){
       }).catch(e => console.error("Error disparando email 5to plato:", e));
     }
   }
-  // --- FIN TRIGGER EMAIL ---
   
   sessionStorage.removeItem('qc_escandallo_editar');
   sessionStorage.setItem('qc_guardando', 'true');
@@ -1133,6 +1154,69 @@ window.addEventListener('beforeunload', function (e) {
     e.returnValue = '';
   }
 });
+
+let subrecetasDisponibles = [];
+
+async function abrirModalSubrecetas() {
+  const btn = document.getElementById('btn-add-sub');
+  const prevHtml = btn.innerHTML;
+  btn.innerHTML = '<span class="spinner-sm" style="border-color:var(--warn); border-top-color:transparent;"></span> Cargando...';
+  
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if(!session) return;
+    const { data: rest } = await sb.from('restaurantes').select('id').eq('user_id', session.user.id).single();
+    
+    const editData = sessionStorage.getItem('qc_escandallo_editar');
+    const editId = editData ? JSON.parse(editData).id : null;
+
+    let query = sb.from('escandallos').select('id, nombre_plato, coste_racion').eq('restaurante_id', rest.id);
+    if (editId) query = query.neq('id', editId); 
+
+    const { data, error } = await query;
+    if (!error && data) {
+      subrecetasDisponibles = data;
+    }
+
+    const lista = document.getElementById('lista-subrecetas');
+    lista.innerHTML = '';
+    
+    if (subrecetasDisponibles.length === 0) {
+      lista.innerHTML = '<p style="text-align:center; font-size:13px; color:var(--text3); padding: 1rem 0;">No tienes otras recetas guardadas aún.</p>';
+    } else {
+      subrecetasDisponibles.forEach(sr => {
+        const div = document.createElement('div');
+        div.style = "padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; background: #fff;";
+        div.innerHTML = `
+          <div>
+            <div style="font-weight:700; font-size:13px; color:var(--text)">${sr.nombre_plato}</div>
+            <div style="font-size:11px; color:var(--text3)">Coste: ${fmt(sr.coste_racion)} / ración</div>
+          </div>
+          <button style="background:var(--accent-light); color:var(--accent); border:1px solid rgba(30,77,43,0.2); padding:6px 12px; border-radius:6px; font-weight:700; font-size:12px; cursor:pointer;" onclick="seleccionarSubreceta('${sr.nombre_plato.replace(/'/g, "\\'")}', ${sr.coste_racion})">Añadir</button>
+        `;
+        lista.appendChild(div);
+      });
+    }
+    
+    document.getElementById('modal-subrecetas').classList.add('visible');
+  } catch (err) {
+    console.error(err);
+    alert('Error cargando sub-recetas');
+  } finally {
+    btn.innerHTML = prevHtml;
+  }
+}
+
+function seleccionarSubreceta(nombre, costeRacion) {
+  addIng('🔄 ' + nombre, 1, 'ración', costeRacion.toFixed(4), 0);
+  hideSubrecetasModal();
+}
+
+function hideSubrecetasModal(e) {
+  if (!e || e.target === document.getElementById('modal-subrecetas')) {
+    document.getElementById('modal-subrecetas').classList.remove('visible');
+  }
+}
 
 initAlergenos();
 const _editCheck=sessionStorage.getItem('qc_escandallo_editar');
