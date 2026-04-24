@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BBXNWHTD8Y"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBXNWHTD8Y"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -113,7 +112,6 @@
   .precio-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;display:flex;align-items:center;gap:10px;margin-bottom:6px}
   .precios-all { display: none; flex-direction: column; gap: 6px; margin-top: 6px; }
   .precios-all.visible { display: flex; }
-  /* Mismo estilo de botón "Ver más" para precios que para platos */
   .precios-toggle { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; background: none; border: 1px solid var(--border); padding: 12px; border-radius: 8px; width: 100%; text-align: center; display: block; transition: background 0.2s; font-family:'Plus Jakarta Sans',sans-serif; margin-top: .625rem; }
   .precios-toggle:hover { background: var(--surface2); }
 
@@ -454,15 +452,36 @@ async function cargarDatos(session){
 
 function fmt(n){return Number(n).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';}
 
+// ── CÁLCULO PROFESIONAL DE ESTADÍSTICAS ─────────────────────────────
 function renderStats(lista){
-  document.getElementById('stat-total').textContent=lista.length;
-  const fcs=lista.filter(e=>e.food_cost_pct>0).map(e=>e.food_cost_pct);
-  if(fcs.length>0)document.getElementById('stat-fc').textContent=Math.round(fcs.reduce((a,b)=>a+b,0)/fcs.length)+'%';
-  const conPrecio=lista.filter(e=>e.precio_venta>0);
-  if(conPrecio.length>0){
-    const top=conPrecio.reduce((a,b)=>((b.precio_venta-b.coste_racion)/b.precio_venta)>((a.precio_venta-a.coste_racion)/a.precio_venta)?b:a);
-    const margen=top.precio_venta>0?Math.round((top.precio_venta-top.coste_racion)/top.precio_venta*100):0;
-    document.getElementById('stat-top').textContent=margen+'%';
+  document.getElementById('stat-total').textContent = lista.length;
+  
+  // Solo contamos platos que tengan un precio de venta configurado para hacer la media real
+  const conPrecio = lista.filter(e => e.precio_venta > 0 && e.coste_racion > 0);
+  
+  if (conPrecio.length > 0) {
+    // Media real de negocio: Suma de todos los costes / Suma de todas las ventas
+    const costeTotal = conPrecio.reduce((acc, e) => acc + parseFloat(e.coste_racion), 0);
+    const ventaTotal = conPrecio.reduce((acc, e) => acc + parseFloat(e.precio_venta), 0);
+    const fcMedioReal = (costeTotal / ventaTotal) * 100;
+    
+    document.getElementById('stat-fc').textContent = fcMedioReal.toFixed(1) + '%';
+    
+    // Margen más alto
+    const top = conPrecio.reduce((a, b) => 
+      ((b.precio_venta - b.coste_racion) / b.precio_venta) > ((a.precio_venta - a.coste_racion) / a.precio_venta) ? b : a
+    );
+    const margenTop = ((top.precio_venta - top.coste_racion) / top.precio_venta) * 100;
+    document.getElementById('stat-top').textContent = margenTop.toFixed(1) + '%';
+  } else {
+    // Fallback: Si no ha puesto precios, hacemos la media de sus objetivos teóricos
+    const fcs = lista.filter(e => e.food_cost_pct > 0).map(e => e.food_cost_pct);
+    if (fcs.length > 0) {
+      document.getElementById('stat-fc').textContent = Math.round(fcs.reduce((a,b) => a+b, 0) / fcs.length) + '%';
+    } else {
+      document.getElementById('stat-fc').textContent = '—';
+    }
+    document.getElementById('stat-top').textContent = '—';
   }
 }
 
@@ -479,6 +498,11 @@ function renderLista(lista){
   const ocultos = lista.slice(maxVisible);
 
   const createCard = (e) => {
+    // Calculamos el FC real que se mostrará en la tarjeta principal
+    const fcCard = (e.precio_venta > 0 && e.coste_racion > 0) 
+      ? ((e.coste_racion / e.precio_venta) * 100).toFixed(1) 
+      : (e.food_cost_pct || 0);
+
     const card = document.createElement('div'); 
     card.className = 'escandallo-card';
     card.innerHTML = `
@@ -487,7 +511,7 @@ function renderLista(lista){
       </div>
       <div class="card-info">
         <div class="card-nombre">${e.nombre_plato}</div>
-        <div style="font-size:12px; color:var(--text3)">${e.categoria||'S/C'} · FC ${e.food_cost_pct}%</div>
+        <div style="font-size:12px; color:var(--text3)">${e.categoria||'S/C'} · FC ${fcCard}%</div>
       </div>
       <div class="card-metrics">
         <div class="card-metric"><div class="card-metric-val">${fmt(e.coste_racion)}</div><div style="font-size:9px; color:var(--text3)">coste</div></div>
@@ -600,7 +624,6 @@ async function eliminarUnico(id, evt){
   window.location.reload();
 }
 
-// CORRECCIÓN: RUTAS LIMPIAS (Producción)
 function nuevoEscandallo(){ sessionStorage.removeItem('qc_escandallo_editar'); window.location.href='/escandallo'; }
 function editarEscandallo(e){ sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(e)); window.location.href='/escandallo'; }
 async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login'; }
@@ -842,9 +865,9 @@ function togglePrecios(){
   btn.textContent = open ? 'Ver menos ▴' : `Ver ${el.children.length} más ▾`;
 }
 
-// ── RANKING DE RENTABILIDAD EXPANDIBLE ───────────────────────
+// ── RANKING DE RENTABILIDAD CON FC REAL ───────────────────────
 let rankingData = [];
-let rankingModo = 'margen'; // Margen € por defecto
+let rankingModo = 'margen'; 
 
 function setRankingTab(modo, btn) {
   rankingModo = modo;
@@ -876,24 +899,29 @@ function renderRanking() {
     return;
   }
 
+  // Ordenamos siempre usando el Food Cost Real para que sea infalible
   const sorted = [...conPrecio].sort((a, b) => {
-    if (rankingModo === 'fc') return (a.food_cost_pct || 0) - (b.food_cost_pct || 0);
+    if (rankingModo === 'fc') {
+      const fcA = (a.coste_racion / a.precio_venta) * 100;
+      const fcB = (b.coste_racion / b.precio_venta) * 100;
+      return fcA - fcB; 
+    }
     return (b.precio_venta - b.coste_racion) - (a.precio_venta - a.coste_racion);
   });
   
   const maxVal = rankingModo === 'fc'
-    ? Math.max(...sorted.map(p => p.food_cost_pct || 0))
+    ? Math.max(...sorted.map(p => (p.coste_racion / p.precio_venta) * 100))
     : Math.max(...sorted.map(p => p.precio_venta - p.coste_racion));
 
   const renderRow = (e, idx) => {
-    const fc = e.food_cost_pct || Math.round(e.coste_racion / e.precio_venta * 100);
+    const fc = (e.precio_venta > 0 && e.coste_racion > 0) ? (e.coste_racion / e.precio_venta) * 100 : (e.food_cost_pct || 0);
     const margen = e.precio_venta - e.coste_racion;
     const val = rankingModo === 'fc' ? fc : margen;
     const pct = maxVal > 0 ? Math.round((val / maxVal) * 100) : 0;
     const badge = getRankingBadge(fc);
     const color = getRankingColor(fc);
     const label = rankingModo === 'fc'
-      ? fc + '%'
+      ? fc.toFixed(1) + '%'
       : margen.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '€';
       
     return `
