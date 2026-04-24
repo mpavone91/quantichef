@@ -58,7 +58,7 @@
   .spinner-sm{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
 
   /* Layout */
-  .container{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
+  .container{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem}
   .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:.875rem}
   .card-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
   .card-title::after{content:'';flex:1;height:1px;background:var(--border)}
@@ -210,7 +210,6 @@
   .alg-dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:none}
   .alg.active .alg-dot{display:inline-block}
   .alg-list{margin-top:10px;padding:9px 13px;background:var(--warn-light);border-radius:8px;border:1px solid rgba(196,148,58,.3);display:none}
-  .alg-list.visible{display:block}
   .alg-list p{font-size:12px;font-weight:700;color:var(--warn)}
   .hint{font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5}
 
@@ -409,12 +408,17 @@
       <span></span>
     </div>
     <div id="ingredientes"></div>
-    <div style="display:flex; gap:8px; margin-top:8px;">
-      <button class="btn-add-manual" style="flex:1; margin-top:0;" onclick="addIng()">+ Añadir ingrediente</button>
-      <button class="btn-add-manual" id="btn-add-sub" style="flex:1; margin-top:0; border-color:var(--gold); color:var(--warn); background:var(--gold-light);" onclick="abrirModalSubrecetas()">
+    <div style="display:flex; gap:8px; margin-top:8px; flex-wrap: wrap;">
+      <button class="btn-add-manual" style="flex:1; min-width: 140px; margin-top:0;" onclick="addIng()">+ Añadir ingrediente</button>
+      <button class="btn-add-manual" id="btn-add-sub" style="flex:1; min-width: 140px; margin-top:0; border-color:var(--gold); color:var(--warn); background:var(--gold-light);" onclick="abrirModalSubrecetas()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px; margin-top:-2px;"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg>
-        Añadir sub-receta
+        Sub-receta
       </button>
+      <button class="btn-add-manual" id="btn-scan-label" style="flex:1; min-width: 140px; margin-top:0; border-color:var(--accent); color:var(--accent); background:var(--accent-light);" onclick="document.getElementById('scan-input').click()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px; margin-top:-2px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Escanear receta/etiqueta
+      </button>
+      <input type="file" id="scan-input" accept="image/*" style="display:none" onchange="handleLabelScan(event)">
     </div>
     <p class="hint" id="merma-hint" style="display:none">Con mermas activas: coste = cantidad bruta real × precio (cantidad útil ÷ (1 − merma%)).</p>
     <p class="hint">Calcula automáticamente o añade manualmente. Edita los precios con los de tu proveedor real.</p>
@@ -586,11 +590,9 @@ async function ejecutarImportacionUrl() {
     let result;
     try { result = await response.json(); } catch(e) { throw new Error("Error del servidor al leer la carta. Inténtalo de nuevo."); }
 
-    if (!response.ok) {
-      throw new Error(result.error || 'Error desconocido al importar.');
-    }
+    if (!response.ok) throw new Error(result.error || 'Error desconocido al importar.');
 
-    alert(`¡Éxito! Hemos importado ${result.cantidad} platos de tu carta. Vamos al panel para verlos.`);
+    alert(`¡Éxito! Hemos importado ${result.cantidad} platos de tu carta.`);
     window.location.href = '/dashboard';
 
   } catch (error) {
@@ -688,7 +690,6 @@ function calcular(){
 
   const por=tot/rac;
 
-  // Anclamos el Food Cost Objetivo (para evitar el bucle infinito)
   if (!sliderFc.hasAttribute('data-target')) sliderFc.setAttribute('data-target', '30');
   if (pCarta === 0) sliderFc.setAttribute('data-target', sliderFc.value);
   const targetFcPct = parseFloat(sliderFc.getAttribute('data-target')) || 30;
@@ -707,14 +708,9 @@ function calcular(){
   
   document.getElementById('val-neto').textContent=neto+'%';
 
-  // Usamos el targetFcPct anclado para calcular los precios ideales fijos
   const pvpMin = targetFcPct > 0 ? por / (targetFcPct / 100) : 0;
   const pvpRecomendado = targetFcPct > 0 && neto < 100 ? por / (targetFcPct / 100) / (1 - neto / 100) : 0;
   
-  // Mantenemos el cálculo del real para métricas
-  const currentPvpMin = fc > 0 ? por / (fc / 100) : 0;
-  const fcReal = currentPvpMin > 0 ? (por / currentPvpMin * 100) : 0;
-
   document.getElementById('m-coste').textContent=fmt(tot);
   document.getElementById('m-racion').textContent=fmt(por);
   document.getElementById('m-pvp').textContent=fmt(pCarta > 0 ? pCarta : pvpMin);
@@ -736,7 +732,7 @@ function calcular(){
     mNetoSub.textContent='+'+neto+'% beneficio neto';
     const expl=document.getElementById('precio-explicacion');
     expl.style.display='block';
-    expl.innerHTML=`<strong>Cómo se calcula el precio recomendado:</strong> Tu coste por ración es ${fmt(por)}. Con tu objetivo de food cost del ${targetFcPct.toFixed(1)}% el precio mínimo es ${fmt(pvpMin)}. Añadiendo un ${neto}% de beneficio neto sobre el precio de venta, el precio recomendado objetivo es <strong>${fmt(pvpRecomendado)}</strong>.`;
+    expl.innerHTML=`<strong>Cómo se calcula el precio recomendado:</strong> Tu coste por ración es ${fmt(por)}. Con un food cost objetivo del ${targetFcPct.toFixed(1)}% el precio mínimo es ${fmt(pvpMin)}. Con un ${neto}% de beneficio neto, el precio recomendado es <strong>${fmt(pvpRecomendado)}</strong>.`;
   } else if(!netoOn){
     mNeto.textContent='—';mNeto.className='metric-value gold';
     mNetoSub.textContent='activa margen neto';
@@ -751,53 +747,44 @@ function calcular(){
   const auditTitle = document.getElementById('audit-title');
   const auditDesc = document.getElementById('audit-desc');
   const auditIcon = document.getElementById('audit-icon');
-  const statusEl = document.getElementById('plato-status');
-
-  if(statusEl) statusEl.style.display = 'none';
 
   if (por > 0) {
     auditBox.style.display = 'flex';
-    
     if (pCarta > 0) {
       const targetPvp = (netoOn && pvpRecomendado > 0) ? pvpRecomendado : pvpMin;
-      const isExcelente = pCarta >= (targetPvp * 0.95); // 5% tolerance
+      const isExcelente = pCarta >= (targetPvp * 0.95);
 
       if (fc >= 40) { 
         auditBox.style.background = 'var(--danger-light)';
         auditBox.style.border = '1px solid rgba(139, 26, 26, 0.2)';
         auditTitle.style.color = 'var(--danger)';
-        auditDesc.style.color = 'var(--text2)';
         auditIcon.textContent = '🚨';
         auditTitle.textContent = 'Alerta: Coste de producto muy elevado';
-        auditDesc.innerHTML = `Tu coste es del <strong>${fc.toFixed(1)}%</strong>, lo que deja poco margen para cubrir gastos fijos. <br><span style="color:var(--danger); font-size:11px; font-weight:700;">💡 TIP: Sube el precio a ${fmt(targetPvp)}, busca alternativas para ingredientes clave, o revisa el número de raciones.</span>`;
+        auditDesc.innerHTML = `Tu coste es del <strong>${fc.toFixed(1)}%</strong>. <br><span style="color:var(--danger); font-size:11px; font-weight:700;">💡 TIP: Sube el precio a ${fmt(targetPvp)}, busca alternativas para ingredientes clave, o revisa las raciones.</span>`;
       } 
       else if (!isExcelente) { 
         auditBox.style.background = 'var(--gold-light)';
         auditBox.style.border = '1px solid rgba(196,148,58,.3)';
         auditTitle.style.color = 'var(--warn)';
-        auditDesc.style.color = 'var(--text2)';
         auditIcon.textContent = '💡';
         auditTitle.textContent = 'Plato rentable con potencial de mejora';
-        auditDesc.innerHTML = `Tienes un buen Food Cost (<strong>${fc.toFixed(1)}%</strong>). Sin embargo, según tu objetivo, este plato tiene potencial para venderse a <strong>${fmt(targetPvp)}</strong>. ¡Súbelo para maximizar tus ganancias!`;
+        auditDesc.innerHTML = `Tienes un buen Food Cost (<strong>${fc.toFixed(1)}%</strong>). Este plato tiene potencial para venderse a <strong>${fmt(targetPvp)}</strong>.`;
       } 
       else { 
         auditBox.style.background = 'var(--accent-light)';
         auditBox.style.border = '1px solid var(--accent-mint)';
         auditTitle.style.color = 'var(--accent)';
-        auditDesc.style.color = 'var(--text2)';
         auditIcon.textContent = '🏆';
         auditTitle.textContent = '¡Precio ideal alcanzado!';
-        const extraStr = pCarta > targetPvp ? ` Tienes un colchón extra de <strong>${fmt(pCarta - targetPvp)} por ración</strong> y un ` : ` Tienes un `;
-        auditDesc.innerHTML = `Estás vendiendo a <strong>${fmt(pCarta)}</strong>, cumpliendo tu objetivo de rentabilidad.${extraStr}Food Cost ideal del <strong>${fc.toFixed(1)}%</strong>. ¡Gran trabajo!`;
+        auditDesc.innerHTML = `Vendes a <strong>${fmt(pCarta)}</strong>, cumpliendo tu objetivo de rentabilidad. Food Cost ideal del <strong>${fc.toFixed(1)}%</strong>.`;
       }
     } else {
       auditBox.style.background = 'var(--surface2)';
       auditBox.style.border = '1px solid var(--border)';
       auditTitle.style.color = 'var(--text2)';
-      auditDesc.style.color = 'var(--text3)';
       auditIcon.textContent = 'ℹ️';
       auditTitle.textContent = 'Añade tu precio en carta';
-      auditDesc.innerHTML = `Introduce tu precio de venta actual arriba para ver la auditoría. El precio sugerido para cubrir un ${targetFcPct.toFixed(1)}% de coste es <strong>${fmt(pvpMin)}</strong>.`;
+      auditDesc.innerHTML = `Introduce tu precio actual arriba para ver la auditoría. El sugerido es <strong>${fmt(pvpMin)}</strong>.`;
     }
   } else {
     auditBox.style.display = 'none';
@@ -837,116 +824,121 @@ async function sugerir(){
   if (!esPremium && trialCount >= 5) {
     box.classList.add('visible');
     loading.style.display = 'none';
-    list.innerHTML = '';
-    
     errorEl.style.display = 'block';
-    errorEl.style.color = '#8B4A00'; 
-    errorEl.style.background = '#FFF3E0'; 
-    errorEl.style.padding = '12px 14px';
-    errorEl.style.borderRadius = '8px';
-    errorEl.style.border = '1px solid #F5C47A';
-    errorEl.innerHTML = '¡Has usado tus escandallos gratuitos! <a href="/precios" style="color:#8B4A00; text-decoration:underline; font-weight:700;">Pásate al plan Pro</a> para tener escandallos ilimitados.';
+    errorEl.innerHTML = '¡Has usado tus escandallos gratuitos! <a href="/precios" style="color:#8B4A00; text-decoration:underline; font-weight:700;">Pásate al plan Pro</a>';
     return; 
   }
 
-  errorEl.style.color = 'var(--danger)';
-  errorEl.style.background = 'transparent';
-  errorEl.style.padding = '6px 0';
-  errorEl.style.border = 'none';
+  btn.disabled=true; btn.textContent='Calculando...';
+  box.classList.add('visible'); loading.style.display='flex';
+  errorEl.style.display='none'; list.innerHTML=''; addBtn.style.display='none';
 
-  btn.disabled=true;btn.textContent='Calculando...';
-  box.classList.add('visible');loading.style.display='flex';
-  errorEl.style.display='none';list.innerHTML='';addBtn.style.display='none';
-  document.getElementById('ai-note').style.display='none';
   try{
     const { data: { session: _sess } } = await sb.auth.getSession();
-    const _token = _sess?.access_token || '';
-    const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_token},body:JSON.stringify({plato:nombre,categoria:categoria,raciones:raciones})});
+    const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_sess.access_token},body:JSON.stringify({plato:nombre,categoria:categoria,raciones:raciones})});
     const data=await res.json();
-    if(!res.ok)throw new Error(data.error?.message||'Error API');
     const sugs=JSON.parse(data.content[0].text.trim().replace(/```json|```/g,'').trim());
     loading.style.display='none';
 
     sugs.forEach((s,i)=>{
       const provMatch=buscarPrecioProveedor(s.nombre);
       if(provMatch){
-        s._precio_original=s.precio_kg;
         s.precio_kg=parseFloat(provMatch.precio_kg)||s.precio_kg;
         s._es_proveedor=true;
-        s._proveedor_nombre=provMatch.proveedor||'tu proveedor';
-        if(provMatch.unidad&&provMatch.unidad!=='kg') s._unidad_prov=provMatch.unidad;
-      } else {
-        s._es_proveedor=false;
       }
-
       const item=document.createElement('div');
       item.className = s._es_proveedor ? 'sug-item selected is-provider' : 'sug-item selected';
-      
-      const pc=s.unidad==='ud'?`${s.precio_kg.toFixed(2)}€/ud`:`${s.precio_kg.toFixed(2)}€/kg`;
-      const mt=s.merma>0?`<span class="sug-merma">Merma ${s.merma}%</span>`:'';
-      const provBadge=s._es_proveedor
-        ?`<span class="sug-prov">✓ Precio proveedor</span>`
-        :`<span class="sug-est">Precio estimado</span>`;
-      item.innerHTML=`<input type="checkbox" id="sc${i}" checked style="display:none"><div class="sug-check" onclick="toggleSug(this,${i})"><svg class="sug-check-icon" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div><label for="sc${i}" style="display:flex;align-items:center;gap:6px;flex:1;cursor:pointer;margin:0;flex-wrap:wrap" onclick="toggleSug(this.previousElementSibling,${i})"><span class="sug-name">${s.nombre}</span><span class="sug-qty">${s.cantidad} ${s.unidad}</span><span class="sug-price">${pc}</span>${mt}${provBadge}</label>`;
+      item.innerHTML=`<input type="checkbox" id="sc${i}" checked style="display:none"><div class="sug-check" onclick="toggleSug(this,${i})"><svg class="sug-check-icon" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div><label for="sc${i}" style="display:flex;align-items:center;gap:6px;flex:1;cursor:pointer;"><span class="sug-name">${s.nombre}</span><span class="sug-qty">${s.cantidad} ${s.unidad}</span><span class="sug-price">${s.precio_kg.toFixed(2)}€</span></label>`;
       list.appendChild(item);
     });
-    _sugs=sugs;addBtn.style.display='inline-block';document.getElementById('ai-note').style.display='block';
-
-    const conProv=sugs.filter(s=>s._es_proveedor).length;
-    const noteEl=document.getElementById('ai-note');
-    if(conProv>0){
-      noteEl.innerHTML=`<strong>${conProv} ingrediente${conProv>1?'s':''}</strong> con precio de tu proveedor. El resto son precios estimados — ajústalos si es necesario.`;
-    } else if(preciosProveedor.length>0){
-      noteEl.textContent='No se encontraron coincidencias con tus precios de proveedor. Precios estimados según mercado español.';
-    } else {
-      noteEl.textContent='Precios y mermas aproximados según mercado español. Sube un albarán en el dashboard para usar precios reales.';
-    }
+    _sugs=sugs; addBtn.style.display='inline-block';
   }catch(err){
-    loading.style.display='none';errorEl.style.display='block';
-    errorEl.textContent='No se pudo conectar con la IA. Añade manualmente. ('+err.message+')';
+    loading.style.display='none'; errorEl.style.display='block';
+    errorEl.textContent='Error al conectar con la IA.';
   }
-  btn.disabled=false;
-  btn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Calcular ingredientes y costes`;
+  btn.disabled=false; btn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Calcular ingredientes y costes`;
 }
+
 function toggleSug(checkEl,i){
   const item=checkEl.closest('.sug-item');
   const cb=item.querySelector('input[type=checkbox]');
   cb.checked=!cb.checked;
   item.classList.toggle('selected',cb.checked);
 }
+
 async function addSugeridos(){
   if(!await registrarEscandallo())return;
-  const seleccionados=[];
-  document.querySelectorAll('#sug-list input[type=checkbox]').forEach((cb,i)=>{
-    if(cb.checked&&_sugs[i]){
-      const s=_sugs[i];let p=s.precio_kg;
-      if(s.unidad==='g')p/=1000;else if(s.unidad==='ml')p/=1000;
-      seleccionados.push({n:s.nombre,q:s.cantidad,u:s.unidad,p:p.toFixed(4),m:s.merma||0});
+  _sugs.forEach((s, i) => {
+    const cb = document.getElementById('sc' + i);
+    if (cb && cb.checked) {
+      let p = s.precio_kg;
+      if (s.unidad === 'g' || s.unidad === 'ml') p /= 1000;
+      addIng(s.nombre, s.cantidad, s.unidad, p.toFixed(4), s.merma || 0);
     }
   });
-  let si=0;
-  for(let i=0;i<ings.length&&si<seleccionados.length;i++){
-    const ing=ings[i];
-    const nombre=document.getElementById('n'+ing.id)?.value||'';
-    const cantidad=document.getElementById('q'+ing.id)?.value||'';
-    if(!nombre&&(!cantidad||cantidad==='0')){
-      const s=seleccionados[si];
-      document.getElementById('n'+ing.id).value=s.n;
-      document.getElementById('q'+ing.id).value=s.q;
-      document.getElementById('u'+ing.id).value=s.u;
-      document.getElementById('p'+ing.id).value=s.p;
-      if(mermasOn&&document.getElementById('m'+ing.id))document.getElementById('m'+ing.id).value=s.m;
-      si++;
-    }
-  }
-  for(;si<seleccionados.length;si++){
-    const s=seleccionados[si];
-    addIng(s.n,s.q,s.u,s.p,s.m);
-  }
-  calcular();
   document.getElementById('ai-box').classList.remove('visible');
-  document.getElementById('btn-add-sel').style.display='none';
-  document.getElementById('ai-note').style.display='none';
+  calcular();
+}
+
+// ── CÁMARA INTELIGENTE (SCANN LABELS) ────────────────────────
+async function handleLabelScan(e) {
+  if (!e.target.files.length) return;
+  const file = e.target.files[0];
+  const btn = document.getElementById('btn-scan-label');
+  const originalHtml = btn.innerHTML;
+  
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-sm"></span> Analizando foto...';
+
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async () => {
+    try {
+      const base64 = reader.result.split(',')[1];
+      const { data: { session } } = await sb.auth.getSession();
+      
+      // Reutilizamos la API de extracción con un modo especial
+      const resp = await fetch('/api/extract', { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` }, 
+        body: JSON.stringify({ file_base64: base64, file_type: 'label_scan' }) 
+      });
+      
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error);
+
+      // 1. Añadir ingredientes
+      if (data.ingredientes) {
+        data.ingredientes.forEach(ing => {
+          const provMatch = buscarPrecioProveedor(ing.nombre);
+          let precio = ing.precio || 0;
+          if (provMatch) precio = provMatch.precio_kg / (ing.unidad === 'g' ? 1000 : 1);
+          addIng(ing.nombre, ing.cantidad, ing.unidad, precio);
+        });
+      }
+
+      // 2. Marcar alérgenos automáticamente
+      if (data.alergenos) {
+        document.querySelectorAll('.alg').forEach(label => {
+          const nombreAlg = label.textContent.trim();
+          if (data.alergenos.includes(nombreAlg)) {
+            const input = label.querySelector('input');
+            input.checked = true;
+            label.classList.add('active');
+          }
+        });
+      }
+
+      alert("¡Hecho! He añadido los ingredientes y marcado los alérgenos que he visto en la foto.");
+      calcular();
+    } catch (err) {
+      alert("No he podido leer bien la foto. Asegúrate de que hay buena luz.");
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+      document.getElementById('scan-input').value = '';
+    }
+  };
 }
 
 const SUPABASE_URL='https://ilzntryzijdfnntwuthp.supabase.co';
@@ -955,16 +947,8 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 async function initAuth(){
   sb.auth.onAuthStateChange(async (event, session) => {
-    if(event==='INITIAL_SESSION'){
-      if(!session){
-        window.location.href='/login';
-      } else if(document.getElementById('auth-loading').style.display!=='none'){
-        await cargarApp(session);
-      }
-    }
-    if(event==='SIGNED_OUT'){
-      window.location.href='/login';
-    }
+    if(session) await cargarApp(session);
+    else window.location.href='/login';
   });
 }
 
@@ -981,72 +965,25 @@ async function cargarApp(session){
   await checkTrial();
 
   const editData=sessionStorage.getItem('qc_escandallo_editar');
-  if(editData){
-    try{
-      const e=JSON.parse(editData);
-      cargarEscandallo(e);
-    }catch(err){console.log('Error cargando escandallo:',err);}
-  } else {
-    if(esPremium){
-      document.getElementById('toggle-merma').checked = true;
-      handleMermaToggle();
-      
-      document.getElementById('toggle-neto').checked = true;
-      handleNetoToggle();
-    }
-  }
+  if(editData) cargarEscandallo(JSON.parse(editData));
+  else { addIng(); addIng(); addIng(); }
 }
 
 function cargarEscandallo(e){
   document.getElementById('nombre').value=e.nombre_plato||'';
   document.getElementById('categoria').value=e.categoria||'';
   document.getElementById('raciones').value=e.raciones||1;
-
-  if(e.precio_carta) {
-    document.getElementById('precio-carta').value = e.precio_carta;
-  }
-
-  if(e.food_cost_pct){
-    document.getElementById('margen-fc').value=e.food_cost_pct;
-    document.getElementById('val-fc').textContent=e.food_cost_pct+'%';
-  }
-  if(e.margen_neto_pct&&e.margen_neto_pct>0&&esPremium){
-    document.getElementById('toggle-neto').checked=true;
-    netoOn=true;
-    document.getElementById('neto-slider-wrap').style.display='block';
-    document.getElementById('margen-neto').value=e.margen_neto_pct;
-    document.getElementById('val-neto').textContent=e.margen_neto_pct+'%';
-  }
-
-  if(e.alergenos&&e.alergenos.length>0){
-    document.querySelectorAll('.alg').forEach(label=>{
-      const nombre=label.textContent.trim();
-      if(e.alergenos.includes(nombre)){
-        label.querySelector('input').checked=true;
-        label.classList.add('active');
-      }
-    });
-  }
-
+  document.getElementById('precio-carta').value=e.precio_carta||'';
   ings=[];
-  if(e.ingredientes&&e.ingredientes.length>0){
-    e.ingredientes.forEach(ing=>{
-      addIng(ing.nombre||'', ing.cantidad||'', ing.unidad||'g', ing.precio||'', ing.merma||0);
-    });
-  } else {
-    addIng();addIng();addIng();
-  }
-
+  if(e.ingredientes) e.ingredientes.forEach(i=>addIng(i.nombre, i.cantidad, i.unidad, i.precio, i.merma));
   calcular();
 }
 
 async function guardarEscandallo(){
   const nombre=document.getElementById('nombre').value.trim();
-  if(!nombre){alert('Escribe el nombre del plato antes de guardar.');return;}
+  if(!nombre){alert('Ponle nombre al plato.');return;}
   const btn=document.getElementById('btn-save');
-  const btnOriginal=btn.innerHTML;
-  btn.disabled=true;
-  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin .7s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Guardando...';
+  btn.disabled=true; btn.innerHTML='Guardando...';
 
   const ingredientesData=ings.map(i=>({
     nombre:document.getElementById('n'+i.id)?.value||'',
@@ -1057,165 +994,56 @@ async function guardarEscandallo(){
   })).filter(i=>i.nombre);
 
   const alergenos=Array.from(document.querySelectorAll('.alg input:checked')).map(i=>i.closest('.alg').textContent.trim());
-  const fc=parseFloat(document.getElementById('margen-fc').value)||30;
-  const neto=netoOn?(parseFloat(document.getElementById('margen-neto').value)||0):0;
-  const precioCarta = parseFloat(document.getElementById('precio-carta').value)||null;
-
-  const mCoste=document.getElementById('m-coste').textContent.replace(/[^0-9,.]/g,'').replace(',','.');
-  const mRacion=document.getElementById('m-racion').textContent.replace(/[^0-9,.]/g,'').replace(',','.');
-  const mPvp=document.getElementById('m-pvp').textContent.replace(/[^0-9,.]/g,'').replace(',','.');
-
   const {data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='/login';return;}
-
   const {data:rest}=await sb.from('restaurantes').select('id').eq('user_id',session.user.id).single();
-  if(!rest){btn.disabled=false;btn.innerHTML=btnOriginal;return;}
-
-  const editData=sessionStorage.getItem('qc_escandallo_editar');
-  const editId=editData?JSON.parse(editData).id:null;
 
   const payload={
     restaurante_id:rest.id,
     nombre_plato:nombre,
-    categoria:document.getElementById('categoria').value||null,
-    raciones:parseInt(document.getElementById('raciones').value)||1,
-    precio_carta: precioCarta,
-    food_cost_pct:fc,
-    margen_neto_pct:neto,
+    precio_carta: parseFloat(document.getElementById('precio-carta').value)||0,
     ingredientes:ingredientesData,
     alergenos,
-    coste_total:parseFloat(mCoste)||0,
-    coste_racion:parseFloat(mRacion)||0,
-    precio_venta:parseFloat(mPvp)||0,
+    coste_racion: parseFloat(document.getElementById('m-racion').textContent.replace(',','.')),
     updated_at:new Date().toISOString()
   };
 
-  let error;
-  if(editId){
-    ({error}=await sb.from('escandallos').update(payload).eq('id',editId));
-  } else {
-    ({error}=await sb.from('escandallos').insert(payload));
-  }
+  const editData=sessionStorage.getItem('qc_escandallo_editar');
+  const editId=editData?JSON.parse(editData).id:null;
 
-  if(error){
-    console.error('Save error:', error);
-    alert('Error al guardar: ' + (error.message || 'Inténtalo de nuevo.'));
-    btn.disabled=false;
-    btn.innerHTML=btnOriginal;
-    return;
-  }
-  
-  if (!esPremium && !editId) { 
-    const { count } = await sb.from('escandallos')
-      .select('id', { count: 'exact', head: true })
-      .eq('restaurante_id', rest.id);
-      
-    if (count === 5) {
-      fetch('/api/send-fifth-dish-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email: session.user.email, 
-          nombre: rest.nombre 
-        })
-      }).catch(e => console.error("Error disparando email 5to plato:", e));
-    }
-  }
-  
+  if(editId) await sb.from('escandallos').update(payload).eq('id',editId);
+  else await sb.from('escandallos').insert(payload);
+
   sessionStorage.removeItem('qc_escandallo_editar');
-  sessionStorage.setItem('qc_guardando', 'true');
-  
-  btn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> ¡Guardado!';
-  btn.style.backgroundColor = '#2D5A3D';
-  
-  setTimeout(() => {
-    window.location.href = '/dashboard';
-  }, 800);
+  window.location.href = '/dashboard';
 }
 
-async function cerrarSesion(){
-  await sb.auth.signOut();
-  window.location.href='/login';
-}
-  
-window.addEventListener('beforeunload', function (e) {
-  const hayDatos = ings.some(i => {
-    const inputNombre = document.getElementById('n'+i.id);
-    return inputNombre && inputNombre.value.trim() !== '';
-  });
-  
-  if (hayDatos && !sessionStorage.getItem('qc_guardando')) {
-    e.preventDefault();
-    e.returnValue = '';
-  }
-});
+async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login'; }
 
 let subrecetasDisponibles = [];
-
 async function abrirModalSubrecetas() {
-  const btn = document.getElementById('btn-add-sub');
-  const prevHtml = btn.innerHTML;
-  btn.innerHTML = '<span class="spinner-sm" style="border-color:var(--warn); border-top-color:transparent;"></span> Cargando...';
+  const { data: { session } } = await sb.auth.getSession();
+  const { data: rest } = await sb.from('restaurantes').select('id').eq('user_id', session.user.id).single();
+  const { data } = await sb.from('escandallos').select('id, nombre_plato, coste_racion').eq('restaurante_id', rest.id);
   
-  try {
-    const { data: { session } } = await sb.auth.getSession();
-    if(!session) return;
-    const { data: rest } = await sb.from('restaurantes').select('id').eq('user_id', session.user.id).single();
-    
-    const editData = sessionStorage.getItem('qc_escandallo_editar');
-    const editId = editData ? JSON.parse(editData).id : null;
-
-    let query = sb.from('escandallos').select('id, nombre_plato, coste_racion').eq('restaurante_id', rest.id);
-    if (editId) query = query.neq('id', editId); 
-
-    const { data, error } = await query;
-    if (!error && data) {
-      subrecetasDisponibles = data;
-    }
-
-    const lista = document.getElementById('lista-subrecetas');
-    lista.innerHTML = '';
-    
-    if (subrecetasDisponibles.length === 0) {
-      lista.innerHTML = '<p style="text-align:center; font-size:13px; color:var(--text3); padding: 1rem 0;">No tienes otras recetas guardadas aún.</p>';
-    } else {
-      subrecetasDisponibles.forEach(sr => {
-        const div = document.createElement('div');
-        div.style = "padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; background: #fff;";
-        div.innerHTML = `
-          <div>
-            <div style="font-weight:700; font-size:13px; color:var(--text)">${sr.nombre_plato}</div>
-            <div style="font-size:11px; color:var(--text3)">Coste: ${fmt(sr.coste_racion)} / ración</div>
-          </div>
-          <button style="background:var(--accent-light); color:var(--accent); border:1px solid rgba(30,77,43,0.2); padding:6px 12px; border-radius:6px; font-weight:700; font-size:12px; cursor:pointer;" onclick="seleccionarSubreceta('${sr.nombre_plato.replace(/'/g, "\\'")}', ${sr.coste_racion})">Añadir</button>
-        `;
-        lista.appendChild(div);
-      });
-    }
-    
-    document.getElementById('modal-subrecetas').classList.add('visible');
-  } catch (err) {
-    console.error(err);
-    alert('Error cargando sub-recetas');
-  } finally {
-    btn.innerHTML = prevHtml;
-  }
+  const lista = document.getElementById('lista-subrecetas');
+  lista.innerHTML = '';
+  data.forEach(sr => {
+    const div = document.createElement('div');
+    div.style = "padding:10px; border:1px solid var(--border); border-radius:8px; display:flex; justify-content:space-between; background:#fff;";
+    div.innerHTML = `<span>${sr.nombre_plato}</span><button onclick="seleccionarSubreceta('${sr.nombre_plato}', ${sr.coste_racion})" style="color:var(--accent); font-weight:bold; cursor:pointer; background:none; border:none;">Añadir</button>`;
+    lista.appendChild(div);
+  });
+  document.getElementById('modal-subrecetas').classList.add('visible');
 }
 
-function seleccionarSubreceta(nombre, costeRacion) {
-  addIng('🔄 ' + nombre, 1, 'ración', costeRacion.toFixed(4), 0);
-  hideSubrecetasModal();
+function seleccionarSubreceta(nombre, coste) {
+  addIng('🔄 ' + nombre, 1, 'ración', coste.toFixed(4), 0);
+  document.getElementById('modal-subrecetas').classList.remove('visible');
 }
 
-function hideSubrecetasModal(e) {
-  if (!e || e.target === document.getElementById('modal-subrecetas')) {
-    document.getElementById('modal-subrecetas').classList.remove('visible');
-  }
-}
+function hideSubrecetasModal() { document.getElementById('modal-subrecetas').classList.remove('visible'); }
 
 initAlergenos();
-const _editCheck=sessionStorage.getItem('qc_escandallo_editar');
-if(!_editCheck){addIng();addIng();addIng();}
 initAuth();
 </script>
 </div>
