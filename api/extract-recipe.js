@@ -81,9 +81,45 @@ export default async function handler(req, res) {
 // ── LÓGICA CLAUDE ──
 async function parseRecipeWithClaude(base64, type) {
     const isPdf = type.toLowerCase() === 'pdf';
-    const mediaType = isPdf ? 'application/pdf' : 'image/jpeg';
     
-    const prompt = `Eres un chef experto. Extrae los platos de este documento. Devuelve SOLO un JSON (sin texto extra): {"platos": [{"nombre": "...", "categoria": "...", "precio_venta": 0.0, "ingredientes": [{"nombre": "...", "cantidad_gr": 0, "unidad_original": "..."}]}]}. Convierte todas las cantidades a gramos o mililitros.`;
+    let contentBlock;
+    if (isPdf) {
+        contentBlock = {
+            type: "document",
+            source: {
+                type: "base64",
+                media_type: "application/pdf",
+                data: base64
+            }
+        };
+    } else {
+        const mimeType = type.toLowerCase() === 'jpg' ? 'image/jpeg' : `image/${type.toLowerCase()}`;
+        contentBlock = {
+            type: "image",
+            source: {
+                type: "base64",
+                media_type: mimeType,
+                data: base64
+            }
+        };
+    }
+
+    const prompt = `Analiza este documento completo, página por página, y extrae TODOS Y CADA UNO de los platos que aparecen. Es obligatorio que proceses el documento entero y no te dejes ninguna receta.
+Devuelve SOLO un objeto JSON estricto. El array "platos" debe contener tantos objetos como recetas haya en el documento.
+Estructura requerida:
+{
+  "platos": [
+    {
+      "nombre": "Nombre del Plato",
+      "categoria": "Entrante/Principal/Postre",
+      "precio_venta": 0.0,
+      "ingredientes": [
+        {"nombre": "Ingrediente", "cantidad_gr": 0, "unidad_original": "g/ml/ud"}
+      ]
+    }
+  ]
+}
+REGLA: Convierte todas las cantidades a gramos (gr) o mililitros (ml) numéricos en el campo cantidad_gr.`;
 
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -93,12 +129,12 @@ async function parseRecipeWithClaude(base64, type) {
             'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-            model: 'claude-haiku-4-5-20251001',
-            max_tokens: 4096,
+            model: 'claude-sonnet-4-6',
+            max_tokens: 8192,
             messages: [{
                 role: 'user',
                 content: [
-                    { type: isPdf ? 'document' : 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+                    contentBlock,
                     { type: 'text', text: prompt }
                 ]
             }]
@@ -106,10 +142,21 @@ async function parseRecipeWithClaude(base64, type) {
     });
 
     const data = await resp.json();
-    if (!resp.ok) throw new Error(data.error?.message || 'Error en Claude');
     
-    const cleanJson = data.content[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
-    return JSON.parse(cleanJson);
+    if (!resp.ok) {
+        console.error("Anthropic error:", JSON.stringify(data.error));
+        throw new Error(data.error?.message || 'Fallo de conexión con el procesador de documentos.');
+    }
+    
+    let cleanJson = data.content[0].text;
+    cleanJson = cleanJson.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    
+    try {
+        return JSON.parse(cleanJson);
+    } catch (e) {
+        console.error("Raw response:", cleanJson);
+        throw new Error('El documento no pudo ser interpretado correctamente.');
+    }
 }
 
 function buscarMejorCoincidencia(nombre, inventario) {
