@@ -257,7 +257,7 @@
           <div class="action-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           </div>
-          <div class="action-title">Digitalizar Ficha Técnica <span id="dash-upsell-lock" style="font-size:11px;">🔒</span></div>
+          <div class="action-title">Digitalizar Ficha <span id="dash-upsell-lock" style="font-size:11px;">🔒</span></div>
           <div class="action-sub">Importa tu menú con cantidades reales.</div>
           <input type="file" id="file-input-recetas" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleRecetasUpload(event)" style="display:none">
         </div>
@@ -267,7 +267,7 @@
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </div>
           <div class="action-title">+ Escandallo Individual</div>
-          <div class="action-sub">Crea un plato y automatizamos lo demás.</div>
+          <div class="action-sub">Crea un plato paso a paso.</div>
         </div>
       </div>
     </div>
@@ -276,7 +276,7 @@
       <span style="font-size:18px">💡</span>
       <div style="flex:1">
         <strong>Tus escandallos usan precios estimados de mercado.</strong> 
-        Sube una factura/albarán (arriba) para que el sistema aprenda tus precios reales y sea 100% exacto.
+        Sube una factura (arriba) para que el sistema aprenda tus precios reales y sea 100% exacto.
       </div>
     </div>
 
@@ -291,7 +291,7 @@
     </div>
 
     <div class="extract-loading" id="extract-loading" style="display:none; background:var(--accent-light); padding:1rem; border-radius:10px; margin-bottom:1rem; align-items:center; gap:10px;">
-      <div class="spinner"></div><span id="loading-text-dynamic" style="color:var(--accent); font-weight:600; font-size:14px;">Digitalizando albarán...</span>
+      <div class="spinner"></div><span id="loading-text-dynamic" style="color:var(--accent); font-weight:600; font-size:14px;">Leyendo albarán con Inteligencia Artificial...</span>
     </div>
     <div class="prov-msg" id="prov-msg" style="margin-bottom:1.5rem; display:none; padding:12px; border-radius:8px; font-weight:500; font-size:13px;"></div>
 
@@ -301,7 +301,7 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Revisa los precios extraídos
         </h3>
-        <p class="review-desc">Ajusta los nombres o cantidades si hemos cometido algún error al leer tu documento antes de guardarlos.</p>
+        <p class="review-desc">Ajusta los nombres o cantidades si la IA ha cometido algún error al leer tu factura antes de guardarlos.</p>
         
         <div class="review-table-container">
           <table class="review-table">
@@ -409,19 +409,9 @@ async function cargarDatos(session){
   }
 
   if(!rest){
-  document.getElementById('loading').innerHTML = `
-    <div style="text-align:center; padding:2rem;">
-      <p style="color:var(--danger); font-weight:600; margin-bottom:1rem">
-        Error al cargar tu cocina. Recarga la página.
-      </p>
-      <button onclick="window.location.reload()" 
-        style="background:var(--accent); color:white; border:none; 
-        padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600; font-family:'Plus Jakarta Sans',sans-serif;">
-        Reintentar
-      </button>
-    </div>`;
-  return;
-}
+    await sb.auth.signOut(); 
+    window.location.href='/login';
+    return;
   }
 
   restauranteId = rest.id;
@@ -721,7 +711,7 @@ async function processFile(file){
   document.getElementById('extract-loading').style.display='flex';
   document.getElementById('prov-msg').style.display='none';
   document.getElementById('review-wrap').style.display='none';
-  document.getElementById('loading-text-dynamic').textContent = 'Digitalizando albarán...';
+  document.getElementById('loading-text-dynamic').textContent = 'Leyendo albarán con Inteligencia Artificial...';
   
   const reader = new FileReader();
   reader.readAsDataURL(file);
