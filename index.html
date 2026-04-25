@@ -545,5 +545,50 @@ const observer = new IntersectionObserver(entries => {
 document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 </script>
 <script src="/chat-widget.js"></script>
+<style>
+  #cookie-banner {
+    position: fixed; bottom: 24px; left: 24px; right: 24px; 
+    background: #FFFFFF; border: 1px solid #E0DDD6;
+    border-radius: 16px; padding: 20px; z-index: 10001;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    display: none; align-items: center; justify-content: space-between; gap: 24px;
+    max-width: 800px; margin: 0 auto;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  #cookie-banner p { font-size: 13px; color: #4A4845; line-height: 1.6; margin: 0; }
+  #cookie-banner a { color: #1E4D2B; font-weight: 700; text-decoration: underline; }
+  .cookie-btns { display: flex; gap: 12px; flex-shrink: 0; }
+  .btn-cookie { padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; white-space: nowrap; }
+  .btn-cookie.accept { background: #1E4D2B; color: white; }
+  .btn-cookie.accept:hover { background: #2D5A3D; }
+  .btn-cookie.settings { background: #F2EFE9; color: #4A4845; border: 1px solid #E0DDD6; }
+
+  @media (max-width: 640px) {
+    #cookie-banner { flex-direction: column; text-align: center; bottom: 12px; left: 12px; right: 12px; padding: 16px; gap: 16px; }
+    .cookie-btns { width: 100%; }
+    .btn-cookie { flex: 1; }
+  }
+</style>
+
+<div id="cookie-banner">
+  <p>🍪 En QuantiChef usamos cookies para mejorar tu experiencia y entender cómo usas nuestra web. Al aceptar, nos ayudas a mejorar la herramienta. <a href="/legal#cookies">Más info</a></p>
+  <div class="cookie-btns">
+    <button class="btn-cookie settings" onclick="location.href='/legal#cookies'">Configurar</button>
+    <button class="btn-cookie accept" onclick="acceptCookies()">Aceptar todo</button>
+  </div>
+</div>
+
+<script>
+  function acceptCookies() {
+    localStorage.setItem('qc_cookies_accepted', 'true');
+    document.getElementById('cookie-banner').style.display = 'none';
+  }
+
+  window.addEventListener('load', function() {
+    if (!localStorage.getItem('qc_cookies_accepted')) {
+      document.getElementById('cookie-banner').style.display = 'flex';
+    }
+  });
+</script>
 </body>
 </html>
