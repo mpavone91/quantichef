@@ -121,7 +121,7 @@
   .toggle input:checked+.toggle-slider:before{transform:translateX(16px)}
   .premium-tag{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);background:var(--gold-light);padding:2px 7px;border-radius:4px;flex-shrink:0}
   
-  /* DISEÑO PREMIUM BLOQUEADO - IDÉNTICO AL BOTÓN UPSELL */
+  /* DISEÑO PREMIUM BLOQUEADO */
   .lock-overlay {
     position: absolute;
     inset: 0;
@@ -134,7 +134,6 @@
     z-index: 10;
   }
   .lock-overlay.row-mode {
-    /* El truco del degradado: borra visualmente el interruptor pero deja el texto 100% limpio */
     left: 35%;
     background: linear-gradient(90deg, rgba(242,239,233,0) 0%, var(--surface2) 20%, var(--surface2) 100%);
     justify-content: flex-end;
@@ -594,7 +593,6 @@ async function checkTrial() {
   }
 }
 
-// ── IMPORTACIÓN DE MENÚ (MODAL) ──────────────────────────────
 function mostrarUrlModal() {
   if (!esPremium) { window.location.href = '/precios'; return; }
   document.getElementById('url-input').value = '';
@@ -693,17 +691,44 @@ function initAlergenos(){const c=document.getElementById('alergenos');ALGS.forEa
 const UNITS=["g","kg","ml","l","ud","ración"];
 let ings=[],_sugs=[];
 let preciosProveedor=[];
-function addIng(n='',q='',u='g',p='',m=''){const id=Date.now()+Math.random();ings.push({id,n,q,u,p,m});renderIngs();}
+function addIng(n='',q='',u='g',p='',m='', prov=null){const id=Date.now()+Math.random();ings.push({id,n,q,u,p,m,prov});renderIngs();}
 function removeIng(id){ings=ings.filter(i=>i.id!==id);renderIngs();}
 function renderIngs(){
   const c=document.getElementById('ingredientes');
-  const v={};ings.forEach(i=>{v[i.id]={n:document.getElementById('n'+i.id)?.value??i.n,q:document.getElementById('q'+i.id)?.value??i.q,u:document.getElementById('u'+i.id)?.value??i.u,p:document.getElementById('p'+i.id)?.value??i.p,m:document.getElementById('m'+i.id)?.value??i.m};});
+  const v={};
+  ings.forEach(i=>{
+    v[i.id]={
+      n:document.getElementById('n'+i.id)?.value??i.n,
+      q:document.getElementById('q'+i.id)?.value??i.q,
+      u:document.getElementById('u'+i.id)?.value??i.u,
+      p:document.getElementById('p'+i.id)?.value??i.p,
+      m:document.getElementById('m'+i.id)?.value??i.m,
+      prov: i.prov
+    };
+  });
   c.innerHTML='';
   ings.forEach(i=>{
-    const x=v[i.id]||{n:i.n,q:i.q,u:i.u,p:i.p,m:i.m};
+    const x=v[i.id]||{n:i.n,q:i.q,u:i.u,p:i.p,m:i.m,prov:i.prov};
     const d=document.createElement('div');d.className='ing-row '+(mermasOn?'con-merma':'sin-merma');
     const mc=mermasOn?`<div class="merma-cell"><input type="number" class="merma-input" placeholder="0" min="0" max="99" step="1" id="m${i.id}" value="${x.m}" oninput="calcular()" onfocus="this.select()"><span class="merma-pct">%</span></div>`:'';
-    d.innerHTML=`<input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()" onfocus="this.select()"><input type="number" placeholder="0" min="0" step="0.001" id="q${i.id}" value="${x.q}" oninput="calcular()" onfocus="this.select()"><select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><div class="price-wrap"><input type="number" placeholder="0,00" min="0" step="0.01" id="p${i.id}" value="${x.p}" oninput="calcular()" onfocus="this.select()"><span class="price-symbol">€</span></div>${mc}<button class="btn-del" onclick="removeIng(${i.id})">×</button>`;
+    
+    let provBadge = '';
+    if(x.prov === true) provBadge = '<span style="font-size:9px; color:#1E4D2B; text-align:right; font-weight:700; margin-top:2px;">✓ Tu proveedor</span>';
+    else if(x.prov === false) provBadge = '<span style="font-size:9px; color:#8A8784; text-align:right; font-weight:600; margin-top:2px;">Base de datos</span>';
+
+    d.innerHTML=`
+      <input type="text" placeholder="Ingrediente" id="n${i.id}" value="${x.n}" oninput="calcular()" onfocus="this.select()">
+      <input type="number" placeholder="0" min="0" step="0.001" id="q${i.id}" value="${x.q}" oninput="calcular()" onfocus="this.select()">
+      <select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select>
+      <div style="display:flex; flex-direction:column;">
+        <div class="price-wrap">
+          <input type="number" placeholder="0,0000" min="0" step="0.0001" id="p${i.id}" value="${x.p}" oninput="calcular()" onfocus="this.select()">
+          <span class="price-symbol">€</span>
+        </div>
+        ${provBadge}
+      </div>
+      ${mc}
+      <button class="btn-del" onclick="removeIng(${i.id})">×</button>`;
     c.appendChild(d);
   });calcular();
 }
@@ -928,15 +953,15 @@ async function sugerir(){
     const conProv=sugs.filter(s=>s._es_proveedor).length;
     const noteEl=document.getElementById('ai-note');
     if(conProv>0){
-      noteEl.innerHTML=`<strong>${conProv} ingrediente${conProv>1?'s':''}</strong> con precio de tu proveedor. El resto son precios estimados — ajústalos si es necesario.`;
+      noteEl.innerHTML=`<strong>${conProv} ingrediente${conProv>1?'s':''}</strong> con precio de tu proveedor. El resto son precios de la Base de Datos.`;
     } else if(preciosProveedor.length>0){
-      noteEl.textContent='No se encontraron coincidencias con tus precios de proveedor. Precios estimados según mercado español.';
+      noteEl.textContent='No se encontraron coincidencias con tus precios de proveedor. Precios de la Base de Datos de QuantiChef.';
     } else {
-      noteEl.textContent='Precios y mermas aproximados según mercado español. Sube un albarán en el dashboard para usar precios reales.';
+      noteEl.textContent='Precios y mermas de la Base de Datos. Sube un albarán en el dashboard para usar precios reales.';
     }
   }catch(err){
     loading.style.display='none';errorEl.style.display='block';
-    errorEl.textContent='No se pudo conectar con la IA. Añade manualmente. ('+err.message+')';
+    errorEl.textContent='No se pudo conectar con la base de datos. Añade manualmente. ('+err.message+')';
   }
   btn.disabled=false;
   btn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Calcular ingredientes y costes`;
@@ -956,7 +981,7 @@ async function addSugeridos(){
     if(cb.checked&&_sugs[i]){
       const s=_sugs[i];let p=s.precio_kg;
       if(s.unidad==='g')p/=1000;else if(s.unidad==='ml')p/=1000;
-      seleccionados.push({n:s.nombre,q:s.cantidad,u:s.unidad,p:p.toFixed(4),m:s.merma||0});
+      seleccionados.push({n:s.nombre,q:s.cantidad,u:s.unidad,p:p.toFixed(4),m:s.merma||0, prov:s._es_proveedor});
     }
   });
   let si=0;
@@ -971,12 +996,13 @@ async function addSugeridos(){
       document.getElementById('u'+ing.id).value=s.u;
       document.getElementById('p'+ing.id).value=s.p;
       if(mermasOn&&document.getElementById('m'+ing.id))document.getElementById('m'+ing.id).value=s.m;
+      ing.prov = s.prov; 
       si++;
     }
   }
   for(;si<seleccionados.length;si++){
     const s=seleccionados[si];
-    addIng(s.n,s.q,s.u,s.p,s.m);
+    addIng(s.n,s.q,s.u,s.p,s.m,s.prov);
   }
   calcular();
   document.getElementById('ai-box').classList.remove('visible');
@@ -1014,8 +1040,12 @@ async function handleLabelScan(e) {
         data.ingredientes.forEach(ing => {
           const provMatch = buscarPrecioProveedor(ing.nombre);
           let precio = ing.precio || 0;
-          if (provMatch) precio = provMatch.precio_kg / (ing.unidad === 'g' || ing.unidad === 'ml' ? 1000 : 1);
-          addIng(ing.nombre, ing.cantidad, ing.unidad, precio);
+          let esProv = false;
+          if (provMatch) {
+            precio = provMatch.precio_kg / (ing.unidad === 'g' || ing.unidad === 'ml' ? 1000 : 1);
+            esProv = true;
+          }
+          addIng(ing.nombre, ing.cantidad, ing.unidad, precio, 0, esProv);
         });
       }
 
@@ -1124,7 +1154,7 @@ function cargarEscandallo(e){
   ings=[];
   if(e.ingredientes&&e.ingredientes.length>0){
     e.ingredientes.forEach(ing=>{
-      addIng(ing.nombre||'', ing.cantidad||'', ing.unidad||'g', ing.precio||'', ing.merma||0);
+      addIng(ing.nombre||'', ing.cantidad||'', ing.unidad||'g', ing.precio||'', ing.merma||0, ing.prov||null);
     });
   } else {
     addIng();addIng();addIng();
@@ -1146,7 +1176,8 @@ async function guardarEscandallo(){
     cantidad:parseFloat(document.getElementById('q'+i.id)?.value)||0,
     unidad:document.getElementById('u'+i.id)?.value||'g',
     precio:parseFloat(document.getElementById('p'+i.id)?.value)||0,
-    merma:mermasOn?(parseFloat(document.getElementById('m'+i.id)?.value)||0):0
+    merma:mermasOn?(parseFloat(document.getElementById('m'+i.id)?.value)||0):0,
+    prov: i.prov
   })).filter(i=>i.nombre);
 
   const alergenos=Array.from(document.querySelectorAll('.alg input:checked')).map(i=>i.closest('.alg').textContent.trim());
