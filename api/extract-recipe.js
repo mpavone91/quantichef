@@ -97,8 +97,6 @@ export default async function handler(req, res) {
                 coste_racion: Number(costeRacion.toFixed(2)),
                 food_cost_pct: Number(food_cost_pct.toFixed(2)),
                 ingredientes: ingredientesConPrecio,
-                elaboracion: plato.elaboracion || '',
-                origen: 'ficha_tecnica'
             });
 
             if (insertError) {
