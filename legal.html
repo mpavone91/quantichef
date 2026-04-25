@@ -338,7 +338,7 @@ footer a:hover{color:var(--accent)}
 </div>
 
 <footer>
-  <a href="/">QuantiChef</a> · <a href="/">Inicio</a> · <a href="mailto:hola@quantichef.com">Contacto</a>
+  <a href="/">QuantiChef</a> · <a href="/">Inicio</a> · <a href="/contacto">Contacto</a>
   <br><span style="margin-top:4px;display:inline-block">© 2026 MOMU Bienestar S.L. · CIF B56759723 · Todos los derechos reservados</span>
 </footer>
 
@@ -362,7 +362,6 @@ function showSection(id, el) {
 function acceptCookies() {
   localStorage.setItem('qc_cookies_accepted', 'true');
   document.getElementById('cookie-banner').style.display = 'none';
-  // Aquí podrías activar Google Analytics si estuviera pausado
 }
 
 window.onload = function() {
@@ -370,12 +369,12 @@ window.onload = function() {
     document.getElementById('cookie-banner').style.display = 'flex';
   }
   
-  // Abrir sección desde URL hash si existe
   if(window.location.hash) {
     const id = window.location.hash.replace('#','');
     showSection(id);
   }
 }
 </script>
+<script src="/chat-widget.js"></script>
 </body>
 </html>
