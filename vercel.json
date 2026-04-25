@@ -12,5 +12,16 @@
       "path": "/api/send-trial-reminder",
       "schedule": "0 10 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "api/extract.js": {
+      "maxDuration": 120
+    },
+    "api/extract-recipe.js": {
+      "maxDuration": 120
+    },
+    "api/chat.js": {
+      "maxDuration": 30
+    }
+  }
 }
