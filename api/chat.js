@@ -21,29 +21,25 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "El array de mensajes es obligatorio" });
   }
 
-  // 🛠️ FIX 1: LIMPIEZA ESTRICTA DE HISTORIAL (Anthropic odia 2 roles seguidos)
+  // 🛠️ LIMPIEZA ESTRICTA DE HISTORIAL (Anthropic odia 2 roles seguidos)
   let historialLimpio = [];
   for (let m of messages) {
     if (historialLimpio.length === 0) {
       if (m.role === 'user') historialLimpio.push(m);
     } else {
-      // Si el rol es distinto al anterior, lo añadimos
       if (m.role !== historialLimpio[historialLimpio.length - 1].role) {
         historialLimpio.push(m);
       } else {
-        // Si hay dos 'user' seguidos, nos quedamos con el último intento
         historialLimpio[historialLimpio.length - 1] = m;
       }
     }
   }
 
-  // Tomamos los últimos 10 y aseguramos que SIEMPRE empiece por 'user'
   let historialSeguro = historialLimpio.slice(-10);
   if (historialSeguro.length > 0 && historialSeguro[0].role === 'assistant') {
     historialSeguro.shift();
   }
 
-  // Si después de limpiar no hay mensajes, evitamos llamar a la IA y respondemos directo
   if (historialSeguro.length === 0) {
     return res.status(200).json({ reply: "¿En qué te puedo ayudar hoy?" });
   }
@@ -77,7 +73,7 @@ REGLAS ESTRICTAS (MUY IMPORTANTE):
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20240620', // Versión súper estable y universal
+        model: 'claude-haiku-4-5-20251001', // TU MODELO EXACTO QUE FUNCIONA
         max_tokens: 400,
         system: SYSTEM_PROMPT,
         messages: historialSeguro
@@ -86,7 +82,6 @@ REGLAS ESTRICTAS (MUY IMPORTANTE):
 
     const data = await response.json();
 
-    // 🛠️ FIX 2: MODO DEBUG VISUAL. Si hay error, Diego lo dice en el chat.
     if (!response.ok) {
       console.error("Error de Anthropic:", data.error);
       return res.status(200).json({
