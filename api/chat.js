@@ -24,7 +24,7 @@ export default async function handler(req, res) {
   // Protección: Anthropic exige que el historial siempre empiece por el usuario.
   let historialSeguro = messages.slice(-10);
   if (historialSeguro.length > 0 && historialSeguro[0].role === 'assistant') {
-    historialSeguro.shift(); // Si al cortar el historial el primero es Diego, lo quitamos.
+    historialSeguro.shift();
   }
 
   const SYSTEM_PROMPT = `Eres Diego, consultor gastronómico y experto en rentabilidad en QuantiChef.
@@ -56,7 +56,8 @@ REGLAS ESTRICTAS (MUY IMPORTANTE):
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-3-haiku-20240307', // Volvemos al modelo fiable y ultra-rápido
+        // EL FIX: Usamos el modelo Claude 3.5 Sonnet, que es el flagship garantizado.
+        model: 'claude-3-5-sonnet-20241022', 
         max_tokens: 400,
         system: SYSTEM_PROMPT,
         messages: historialSeguro
@@ -76,6 +77,6 @@ REGLAS ESTRICTAS (MUY IMPORTANTE):
 
   } catch (error) {
     console.error("Chat error:", error);
-    return res.status(500).json({ error: "Error interno al procesar tu mensaje." });
+    return res.status(500).json({ error: "Error interno al procesar tu mensaje. Inténtalo de nuevo." });
   }
 }
