@@ -57,7 +57,7 @@ REGLAS ESTRICTAS (MUY IMPORTANTE):
       },
       body: JSON.stringify({
         // EL FIX: Usamos el modelo Claude 3.5 Sonnet, que es el flagship garantizado.
-        model: 'claude-3-5-sonnet-20241022', 
+        model: 'claude-3-5-haiku-20241022', 
         max_tokens: 400,
         system: SYSTEM_PROMPT,
         messages: historialSeguro
