@@ -55,35 +55,22 @@ export default async function handler(req, res) {
   try {
     switch (event.type) {
 
-      // ✅ Pago exitoso — activar plan pro
+      // ✅ PAGO EXITOSO — ACTIVAR PLAN PRO Y ENVIAR EMAIL
       case 'checkout.session.completed': {
         const session = event.data.object;
         const restauranteId = session.metadata?.restauranteId;
         const stripeCustomerId = session.customer;
         const subscriptionId = session.subscription;
+        const customerEmail = session.customer_details?.email; // Email del pagador
 
-        // ❌ SIN FALLBACK — si no hay restauranteId en metadata, 
-        // es un checkout corrupto o manipulado. No actuamos.
         if (!restauranteId) {
           console.error(`Checkout sin restauranteId en metadata: ${session.id}`);
           await registrarError(event, 'Sin restauranteId en metadata');
           break;
         }
 
-        // Validar que el restaurante existe antes de activar
-        const { data: rest } = await supabase
-          .from('restaurantes')
-          .select('id')
-          .eq('id', restauranteId)
-          .maybeSingle();
-
-        if (!rest) {
-          console.error(`Restaurante ${restauranteId} no encontrado`);
-          await registrarError(event, `Restaurante ${restauranteId} no existe`);
-          break;
-        }
-
-        const { error } = await supabase
+        // Actualizamos y recuperamos el nombre para el email en un solo paso
+        const { data: restUpdated, error } = await supabase
           .from('restaurantes')
           .update({
             plan: 'pro',
@@ -91,18 +78,36 @@ export default async function handler(req, res) {
             stripe_subscription_id: subscriptionId || null,
             plan_activated_at: new Date().toISOString()
           })
-          .eq('id', restauranteId);
+          .eq('id', restauranteId)
+          .select('nombre')
+          .single();
 
         if (error) {
           console.error('Error activando plan:', error);
           await registrarError(event, error.message);
         } else {
-          console.log(`Plan pro activado para restaurante ${restauranteId}`);
+          console.log(`Plan pro activado para restaurante ${restauranteId} (${restUpdated.nombre})`);
+
+          // 🔥 DISPARO AUTOMÁTICO DE EMAIL DE BIENVENIDA PRO
+          try {
+            const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.quantichef.com';
+            await fetch(`${siteUrl}/api/send-payment-success`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: customerEmail,
+                nombre: restUpdated.nombre,
+                planNombre: 'Plan Cocina Rentable'
+              })
+            });
+          } catch (mailErr) {
+            console.error('Error enviando email de bienvenida PRO:', mailErr);
+          }
         }
         break;
       }
 
-      // ❌ Suscripción cancelada — volver a trial
+      // ❌ SUSCRIPCIÓN CANCELADA — VOLVER A TRIAL
       case 'customer.subscription.deleted': {
         const subscription = event.data.object;
         const customerId = subscription.customer;
@@ -126,7 +131,7 @@ export default async function handler(req, res) {
         break;
       }
 
-      // ⚠️ Estado de suscripción cambió (past_due, unpaid, etc.)
+      // ⚠️ ESTADO DE SUSCRIPCIÓN CAMBIÓ
       case 'customer.subscription.updated': {
         const subscription = event.data.object;
         const customerId = subscription.customer;
@@ -140,27 +145,17 @@ export default async function handler(req, res) {
 
         if (!rest) break;
 
-        // Si la suscripción está en mora tras múltiples intentos → suspender
         if (status === 'unpaid' || status === 'incomplete_expired') {
-          await supabase
-            .from('restaurantes')
-            .update({ plan: 'trial' })
-            .eq('id', rest.id);
+          await supabase.from('restaurantes').update({ plan: 'trial' }).eq('id', rest.id);
           console.log(`Plan suspendido (${status}) para restaurante ${rest.id}`);
         }
-        // Si vuelve a estar activa tras un fallo → reactivar
         else if (status === 'active') {
-          await supabase
-            .from('restaurantes')
-            .update({ plan: 'pro' })
-            .eq('id', rest.id);
+          await supabase.from('restaurantes').update({ plan: 'pro' }).eq('id', rest.id);
           console.log(`Plan reactivado para restaurante ${rest.id}`);
         }
         break;
       }
 
-      // ⚠️ Pago fallido en renovación — solo logueamos
-      // La acción real viene en customer.subscription.updated
       case 'invoice.payment_failed': {
         const invoice = event.data.object;
         console.log(`Pago fallido para customer ${invoice.customer}`);
@@ -171,7 +166,7 @@ export default async function handler(req, res) {
         console.log(`Evento no manejado: ${event.type}`);
     }
 
-    // ── REGISTRAR EVENTO COMO PROCESADO ─────────────────────────
+    // REGISTRAR EVENTO COMO PROCESADO
     await supabase
       .from('stripe_events_procesados')
       .insert({ event_id: event.id, event_type: event.type });
@@ -179,21 +174,12 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('Error procesando webhook:', err);
     await registrarError(event, err.message);
-    // Devolver 200 igualmente para que Stripe no reintente infinitamente
-    // El error queda registrado en logs
   }
 
   return res.status(200).json({ received: true });
 }
 
-// Helper para registrar errores — puedes crear tabla errores_webhook si quieres persistirlos
+// Helper para errores
 async function registrarError(event, mensaje) {
   console.error(`[WEBHOOK ERROR] ${event.type} | ${event.id} | ${mensaje}`);
-  // Si quieres guardar en BD, descomenta y crea la tabla:
-  // await supabase.from('errores_webhook').insert({
-  //   event_id: event.id,
-  //   event_type: event.type,
-  //   mensaje,
-  //   payload: event.data.object
-  // });
 }
