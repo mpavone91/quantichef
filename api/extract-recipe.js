@@ -56,7 +56,6 @@ export default async function handler(req, res) {
             const precioCarta = plato.precio_venta || 0;
 
             const { error: insErr } = await supabase.from('escandallos').insert({
-                user_id: user.id,
                 restaurante_id: restaurante_id,
                 nombre_plato: plato.nombre,
                 categoria: plato.categoria || 'Importado',
