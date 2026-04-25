@@ -57,7 +57,6 @@
       flex: 1; overflow-y: auto; padding: 16px;
       display: flex; flex-direction: column; gap: 12px;
       background: #F9F7F2;
-      /* Importante: permite scroll interno sin que el contenedor crezca */
       min-height: 0;
     }
     .qc-msg {
@@ -78,7 +77,7 @@
     }
     #qc-chat-input {
       flex: 1; border: 1px solid #E0DDD6; border-radius: 8px;
-      padding: 10px 14px; font-size: 16px; /* 16px evita el zoom automático en iOS */
+      padding: 10px 14px; font-size: 16px;
       outline: none; font-family: inherit; background: #FAFAF8;
       transition: border-color 0.2s;
     }
@@ -88,25 +87,19 @@
       border-radius: 8px; padding: 0 16px; cursor: pointer;
       font-size: 14px; font-weight: 700; transition: background 0.2s;
       display: flex; align-items: center; justify-content: center;
-      min-width: 48px; /* Área táctil suficiente */
+      min-width: 48px;
     }
     #qc-chat-send:hover { background: #b0822e; }
     #qc-chat-send:disabled { background: #E0DDD6; cursor: not-allowed; }
 
-    /* MÓVIL: pantalla completa como WhatsApp */
     @media (max-width: 480px) {
       #qc-chat-box {
         top: 0; left: 0; right: 0; bottom: 0;
         width: 100%; max-width: 100%;
-        height: 100%; max-height: 100%;
+        height: 100dvh; max-height: 100%;
         border-radius: 0; border: none;
-        /* dvh es la clave: dynamic viewport height, respeta el teclado */
-        height: 100dvh;
       }
       #qc-chat-btn { bottom: 16px; right: 16px; width: 56px; height: 56px; }
-      
-      /* Ocultar el botón flotante cuando el chat está abierto en móvil */
-      #qc-chat-box[style*="flex"] ~ #qc-chat-btn,
       body.qc-open #qc-chat-btn { display: none !important; }
     }
   `;
@@ -153,14 +146,18 @@
 
   let history = [];
 
+  // Ocultar badge si el usuario ya abrió el chat antes
+  if (localStorage.getItem('qc_chat_seen')) {
+    badge.style.display = 'none';
+  }
+
   function openChat() {
     box.style.display = "flex";
     badge.style.display = "none";
+    localStorage.setItem('qc_chat_seen', '1');
     document.body.classList.add("qc-open");
-    // Bloquea el scroll del body cuando el chat está abierto en móvil
     document.body.style.overflow = "hidden";
     window.history.pushState({ widget: "chat" }, "");
-    // Pequeño delay para que el teclado no interrumpa la animación
     setTimeout(() => input.focus(), 300);
   }
 
@@ -208,11 +205,10 @@
     const typing = addMessage("Escribiendo...", "bot");
 
     try {
-      const trimmedHistory = history.slice(-10);
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: trimmedHistory }),
+        body: JSON.stringify({ messages: history.slice(-10) }),
       });
 
       const data = await res.json();
@@ -228,7 +224,6 @@
 
     sendBtn.disabled = false;
     messages.scrollTop = messages.scrollHeight;
-
     if (window.innerWidth > 480) input.focus();
   }
 
