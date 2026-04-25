@@ -388,29 +388,43 @@ let esPremium = false;
 let extractedProducts = [];
 
 async function init(){
-  sb.auth.onAuthStateChange(async (event, session) => {
-    if(event==='INITIAL_SESSION'){
-      if(!session) window.location.href='/login';
-      else await cargarDatos(session);
-    }
-  });
+  const { data: { session }, error } = await sb.auth.getSession();
+  if (error || !session) {
+    window.location.href = '/login';
+    return;
+  }
+  await cargarDatos(session);
 }
 
 async function cargarDatos(session){
   let rest = null;
   let intentos = 0;
-  const maxIntentos = 3;
+  const maxIntentos = 5;
   
   while (!rest && intentos < maxIntentos) {
     const { data } = await sb.from('restaurantes').select('id,nombre,plan').eq('user_id', session.user.id).maybeSingle();
     if (data) { rest = data; break; }
     intentos++;
-    if (intentos < maxIntentos) await new Promise(r => setTimeout(r, 500));
+    if (intentos < maxIntentos) await new Promise(r => setTimeout(r, 800 * intentos));
   }
 
   if(!rest){
-    await sb.auth.signOut(); 
-    window.location.href='/login';
+    const { data: { session: sessionActual } } = await sb.auth.getSession();
+    if (!sessionActual) {
+      window.location.href = '/login';
+      return;
+    }
+    document.getElementById('loading').innerHTML = `
+      <div style="text-align:center; padding:2rem;">
+        <p style="color:var(--danger); font-weight:600; margin-bottom:1rem">
+          Error al cargar tu cocina. Recarga la página.
+        </p>
+        <button onclick="window.location.reload()" 
+          style="background:var(--accent); color:white; border:none; 
+          padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600; font-family:'Plus Jakarta Sans',sans-serif;">
+          Reintentar
+        </button>
+      </div>`;
     return;
   }
 
