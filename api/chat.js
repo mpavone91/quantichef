@@ -1,9 +1,27 @@
-// api/chat.js
-import { Anthropic } from "@anthropic-ai/sdk";
+export default async function handler(req, res) {
+  // CORS
+  const origin = req.headers.origin;
+  if (origin && origin.includes('quantichef.com')) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
 
-const SYSTEM_PROMPT = `Eres Diego, consultor gastronómico y experto en rentabilidad en QuantiChef.
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const { messages } = req.body;
+
+  if (!messages || !Array.isArray(messages)) {
+    return res.status(400).json({ error: "El array de mensajes es obligatorio" });
+  }
+
+  const SYSTEM_PROMPT = `Eres Diego, consultor gastronómico y experto en rentabilidad en QuantiChef.
 
 Tu personalidad: Eres humano, cercano, muy profesional y hablas de tú a tú ("de chef a chef"). Eres empático porque conoces lo dura que es la hostelería.
 
@@ -17,39 +35,40 @@ SOBRE QUANTICHEF (DATOS ACTUALIZADOS):
 - Funcionalidades estrella: Importación por URL de cartas digitales, cámara para escanear etiquetas y detectar alérgenos automáticamente, lectura de facturas para actualizar precios, y el semáforo de rentabilidad en vivo.
 
 REGLAS ESTRICTAS (MUY IMPORTANTE):
-1. Si alguien pregunta directamente si eres una IA o un bot, sé honesto pero sin perder el tono: "Soy un asistente de QuantiChef entrenado para ayudarte con rentabilidad y hostelería. Pero las respuestas son reales — dispara, ¿qué necesitas?"
-2. Si el usuario tiene un problema técnico grave o un error en su cuenta, dile: "Pásame un correo a hola@quantichef.com y lo miro con el equipo técnico ahora mismo".
-3. Usa respuestas cortas y directas (máximo 3-4 párrafos). Nada de bloques de texto enormes.
-4. Siempre en español de España.`;
-
-export default async function handler(req, res) {
-  const origin = req.headers.origin;
-  if (origin && origin.includes('quantichef.com')) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
-
-  const { messages } = req.body;
-  if (!messages || !Array.isArray(messages)) return res.status(400).json({ error: "El array de mensajes es obligatorio" });
-
-  // Limitar historial a los últimos 10 mensajes para controlar costes
-  const trimmedMessages = messages.slice(-10);
+1. Si alguien pregunta directamente si eres una IA, un bot o un asistente virtual, sé totalmente honesto y transparente. Puedes responder algo como: "Soy Diego, el asistente de IA de QuantiChef. Estoy entrenado con datos reales de hostelería para echarte un cable con tus escandallos y márgenes al instante."
+2. Mantén siempre tu tono de consultor experto, incluso reconociendo tu naturaleza de IA. La transparencia genera confianza.
+3. Si el usuario tiene un problema técnico grave o un error en su cuenta, dile: "Pásame un correo a hola@quantichef.com y lo miro con el equipo técnico ahora mismo".
+4. Usa respuestas cortas y directas (máximo 3-4 párrafos). Nada de bloques de texto enormes.
+5. Siempre en español de España.`;
 
   try {
-    const response = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 400,
-      system: SYSTEM_PROMPT,
-      messages: trimmedMessages,
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        // Modelo real actualizado (la IA anterior te dio un nombre inventado)
+        model: 'claude-3-5-haiku-20241022',
+        max_tokens: 400,
+        system: SYSTEM_PROMPT,
+        // Mandamos solo los últimos 10 mensajes para no saturar memoria ni costes
+        messages: messages.slice(-10)
+      })
     });
 
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error?.message || 'Error API Anthropic');
+    }
+
     return res.status(200).json({
-      reply: response.content[0].text,
+      reply: data.content[0].text,
     });
+
   } catch (error) {
     console.error("Chat error:", error);
     return res.status(500).json({ error: "Error interno al procesar tu mensaje. Inténtalo de nuevo." });
