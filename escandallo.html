@@ -433,7 +433,7 @@
     </div>
     <div class="ing-header sin-merma" id="ing-header">
       <span>Ingrediente</span><span>Cantidad</span><span>Unidad</span>
-      <div style="display:flex;align-items:center;gap:4px;position:relative"><span>€/unidad</span><button class="help-btn" onclick="tt('tt-precio')">?</button><div class="tooltip" id="tt-precio" style="left:auto;right:0">Precio al proveedor por kg, litro o unidad.</div></div>
+      <div style="display:flex;align-items:center;gap:4px;position:relative"><span>€/Kg ó Ud</span><button class="help-btn" onclick="tt('tt-precio')">?</button><div class="tooltip" id="tt-precio" style="left:auto;right:0">Precio al proveedor por Kg, Litro o Unidad. El cálculo se ajustará solo.</div></div>
       <span></span>
     </div>
     <div id="ingredientes"></div>
@@ -459,7 +459,7 @@
     </div>
 
     <p class="hint" id="merma-hint" style="display:none">Con mermas activas: coste = cantidad bruta real × precio (cantidad útil ÷ (1 − merma%)).</p>
-    <p class="hint">Calcula automáticamente o añade manualmente. Edita los precios con los de tu proveedor real.</p>
+    <p class="hint">Introduce el precio por Kilo o Litro. Si eliges gramos o ml, dividiremos automáticamente.</p>
   </div>
 
   <div class="metrics">
@@ -593,6 +593,7 @@ async function checkTrial() {
   }
 }
 
+// ── IMPORTACIÓN DE MENÚ (MODAL) ──────────────────────────────
 function mostrarUrlModal() {
   if (!esPremium) { window.location.href = '/precios'; return; }
   document.getElementById('url-input').value = '';
@@ -667,8 +668,8 @@ function handleMermaToggle(){
   mermasOn=t.checked;
   const hdr=document.getElementById('ing-header');
   hdr.className='ing-header '+(mermasOn?'con-merma':'sin-merma');
-  if(mermasOn){hdr.innerHTML='<span>Ingrediente</span><span>Cantidad útil</span><span>Unidad</span><div style="display:flex;align-items:center;gap:4px"><span>€/unidad</span></div><span style="text-align:center">Merma %</span><span></span>';}
-  else{hdr.innerHTML='<span>Ingrediente</span><span>Cantidad</span><span>Unidad</span><div style="display:flex;align-items:center;gap:4px;position:relative"><span>€/unidad</span></div><span></span>';}
+  if(mermasOn){hdr.innerHTML='<span>Ingrediente</span><span>Cantidad útil</span><span>Unidad</span><div style="display:flex;align-items:center;gap:4px"><span>€/Kg ó Ud</span></div><span style="text-align:center">Merma %</span><span></span>';}
+  else{hdr.innerHTML='<span>Ingrediente</span><span>Cantidad</span><span>Unidad</span><div style="display:flex;align-items:center;gap:4px;position:relative"><span>€/Kg ó Ud</span></div><span></span>';}
   document.getElementById('merma-hint').style.display=mermasOn?'block':'none';
   renderIngs();
 }
@@ -722,7 +723,7 @@ function renderIngs(){
       <select id="u${i.id}" onchange="calcular()">${UNITS.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select>
       <div style="display:flex; flex-direction:column;">
         <div class="price-wrap">
-          <input type="number" placeholder="0,0000" min="0" step="0.0001" id="p${i.id}" value="${x.p}" oninput="calcular()" onfocus="this.select()">
+          <input type="number" placeholder="0,00" min="0" step="0.01" id="p${i.id}" value="${x.p}" oninput="calcular()" onfocus="this.select()">
           <span class="price-symbol">€</span>
         </div>
         ${provBadge}
@@ -745,9 +746,16 @@ function calcular(){
   ings.forEach(i=>{
     const q=parseFloat(document.getElementById('q'+i.id)?.value)||0;
     const p=parseFloat(document.getElementById('p'+i.id)?.value)||0;
+    const u=document.getElementById('u'+i.id)?.value||'g';
+    
     let merma=0;
     if(mermasOn)merma=Math.min(parseFloat(document.getElementById('m'+i.id)?.value)||0,99)/100;
-    tot+=(merma>0?q/(1-merma):q)*p;
+    
+    // Si la unidad es g o ml, dividimos entre 1000 porque el precio es por Kg o Litro
+    const factor = (u === 'g' || u === 'ml') ? 1000 : 1;
+    const qCalc = q / factor;
+
+    tot+=(merma>0?qCalc/(1-merma):qCalc)*p;
   });
 
   const por=tot/rac;
@@ -944,7 +952,7 @@ async function sugerir(){
       const mt=s.merma>0?`<span class="sug-merma">Merma ${s.merma}%</span>`:'';
       const provBadge=s._es_proveedor
         ?`<span class="sug-prov">✓ Precio proveedor</span>`
-        :`<span class="sug-est">Precio estimado</span>`;
+        :`<span class="sug-est">Base de datos</span>`;
       item.innerHTML=`<input type="checkbox" id="sc${i}" checked style="display:none"><div class="sug-check" onclick="toggleSug(this,${i})"><svg class="sug-check-icon" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div><label for="sc${i}" style="display:flex;align-items:center;gap:6px;flex:1;cursor:pointer;margin:0;flex-wrap:wrap" onclick="toggleSug(this.previousElementSibling,${i})"><span class="sug-name">${s.nombre}</span><span class="sug-qty">${s.cantidad} ${s.unidad}</span><span class="sug-price">${pc}</span>${mt}${provBadge}</label>`;
       list.appendChild(item);
     });
@@ -980,8 +988,8 @@ async function addSugeridos(){
   document.querySelectorAll('#sug-list input[type=checkbox]').forEach((cb,i)=>{
     if(cb.checked&&_sugs[i]){
       const s=_sugs[i];let p=s.precio_kg;
-      if(s.unidad==='g')p/=1000;else if(s.unidad==='ml')p/=1000;
-      seleccionados.push({n:s.nombre,q:s.cantidad,u:s.unidad,p:p.toFixed(4),m:s.merma||0, prov:s._es_proveedor});
+      // Eliminada la división por 1000 aquí, el precio guardado es el de Kg
+      seleccionados.push({n:s.nombre,q:s.cantidad,u:s.unidad,p:p.toFixed(2),m:s.merma||0, prov:s._es_proveedor});
     }
   });
   let si=0;
@@ -1042,7 +1050,7 @@ async function handleLabelScan(e) {
           let precio = ing.precio || 0;
           let esProv = false;
           if (provMatch) {
-            precio = provMatch.precio_kg / (ing.unidad === 'g' || ing.unidad === 'ml' ? 1000 : 1);
+            precio = provMatch.precio_kg; // Ya no dividimos por 1000 aquí
             esProv = true;
           }
           addIng(ing.nombre, ing.cantidad, ing.unidad, precio, 0, esProv);
@@ -1327,7 +1335,7 @@ async function abrirModalSubrecetas() {
 }
 
 function seleccionarSubreceta(nombre, costeRacion) {
-  addIng('🔄 ' + nombre, 1, 'ración', costeRacion.toFixed(4), 0);
+  addIng('🔄 ' + nombre, 1, 'ración', costeRacion.toFixed(2), 0); // Volvemos a 2 decimales para recetas
   hideSubrecetasModal();
 }
 
