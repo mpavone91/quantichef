@@ -1,5 +1,5 @@
-// api/chat.js
 export default async function handler(req, res) {
+  // CORS
   const origin = req.headers.origin;
   if (origin && origin.includes('quantichef.com')) {
     res.setHeader('Access-Control-Allow-Origin', origin);
@@ -7,15 +7,45 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   const { messages } = req.body;
-  if (!messages || !Array.isArray(messages)) return res.status(400).json({ error: "El array de mensajes es obligatorio" });
 
-  let historialSeguro = messages.slice(-10);
+  if (!messages || !Array.isArray(messages)) {
+    return res.status(400).json({ error: "El array de mensajes es obligatorio" });
+  }
+
+  // 🛠️ FIX 1: LIMPIEZA ESTRICTA DE HISTORIAL (Anthropic odia 2 roles seguidos)
+  let historialLimpio = [];
+  for (let m of messages) {
+    if (historialLimpio.length === 0) {
+      if (m.role === 'user') historialLimpio.push(m);
+    } else {
+      // Si el rol es distinto al anterior, lo añadimos
+      if (m.role !== historialLimpio[historialLimpio.length - 1].role) {
+        historialLimpio.push(m);
+      } else {
+        // Si hay dos 'user' seguidos, nos quedamos con el último intento
+        historialLimpio[historialLimpio.length - 1] = m;
+      }
+    }
+  }
+
+  // Tomamos los últimos 10 y aseguramos que SIEMPRE empiece por 'user'
+  let historialSeguro = historialLimpio.slice(-10);
   if (historialSeguro.length > 0 && historialSeguro[0].role === 'assistant') {
     historialSeguro.shift();
+  }
+
+  // Si después de limpiar no hay mensajes, evitamos llamar a la IA y respondemos directo
+  if (historialSeguro.length === 0) {
+    return res.status(200).json({ reply: "¿En qué te puedo ayudar hoy?" });
   }
 
   const SYSTEM_PROMPT = `Eres Diego, consultor gastronómico y experto en rentabilidad en QuantiChef.
@@ -28,10 +58,10 @@ Tu misión es ayudar al usuario con su duda real, aportando muchísimo valor, y 
 - Haz que sientan que están hablando con un experto en negocios que quiere que su restaurante gane dinero.
 
 SOBRE QUANTICHEF (DATOS ACTUALIZADOS):
-- Precios: 39 EUR/mes (Plan Flexible) o 349 EUR/año (Plan Cocina Rentable, que equivale a 29 EUR/mes y ahorra 119€).
+- Precios: 39 EUR/mes (Plan Flexible) o 349 EUR/año (Plan Cocina Rentable, que ahorra 119€).
 - Funcionalidades estrella: Importación por URL de cartas digitales, cámara para escanear etiquetas y detectar alérgenos automáticamente, lectura de facturas para actualizar precios, y el semáforo de rentabilidad en vivo.
 
-REGLAS ESTRICTAS:
+REGLAS ESTRICTAS (MUY IMPORTANTE):
 1. Si alguien pregunta directamente si eres una IA, un bot o un asistente virtual, sé totalmente honesto y transparente. Puedes responder algo como: "Soy Diego, el asistente de IA de QuantiChef. Estoy entrenado con datos reales de hostelería para echarte un cable con tus escandallos y márgenes al instante."
 2. Mantén siempre tu tono de consultor experto, incluso reconociendo tu naturaleza de IA. La transparencia genera confianza.
 3. Si el usuario tiene un problema técnico grave o un error en su cuenta, dile: "Pásame un correo a hola@quantichef.com y lo miro con el equipo técnico ahora mismo".
@@ -47,7 +77,7 @@ REGLAS ESTRICTAS:
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-3-5-sonnet-20240620', // Versión súper estable y universal
         max_tokens: 400,
         system: SYSTEM_PROMPT,
         messages: historialSeguro
@@ -56,9 +86,12 @@ REGLAS ESTRICTAS:
 
     const data = await response.json();
 
+    // 🛠️ FIX 2: MODO DEBUG VISUAL. Si hay error, Diego lo dice en el chat.
     if (!response.ok) {
-      console.error("Error de Anthropic:", JSON.stringify(data));
-      throw new Error(data.error?.message || 'Error API Anthropic');
+      console.error("Error de Anthropic:", data.error);
+      return res.status(200).json({
+        reply: `**Error técnico de Anthropic:** ${data.error?.message || 'Error desconocido'}`
+      });
     }
 
     return res.status(200).json({
@@ -66,7 +99,7 @@ REGLAS ESTRICTAS:
     });
 
   } catch (error) {
-    console.error("Chat error:", error.message);
-    return res.status(500).json({ error: "Error interno al procesar tu mensaje. Inténtalo de nuevo." });
+    console.error("Chat error:", error);
+    return res.status(200).json({ reply: `**Error de servidor:** ${error.message}` });
   }
 }
