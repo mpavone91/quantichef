@@ -232,26 +232,13 @@
   <div class="spinner"></div>Cargando tu cocina...
 </div>
 
-<div class="modal-overlay" id="modal-url" onclick="hideUrlModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-icon" style="background:var(--gold-light); color:var(--gold);">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-    </div>
-    <h3>Subir Menú Digital</h3>
-    <p>Pega el enlace de tu carta online y extraeremos todos tus platos en segundos.</p>
-    <input type="url" id="url-input" class="form-input" placeholder="ej: www.turestaurante.com/carta" style="margin-bottom: 1.5rem; text-align: center;">
-    <button class="btn-fill" style="width:100%; padding:14px; font-size:14px;" onclick="ejecutarImportacionUrl()" id="btn-import-confirm">Importar Carta Completa</button>
-    <button onclick="hideUrlModal()" style="margin-top: 15px; background:none; border:none; color:var(--text3); font-size:13px; font-weight:600; cursor:pointer; text-decoration:underline;">Cancelar</button>
-  </div>
-</div>
-
 <div id="app" style="display:none">
   <div class="container">
 
     <div class="welcome">
       <div class="welcome-tag">Mi cocina</div>
       <h1 class="welcome-title">Hola, <em id="welcome-nombre">chef</em> 👋</h1>
-      <p class="welcome-sub" id="welcome-sub">Actualiza tus precios con una foto o importa tu menú.</p>
+      <p class="welcome-sub" id="welcome-sub">Actualiza tus precios con una foto o digitaliza tus recetas.</p>
       
       <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
         <div class="upload-area-icon">
@@ -267,10 +254,11 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Nuevo plato manual
         </button>
-        <button class="cta-nueva btn-magico" onclick="mostrarUrlModal()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          Sube tu menú digital <span id="dash-upsell-lock" style="margin-left:4px; font-size:11px;">🔒</span>
+        <button class="cta-nueva btn-magico" onclick="abrirSubidaRecetas()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Digitalizar Ficha Técnica <span id="dash-upsell-lock" style="margin-left:4px; font-size:11px;">🔒</span>
         </button>
+        <input type="file" id="file-input-recetas" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleRecetasUpload(event)" style="display:none">
       </div>
     </div>
 
@@ -293,7 +281,7 @@
     </div>
 
     <div class="extract-loading" id="extract-loading" style="display:none; background:var(--accent-light); padding:1rem; border-radius:10px; margin-bottom:1rem; align-items:center; gap:10px;">
-      <div class="spinner"></div><span style="color:var(--accent); font-weight:600; font-size:14px;">Leyendo albarán con Inteligencia Artificial...</span>
+      <div class="spinner"></div><span id="loading-text-dynamic" style="color:var(--accent); font-weight:600; font-size:14px;">Leyendo albarán con Inteligencia Artificial...</span>
     </div>
     <div class="prov-msg" id="prov-msg" style="margin-bottom:1.5rem; display:none; padding:12px; border-radius:8px; font-weight:500; font-size:13px;"></div>
 
@@ -442,7 +430,7 @@ async function cargarDatos(session){
     const { count: preciosCount } = await sb.from('precios_proveedor').select('id', { count: 'exact', head: true }).eq('restaurante_id', rest.id);
     if(preciosCount === 0) document.getElementById('aviso-estimados').style.display = 'flex';
   } else { 
-    document.getElementById('lista-escandallos').innerHTML = '<div style="padding:3rem; text-align:center; color:var(--text3); border:1.5px dashed var(--border); border-radius:12px; font-size:14px;">Aún no tienes platos. Crea uno o importa tu menú.</div>';
+    document.getElementById('lista-escandallos').innerHTML = '<div style="padding:3rem; text-align:center; color:var(--text3); border:1.5px dashed var(--border); border-radius:12px; font-size:14px;">Aún no tienes platos. Crea uno o importa tus recetas.</div>';
   }
 
   await cargarAlertas();
@@ -628,49 +616,65 @@ function nuevoEscandallo(){ sessionStorage.removeItem('qc_escandallo_editar'); w
 function editarEscandallo(e){ sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(e)); window.location.href='/escandallo'; }
 async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login'; }
 
-function mostrarUrlModal() {
-  if (!esPremium) { window.location.href = '/precios'; return; }
-  document.getElementById('url-input').value = '';
-  document.getElementById('modal-url').classList.add('visible');
-}
+/* ---- NUEVA FUNCIÓN: SUBIR FICHAS TÉCNICAS (REEMPLAZA LA URL) ---- */
 
-function hideUrlModal(e) {
-  if (!e || e.target === document.getElementById('modal-url')) {
-    document.getElementById('modal-url').classList.remove('visible');
+function abrirSubidaRecetas() {
+  if (!esPremium) { 
+    window.location.href = '/precios'; 
+    return; 
   }
+  document.getElementById('file-input-recetas').click();
 }
 
-async function ejecutarImportacionUrl() {
-  const url = document.getElementById('url-input').value.trim();
-  if (!url) { alert("Por favor, escribe una URL válida"); return; }
-
-  const btn = document.getElementById('btn-import-confirm');
-  const btnOriginal = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = `<span class="spinner-sm"></span> Extrayendo Platos...`;
-
-  try {
-    const { data: { session } } = await sb.auth.getSession();
-    const response = await fetch('/api/import-menu', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
-      body: JSON.stringify({ url })
-    });
-
-    let result;
-    try { result = await response.json(); } catch(e) { throw new Error("Error del servidor al leer la carta. Inténtalo de nuevo."); }
-
-    if (!response.ok) throw new Error(result.error || 'Error desconocido al importar.');
-
-    alert(`¡Éxito! Hemos importado ${result.cantidad} platos de tu carta.`);
-    window.location.reload();
-
-  } catch (error) {
-    alert(`Error: ${error.message}`);
-    btn.disabled = false;
-    btn.innerHTML = btnOriginal;
-  }
+async function handleRecetasUpload(e){ 
+  if(e.target.files.length > 0) processRecetasFile(e.target.files[0]); 
 }
+
+async function processRecetasFile(file) {
+  const loadingEl = document.getElementById('extract-loading');
+  const textEl = document.getElementById('loading-text-dynamic');
+  const originalText = textEl.textContent;
+  
+  textEl.textContent = 'Digitalizando platos de tu ficha técnica...';
+  loadingEl.style.display = 'flex';
+  
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async () => {
+    try {
+      const base64 = reader.result.split(',')[1];
+      const { data: { session } } = await sb.auth.getSession();
+      
+      const resp = await fetch('/api/extract-recipe', { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (session?.access_token || '') }, 
+        body: JSON.stringify({ file_base64: base64, file_type: file.name.split('.').pop(), restaurante_id: restauranteId }) 
+      });
+      
+      let data;
+      try { data = await resp.json(); } catch(e) { throw new Error('Error al leer la ficha técnica.'); }
+
+      loadingEl.style.display = 'none';
+      textEl.textContent = originalText;
+      
+      if (!resp.ok) {
+        alert(data.error || 'Error al procesar el documento. Asegúrate de que las recetas sean legibles.');
+        return;
+      }
+      
+      alert(`¡Éxito! Hemos importado ${data.cantidad || 'tus'} platos de la ficha técnica.`);
+      window.location.reload();
+    } catch(err) {
+      loadingEl.style.display = 'none';
+      textEl.textContent = originalText;
+      alert(err.message || 'Error de conexión. Inténtalo de nuevo.');
+    } finally {
+      document.getElementById('file-input-recetas').value = ''; 
+    }
+  };
+}
+
+/* --------------------------------------------------------------- */
 
 async function handleFileUpload(e){ 
   if(e.target.files.length > 0) processFile(e.target.files[0]); 
