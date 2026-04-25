@@ -378,7 +378,7 @@ async function handleFileUpload(e) {
   const file = e.target.files[0];
   if(!file) return;
   const loading = document.getElementById('extract-loading');
-  document.getElementById('loading-text-dynamic').textContent = 'Leyendo albarán con IA...';
+  document.getElementById('loading-text-dynamic').textContent = 'Leyendo albarán...';
   loading.style.display = 'flex';
   const reader = new FileReader();
   reader.readAsDataURL(file);
