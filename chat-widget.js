@@ -143,7 +143,13 @@
   const messages = document.getElementById("qc-chat-messages");
 
   function parseMarkdown(text) {
+    // 1. Convertir negritas
     let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // 2. Convertir enlaces de Markdown [texto](url) en links HTML clicables
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #1E4D2B; font-weight: 700; text-decoration: underline;">$1</a>');
+    
+    // 3. Convertir saltos de línea
     html = html.replace(/\n/g, '<br>');
     return html;
   }
