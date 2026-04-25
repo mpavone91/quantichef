@@ -21,6 +21,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "El array de mensajes es obligatorio" });
   }
 
+  // Protección: Anthropic exige que el historial siempre empiece por el usuario.
+  let historialSeguro = messages.slice(-10);
+  if (historialSeguro.length > 0 && historialSeguro[0].role === 'assistant') {
+    historialSeguro.shift(); // Si al cortar el historial el primero es Diego, lo quitamos.
+  }
+
   const SYSTEM_PROMPT = `Eres Diego, consultor gastronómico y experto en rentabilidad en QuantiChef.
 
 Tu personalidad: Eres humano, cercano, muy profesional y hablas de tú a tú ("de chef a chef"). Eres empático porque conoces lo dura que es la hostelería.
@@ -50,18 +56,17 @@ REGLAS ESTRICTAS (MUY IMPORTANTE):
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        // Modelo real actualizado (la IA anterior te dio un nombre inventado)
-        model: 'claude-3-haiku-20240307',
+        model: 'claude-3-haiku-20240307', // Volvemos al modelo fiable y ultra-rápido
         max_tokens: 400,
         system: SYSTEM_PROMPT,
-        // Mandamos solo los últimos 10 mensajes para no saturar memoria ni costes
-        messages: messages.slice(-10)
+        messages: historialSeguro
       })
     });
 
     const data = await response.json();
 
     if (!response.ok) {
+      console.error("Error de Anthropic:", data.error);
       throw new Error(data.error?.message || 'Error API Anthropic');
     }
 
@@ -71,6 +76,6 @@ REGLAS ESTRICTAS (MUY IMPORTANTE):
 
   } catch (error) {
     console.error("Chat error:", error);
-    return res.status(500).json({ error: "Error interno al procesar tu mensaje. Inténtalo de nuevo." });
+    return res.status(500).json({ error: "Error interno al procesar tu mensaje." });
   }
 }
