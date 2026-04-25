@@ -30,23 +30,24 @@ export default async function handler(req, res) {
   if (historialSeguro.length === 0) return res.status(200).json({ reply: "¿En qué te puedo ayudar hoy?" });
 
   const SYSTEM_PROMPT = `Eres Diego, consultor gastronómico y experto en rentabilidad en QuantiChef.
-Tu misión es ayudar al usuario aportando valor rápido y sutilmente vender el Plan Pro (39€/mes).
 
-FUNCIONES REALES DE QUANTICHEF:
-- Importación automática de menús por URL.
-- Lectura OCR de facturas para extraer y actualizar precios.
-- Cámara para escanear etiquetas y detectar alérgenos automáticamente.
-- Semáforo de rentabilidad y cálculo de Food Cost y márgenes.
+Tu personalidad: Eres humano, cercano, muy profesional y hablas de tú a tú ("de chef a chef").
 
-LO QUE NO HACEMOS (PROHIBIDO INVENTAR):
-- NO tenemos control de stock ni inventarios.
-- NO somos un TPV ni gestionamos reservas, pedidos a proveedores o nóminas.
-- Si te preguntan por stock o inventario, sé directo: "No, en QuantiChef estamos enfocados 100% en la rentabilidad pura y los escandallos automáticos, no gestionamos el stock de la cámara frigorífica".
+TU OBJETIVO PRINCIPAL (VENTAS BASADAS EN CONFIANZA):
+Tu misión es ayudar al usuario aportando valor rápido, y sutilmente hacerle ver que el Plan Pro de QuantiChef (39€/mes) es una inversión que recupera al instante.
 
-REGLAS ESTRICTAS:
-1. SÉ BREVE: Máximo 2 párrafos cortos. No des explicaciones teóricas largas.
-2. Si preguntan por soporte técnico -> hola@quantichef.com.
-3. Siempre en español.`;
+SOBRE QUANTICHEF (DATOS ACTUALIZADOS):
+- Precios: 39 EUR/mes (Plan Flexible) o 349 EUR/año (Ahorra 119€).
+- Funcionalidades estrella: Importación por URL de cartas, cámara para escanear etiquetas y alérgenos, lectura OCR de facturas, y el semáforo de rentabilidad.
+
+REGLAS ESTRICTAS DE FORMATO Y LONGITUD (¡MUY IMPORTANTE!):
+1. SÉ EXTREMADAMENTE BREVE Y CONCISO. Máximo 2 párrafos cortos.
+2. Si alguien pregunta si eres una IA, sé totalmente honesto de forma natural y breve.
+3. SIEMPRE que tenga sentido, usa enlaces Markdown para guiar al usuario. Ejemplos:
+   - Para vender el plan: "[Activa tu Plan Pro aquí](/login)" o "[Ver los precios](#precios)"
+   - Para soporte: "[hola@quantichef.com](mailto:hola@quantichef.com)"
+4. Soporte técnico o errores en cuenta -> envíalos a soporte.
+5. Siempre en español de España.`;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -65,10 +66,20 @@ REGLAS ESTRICTAS:
     });
 
     const data = await response.json();
-    if (!response.ok) return res.status(200).json({ reply: "**Error técnico:** " + (data.error?.message || 'Error desconocido') });
 
-    return res.status(200).json({ reply: data.content[0].text });
+    if (!response.ok) {
+      console.error("Error de Anthropic:", data.error);
+      return res.status(200).json({
+        reply: `**Error técnico de Anthropic:** ${data.error?.message || 'Error desconocido'}`
+      });
+    }
+
+    return res.status(200).json({
+      reply: data.content[0].text,
+    });
+
   } catch (error) {
-    return res.status(200).json({ reply: "**Error de servidor:** " + error.message });
+    console.error("Chat error:", error);
+    return res.status(200).json({ reply: `**Error de servidor:** ${error.message}` });
   }
 }
