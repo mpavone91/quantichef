@@ -123,8 +123,7 @@
         </div>
         <button id="qc-chat-close">×</button>
       </div>
-      <div id="qc-chat-messages">
-        </div>
+      <div id="qc-chat-messages"></div>
       <div id="qc-chat-input-area">
         <input id="qc-chat-input" type="text" placeholder="Escribe tu mensaje..." autocomplete="off" />
         <button id="qc-chat-send">
@@ -149,18 +148,15 @@
     return html;
   }
 
-  // MEMORIA DEL NAVEGADOR
   let history = JSON.parse(sessionStorage.getItem('qc_chat_history')) || [];
   let hasOpened = sessionStorage.getItem('qc_chat_opened') === 'true';
 
-  // Controlar la notificación roja al cargar la página
   badge.style.display = hasOpened ? 'none' : 'flex';
 
-  // Cargar el historial si existe, si no, poner el saludo por defecto
   if (history.length > 0) {
     history.forEach(msg => {
       const div = document.createElement("div");
-      div.className = \`qc-msg \${msg.role === 'user' ? 'user' : 'bot'}\`;
+      div.className = "qc-msg " + (msg.role === 'user' ? 'user' : 'bot');
       if (msg.role === "user") {
         div.textContent = msg.content;
       } else {
@@ -180,7 +176,7 @@
   function openChat() {
     box.style.display = "flex";
     badge.style.display = "none";
-    sessionStorage.setItem('qc_chat_opened', 'true'); // Guardar que ya lo ha abierto
+    sessionStorage.setItem('qc_chat_opened', 'true');
     window.history.pushState({ widget: 'chat' }, '');
     if(window.innerWidth > 480) input.focus();
   }
@@ -217,7 +213,6 @@
     const text = input.value.trim();
     if (!text) return;
 
-    // Guardar mensaje del usuario en la pantalla y en memoria
     addMessageToScreen(text, "user");
     history.push({ role: "user", content: text });
     sessionStorage.setItem('qc_chat_history', JSON.stringify(history));
@@ -237,7 +232,6 @@
       const data = await res.json();
       const formattedReply = data.reply ? parseMarkdown(data.reply) : "Perdona, no he podido enviar el mensaje. ¿Me lo repites?";
       
-      // Actualizar pantalla y memoria con la respuesta de Diego
       typing.innerHTML = formattedReply;
       history.push({ role: "assistant", content: data.reply });
       sessionStorage.setItem('qc_chat_history', JSON.stringify(history));
@@ -248,15 +242,12 @@
 
     sendBtn.disabled = false;
     messages.scrollTop = messages.scrollHeight;
-    
-    if(window.innerWidth > 480) {
-      input.focus();
-    }
+    if(window.innerWidth > 480) input.focus();
   }
 
   function addMessageToScreen(text, type) {
     const div = document.createElement("div");
-    div.className = \`qc-msg \${type}\`;
+    div.className = "qc-msg " + type;
     if (type === "user") {
       div.textContent = text; 
     } else {
