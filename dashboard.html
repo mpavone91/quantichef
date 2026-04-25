@@ -6,10 +6,9 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-BBXNWHTD8Y');
 </script>
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -32,20 +31,16 @@
   nav{background:var(--accent);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;transition: padding 0.2s;}
   .nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
   .nav-logo-icon{width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center}
-  .nav-logo-icon svg{width:15px;height:15px}
   .nav-logo-text{font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:600}
   .nav-right{display:flex;align-items:center;gap:12px}
   .nav-restaurante{font-size:13px;color:rgba(255,255,255,.65)}
   .nav-logout{color:rgba(255,255,255,.5);cursor:pointer;background:none;border:none;display:flex;align-items:center;gap:5px;font-size:12px;padding:0}
   .nav-logout:hover{color:white}
-  
   .btn-suscripcion-nav { display:none; color:rgba(255,255,255,.8); border:1.5px solid rgba(255,255,255,.3); background:none; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition: all .2s; }
-  .btn-suscripcion-nav:hover { background: rgba(255,255,255,.1); border-color: white; color: white; }
 
   /* Loading */
   .loading{display:flex;align-items:center;justify-content:center;min-height:80vh;gap:10px;font-size:14px;color:var(--text3)}
   .spinner{width:20px;height:20px;border:2px solid var(--accent-light);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
-  .spinner-sm{width:16px;height:16px;border:2px solid rgba(30,77,43,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
   @keyframes spin{to{transform:rotate(360deg)}}
 
   .container{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem}
@@ -57,7 +52,7 @@
   .welcome-title em{font-style:italic;color:var(--accent)}
   .welcome-sub{font-size:.95rem;color:var(--text2);margin-top:.5rem;margin-bottom:2rem}
 
-  /* Acciones Grid */
+  /* NUEVO GRID DE ACCIONES (3 Tarjetas) */
   .actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 2rem; }
   .action-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 1.5rem; text-align: left; cursor: pointer; transition: all 0.2s; position: relative; text-decoration: none; display: flex; flex-direction: column; align-items: flex-start; }
   .action-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); border-color: var(--accent-mint); }
@@ -76,15 +71,58 @@
   .modal h3{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:var(--text);margin-bottom:.5rem}
   .modal p{font-size:.92rem;color:var(--text2);line-height:1.6;margin-bottom:1.5rem}
 
-  /* El resto de estilos se mantienen igual... */
+  /* Banners y Stats */
+  .plan-banner{background:var(--gold-light);border:1px solid rgba(196,148,58,.25);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:2rem}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.2rem}
+  .stat-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.4rem}
+  .stat-value{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:300;color:var(--text)}
+  .stat-value.green{color:var(--accent)}
+
+  /* Ranking */
+  .ranking-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
+  .ranking-header{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1.2rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+  .ranking-tabs{display:flex;gap:4px}
+  .ranking-tab{font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--text3);transition:all .15s}
+  .ranking-tab.active{background:var(--accent);color:white;border-color:var(--accent)}
+  .ranking-row{display:flex;align-items:center;gap:12px;padding:.75rem 1.2rem;border-bottom:1px solid var(--border);cursor:pointer}
+  .rank-num{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:300;color:var(--text3);width:28px;text-align:center}
+  .rank-name{flex:1;font-size:13px;font-weight:600;color:var(--text)}
+  .rank-pct{font-family:'Fraunces',serif;font-size:1rem;min-width:52px;text-align:right}
+
+  /* Listado Platos */
   .section-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:8px; justify-content: space-between;}
   .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
-  .escandallo-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:1rem;transition:all .2s;cursor:pointer;text-decoration:none;color:inherit}
-  .card-metric-val{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:300}
-  .btn-fill { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; transition: background 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+  .escandallo-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:1rem;transition:all .2s;cursor:pointer;text-decoration:none;color:inherit;margin-bottom:8px}
+  .escandallo-card:hover{border-color:var(--accent-mint);box-shadow:0 4px 16px rgba(30,77,43,.07)}
+  .card-metrics{display:flex;gap:.75rem;flex-shrink:0}
+  .card-metric{text-align:right}
+  .card-del{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .card-del:hover{background:var(--danger-light);color:var(--danger)}
+  .card-checkbox { display:none; margin-right:5px; }
+
+  /* Precios Guardados */
+  .precios-guardados{margin-top:2.5rem; margin-bottom: 2rem;}
+  .precio-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .precios-all { display: none; flex-direction: column; gap: 6px; }
+  .precios-all.visible { display: flex; }
+  .btn-fill { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; }
+
+  /* Review Table (para albaranes) */
+  .review-wrap { margin-bottom: 2rem; }
+  .review-card { background: var(--surface); border: 1px solid var(--accent-mint); border-radius: 12px; padding: 1.5rem; box-shadow: 0 8px 24px rgba(30,77,43,0.06); }
+  .review-table-container { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; margin-top:1rem; }
+  .review-table { width: 100%; border-collapse: collapse; background: white; }
+  .review-table th { font-size: 10px; font-weight: 700; color: var(--text3); padding: 12px; border-bottom: 1px solid var(--border); text-align: left; }
+  .review-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .form-input{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;outline:none;}
 
   @keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
-  @media(max-width:768px){ .actions-grid { grid-template-columns: 1fr; } }
+  @media(max-width:768px){ 
+    .actions-grid { grid-template-columns: 1fr; } 
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stats .stat:last-child { grid-column: 1/-1; }
+  }
 </style>
 </head>
 <body>
@@ -122,7 +160,7 @@
     <div class="welcome">
       <div class="welcome-tag">Panel de Control</div>
       <h1 class="welcome-title">Hola, <em>Chef</em> 👋</h1>
-      <p class="welcome-sub">¿Qué quieres hacer hoy?</p>
+      <p class="welcome-sub">Tu cocina bajo control.</p>
       
       <div class="actions-grid">
         <div class="action-card ac-green" onclick="document.getElementById('file-input').click()">
@@ -142,17 +180,70 @@
         <div class="action-card ac-gray" onclick="nuevoEscandallo()">
           <div class="action-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
           <div class="action-title">+ Escandallo Individual</div>
-          <div class="action-sub">Crea un plato desde cero.</div>
+          <div class="action-sub">Crea un plato paso a paso.</div>
         </div>
       </div>
     </div>
 
-    <div class="extract-loading" id="extract-loading" style="display:none; background:var(--accent-light); padding:1rem; border-radius:10px; margin-bottom:1rem; align-items:center; gap:10px;">
-      <div class="spinner"></div><span id="loading-text-dynamic" style="color:var(--accent); font-weight:600; font-size:14px;">Procesando documento...</span>
+    <div class="plan-banner" id="aviso-estimados" style="display:none; background:#FFF3E0; border-color:#F5C47A; color:#8B4A00;">
+      <span style="font-size:18px">💡</span>
+      <div style="flex:1"><strong>Tus escandallos usan precios de mercado.</strong> Sube una factura para ser 100% exacto.</div>
     </div>
 
+    <div class="extract-loading" id="extract-loading" style="display:none; background:var(--accent-light); padding:1rem; border-radius:10px; margin-bottom:1.5rem; align-items:center; gap:10px;">
+      <div class="spinner"></div><span id="loading-text-dynamic" style="color:var(--accent); font-weight:600; font-size:14px;">Procesando...</span>
+    </div>
+
+    <div class="review-wrap" id="review-wrap" style="display:none;">
+      <div class="review-card">
+        <h3 class="action-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Revisa los precios del albarán</h3>
+        <div class="review-table-container">
+          <table class="review-table">
+            <thead><tr><th>Ingrediente</th><th style="width:100px">Precio (€)</th><th style="width:80px; text-align:center;">Unidad</th><th style="width:50px;"></th></tr></thead>
+            <tbody id="review-body"></tbody>
+          </table>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:1.5rem; justify-content:flex-end;">
+          <button class="action-card ac-gray" style="padding:10px 20px;" onclick="cancelarReview()">Descartar</button>
+          <button class="btn-fill" id="btn-guardar-precios" onclick="guardarPrecios()">Guardar en cocina</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats" id="stats" style="display:none">
+      <div class="stat"><div class="stat-label">Platos</div><div class="stat-value green" id="stat-total">0</div></div>
+      <div class="stat"><div class="stat-label">Food cost medio</div><div class="stat-value" id="stat-fc">—</div></div>
+      <div class="stat"><div class="stat-label">Margen más alto</div><div class="stat-value green" id="stat-top">—</div></div>
+    </div>
+
+    <div id="ranking-section" style="display:none">
+      <div class="section-title">Ranking de rentabilidad</div>
+      <div class="ranking-card">
+        <div class="ranking-header">
+          <div style="font-size:13px; font-weight:700;">Tus mejores platos</div>
+          <div class="ranking-tabs">
+            <button class="ranking-tab" id="tab-fc" onclick="setRankingTab('fc',this)">Food cost</button>
+            <button class="ranking-tab active" id="tab-margen" onclick="setRankingTab('margen',this)">Margen €</button>
+          </div>
+        </div>
+        <div id="ranking-list"></div>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <div>Mis platos</div>
+      <button id="btn-toggle-borrado" onclick="toggleModoBorrado()" style="font-size:10px; border:1px solid var(--border); padding:4px 8px; border-radius:6px; background:none; cursor:pointer;">Seleccionar varios</button>
+    </div>
     <div id="lista-escandallos"></div>
+
+    <div class="precios-guardados" id="precios-guardados"></div>
   </div>
+</div>
+
+<div id="bulk-delete-bar" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--text); color:white; padding:12px 24px; border-radius:12px; z-index:100; align-items:center; gap:15px; box-shadow:0 8px 32px rgba(0,0,0,0.25);">
+  <span id="bulk-count" style="font-size:13px; font-weight:600;">0 seleccionados</span>
+  <button onclick="confirmarBorradoMultiple()" style="background:var(--danger); color:white; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer;">Borrar platos</button>
+  <button onclick="toggleModoBorrado()" style="background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; text-decoration:underline; font-size:13px;">Cancelar</button>
 </div>
 
 <script>
@@ -163,8 +254,10 @@ const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let restauranteId=null;
 let esPremium = false;
+let rankingData = [];
+let rankingModo = 'margen';
+let extractedProducts = [];
 
-// INICIALIZACIÓN
 async function init(){
   sb.auth.onAuthStateChange(async (event, session) => {
     if(event==='INITIAL_SESSION'){
@@ -174,7 +267,6 @@ async function init(){
   });
 }
 
-// CARGAR DATOS
 async function cargarDatos(session){
   const { data: rest } = await sb.from('restaurantes').select('id,nombre,plan').eq('user_id', session.user.id).maybeSingle();
   if(!rest) { await sb.auth.signOut(); window.location.href='/login'; return; }
@@ -184,23 +276,49 @@ async function cargarDatos(session){
   document.getElementById('nav-restaurante').textContent = rest.nombre;
   document.getElementById('dash-upsell-lock').style.display = esPremium ? 'none' : 'inline';
   
-  // Cargar lista de platos
   const {data:escandallos} = await sb.from('escandallos').select('*').eq('restaurante_id', rest.id).order('updated_at', {ascending:false});
+  
   document.getElementById('loading').style.display = 'none';
   document.getElementById('app').style.display = 'block';
-  renderLista(escandallos || []);
+
+  if(escandallos && escandallos.length > 0){
+    document.getElementById('stats').style.display = 'grid';
+    renderStats(escandallos);
+    renderLista(escandallos);
+    rankingData = escandallos;
+    if(esPremium) {
+      document.getElementById('ranking-section').style.display = 'block';
+      renderRanking();
+    }
+  } else {
+    document.getElementById('lista-escandallos').innerHTML = '<div style="padding:3rem; text-align:center; color:var(--text3); border:1.5px dashed var(--border); border-radius:12px;">Aún no tienes platos. Empieza digitalizando tus recetas.</div>';
+  }
+  
+  await cargarPreciosGuardados();
+}
+
+// FORMATO Y RENDER
+function fmt(n){return Number(n).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';}
+
+function renderStats(lista){
+  document.getElementById('stat-total').textContent = lista.length;
+  const conPrecio = lista.filter(e => e.precio_carta > 0);
+  if(conPrecio.length > 0){
+    const avgFc = conPrecio.reduce((acc, e) => acc + (e.coste_racion/e.precio_carta*100), 0) / conPrecio.length;
+    document.getElementById('stat-fc').textContent = avgFc.toFixed(1) + '%';
+  }
 }
 
 function renderLista(lista){
   const c = document.getElementById('lista-escandallos');
-  if(lista.length === 0) {
-    c.innerHTML = '<div style="padding:3rem; text-align:center; color:var(--text3); border:1.5px dashed var(--border); border-radius:12px;">Aún no tienes platos.</div>';
-    return;
-  }
-  c.innerHTML = '<div class="section-title">Mis platos</div>' + lista.map(e => `
-    <div class="escandallo-card" onclick="editarEscandallo(${JSON.stringify(e).replace(/"/g,'&quot;')})">
-      <div style="flex:1"><strong>${e.nombre_plato}</strong></div>
-      <div class="card-metric-val">${e.coste_racion.toFixed(2)}€</div>
+  c.innerHTML = lista.map(e => `
+    <div class="escandallo-card" onclick="modoBorrado ? null : editarEscandallo(${JSON.stringify(e).replace(/"/g,'&quot;')})">
+      <div class="card-checkbox"><input type="checkbox" class="bulk-cb" value="${e.id}" onchange="actualizarContadorBorrado()"></div>
+      <div style="flex:1"><strong>${e.nombre_plato}</strong><div style="font-size:11px; color:var(--text3)">${e.categoria}</div></div>
+      <div class="card-metrics">
+        <div class="card-metric"><div style="font-size:14px; font-weight:600;">${fmt(e.coste_racion)}</div><div style="font-size:9px; color:var(--text3)">coste</div></div>
+      </div>
+      <button class="card-del" onclick="eliminarUnico('${e.id}', event)">×</button>
     </div>
   `).join('');
 }
@@ -224,7 +342,7 @@ function cerrarStatus() {
   if(modal.dataset.refresh === 'true') window.location.reload();
 }
 
-// SUBIDA DE RECETAS
+// UPLOAD RECETAS
 function abrirSubidaRecetas() {
   if (!esPremium) { window.location.href = '/precios'; return; }
   document.getElementById('file-input-recetas').click();
@@ -233,43 +351,131 @@ function abrirSubidaRecetas() {
 async function handleRecetasUpload(e) {
   const file = e.target.files[0];
   if(!file) return;
-  
   const loading = document.getElementById('extract-loading');
   document.getElementById('loading-text-dynamic').textContent = 'Digitalizando tus platos...';
   loading.style.display = 'flex';
-  
   const reader = new FileReader();
   reader.readAsDataURL(file);
   reader.onload = async () => {
     try {
       const base64 = reader.result.split(',')[1];
       const { data: { session } } = await sb.auth.getSession();
-      
       const resp = await fetch('/api/extract-recipe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
         body: JSON.stringify({ file_base64: base64, file_type: file.name.split('.').pop(), restaurante_id: restauranteId })
       });
-      
       const res = await resp.json();
       loading.style.display = 'none';
-      
-      if(resp.ok && res.cantidad > 0) {
-        showStatus('¡Magia pura, Chef!', `Hemos digitalizado ${res.cantidad} platos. Ya puedes verlos en tu cocina.`, true);
-      } else {
-        showStatus('Ups, hubo un problema', res.error || 'No pudimos leer las recetas. Prueba con otro formato.', false);
-      }
-    } catch(err) {
-      loading.style.display = 'none';
-      showStatus('Error de conexión', 'No pudimos contactar con QuantiChef. Revisa tu conexión.', false);
-    }
+      if(resp.ok && res.cantidad > 0) showStatus('¡Magia pura, Chef!', `Hemos digitalizado ${res.cantidad} platos.`, true);
+      else showStatus('Ups, algo falló', res.error || 'No pudimos extraer los platos.', false);
+    } catch(err) { loading.style.display = 'none'; showStatus('Error', 'Revisa tu conexión.', false); }
   };
 }
 
-// FUNCIONES AUXILIARES
+// ALBARANES (Lógica existente)
+async function handleFileUpload(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  const loading = document.getElementById('extract-loading');
+  document.getElementById('loading-text-dynamic').textContent = 'Leyendo albarán con IA...';
+  loading.style.display = 'flex';
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async () => {
+    const base64 = reader.result.split(',')[1];
+    const { data: { session } } = await sb.auth.getSession();
+    const resp = await fetch('/api/extract', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+      body: JSON.stringify({ file_base64: base64, file_type: file.name.split('.').pop() })
+    });
+    const data = await resp.json();
+    loading.style.display = 'none';
+    if(resp.ok && data.productos) renderReviewTable(data.productos);
+    else showStatus('Error', data.error || 'No pudimos leer el albarán.', false);
+  };
+}
+
+function renderReviewTable(prods){
+  extractedProducts = prods;
+  document.getElementById('review-body').innerHTML = prods.map((p,i)=>`
+    <tr>
+      <td><input class="form-input" value="${p.nombre}" onchange="extractedProducts[${i}].nombre=this.value"></td>
+      <td><input type="number" class="form-input" value="${p.precio}" onchange="extractedProducts[${i}].precio=this.value"></td>
+      <td style="text-align:center;">${p.unidad||'kg'}</td>
+      <td><button onclick="extractedProducts.splice(${i},1);renderReviewTable(extractedProducts)">×</button></td>
+    </tr>`).join('');
+  document.getElementById('review-wrap').style.display = 'block';
+}
+
+async function guardarPrecios(){
+  const { data: { session } } = await sb.auth.getSession();
+  const resp = await fetch('/api/extract', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer ' + session.access_token},
+    body:JSON.stringify({mode:'save_prices', restaurante_id:restauranteId, productos:extractedProducts})
+  });
+  if(resp.ok) showStatus('Precios guardados', 'Tu cocina está actualizada.', true);
+}
+
+// RANKING (Lógica existente)
+function setRankingTab(modo, btn){
+  rankingModo = modo;
+  document.querySelectorAll('.ranking-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderRanking();
+}
+
+function renderRanking(){
+  const list = document.getElementById('ranking-list');
+  const conPrecio = rankingData.filter(e => e.precio_carta > 0);
+  const sorted = [...conPrecio].sort((a,b) => rankingModo === 'fc' ? (a.coste_racion/a.precio_carta) - (b.coste_racion/b.precio_carta) : (b.precio_carta-b.coste_racion) - (a.precio_carta-a.coste_racion));
+  list.innerHTML = sorted.slice(0,5).map((e,i) => `
+    <div class="ranking-row" onclick="editarEscandallo(${JSON.stringify(e).replace(/"/g,'&quot;')})">
+      <div class="rank-num">${i+1}</div>
+      <div class="rank-name">${e.nombre_plato}</div>
+      <div class="rank-pct">${rankingModo==='fc' ? (e.coste_racion/e.precio_carta*100).toFixed(1)+'%' : fmt(e.precio_carta-e.coste_racion)}</div>
+    </div>
+  `).join('');
+}
+
+// PRECIOS PROVEEDOR (Lógica existente)
+async function cargarPreciosGuardados(){
+  const {data: precios} = await sb.from('precios_proveedor').select('*').eq('restaurante_id', restauranteId).order('updated_at', {ascending: false});
+  const container = document.getElementById('precios-guardados');
+  if(!precios || precios.length === 0) return;
+  container.innerHTML = `<div class="section-title">Precios de proveedor</div>` + precios.slice(0,5).map(p => `
+    <div class="precio-card">
+      <div style="flex:1"><b>${p.ingrediente_normalizado}</b></div>
+      <div style="color:var(--accent); font-weight:600;">${fmt(p.precio_kg)} / ${p.unidad}</div>
+    </div>`).join('');
+}
+
+// BORRADO Y AUXILIARES
+let modoBorrado = false;
+function toggleModoBorrado(){
+  modoBorrado = !modoBorrado;
+  document.querySelectorAll('.card-checkbox').forEach(c => c.style.display = modoBorrado ? 'block' : 'none');
+  document.getElementById('bulk-delete-bar').style.display = modoBorrado ? 'flex' : 'none';
+  document.getElementById('btn-toggle-borrado').textContent = modoBorrado ? 'Cancelar' : 'Seleccionar varios';
+}
+function actualizarContadorBorrado(){
+  const count = document.querySelectorAll('.bulk-cb:checked').length;
+  document.getElementById('bulk-count').textContent = `${count} seleccionados`;
+}
+async function confirmarBorradoMultiple(){
+  const ids = Array.from(document.querySelectorAll('.bulk-cb:checked')).map(c => c.value);
+  if(confirm(`¿Borrar ${ids.length} platos?`)){
+    await sb.from('escandallos').delete().in('id', ids);
+    window.location.reload();
+  }
+}
+async function eliminarUnico(id, e){ e.stopPropagation(); if(confirm('¿Borrar plato?')) { await sb.from('escandallos').delete().eq('id',id); window.location.reload(); } }
 function nuevoEscandallo(){ sessionStorage.removeItem('qc_escandallo_editar'); window.location.href='/escandallo'; }
 function editarEscandallo(e){ sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(e)); window.location.href='/escandallo'; }
 async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login'; }
+function cancelarReview(){ document.getElementById('review-wrap').style.display='none'; }
 
 init();
 </script>
