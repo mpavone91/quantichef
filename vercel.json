@@ -4,7 +4,8 @@
     { "source": "/escandallo", "destination": "/escandallo.html" },
     { "source": "/login", "destination": "/auth.html" },
     { "source": "/precios", "destination": "/precios.html" },
-    { "source": "/legal", "destination": "/legal.html" }
+    { "source": "/legal", "destination": "/legal.html" },
+    { "source": "/contacto", "destination": "/contacto.html" }
   ],
   "crons": [
     {
