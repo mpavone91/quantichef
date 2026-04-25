@@ -525,43 +525,11 @@
     <div class="footer-links">
       <a href="#como-funciona">Metodología</a>
       <a href="/legal">Privacidad</a>
-      <a href="#" onclick="document.getElementById('contact-modal').style.display='flex'; return false;">Contacto</a>
+      <a href="/contacto">Contacto</a>
     </div>
   </div>
   <div class="footer-copy">© 2026 QuantiChef · Tecnología para la rentabilidad hostelera real.</div>
 </footer>
-
-<div id="contact-modal" style="position:fixed; inset:0; background:rgba(30,77,43,0.4); backdrop-filter:blur(8px); z-index:20000; display:none; align-items:center; justify-content:center; padding:20px;" onclick="if(event.target===this) this.style.display='none'">
-  <div style="background:#FFFFFF; width:100%; max-width:450px; border-radius:24px; padding:32px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.2); font-family:'Plus Jakarta Sans',sans-serif;">
-    <button onclick="document.getElementById('contact-modal').style.display='none'" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:28px; color:#8A8784; cursor:pointer;">&times;</button>
-    <div id="contact-form-area">
-      <h3 style="font-family:'Fraunces',serif; font-size:26px; color:#1E4D2B; margin-bottom:8px; font-weight:600;">Hablemos 👨‍🍳</h3>
-      <p style="font-size:14px; color:#8A8784; margin-bottom:24px;">Diego o alguien del equipo te responderá pronto.</p>
-      <form onsubmit="handleContact(event)">
-        <div style="display:none;"><input type="text" id="c_honeypot"></div>
-        <div style="margin-bottom:14px">
-          <label style="font-size:11px; font-weight:800; text-transform:uppercase; color:#1A1916;">Nombre</label>
-          <input type="text" id="c_name" style="width:100%; padding:12px 16px; border:1.5px solid #E0DDD6; border-radius:12px; font-size:14px; outline:none; background:#F9F7F2; margin-top:6px;" placeholder="Chef García" required>
-        </div>
-        <div style="margin-bottom:14px">
-          <label style="font-size:11px; font-weight:800; text-transform:uppercase; color:#1A1916;">Email</label>
-          <input type="email" id="c_email" style="width:100%; padding:12px 16px; border:1.5px solid #E0DDD6; border-radius:12px; font-size:14px; outline:none; background:#F9F7F2; margin-top:6px;" placeholder="tu@email.com" required>
-        </div>
-        <div style="margin-bottom:14px">
-          <label style="font-size:11px; font-weight:800; text-transform:uppercase; color:#1A1916;">Mensaje</label>
-          <textarea id="c_msg" style="width:100%; padding:12px 16px; border:1.5px solid #E0DDD6; border-radius:12px; font-size:14px; outline:none; background:#F9F7F2; margin-top:6px; resize:none;" rows="4" placeholder="¿En qué podemos ayudarte?" required></textarea>
-        </div>
-        <button type="submit" id="c_btn" style="width:100%; background:#1E4D2B; color:white; border:none; padding:16px; border-radius:14px; font-weight:700; font-size:16px; cursor:pointer; margin-top:12px; transition:all 0.2s;">Enviar mensaje</button>
-      </form>
-    </div>
-    <div id="contact-ok" style="display:none; text-align:center; padding:20px 0">
-      <div style="font-size:50px; margin-bottom:15px">✅</div>
-      <h4 style="color:#1E4D2B; font-family:'Fraunces', serif; font-size:22px">¡Mensaje enviado!</h4>
-      <p style="color:#8A8784; font-size:14px; margin-bottom:20px">Te contactaremos en tu email muy pronto.</p>
-      <button onclick="document.getElementById('contact-modal').style.display='none'" style="width:auto; padding: 10px 30px; background:#1E4D2B; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Cerrar</button>
-    </div>
-  </div>
-</div>
 
 <style>
   #cookie-banner {
@@ -619,35 +587,6 @@ window.addEventListener('load', function() {
     document.getElementById('cookie-banner').style.display = 'flex';
   }
 });
-
-// CONTACTO
-async function handleContact(e) {
-  e.preventDefault();
-  if(document.getElementById('c_honeypot').value !== "") return;
-  const btn = document.getElementById('c_btn');
-  btn.disabled = true; btn.innerText = "Enviando...";
-  
-  const payload = {
-    nombre: document.getElementById('c_name').value,
-    email: document.getElementById('c_email').value,
-    mensaje: document.getElementById('c_msg').value
-  };
-
-  try {
-    const res = await fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if(res.ok) {
-      document.getElementById('contact-form-area').style.display = 'none';
-      document.getElementById('contact-ok').style.display = 'block';
-    } else { throw new Error(); }
-  } catch {
-    alert("Error al enviar. Escríbenos a hola@quantichef.com");
-    btn.disabled = false; btn.innerText = "Enviar mensaje";
-  }
-}
 </script>
 <script src="/chat-widget.js"></script>
 </body>
