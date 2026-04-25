@@ -276,7 +276,7 @@
       <span style="font-size:18px">💡</span>
       <div style="flex:1">
         <strong>Tus escandallos usan precios estimados de mercado.</strong> 
-        Sube una factura (arriba) para que el sistema aprenda tus precios reales y sea 100% exacto.
+        Sube una factura o albarán (arriba) para que el sistema aprenda tus precios reales y sea 100% exacto.
       </div>
     </div>
 
@@ -291,7 +291,7 @@
     </div>
 
     <div class="extract-loading" id="extract-loading" style="display:none; background:var(--accent-light); padding:1rem; border-radius:10px; margin-bottom:1rem; align-items:center; gap:10px;">
-      <div class="spinner"></div><span id="loading-text-dynamic" style="color:var(--accent); font-weight:600; font-size:14px;">Leyendo albarán con Inteligencia Artificial...</span>
+      <div class="spinner"></div><span id="loading-text-dynamic" style="color:var(--accent); font-weight:600; font-size:14px;">Leyendo albarán... Puede tomar unos segundos</span>
     </div>
     <div class="prov-msg" id="prov-msg" style="margin-bottom:1.5rem; display:none; padding:12px; border-radius:8px; font-weight:500; font-size:13px;"></div>
 
@@ -301,7 +301,7 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Revisa los precios extraídos
         </h3>
-        <p class="review-desc">Ajusta los nombres o cantidades si la IA ha cometido algún error al leer tu factura antes de guardarlos.</p>
+        <p class="review-desc">Ajusta los nombres o cantidades por si hubo algún error en la extracción de los precios antes de guardarlos.</p>
         
         <div class="review-table-container">
           <table class="review-table">
@@ -725,7 +725,7 @@ async function processFile(file){
   document.getElementById('extract-loading').style.display='flex';
   document.getElementById('prov-msg').style.display='none';
   document.getElementById('review-wrap').style.display='none';
-  document.getElementById('loading-text-dynamic').textContent = 'Leyendo albarán con Inteligencia Artificial...';
+  document.getElementById('loading-text-dynamic').textContent = 'Leyendo albarán... Puede tomar unos segundos';
   
   const reader = new FileReader();
   reader.readAsDataURL(file);
