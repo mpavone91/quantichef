@@ -34,7 +34,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        // 2. Extraer y Normalizar la Ficha Técnica usando Claude 3.5 Sonnet
+        // 2. Extraer y Normalizar la Ficha Técnica usando Claude
         const claudeData = await parseRecipeWithClaude(file_base64, file_type);
         
         if (!claudeData || !claudeData.platos || claudeData.platos.length === 0) {
@@ -148,7 +148,20 @@ Quiero que leas el documento adjunto y extraigas TODOS los platos y sus recetas.
 }
 `;
 
-  const requestBody = {
+    // Lógica para separar PDFs de Imágenes (El fix del error)
+    const isPdf = fileType.toLowerCase() === "pdf";
+    const blockType = isPdf ? "document" : "image";
+    let mediaType = "image/jpeg"; // Por defecto
+
+    if (isPdf) {
+        mediaType = "application/pdf";
+    } else if (fileType.toLowerCase() === "png") {
+        mediaType = "image/png";
+    } else if (fileType.toLowerCase() === "webp") {
+        mediaType = "image/webp";
+    }
+
+    const requestBody = {
         model: "claude-haiku-4-5-20251001", // Modelo actualizado
         max_tokens: 3000,
         temperature: 0.1,
@@ -157,10 +170,10 @@ Quiero que leas el documento adjunto y extraigas TODOS los platos y sus recetas.
                 role: "user",
                 content: [
                     {
-                        type: "image",
+                        type: blockType,
                         source: {
                             type: "base64",
-                            media_type: fileType === "pdf" ? "application/pdf" : "image/jpeg",
+                            media_type: mediaType,
                             data: base64Image
                         }
                     },
