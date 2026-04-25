@@ -12,7 +12,6 @@
     #qc-chat-btn:hover { background: #2D5A3D; transform: scale(1.05); }
     #qc-chat-btn svg { width: 28px; height: 28px; }
 
-    /* Globito rojo de notificación (El cebo) */
     #qc-chat-badge {
       position: absolute; top: -2px; right: -2px;
       background: #DC2626; color: white; font-size: 11px; font-weight: 800;
@@ -23,7 +22,8 @@
 
     #qc-chat-box {
       position: fixed; bottom: 100px; right: 24px; z-index: 9999;
-      width: 360px; max-width: calc(100vw - 48px); height: 550px; max-height: calc(100vh - 120px);
+      width: 360px; max-width: calc(100vw - 48px);
+      height: 550px; max-height: calc(100vh - 120px);
       background: #FFFFFF; border-radius: 16px; border: 1px solid #E0DDD6;
       box-shadow: 0 12px 40px rgba(0,0,0,0.15);
       display: none; flex-direction: column; overflow: hidden;
@@ -39,19 +39,17 @@
     #qc-chat-header {
       background: #1E4D2B; color: white; padding: 16px;
       display: flex; justify-content: space-between; align-items: center;
-      flex-shrink: 0; /* Evita que el teclado lo aplaste */
+      flex-shrink: 0;
     }
     #qc-chat-header-title { display: flex; align-items: center; gap: 10px; }
-    
     .qc-avatar {
       width: 32px; height: 32px; border-radius: 50%; background: #C4943A;
-      display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: bold; font-size: 14px;
     }
-    
     #qc-chat-header-text { display: flex; flex-direction: column; }
     #qc-chat-header-text strong { font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px; line-height: 1.1; }
     #qc-chat-header-text small { font-size: 10px; color: #C8E6D0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-
     #qc-chat-close { background: none; border: none; color: white; font-size: 24px; cursor: pointer; line-height: 1; padding: 0; opacity: 0.8; transition: opacity 0.2s; }
     #qc-chat-close:hover { opacity: 1; }
 
@@ -59,6 +57,8 @@
       flex: 1; overflow-y: auto; padding: 16px;
       display: flex; flex-direction: column; gap: 12px;
       background: #F9F7F2;
+      /* Importante: permite scroll interno sin que el contenedor crezca */
+      min-height: 0;
     }
     .qc-msg {
       max-width: 85%; padding: 12px 14px; border-radius: 12px;
@@ -66,7 +66,6 @@
     }
     .qc-msg.bot { background: #FFFFFF; color: #1A1916; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #E0DDD6; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
     .qc-msg.user { background: #1E4D2B; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-    
     .qc-msg.bot p { margin-bottom: 8px; }
     .qc-msg.bot p:last-child { margin-bottom: 0; }
     .qc-msg.bot ul { margin-left: 20px; margin-bottom: 8px; }
@@ -75,12 +74,13 @@
     #qc-chat-input-area {
       display: flex; padding: 14px; gap: 10px;
       background: #FFFFFF; border-top: 1px solid #E0DDD6;
-      flex-shrink: 0; /* Evita que el teclado lo aplaste */
+      flex-shrink: 0;
     }
     #qc-chat-input {
       flex: 1; border: 1px solid #E0DDD6; border-radius: 8px;
-      padding: 10px 14px; font-size: 14px; outline: none;
-      font-family: inherit; background: #FAFAF8; transition: border-color 0.2s;
+      padding: 10px 14px; font-size: 16px; /* 16px evita el zoom automático en iOS */
+      outline: none; font-family: inherit; background: #FAFAF8;
+      transition: border-color 0.2s;
     }
     #qc-chat-input:focus { border-color: #1E4D2B; }
     #qc-chat-send {
@@ -88,20 +88,26 @@
       border-radius: 8px; padding: 0 16px; cursor: pointer;
       font-size: 14px; font-weight: 700; transition: background 0.2s;
       display: flex; align-items: center; justify-content: center;
+      min-width: 48px; /* Área táctil suficiente */
     }
     #qc-chat-send:hover { background: #b0822e; }
     #qc-chat-send:disabled { background: #E0DDD6; cursor: not-allowed; }
 
-    /* Ajustes perfectos para Móvil y Teclado */
+    /* MÓVIL: pantalla completa como WhatsApp */
     @media (max-width: 480px) {
       #qc-chat-box {
-        /* No ocupa toda la pantalla. Deja márgenes para parecer un Widget real */
-        bottom: 85px; right: 16px; left: 16px;
-        width: auto; max-width: none;
-        height: 70vh; /* Al 70%, el teclado no lo sacará de la pantalla */
-        max-height: 500px;
+        top: 0; left: 0; right: 0; bottom: 0;
+        width: 100%; max-width: 100%;
+        height: 100%; max-height: 100%;
+        border-radius: 0; border: none;
+        /* dvh es la clave: dynamic viewport height, respeta el teclado */
+        height: 100dvh;
       }
       #qc-chat-btn { bottom: 16px; right: 16px; width: 56px; height: 56px; }
+      
+      /* Ocultar el botón flotante cuando el chat está abierto en móvil */
+      #qc-chat-box[style*="flex"] ~ #qc-chat-btn,
+      body.qc-open #qc-chat-btn { display: none !important; }
     }
   `;
 
@@ -109,9 +115,7 @@
   styleEl.textContent = styles;
   document.head.appendChild(styleEl);
 
-  document.body.insertAdjacentHTML(
-    "beforeend",
-    `
+  document.body.insertAdjacentHTML("beforeend", `
     <button id="qc-chat-btn" title="Hablar con soporte">
       <span id="qc-chat-badge">1</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
@@ -128,7 +132,7 @@
         <button id="qc-chat-close">×</button>
       </div>
       <div id="qc-chat-messages">
-        <div class="qc-msg bot">¡Hola, chef! Soy Diego, del equipo de QuantiChef. 👋 <br><br>Estoy aquí para ayudarte a sacarle el máximo partido a tu carta o resolverte cualquier duda sobre cómo mejorar tus márgenes. ¿En qué te puedo echar una mano hoy?</div>
+        <div class="qc-msg bot">¡Hola, chef! Soy Diego, del equipo de QuantiChef. 👋<br><br>Estoy aquí para ayudarte a sacarle el máximo partido a tu carta o resolverte cualquier duda sobre cómo mejorar tus márgenes. ¿En qué te puedo echar una mano hoy?</div>
       </div>
       <div id="qc-chat-input-area">
         <input id="qc-chat-input" type="text" placeholder="Escribe tu mensaje..." autocomplete="off" />
@@ -137,8 +141,7 @@
         </button>
       </div>
     </div>
-  `
-  );
+  `);
 
   const btn = document.getElementById("qc-chat-btn");
   const badge = document.getElementById("qc-chat-badge");
@@ -150,37 +153,35 @@
 
   let history = [];
 
-  // Lógica para abrir/cerrar e interceptar el botón "Atrás" del móvil
   function openChat() {
     box.style.display = "flex";
-    badge.style.display = "none"; // Desaparece la notificación roja
-    
-    // Inyectamos un estado falso en el navegador para atrapar el botón Atrás
-    window.history.pushState({ widget: 'chat' }, '');
-    input.focus();
+    badge.style.display = "none";
+    document.body.classList.add("qc-open");
+    // Bloquea el scroll del body cuando el chat está abierto en móvil
+    document.body.style.overflow = "hidden";
+    window.history.pushState({ widget: "chat" }, "");
+    // Pequeño delay para que el teclado no interrumpa la animación
+    setTimeout(() => input.focus(), 300);
   }
 
   function closeChat() {
     box.style.display = "none";
+    document.body.classList.remove("qc-open");
+    document.body.style.overflow = "";
   }
 
   btn.addEventListener("click", () => {
     if (box.style.display === "flex") {
-      window.history.back(); // Esto dispara el popstate y lo cierra
+      window.history.back();
     } else {
       openChat();
     }
   });
 
-  closeBtn.addEventListener("click", () => {
-    window.history.back(); // Esto dispara el popstate y lo cierra
-  });
+  closeBtn.addEventListener("click", () => window.history.back());
 
-  // Si el usuario le da al botón físico "Atrás" de Android, cerramos el chat pero no nos vamos de la página
   window.addEventListener("popstate", () => {
-    if (box.style.display === "flex") {
-      closeChat();
-    }
+    if (box.style.display === "flex") closeChat();
   });
 
   input.addEventListener("keydown", (e) => {
@@ -190,8 +191,8 @@
   sendBtn.addEventListener("click", sendMessage);
 
   function parseMarkdown(text) {
-    let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/\n/g, '<br>');
+    let html = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    html = html.replace(/\n/g, "<br>");
     return html;
   }
 
@@ -207,15 +208,18 @@
     const typing = addMessage("Escribiendo...", "bot");
 
     try {
+      const trimmedHistory = history.slice(-10);
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history }),
+        body: JSON.stringify({ messages: trimmedHistory }),
       });
 
       const data = await res.json();
-      const formattedReply = data.reply ? parseMarkdown(data.reply) : "Perdona, no he podido enviar el mensaje. ¿Me lo repites?";
-      
+      const formattedReply = data.reply
+        ? parseMarkdown(data.reply)
+        : "Perdona, no he podido enviar el mensaje. ¿Me lo repites?";
+
       typing.innerHTML = formattedReply;
       history.push({ role: "assistant", content: data.reply });
     } catch {
@@ -224,20 +228,17 @@
 
     sendBtn.disabled = false;
     messages.scrollTop = messages.scrollHeight;
-    
-    // En móviles a veces no interesa forzar el focus tras enviar para que el teclado se baje
-    if(window.innerWidth > 480) {
-      input.focus();
-    }
+
+    if (window.innerWidth > 480) input.focus();
   }
 
   function addMessage(text, type) {
     const div = document.createElement("div");
     div.className = `qc-msg ${type}`;
     if (type === "user") {
-      div.textContent = text; 
+      div.textContent = text;
     } else {
-      div.innerHTML = text; 
+      div.innerHTML = text;
     }
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
