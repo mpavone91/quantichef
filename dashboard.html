@@ -19,10 +19,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QuantiChef — Mi cocina</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root{--bg:#F9F7F2;--surface:#FFFFFF;--border:#E0DDD6;--text:#1A1916;--text2:#4A4845;--text3:#8A8784;--accent:#1E4D2B;--accent-mid:#2D5A3D;--accent-light:#E8F2EC;--accent-mint:#C8E6D0;--gold:#C4943A;--gold-light:#FFF4E0;--danger:#8B1A1A;--danger-light:#FDEAEA}
+  :root{--bg:#F9F7F2;--surface:#FFFFFF;--border:#E0DDD6;--text:#1A1916;--text2:#4A4845;--text3:#8A8784;--accent:#1E4D2B;--accent-mid:#2D5A3D;--accent-light:#E8F2EC;--accent-mint:#C8E6D0;--gold:#C4943A;--gold-light:#FFF4E0;--danger:#8B1A1A;--danger-light:#FDEAEA; --gray-light:#F0EDE4}
   *{box-sizing:border-box;margin:0;padding:0}
   
   input[type="range"] { touch-action: pan-y; cursor: pointer; }
@@ -55,25 +55,23 @@
   .welcome-tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem}
   .welcome-title{font-family:'Fraunces',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:300;letter-spacing:-.02em;color:var(--text);line-height:1.2}
   .welcome-title em{font-style:italic;color:var(--accent)}
-  .welcome-sub{font-size:.95rem;color:var(--text2);margin-top:.5rem;margin-bottom:1.5rem}
+  .welcome-sub{font-size:.95rem;color:var(--text2);margin-top:.5rem;margin-bottom:2rem}
 
-  /* Upload area */
-  .upload-area{background:var(--surface);border:2px dashed var(--border);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:1.5rem}
-  .upload-area:hover{border-color:var(--accent-mint);background:var(--accent-light)}
-  .upload-area-icon{width:48px;height:48px;border-radius:12px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem}
-  .upload-area-icon svg{width:22px;height:22px;color:var(--accent)}
-  .upload-area-title{font-weight:600;font-size:.95rem;color:var(--text);margin-bottom:.25rem}
-  .upload-area-sub{font-size:12px;color:var(--text3)}
+  /* NUEVO GRID DE ACCIONES (3 Tarjetas) */
+  .actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 2rem; }
+  .action-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 1.5rem; text-align: left; cursor: pointer; transition: all 0.2s; position: relative; text-decoration: none; display: flex; flex-direction: column; align-items: flex-start; }
+  .action-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); border-color: var(--accent-mint); }
   
-  /* Botones principales */
-  .btns-row { display:flex; gap:10px; flex-wrap:wrap; }
-  .cta-nueva{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent-light);color:var(--accent);padding:12px 20px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:700;transition:all .2s;border:1px solid var(--accent-mint);cursor:pointer;}
-  .cta-nueva:hover{background:var(--accent-mint);transform:translateY(-1px)}
+  .action-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; }
+  .action-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; width: 100%; }
+  .action-sub { font-size: 12.5px; color: var(--text2); line-height: 1.4; }
   
-  /* BOTÓN IMPORTAR MÁGICO */
-  .cta-nueva.btn-magico { background: #F4FAF6; border: 1px solid #D5E8DD; color: var(--accent); }
-  .cta-nueva.btn-magico:hover { background: var(--gold-light); border-color: var(--gold); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(196, 148, 58, 0.15); }
-  .cta-nueva.btn-magico svg { color: var(--gold); }
+  /* Colores por tarjeta */
+  .ac-green .action-icon { background: var(--accent-light); color: var(--accent); }
+  .ac-gold .action-icon { background: var(--gold-light); color: var(--gold); }
+  .ac-gold:hover { border-color: var(--gold); }
+  .ac-gray .action-icon { background: var(--gray-light); color: var(--text2); }
+  .ac-gray:hover { border-color: #D1CEC5; }
 
   /* Banners */
   .plan-banner{background:var(--gold-light);border:1px solid rgba(196,148,58,.25);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
@@ -156,8 +154,6 @@
   .modal-icon svg{width:28px;height:28px;color:var(--gold)}
   .modal h3{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:var(--text);margin-bottom:.5rem}
   .modal p{font-size:.92rem;color:var(--text2);line-height:1.6;margin-bottom:1.5rem}
-  .form-input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:#FAFAF8;outline:none;transition:border-color .15s}
-  .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,43,.08)}
 
   /* RANKING DE RENTABILIDAD */
   .ranking-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
@@ -197,8 +193,7 @@
     .nav-logo-icon{width:28px;height:28px}
     .nav-logo-text{font-size:16px}
     .container{padding:1.5rem 1rem}
-    .btns-row { flex-direction: column; }
-    .cta-nueva { width: 100%; justify-content: center; }
+    .actions-grid { grid-template-columns: 1fr; gap: 10px; }
     .stats{grid-template-columns:1fr 1fr}
     .stats .stat:last-child{grid-column:1/-1}
     .rank-bar-wrap { display: none; }
@@ -232,33 +227,56 @@
   <div class="spinner"></div>Cargando tu cocina...
 </div>
 
+<div class="modal-overlay" id="modal-success">
+  <div class="modal">
+    <div class="modal-icon" style="background:var(--accent-light); color:var(--accent);">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+    <h3 style="color:var(--accent);">¡Magia pura, Chef!</h3>
+    <p>Hemos digitalizado <strong id="success-count" style="color:var(--accent);">X</strong> platos con éxito. Tus escandallos ya están calculados con los precios de tu almacén.</p>
+    <button class="btn-fill" style="width:100%; padding:14px; font-size:15px;" onclick="cerrarExito()">Ver mis platos</button>
+  </div>
+</div>
+
 <div id="app" style="display:none">
   <div class="container">
 
     <div class="welcome">
-      <div class="welcome-tag">Mi cocina</div>
+      <div class="welcome-tag">Panel de Control</div>
       <h1 class="welcome-title">Hola, <em id="welcome-nombre">chef</em> 👋</h1>
-      <p class="welcome-sub" id="welcome-sub">Actualiza tus precios con una foto o digitaliza tus recetas.</p>
+      <p class="welcome-sub" id="welcome-sub">¿Qué quieres hacer hoy?</p>
       
-      <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
-        <div class="upload-area-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <div class="actions-grid">
+        
+        <div class="action-card ac-green" onclick="document.getElementById('file-input').click()">
+          <div class="action-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <div class="action-title">Sube tu albarán</div>
+          <div class="action-sub">Actualiza precios automáticamente.</div>
+          <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleFileUpload(event)" style="display:none">
         </div>
-        <div class="upload-area-title">Sube tu albarán o factura</div>
-        <div class="upload-area-sub">Aceptamos Fotos (JPG, PNG), PDFs y Excels.</div>
-        <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleFileUpload(event)" style="display:none">
-      </div>
 
-      <div class="btns-row">
-        <button class="cta-nueva" onclick="nuevoEscandallo()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Nuevo plato manual
-        </button>
-      <button class="cta-nueva btn-magico" onclick="abrirSubidaRecetas()">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-  Digitalizar Ficha Técnica <span id="dash-upsell-lock" style="margin-left:4px; font-size:11px;">🔒</span>
-</button>
-        <input type="file" id="file-input-recetas" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleRecetasUpload(event)" style="display:none">
+        <div class="action-card ac-gold" onclick="abrirSubidaRecetas()">
+          <div class="action-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="action-title">Digitalizar Ficha <span id="dash-upsell-lock" style="font-size:11px;">🔒</span></div>
+          <div class="action-sub">Importa tu menú con cantidades reales.</div>
+          <input type="file" id="file-input-recetas" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleRecetasUpload(event)" style="display:none">
+        </div>
+
+        <div class="action-card ac-gray" onclick="nuevoEscandallo()">
+          <div class="action-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+          <div class="action-title">+ Nuevo escandallo</div>
+          <div class="action-sub">Crea un plato individual a mano.</div>
+        </div>
+
       </div>
     </div>
 
@@ -442,7 +460,6 @@ function fmt(n){return Number(n).toLocaleString('es-ES',{minimumFractionDigits:2
 function renderStats(lista){
   document.getElementById('stat-total').textContent = lista.length;
   
-  // Usamos precio_carta para los cálculos reales
   const conPrecioReal = lista.filter(e => parseFloat(e.precio_carta) > 0 && parseFloat(e.coste_racion) > 0);
   const statFcEl = document.getElementById('stat-fc');
 
@@ -484,7 +501,6 @@ function renderLista(lista){
   const ocultos = lista.slice(maxVisible);
 
   const createCard = (e) => {
-    // Calculamos FC real para mostrarlo en la lista usando precio_carta
     const fcCard = (parseFloat(e.precio_carta) > 0 && parseFloat(e.coste_racion) > 0) 
       ? ((e.coste_racion / e.precio_carta) * 100).toFixed(1) 
       : (e.food_cost_pct || 0);
@@ -616,7 +632,7 @@ function nuevoEscandallo(){ sessionStorage.removeItem('qc_escandallo_editar'); w
 function editarEscandallo(e){ sessionStorage.setItem('qc_escandallo_editar', JSON.stringify(e)); window.location.href='/escandallo'; }
 async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login'; }
 
-/* ---- NUEVA FUNCIÓN: SUBIR FICHAS TÉCNICAS (REEMPLAZA LA URL) ---- */
+/* ---- NUEVA FUNCIÓN: SUBIR FICHAS TÉCNICAS Y MODAL DE ÉXITO ---- */
 
 function abrirSubidaRecetas() {
   if (!esPremium) { 
@@ -624,6 +640,11 @@ function abrirSubidaRecetas() {
     return; 
   }
   document.getElementById('file-input-recetas').click();
+}
+
+function cerrarExito() {
+  document.getElementById('modal-success').classList.remove('visible');
+  window.location.reload();
 }
 
 async function handleRecetasUpload(e){ 
@@ -662,8 +683,14 @@ async function processRecetasFile(file) {
         return;
       }
       
-      alert(`¡Éxito! Hemos importado ${data.cantidad || 'tus'} platos de la ficha técnica.`);
-      window.location.reload();
+      // Mostrar el modal elegante si guardó algo
+      if(data.cantidad > 0) {
+        document.getElementById('success-count').textContent = data.cantidad;
+        document.getElementById('modal-success').classList.add('visible');
+      } else {
+        alert('No pudimos extraer o guardar los platos. Revisa el documento.');
+      }
+      
     } catch(err) {
       loadingEl.style.display = 'none';
       textEl.textContent = originalText;
