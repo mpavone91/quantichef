@@ -51,7 +51,7 @@ REGLAS ESTRICTAS (MUY IMPORTANTE):
       },
       body: JSON.stringify({
         // Modelo real actualizado (la IA anterior te dio un nombre inventado)
-        model: 'claude-3-5-haiku-20241022',
+        model: 'claude-3-haiku-20240307',
         max_tokens: 400,
         system: SYSTEM_PROMPT,
         // Mandamos solo los últimos 10 mensajes para no saturar memoria ni costes
