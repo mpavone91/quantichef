@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BBXNWHTD8Y"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBXNWHTD8Y"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-BBXNWHTD8Y');
 </script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -52,6 +50,21 @@ main{flex:1;max-width:780px;margin:0 auto;padding:2.5rem 1.5rem}
 .legal-section strong{color:var(--text)}
 .legal-date{font-size:12px;color:var(--text3);margin-bottom:1.5rem}
 
+/* Banner Cookies */
+#cookie-banner {
+  position: fixed; bottom: 20px; left: 20px; right: 20px; 
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; z-index: 10000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  display: none; align-items: center; justify-content: space-between; gap: 20px;
+  max-width: 900px; margin: 0 auto;
+}
+#cookie-banner p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.cookie-btns { display: flex; gap: 10px; flex-shrink: 0; }
+.btn-cookie { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
+.btn-cookie.accept { background: var(--accent); color: white; }
+.btn-cookie.settings { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+
 /* Sobre nosotros - card especial */
 .about-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:1.5rem 0}
 .about-card p{font-size:.95rem;line-height:1.8}
@@ -73,6 +86,9 @@ footer a:hover{color:var(--accent)}
   nav{padding:.875rem 1.25rem}
   main{padding:1.5rem 1rem}
   .about-values{grid-template-columns:1fr}
+  #cookie-banner { flex-direction: column; text-align: center; bottom: 10px; left: 10px; right: 10px; }
+  .cookie-btns { width: 100%; }
+  .btn-cookie { flex: 1; }
 }
 </style>
 </head>
@@ -81,17 +97,7 @@ footer a:hover{color:var(--accent)}
 <nav>
   <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none">
     <div style="width:32px;height:32px;background:rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-      <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
-        <circle cx="13" cy="16" r="9" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
-        <line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-        <line x1="9" y1="10" x2="9" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-        <line x1="12" y1="10" x2="12" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-        <line x1="15" y1="10" x2="15" y2="14.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-        <path d="M9 14.5 Q12 17 15 14.5" fill="none" stroke="white" stroke-width="1.1" stroke-linecap="round"/>
-        <rect x="18" y="18.5" width="2.2" height="3.5" rx="1" fill="rgba(255,255,255,0.4)"/>
-        <rect x="21" y="16.5" width="2.2" height="5.5" rx="1" fill="rgba(255,255,255,0.65)"/>
-        <rect x="24" y="14" width="2.2" height="8" rx="1" fill="white"/>
-      </svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a1 1 0 0 0 0 2h20a1 1 0 0 0 0-2Z"></path><path d="M4 17a8 8 0 0 1 16 0H4Z"></path><circle cx="12" cy="5" r="1.5"></circle></svg>
     </div>
     <div>
       <div style="font-family:'Fraunces',Georgia,serif;font-size:18px;color:#fff;font-weight:600;letter-spacing:-0.02em;line-height:1.1">QuantiChef</div>
@@ -113,7 +119,6 @@ footer a:hover{color:var(--accent)}
     <a href="#condiciones" onclick="showSection('condiciones',this);return false;">Condiciones de uso</a>
   </div>
 
-  <!-- ============ SOBRE NOSOTROS ============ -->
   <div class="legal-section visible" id="sobre-nosotros">
     <h1>Sobre nosotros</h1>
     <p class="legal-date">QuantiChef — escandallo inteligente para hostelería</p>
@@ -151,7 +156,6 @@ footer a:hover{color:var(--accent)}
     </div>
   </div>
 
-  <!-- ============ AVISO LEGAL ============ -->
   <div class="legal-section" id="aviso-legal">
     <h1>Aviso legal</h1>
     <p class="legal-date">Última actualización: abril 2026</p>
@@ -182,7 +186,6 @@ footer a:hover{color:var(--accent)}
     <p>El presente aviso legal se rige por la legislación española. Para cualquier controversia derivada del uso de este sitio web, las partes se someten a los juzgados y tribunales de la ciudad de Madrid.</p>
   </div>
 
-  <!-- ============ POLÍTICA DE PRIVACIDAD ============ -->
   <div class="legal-section" id="privacidad">
     <h1>Política de privacidad</h1>
     <p class="legal-date">Última actualización: abril 2026</p>
@@ -257,12 +260,11 @@ footer a:hover{color:var(--accent)}
     <p>Implementamos medidas técnicas y organizativas para proteger tus datos, incluyendo cifrado en tránsito (HTTPS/TLS), control de acceso basado en roles (RLS) en nuestra base de datos, y procesamiento de pagos conforme al estándar PCI DSS.</p>
   </div>
 
-  <!-- ============ POLÍTICA DE COOKIES ============ -->
   <div class="legal-section" id="cookies">
     <h1>Política de cookies</h1>
     <p class="legal-date">Última actualización: abril 2026</p>
 
-    <p>Este sitio web utiliza cookies y tecnologías similares para garantizar el correcto funcionamiento de la plataforma.</p>
+    <p>Este sitio web utiliza cookies y tecnologías similares para garantizar el correcto funcionamiento de la plataforma y analizar el tráfico.</p>
 
     <h2>¿Qué son las cookies?</h2>
     <p>Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas un sitio web. Permiten que el sitio recuerde tus acciones y preferencias durante un periodo de tiempo.</p>
@@ -271,21 +273,24 @@ footer a:hover{color:var(--accent)}
 
     <p><strong>Cookies técnicas (estrictamente necesarias):</strong></p>
     <ul>
-      <li><strong>Sesión de autenticación (Supabase):</strong> mantiene tu sesión iniciada mientras usas la plataforma. Caduca al cerrar sesión o tras un periodo de inactividad. No se puede desactivar sin perder la funcionalidad.</li>
+      <li><strong>Sesión de autenticación (Supabase):</strong> mantiene tu sesión iniciada mientras usas la plataforma.</li>
+      <li><strong>Consentimiento de cookies:</strong> registra si has aceptado o no el uso de cookies en este sitio.</li>
+    </ul>
+
+    <p><strong>Cookies de analítica:</strong></p>
+    <ul>
+      <li><strong>Google Analytics:</strong> utilizamos estas cookies para entender cómo interactúan los usuarios con la web, qué páginas son las más visitadas y mejorar la experiencia de usuario. Estos datos se recogen de forma agregada y anónima.</li>
     </ul>
 
     <p><strong>Cookies de terceros:</strong></p>
     <ul>
-      <li><strong>Stripe:</strong> utiliza cookies para el procesamiento seguro de pagos y la prevención del fraude, de acuerdo con su propia política de privacidad.</li>
+      <li><strong>Stripe:</strong> utiliza cookies para el procesamiento seguro de pagos y la prevención del fraude.</li>
     </ul>
-
-    <p>Actualmente <strong>no utilizamos</strong> cookies de analítica (Google Analytics o similares), cookies publicitarias ni cookies de redes sociales.</p>
 
     <h2>Cómo gestionar las cookies</h2>
     <p>Puedes configurar tu navegador para bloquear o eliminar las cookies. Ten en cuenta que si bloqueas las cookies técnicas, la plataforma no funcionará correctamente.</p>
   </div>
 
-  <!-- ============ CONDICIONES DE USO ============ -->
   <div class="legal-section" id="condiciones">
     <h1>Condiciones de uso</h1>
     <p class="legal-date">Última actualización: abril 2026</p>
@@ -324,6 +329,14 @@ footer a:hover{color:var(--accent)}
   </div>
 </main>
 
+<div id="cookie-banner">
+  <p>🍪 En QuantiChef utilizamos cookies propias y de terceros para mejorar tu experiencia y analizar el uso de nuestra web. Al pulsar en aceptar, consientes su uso. Puedes leer más en nuestra <a href="#cookies" onclick="showSection('cookies')">política de cookies</a>.</p>
+  <div class="cookie-btns">
+    <button class="btn-cookie settings" onclick="showSection('cookies')">Configurar</button>
+    <button class="btn-cookie accept" onclick="acceptCookies()">Aceptar todo</button>
+  </div>
+</div>
+
 <footer>
   <a href="/">QuantiChef</a> · <a href="/">Inicio</a> · <a href="mailto:hola@quantichef.com">Contacto</a>
   <br><span style="margin-top:4px;display:inline-block">© 2026 MOMU Bienestar S.L. · CIF B56759723 · Todos los derechos reservados</span>
@@ -332,17 +345,36 @@ footer a:hover{color:var(--accent)}
 <script>
 function showSection(id, el) {
   document.querySelectorAll('.legal-section').forEach(s => s.classList.remove('visible'));
-  document.getElementById(id).classList.add('visible');
+  const section = document.getElementById(id);
+  if(section) section.classList.add('visible');
+  
   document.querySelectorAll('.legal-nav a').forEach(a => a.classList.remove('active'));
-  if(el) el.classList.add('active');
+  if(el) {
+    el.classList.add('active');
+  } else {
+    const link = document.querySelector(`.legal-nav a[href="#${id}"]`);
+    if(link) link.classList.add('active');
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Abrir sección desde URL hash
-if(window.location.hash) {
-  const id = window.location.hash.replace('#','');
-  const link = document.querySelector(`.legal-nav a[href="#${id}"]`);
-  if(link) showSection(id, link);
+// Lógica del Banner de Cookies
+function acceptCookies() {
+  localStorage.setItem('qc_cookies_accepted', 'true');
+  document.getElementById('cookie-banner').style.display = 'none';
+  // Aquí podrías activar Google Analytics si estuviera pausado
+}
+
+window.onload = function() {
+  if (!localStorage.getItem('qc_cookies_accepted')) {
+    document.getElementById('cookie-banner').style.display = 'flex';
+  }
+  
+  // Abrir sección desde URL hash si existe
+  if(window.location.hash) {
+    const id = window.location.hash.replace('#','');
+    showSection(id);
+  }
 }
 </script>
 </body>
