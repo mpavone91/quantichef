@@ -72,8 +72,8 @@ REGLAS ESTRICTAS DE FORMATO Y LONGITUD (¡MUY IMPORTANTE!):
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-3-haiku-20240307',
-        max_tokens: 800, // Aumentado para que NUNCA se corte a mitad de frase
+        model: 'claude-haiku-4-5-20251001', // MODELO CORRECTO Y DEFINITIVO
+        max_tokens: 800,
         system: SYSTEM_PROMPT,
         messages: historialSeguro
       })
