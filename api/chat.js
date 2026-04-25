@@ -1,5 +1,5 @@
+// api/chat.js
 export default async function handler(req, res) {
-  // CORS
   const origin = req.headers.origin;
   if (origin && origin.includes('quantichef.com')) {
     res.setHeader('Access-Control-Allow-Origin', origin);
@@ -7,21 +7,12 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const { messages } = req.body;
+  if (!messages || !Array.isArray(messages)) return res.status(400).json({ error: "El array de mensajes es obligatorio" });
 
-  if (!messages || !Array.isArray(messages)) {
-    return res.status(400).json({ error: "El array de mensajes es obligatorio" });
-  }
-
-  // Protección: Anthropic exige que el historial siempre empiece por el usuario.
   let historialSeguro = messages.slice(-10);
   if (historialSeguro.length > 0 && historialSeguro[0].role === 'assistant') {
     historialSeguro.shift();
@@ -40,7 +31,7 @@ SOBRE QUANTICHEF (DATOS ACTUALIZADOS):
 - Precios: 39 EUR/mes (Plan Flexible) o 349 EUR/año (Plan Cocina Rentable, que equivale a 29 EUR/mes y ahorra 119€).
 - Funcionalidades estrella: Importación por URL de cartas digitales, cámara para escanear etiquetas y detectar alérgenos automáticamente, lectura de facturas para actualizar precios, y el semáforo de rentabilidad en vivo.
 
-REGLAS ESTRICTAS (MUY IMPORTANTE):
+REGLAS ESTRICTAS:
 1. Si alguien pregunta directamente si eres una IA, un bot o un asistente virtual, sé totalmente honesto y transparente. Puedes responder algo como: "Soy Diego, el asistente de IA de QuantiChef. Estoy entrenado con datos reales de hostelería para echarte un cable con tus escandallos y márgenes al instante."
 2. Mantén siempre tu tono de consultor experto, incluso reconociendo tu naturaleza de IA. La transparencia genera confianza.
 3. Si el usuario tiene un problema técnico grave o un error en su cuenta, dile: "Pásame un correo a hola@quantichef.com y lo miro con el equipo técnico ahora mismo".
@@ -56,8 +47,7 @@ REGLAS ESTRICTAS (MUY IMPORTANTE):
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        // EL FIX: Usamos el modelo Claude 3.5 Sonnet, que es el flagship garantizado.
-        model: 'claude-3-5-haiku-20241022', 
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 400,
         system: SYSTEM_PROMPT,
         messages: historialSeguro
@@ -67,7 +57,7 @@ REGLAS ESTRICTAS (MUY IMPORTANTE):
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Error de Anthropic:", data.error);
+      console.error("Error de Anthropic:", JSON.stringify(data));
       throw new Error(data.error?.message || 'Error API Anthropic');
     }
 
@@ -76,7 +66,7 @@ REGLAS ESTRICTAS (MUY IMPORTANTE):
     });
 
   } catch (error) {
-    console.error("Chat error:", error);
+    console.error("Chat error:", error.message);
     return res.status(500).json({ error: "Error interno al procesar tu mensaje. Inténtalo de nuevo." });
   }
 }
