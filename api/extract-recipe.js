@@ -80,8 +80,6 @@ export default async function handler(req, res) {
                 });
 
                 // Validación defensiva de raciones:
-                // Si Claude confunde el precio de carta con las raciones, el número será muy alto (>50)
-                // En ese caso lo reseteamos a 1 para evitar errores en Supabase
                 const racionesRaw = Math.max(1, Math.round(Math.abs(parseFloat(p.raciones) || 1)));
                 const raciones = racionesRaw > 50 ? 1 : racionesRaw;
 
@@ -91,12 +89,14 @@ export default async function handler(req, res) {
                 // pvp es el precio que paga el cliente en carta (€)
                 const pCarta = parseFloat(p.pvp) || 0;
 
-                // Validación defensiva de pvp: si es un número absurdo (>500€) probablemente es un error
+                // Validación defensiva de pvp
                 const pCartaSafe = pCarta > 500 ? 0 : pCarta;
 
+                // 🔥 AQUÍ ESTÁ LA MAGIA: Forzamos un número ENTERO para la base de datos
                 const foodCostPct = pCartaSafe > 0
-                    ? Number(((costeRacion / pCartaSafe) * 100).toFixed(2))
+                    ? Math.round((costeRacion / pCartaSafe) * 100)
                     : 30;
+
                 const precioVenta = pCartaSafe > 0
                     ? pCartaSafe
                     : Number((costeRacion / 0.3).toFixed(2));
@@ -110,7 +110,7 @@ export default async function handler(req, res) {
                     precio_carta: pCartaSafe > 0 ? pCartaSafe : null,
                     coste_total: Number(costeTotal.toFixed(4)),
                     coste_racion: Number(costeRacion.toFixed(4)),
-                    food_cost_pct: foodCostPct,
+                    food_cost_pct: foodCostPct, // <- Esto ya enviará "18" o "28" sin decimales
                     ingredientes: ingsProcesados,
                     alergenos: p.alergenos || []
                 });
