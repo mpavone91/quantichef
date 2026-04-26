@@ -97,7 +97,7 @@
   .btn-del-row { background: var(--danger-light); color: var(--danger); border: none; border-radius: 6px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px; }
   .btn-del-row:hover { background: var(--danger); color: white; }
 
-  /* ZONA RESTAURADA: ALERTAS Y PRECIOS GUARDADOS */
+  /* ALERTAS Y PRECIOS GUARDADOS */
   .alertas-section{margin-bottom: 2rem;}
   .alertas-panel{background:#FEF2F2;border:1px solid rgba(220,38,38,.2);border-radius:12px;overflow:hidden}
   .alertas-header{display:flex;align-items:center;gap:10px;padding:1rem 1.2rem;background:rgba(220,38,38,.06);border-bottom:1px solid rgba(220,38,38,.12)}
@@ -110,6 +110,10 @@
   .precios-all.visible { display: flex; }
   .precios-toggle { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; background: none; border: 1px solid var(--border); padding: 12px; border-radius: 8px; width: 100%; text-align: center; display: block; transition: background 0.2s; font-family:'Plus Jakarta Sans',sans-serif; margin-top: .625rem; }
   .precios-toggle:hover { background: var(--surface2); }
+  
+  /* Nuevos estilos para los checkboxes de precios (Demo) */
+  .precio-checkbox { display:none; margin-right:5px; }
+  .precio-checkbox input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
 
   /* Stats */
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:2rem}
@@ -195,6 +199,15 @@
     .stats{grid-template-columns:1fr 1fr}
     .stats .stat:last-child{grid-column:1/-1}
     .rank-bar-wrap { display: none; }
+    
+    /* FIX: Precios guardados en móvil */
+    .precio-card { flex-wrap: wrap; }
+    .precio-card > div:first-child { width: 100%; margin-bottom: 5px; }
+    .precio-card > div:last-child { width: 100%; justify-content: space-between; }
+    
+    /* FIX: Formulario añadir precio manual en móvil */
+    .add-precio-grid { grid-template-columns: 1fr !important; }
+    .add-precio-grid .btn-fill { width: 100%; height: 42px !important; margin-top: 5px;}
   }
 </style>
 </head>
@@ -358,7 +371,7 @@
 
     <div class="section-title" style="justify-content: space-between;">
       <div style="display:flex; align-items:center; gap:8px;">Mis platos</div>
-      <button id="btn-toggle-borrado" onclick="toggleModoBorrado()" style="font-size:11px; font-weight:600; color:var(--text3); background:none; border:1px solid var(--border); padding:5px 10px; border-radius:6px; cursor:pointer; transition:all 0.2s;">Seleccionar varios</button>
+      <button id="btn-toggle-borrado" onclick="toggleModoBorrado('escandallos')" style="font-size:11px; font-weight:600; color:var(--text3); background:none; border:1px solid var(--border); padding:5px 10px; border-radius:6px; cursor:pointer; transition:all 0.2s;">Seleccionar varios</button>
     </div>
     
     <div id="lista-escandallos"></div>
@@ -370,8 +383,9 @@
 
 <div id="bulk-delete-bar" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--text); color:white; padding:12px 24px; border-radius:12px; z-index:100; align-items:center; gap:15px; box-shadow:0 8px 32px rgba(0,0,0,0.25);">
   <span id="bulk-count" style="font-size:13px; font-weight:600; white-space:nowrap;">0 seleccionados</span>
-  <button id="btn-bulk-delete" onclick="confirmarBorradoMultiple()" style="background:var(--danger); color:white; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;">Borrar platos</button>
-  <button onclick="toggleModoBorrado()" style="background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; text-decoration:underline; font-size:13px;">Cancelar</button>
+  <button id="btn-bulk-delete" onclick="confirmarBorradoMultiple()" style="background:var(--danger); color:white; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;">Borrar</button>
+  <button id="btn-bulk-select-all" onclick="seleccionarTodosBulk()" style="background:none; border:none; color:var(--accent-mint); cursor:pointer; font-size:13px; font-weight:600;">Seleccionar todos</button>
+  <button onclick="cerrarModoBorrado()" style="background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; text-decoration:underline; font-size:13px;">Cancelar</button>
 </div>
 
 <script>
@@ -512,7 +526,7 @@ function renderLista(lista){
     card.className = 'escandallo-card';
     card.innerHTML = `
       <div class="card-checkbox">
-        <input type="checkbox" class="bulk-cb" value="${e.id}">
+        <input type="checkbox" class="bulk-cb-escandallo" value="${e.id}">
       </div>
       <div class="card-info">
         <div class="card-nombre">${e.nombre_plato}</div>
@@ -522,14 +536,14 @@ function renderLista(lista){
         <div class="card-metric"><div class="card-metric-val">${fmt(e.coste_racion)}</div><div style="font-size:9px; color:var(--text3)">coste</div></div>
         <div class="card-metric"><div class="card-metric-val" style="color:var(--accent)">${fmt(precioMostrar)}</div><div style="font-size:9px; color:var(--text3)">venta</div></div>
       </div>
-      <button class="card-del" onclick="eliminarUnico('${e.id}',event)">×</button>
+      <button class="card-del" onclick="eliminarUnico('${e.id}', 'escandallo', event)">×</button>
     `;
     
     card.onclick = (evt) => {
-      if(modoBorrado) {
-        const cb = card.querySelector('.bulk-cb');
+      if(modoBorradoActual === 'escandallos') {
+        const cb = card.querySelector('.bulk-cb-escandallo');
         if(evt.target !== cb) cb.checked = !cb.checked;
-        actualizarContadorBorrado();
+        actualizarContadorBorrado('escandallos');
       } else {
         editarEscandallo(e);
       }
@@ -559,73 +573,134 @@ function renderLista(lista){
   }
 }
 
-let modoBorrado = false;
+// ── SISTEMA DE BORRADO MÚLTIPLE COMPARTIDO ──
+let modoBorradoActual = null; // 'escandallos' o 'precios'
 
-function toggleModoBorrado() {
-  modoBorrado = !modoBorrado;
-  const cbs = document.querySelectorAll('.card-checkbox');
-  const dels = document.querySelectorAll('.card-del');
-  const btnToggle = document.getElementById('btn-toggle-borrado');
+function toggleModoBorrado(tipo) {
+  if (modoBorradoActual === tipo) {
+    cerrarModoBorrado();
+    return;
+  }
+  
+  cerrarModoBorrado(); // Resetea antes de abrir otro
+  modoBorradoActual = tipo;
+  
+  const isEscandallo = tipo === 'escandallos';
+  const btnToggleId = isEscandallo ? 'btn-toggle-borrado' : 'btn-toggle-borrado-precios';
+  const cbClass = isEscandallo ? '.card-checkbox' : '.precio-checkbox';
+  const delClass = isEscandallo ? '.card-del' : '.precio-del';
+  
+  const cbs = document.querySelectorAll(cbClass);
+  const dels = document.querySelectorAll(delClass);
+  const btnToggle = document.getElementById(btnToggleId);
   const bar = document.getElementById('bulk-delete-bar');
 
-  if (modoBorrado) {
-    const allContainer = document.getElementById('escandallos-all');
-    const toggleBtn = document.getElementById('escandallos-toggle-btn');
-    if (allContainer && !allContainer.classList.contains('visible')) {
-      allContainer.classList.add('visible');
-      toggleBtn.textContent = 'Ver menos ▴';
-    }
+  // Si abrimos modo borrado, expandimos las listas para poder seleccionar todo
+  const allContainerId = isEscandallo ? 'escandallos-all' : 'precios-all';
+  const toggleBtnId = isEscandallo ? 'escandallos-toggle-btn' : 'precios-toggle-btn';
+  const allContainer = document.getElementById(allContainerId);
+  const toggleBtn = document.getElementById(toggleBtnId);
+  
+  if (allContainer && !allContainer.classList.contains('visible')) {
+    allContainer.classList.add('visible');
+    if (toggleBtn) toggleBtn.textContent = 'Ver menos ▴';
   }
 
   cbs.forEach(cb => {
-    cb.style.display = modoBorrado ? 'block' : 'none';
+    cb.style.display = 'block';
     cb.querySelector('input').checked = false;
   });
-  dels.forEach(d => d.style.display = modoBorrado ? 'none' : 'flex');
+  dels.forEach(d => d.style.display = 'none');
   
-  bar.style.display = modoBorrado ? 'flex' : 'none';
+  bar.style.display = 'flex';
   
-  if (modoBorrado) {
+  if (btnToggle) {
     btnToggle.textContent = 'Cancelar selección';
     btnToggle.style.background = 'var(--surface2)';
-  } else {
+  }
+  
+  actualizarContadorBorrado(tipo);
+}
+
+function cerrarModoBorrado() {
+  if (!modoBorradoActual) return;
+  
+  const isEscandallo = modoBorradoActual === 'escandallos';
+  const btnToggleId = isEscandallo ? 'btn-toggle-borrado' : 'btn-toggle-borrado-precios';
+  const cbClass = isEscandallo ? '.card-checkbox' : '.precio-checkbox';
+  const delClass = isEscandallo ? '.card-del' : '.precio-del';
+  
+  const cbs = document.querySelectorAll(cbClass);
+  const dels = document.querySelectorAll(delClass);
+  const btnToggle = document.getElementById(btnToggleId);
+  
+  cbs.forEach(cb => cb.style.display = 'none');
+  dels.forEach(d => d.style.display = isEscandallo ? 'flex' : 'block');
+  
+  document.getElementById('bulk-delete-bar').style.display = 'none';
+  
+  if (btnToggle) {
     btnToggle.textContent = 'Seleccionar varios';
     btnToggle.style.background = 'none';
   }
-  actualizarContadorBorrado();
+  
+  modoBorradoActual = null;
 }
 
-function actualizarContadorBorrado() {
-  const count = document.querySelectorAll('.bulk-cb:checked').length;
+function actualizarContadorBorrado(tipo) {
+  const cbSelector = tipo === 'escandallos' ? '.bulk-cb-escandallo:checked' : '.bulk-cb-precio:checked';
+  const count = document.querySelectorAll(cbSelector).length;
   document.getElementById('bulk-count').textContent = count + (count === 1 ? ' seleccionado' : ' seleccionados');
   document.getElementById('btn-bulk-delete').disabled = count === 0;
   document.getElementById('btn-bulk-delete').style.opacity = count === 0 ? '0.5' : '1';
 }
 
+function seleccionarTodosBulk() {
+  if (!modoBorradoActual) return;
+  const cbSelector = modoBorradoActual === 'escandallos' ? '.bulk-cb-escandallo' : '.bulk-cb-precio';
+  const checkboxes = document.querySelectorAll(cbSelector);
+  const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+  
+  checkboxes.forEach(cb => cb.checked = !allChecked);
+  actualizarContadorBorrado(modoBorradoActual);
+  
+  const btnAll = document.getElementById('btn-bulk-select-all');
+  btnAll.textContent = allChecked ? 'Seleccionar todos' : 'Deseleccionar todos';
+}
+
 async function confirmarBorradoMultiple() {
-  const checked = document.querySelectorAll('.bulk-cb:checked');
+  if (!modoBorradoActual) return;
+  
+  const cbSelector = modoBorradoActual === 'escandallos' ? '.bulk-cb-escandallo:checked' : '.bulk-cb-precio:checked';
+  const tabla = modoBorradoActual === 'escandallos' ? 'escandallos' : 'precios_proveedor';
+  const elemento = modoBorradoActual === 'escandallos' ? 'platos' : 'precios';
+  
+  const checked = document.querySelectorAll(cbSelector);
   if(checked.length === 0) return;
-  if(!confirm(`¿Estás seguro de borrar ${checked.length} platos de tu cocina? Esta acción es irreversible.`)) return;
+  if(!confirm(`¿Estás seguro de borrar ${checked.length} ${elemento}? Esta acción es irreversible.`)) return;
   
   const ids = Array.from(checked).map(cb => cb.value);
   const btn = document.getElementById('btn-bulk-delete');
   btn.textContent = 'Borrando...';
   btn.disabled = true;
 
-  const { error } = await sb.from('escandallos').delete().in('id', ids);
+  const { error } = await sb.from(tabla).delete().in('id', ids);
   if(error) {
     alert('Error al borrar: ' + error.message);
-    btn.textContent = 'Borrar platos';
+    btn.textContent = 'Borrar';
     btn.disabled = false;
   } else {
     window.location.reload();
   }
 }
 
-async function eliminarUnico(id, evt){
-  evt.stopPropagation();
-  if(!confirm('¿Eliminar plato?')) return;
-  await sb.from('escandallos').delete().eq('id',id);
+async function eliminarUnico(id, tipo, evt){
+  if(evt) evt.stopPropagation();
+  const elemento = tipo === 'escandallo' ? 'plato' : 'precio';
+  const tabla = tipo === 'escandallo' ? 'escandallos' : 'precios_proveedor';
+  
+  if(!confirm(`¿Eliminar ${elemento}?`)) return;
+  await sb.from(tabla).delete().eq('id',id);
   window.location.reload();
 }
 
@@ -652,7 +727,7 @@ function cerrarStatus() {
   if(modal.dataset.refresh === 'true') window.location.reload();
 }
 
-/* ---- NUEVA FUNCIÓN: SUBIR FICHAS TÉCNICAS ---- */
+/* ---- SUBIR FICHAS TÉCNICAS ---- */
 function abrirSubidaRecetas() {
   if (!esPremium) { 
     window.location.href = '/precios'; 
@@ -713,7 +788,7 @@ async function processRecetasFile(file) {
   };
 }
 
-/* ---- LÓGICA DE ALBARANES INTACTA ---- */
+/* ---- LÓGICA DE ALBARANES ---- */
 async function handleFileUpload(e){ 
   if(e.target.files.length > 0) processFile(e.target.files[0]); 
 }
@@ -875,8 +950,11 @@ async function cargarPreciosGuardados(){
     return d.toLocaleDateString('es-ES', {day:'numeric', month:'short'});
   };
 
-const renderPrecio = (p) => `
-    <div class="precio-card" style="justify-content: space-between;">
+  const renderPrecio = (p) => `
+    <div class="precio-card" onclick="if(modoBorradoActual==='precios') { const cb=this.querySelector('.bulk-cb-precio'); cb.checked=!cb.checked; actualizarContadorBorrado('precios'); }">
+      <div class="precio-checkbox">
+        <input type="checkbox" class="bulk-cb-precio" value="${p.id}" onclick="event.stopPropagation(); actualizarContadorBorrado('precios');">
+      </div>
       <div style="flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
         <b style="font-size:13px; color:var(--text)">${p.ingrediente_normalizado || p.ingrediente}</b>
         ${p.updated_at ? `<span style="font-size:11px;color:var(--text3);margin-left:6px">${fmtFecha(p.updated_at)}</span>` : ''}
@@ -885,11 +963,12 @@ const renderPrecio = (p) => `
         <input type="number" step="0.01" value="${p.precio_kg}" 
                style="width: 75px; text-align: right; padding: 4px 6px; font-size:13px; font-weight: 700; border: 1px solid transparent; background: none; color: var(--accent); border-radius:4px;" 
                onchange="actualizarPrecio('${p.id}', this.value)"
+               onclick="event.stopPropagation()"
                onfocus="this.style.border='1px solid var(--border)'; this.style.background='white';"
                onblur="this.style.border='1px solid transparent'; this.style.background='none';">
         <span style="font-size:12px; color:var(--text3); font-weight:600;">€ / ${p.unidad}</span>
         
-        <button onclick="eliminarPrecio('${p.id}')" 
+        <button class="precio-del" onclick="eliminarUnico('${p.id}', 'precio', event)" 
                 style="background:none; border:none; color:var(--text3); cursor:pointer; font-size:18px; padding:0 5px; margin-left:5px;"
                 onmouseover="this.style.color='var(--danger)'"
                 onmouseout="this.style.color='var(--text3)'">×</button>
@@ -897,10 +976,13 @@ const renderPrecio = (p) => `
     </div>`;
     
  container.innerHTML = `
-    <div class="section-title">Mis precios de proveedor</div>
+    <div class="section-title" style="justify-content: space-between;">
+      <div style="display:flex; align-items:center; gap:8px;">Mis precios de proveedor</div>
+      <button id="btn-toggle-borrado-precios" onclick="toggleModoBorrado('precios')" style="font-size:11px; font-weight:600; color:var(--text3); background:none; border:1px solid var(--border); padding:5px 10px; border-radius:6px; cursor:pointer; transition:all 0.2s;">Seleccionar varios</button>
+    </div>
     
     <div class="card" style="margin-bottom: 1rem; border: 1.5px dashed var(--border); background: var(--surface2); padding: 1rem;">
-      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; align-items: end;">
+      <div class="add-precio-grid" style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; align-items: end;">
         <div class="field">
           <label style="font-size: 10px; font-weight: 700; color: var(--text3); display:block; margin-bottom:4px;">INGREDIENTE</label>
           <input type="text" id="new-ing-name" placeholder="Ej: Azúcar blanco" style="padding:8px; font-size:12px;">
@@ -1044,13 +1126,6 @@ function initRanking(escandallos, esPro) {
 
 init();
   // --- FUNCIONES GESTIÓN MANUAL DE PRECIOS ---
-
-async function eliminarPrecio(id) {
-  if (!confirm('¿Seguro que quieres borrar este precio? Tus escandallos dejarán de detectarlo como "Tu proveedor".')) return;
-  const { error } = await sb.from('precios_proveedor').delete().eq('id', id);
-  if (error) alert('Error al eliminar');
-  else location.reload();
-}
 
 async function actualizarPrecio(id, nuevoPrecio) {
   const { error } = await sb.from('precios_proveedor')
