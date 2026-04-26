@@ -1,3 +1,14 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+const supabaseAuth = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
+
 export default async function handler(req, res) {
   const origin = req.headers.origin;
   if (origin && origin.includes('quantichef.com')) {
@@ -11,6 +22,45 @@ export default async function handler(req, res) {
 
   const { messages } = req.body;
   if (!messages || !Array.isArray(messages)) return res.status(400).json({ error: "El array de mensajes es obligatorio" });
+
+  // --- RATE LIMITING Y SEGURIDAD ---
+  const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown';
+  let esPro = false;
+  let userId = null;
+  const authHeader = req.headers['authorization'];
+
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.slice(7);
+    const { data: { user } } = await supabaseAuth.auth.getUser(token);
+    if (user) {
+      userId = user.id;
+      const { data: rest } = await supabaseAdmin.from('restaurantes').select('id, plan, chat_mensajes').eq('user_id', user.id).single();
+      if (rest) {
+        esPro = rest.plan === 'pro';
+        if (!esPro) {
+          // Registrados gratis: límite 10 mensajes
+          if ((rest.chat_mensajes || 0) >= 10) {
+            return res.status(200).json({ reply: "Límite de chat alcanzado. Has probado la inteligencia de QuantiChef gratis. ¡Hazte PRO para hablar conmigo sin límites y seguir ahorrando!" });
+          }
+          await supabaseAdmin.from('restaurantes').update({ chat_mensajes: (rest.chat_mensajes || 0) + 1 }).eq('id', rest.id);
+        }
+      }
+    }
+  }
+
+  if (!userId) {
+    // No registrados: límite por IP (3 mensajes)
+    const { data: limit } = await supabaseAdmin.from('chat_limits').select('*').eq('ip_address', ip).single();
+    if (limit) {
+      if (limit.message_count >= 3) {
+        return res.status(200).json({ reply: "¡Hola de nuevo! Ya he respondido tus consultas gratuitas de hoy. Regístrate en QuantiChef para seguir explorando y controlar tus costes." });
+      }
+      await supabaseAdmin.from('chat_limits').update({ message_count: limit.message_count + 1 }).eq('id', limit.id);
+    } else {
+      await supabaseAdmin.from('chat_limits').insert({ ip_address: ip, message_count: 1 });
+    }
+  }
+  // ---------------------------------
 
   let historialLimpio = [];
   let contextoDelFrontend = "";

@@ -30,6 +30,24 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Sesión inválida o caducada' });
   }
 
+  // --- NUEVA VERIFICACIÓN DE SEGURIDAD (LÍMITE FACTURAS) ---
+  // Utilizamos supabase (admin client) para obtener los datos del restaurante
+  const { data: rest } = await supabase.from('restaurantes').select('id, plan').eq('user_id', user.id).single();
+  
+  if (!rest) {
+    return res.status(403).json({ error: 'Restaurante no encontrado' });
+  }
+
+  if (rest.plan !== 'pro') {
+    // Para trial, límite de 1 extracción (si ya hay precios guardados, significa que ya extrajo y guardó al menos 1 vez)
+    const { count } = await supabase.from('precios_proveedor').select('id', { count: 'exact', head: true }).eq('restaurante_id', rest.id);
+    if ((count || 0) > 0) {
+      return res.status(403).json({ error: 'Ya has utilizado tu extracción de prueba. Hazte PRO para escanear facturas ilimitadas.' });
+    }
+  }
+  // ---------------------------------------------------------
+
+
   try {
     const { file_base64, file_type, file_name, mode } = req.body;
 

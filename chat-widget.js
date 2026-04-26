@@ -237,9 +237,17 @@
     const typing = addMessageToScreen("Diego está escribiendo...", "bot");
 
     try {
+      const headers = { "Content-Type": "application/json" };
+      try {
+        const authData = JSON.parse(localStorage.getItem('sb-ilzntryzijdfnntwuthp-auth-token') || 'null');
+        if (authData?.access_token) {
+          headers["Authorization"] = "Bearer " + authData.access_token;
+        }
+      } catch (e) {}
+
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: headers,
         body: JSON.stringify({ messages: history }),
       });
 

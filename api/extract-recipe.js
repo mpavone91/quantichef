@@ -24,15 +24,27 @@ export default async function handler(req, res) {
         // Validar restaurante_id antes de continuar
         if (!restaurante_id) return res.status(400).json({ error: 'Falta restaurante_id' });
 
-        // Verificar que el restaurante pertenece al usuario
         const { data: rest, error: restErr } = await supabase
             .from('restaurantes')
-            .select('id')
+            .select('id, plan')
             .eq('id', restaurante_id)
             .eq('user_id', user.id)
             .single();
 
         if (restErr || !rest) return res.status(403).json({ error: 'Restaurante no encontrado o sin permisos' });
+
+        // --- VERIFICACIÓN DE SEGURIDAD (LÍMITE TRIAL) ---
+        if (rest.plan !== 'pro') {
+            const { count } = await supabase
+                .from('escandallos')
+                .select('id', { count: 'exact', head: true })
+                .eq('restaurante_id', restaurante_id);
+            
+            if ((count || 0) >= 5) {
+                return res.status(403).json({ error: 'Has alcanzado el límite de 5 escandallos gratis. Hazte PRO para generar recetas ilimitadas.' });
+            }
+        }
+        // ------------------------------------------------
 
         // 1. Extraer recetas usando Claude
         const recipes = await parseRecipeWithClaude(file_base64, file_type);
