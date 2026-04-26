@@ -1,9 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Cliente con SERVICE ROLE para escribir datos
+// Cliente con SERVICE ROLE para escribir datos con permisos totales
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-// Cliente ANON para verificar la sesión igual que en extract.js
+// Cliente ANON para verificar la sesión del usuario (igual que en extract.js)
 const supabaseAuth = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
 export default async function handler(req, res) {
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    // ── VERIFICACIÓN DE SESIÓN (IDÉNTICO A EXTRACT.JS) ──
+    // ── VERIFICACIÓN DE SESIÓN SEGURA ──
     const authHeader = req.headers['authorization'];
     const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
     if (!token) return res.status(401).json({ error: 'No autorizado' });
@@ -25,60 +25,82 @@ export default async function handler(req, res) {
     try {
         const { file_base64, file_type, restaurante_id } = req.body;
 
-        // 1. Extraer recetas con Claude
+        if (!file_base64 || !file_type || !restaurante_id) {
+            return res.status(400).json({ error: 'Faltan datos obligatorios para procesar.' });
+        }
+
+        // 1. Extraer recetas usando el motor de Claude
         const recipes = await parseRecipeWithClaude(file_base64, file_type);
         
-        // 2. Obtener precios actuales del proveedor
+        if (!recipes || !recipes.platos || recipes.platos.length === 0) {
+            return res.status(400).json({ error: 'No se detectaron platos en el documento.' });
+        }
+
+        // 2. Obtener el inventario de precios del proveedor para cruzar datos
         const { data: inventario } = await supabase
             .from('precios_proveedor')
             .select('*')
             .eq('restaurante_id', restaurante_id);
 
+        const inventarioSeguro = inventario || [];
         let platosGuardados = 0;
 
-        // 3. Procesar y Guardar cada plato
+        // 3. Procesar cada plato extraído
         for (const plato of recipes.platos) {
-            const ingredientesProcesados = plato.ingredientes.map(ing => {
-                const match = buscarMejorCoincidencia(ing.nombre, inventario || []);
+            const ingredientesProcesados = (plato.ingredientes || []).map(ing => {
+                const match = buscarMejorCoincidencia(ing.nombre, inventarioSeguro);
                 const precioBase = match ? parseFloat(match.precio_kg) : 0;
-                const coste = (ing.cantidad_gr / 1000) * precioBase;
+                const cantGramos = parseFloat(ing.cantidad_gr) || 0;
+                
+                // Cálculo de coste inicial (Sin merma)
+                const coste = (cantGramos / 1000) * precioBase;
 
                 return {
                     nombre: ing.nombre,
-                    cantidad: ing.cantidad_gr,
-                    unidad: ing.unidad_original,
+                    cantidad: cantGramos,
+                    unidad: ing.unidad_original || 'g',
                     precio: precioBase,
+                    merma: 0,              // Inicializamos para que el frontend no de error 0
+                    peso_neto: cantGramos, // Inicializamos igual a la cantidad
                     coste: Number(coste.toFixed(2))
                 };
             });
 
             const costeRacionTotal = ingredientesProcesados.reduce((acc, curr) => acc + curr.coste, 0);
-            const precioCarta = plato.precio_venta || 0;
+            const precioCarta = parseFloat(plato.precio_venta) || 0;
+            
+            // Si no hay precio en carta, sugerimos uno al 30% de food cost
+            const precioVentaEstimado = precioCarta > 0 ? precioCarta : Number((costeRacionTotal / 0.3).toFixed(2));
+            const foodCostPct = precioCarta > 0 ? (costeRacionTotal / precioCarta) * 100 : 30;
 
+            // 4. Guardar en la tabla escandallos (user_id eliminado)
             const { error: insErr } = await supabase.from('escandallos').insert({
                 restaurante_id: restaurante_id,
-                nombre_plato: plato.nombre,
+                nombre_plato: plato.nombre || 'Plato importado',
                 categoria: plato.categoria || 'Importado',
-                precio_venta: precioCarta > 0 ? precioCarta : Number((costeRacionTotal / 0.3).toFixed(2)),
+                precio_venta: precioVentaEstimado,
                 precio_carta: precioCarta,
                 coste_racion: Number(costeRacionTotal.toFixed(2)),
-                food_cost_pct: precioCarta > 0 ? Number(((costeRacionTotal / precioCarta) * 100).toFixed(2)) : 30,
+                food_cost_pct: Number(foodCostPct.toFixed(2)),
                 ingredientes: ingredientesProcesados
             });
 
-            if (!insErr) platosGuardados++;
-            else console.error("Error Supabase:", insErr.message);
+            if (!insErr) {
+                platosGuardados++;
+            } else {
+                console.error(`Error guardando ${plato.nombre}:`, insErr.message);
+            }
         }
 
         return res.status(200).json({ success: true, cantidad: platosGuardados });
 
     } catch (err) {
-        console.error("Error General:", err.message);
+        console.error("Error crítico en la API:", err.message);
         return res.status(500).json({ error: err.message });
     }
 }
 
-// ── LÓGICA CLAUDE ──
+// ── LÓGICA DE EXTRACCIÓN CON CLAUDE ──
 async function parseRecipeWithClaude(base64, type) {
     const isPdf = type.toLowerCase() === 'pdf';
     
@@ -86,27 +108,23 @@ async function parseRecipeWithClaude(base64, type) {
     if (isPdf) {
         contentBlock = {
             type: "document",
-            source: {
-                type: "base64",
-                media_type: "application/pdf",
-                data: base64
-            }
+            source: { type: "base64", media_type: "application/pdf", data: base64 }
         };
     } else {
         const mimeType = type.toLowerCase() === 'jpg' ? 'image/jpeg' : `image/${type.toLowerCase()}`;
         contentBlock = {
             type: "image",
-            source: {
-                type: "base64",
-                media_type: mimeType,
-                data: base64
-            }
+            source: { type: "base64", media_type: mimeType, data: base64 }
         };
     }
 
-    const prompt = `Analiza este documento completo, página por página, y extrae TODOS Y CADA UNO de los platos que aparecen. Es obligatorio que proceses el documento entero y no te dejes ninguna receta.
-Devuelve SOLO un objeto JSON estricto. El array "platos" debe contener tantos objetos como recetas haya en el documento.
-Estructura requerida:
+    const prompt = `Eres un extractor de datos de hostelería experto y meticuloso. Tu tarea es analizar TODAS las páginas de este documento y extraer CADA UNA de las recetas presentes.
+
+INSTRUCCIÓN CRÍTICA DE COBERTURA:
+Si el documento tiene 20 recetas, DEBES extraer las 20. No resumas, no te detengas después de los primeros platos. Es obligatorio procesar el archivo completo hasta el final.
+
+Devuelve ÚNICAMENTE un objeto JSON estricto (sin texto adicional).
+Estructura:
 {
   "platos": [
     {
@@ -119,7 +137,8 @@ Estructura requerida:
     }
   ]
 }
-REGLA: Convierte todas las cantidades a gramos (gr) o mililitros (ml) numéricos en el campo cantidad_gr.`;
+
+REGLA DE CONVERSIÓN: Transforma todas las cantidades a números en gramos (gr) o mililitros (ml) en el campo "cantidad_gr". (Ej: 1kg = 1000).`;
 
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -129,8 +148,9 @@ REGLA: Convierte todas las cantidades a gramos (gr) o mililitros (ml) numéricos
             'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-            model: 'claude-sonnet-4-6',
-            max_tokens: 8192,
+            model: 'claude-sonnet-4-6', // Tu modelo avanzado
+            max_tokens: 16000,           // Límite aumentado para permitir listas largas de 20+ platos
+            temperature: 0,              // Temperatura 0 para máxima precisión analítica
             messages: [{
                 role: 'user',
                 content: [
@@ -144,26 +164,37 @@ REGLA: Convierte todas las cantidades a gramos (gr) o mililitros (ml) numéricos
     const data = await resp.json();
     
     if (!resp.ok) {
-        console.error("Anthropic error:", JSON.stringify(data.error));
-        throw new Error(data.error?.message || 'Fallo de conexión con el procesador de documentos.');
+        throw new Error(data.error?.message || 'Error en el motor de procesamiento.');
     }
     
-    let cleanJson = data.content[0].text;
-    cleanJson = cleanJson.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    const rawText = data.content[0].text;
+    
+    // Extracción quirúrgica del JSON entre llaves
+    const startIndex = rawText.indexOf('{');
+    const endIndex = rawText.lastIndexOf('}');
+    
+    if (startIndex === -1 || endIndex === -1) {
+         throw new Error('No se pudo generar un formato de datos válido.');
+    }
+    
+    const cleanJson = rawText.substring(startIndex, endIndex + 1);
     
     try {
         return JSON.parse(cleanJson);
     } catch (e) {
-        console.error("Raw response:", cleanJson);
-        throw new Error('El documento no pudo ser interpretado correctamente.');
+        throw new Error('Error al interpretar la estructura del documento.');
     }
 }
 
+// ── BÚSQUEDA DIFUSA DE INGREDIENTES ──
 function buscarMejorCoincidencia(nombre, inventario) {
+    if (!nombre) return null;
     const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '').trim();
     const nNombre = norm(nombre);
+    
     return inventario.find(p => {
         const nProv = norm(p.ingrediente_normalizado || p.ingrediente);
+        if (!nProv) return false;
         return nNombre.includes(nProv) || nProv.includes(nNombre);
     });
 }
