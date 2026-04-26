@@ -1,4 +1,3 @@
-// chat-widget.js
 (function () {
   const styles = `
     #qc-chat-btn {
@@ -143,13 +142,8 @@
   const messages = document.getElementById("qc-chat-messages");
 
   function parseMarkdown(text) {
-    // 1. Convertir negritas
     let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
-    // 2. Convertir enlaces de Markdown [texto](url) en links HTML clicables
     html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #1E4D2B; font-weight: 700; text-decoration: underline;">$1</a>');
-    
-    // 3. Convertir saltos de línea
     html = html.replace(/\n/g, '<br>');
     return html;
   }
@@ -160,7 +154,9 @@
   badge.style.display = hasOpened ? 'none' : 'flex';
 
   if (history.length > 0) {
-    history.forEach(msg => {
+    // Filtramos los mensajes de "system" para que el usuario no vea los contextos ocultos
+    const visibleHistory = history.filter(msg => msg.role !== 'system');
+    visibleHistory.forEach(msg => {
       const div = document.createElement("div");
       div.className = "qc-msg " + (msg.role === 'user' ? 'user' : 'bot');
       if (msg.role === "user") {
@@ -172,7 +168,7 @@
     });
     setTimeout(() => messages.scrollTop = messages.scrollHeight, 100);
   } else {
-    const defaultGreeting = "¡Hola, chef! Soy Diego, del equipo de QuantiChef. 👋 <br><br>Estoy aquí para ayudarte a sacarle el máximo partido a tu carta o resolverte cualquier duda sobre cómo mejorar tus márgenes. ¿En qué te puedo echar una mano hoy?";
+    const defaultGreeting = "¡Oído cocina, Chef! Soy Diego, del equipo de QuantiChef. 👋 <br><br>Estoy aquí para echarte una mano con tus escandallos o dudas. ¿En qué te puedo ayudar hoy?";
     const div = document.createElement("div");
     div.className = "qc-msg bot";
     div.innerHTML = defaultGreeting;
@@ -220,13 +216,25 @@
     if (!text) return;
 
     addMessageToScreen(text, "user");
+    
+    // TRIPLE CHECK DE CONTEXTO: Le pasamos a Diego la info actual antes de cada mensaje.
+    const isPro = window.esPremium === true;
+    const restName = document.getElementById('restaurante-nombre')?.textContent || 'Chef';
+    const contextStr = `[SISTEMA: El usuario actual es del Restaurante "${restName}". Su plan actual es: ${isPro ? 'PRO (VIP, no vendas nada)' : 'GRATIS (Explica sutilmente ventajas Pro si procede)'}]`;
+
+    // Filtramos mensajes previos de sistema para no saturar la memoria de Diego
+    history = history.filter(m => m.role !== 'system');
+    
+    // Inyectamos el contexto de forma transparente
+    history.push({ role: "system", content: contextStr });
     history.push({ role: "user", content: text });
+    
     sessionStorage.setItem('qc_chat_history', JSON.stringify(history));
     
     input.value = "";
     sendBtn.disabled = true;
 
-    const typing = addMessageToScreen("Escribiendo...", "bot");
+    const typing = addMessageToScreen("Diego está escribiendo...", "bot");
 
     try {
       const res = await fetch("/api/chat", {
@@ -236,14 +244,14 @@
       });
 
       const data = await res.json();
-      const formattedReply = data.reply ? parseMarkdown(data.reply) : "Perdona, no he podido enviar el mensaje. ¿Me lo repites?";
+      const formattedReply = data.reply ? parseMarkdown(data.reply) : "Perdona Chef, he tenido un lapsus. ¿Me lo repites?";
       
       typing.innerHTML = formattedReply;
       history.push({ role: "assistant", content: data.reply });
       sessionStorage.setItem('qc_chat_history', JSON.stringify(history));
 
     } catch {
-      typing.textContent = "Uy, parece que hay un fallo de conexión. Inténtalo de nuevo.";
+      typing.textContent = "Uy, parece que hay un fallo de conexión. Si el problema persiste escríbenos a hola@quantichef.com.";
     }
 
     sendBtn.disabled = false;
