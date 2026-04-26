@@ -1,7 +1,12 @@
 {
   "dependencies": {
-    "stripe": "^14",
     "@supabase/supabase-js": "^2",
-    "resend": "^3.2.0"
+    "axios": "^1.15.2",
+    "cheerio": "^1.2.0",
+    "csv-parser": "^3.2.0",
+    "csv-writer": "^1.6.0",
+    "dotenv": "^17.4.2",
+    "resend": "^3.5.0",
+    "stripe": "^14"
   }
 }
