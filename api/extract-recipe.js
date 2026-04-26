@@ -118,13 +118,15 @@ async function parseRecipeWithClaude(base64, type) {
         };
     }
 
+    // PROMPT CON TÉCNICA "CHAIN OF THOUGHT" PARA EVITAR QUE SE SALTE PLATOS
     const prompt = `Eres un extractor de datos de hostelería experto y meticuloso. Tu tarea es analizar TODAS las páginas de este documento y extraer CADA UNA de las recetas presentes.
 
-INSTRUCCIÓN CRÍTICA DE COBERTURA:
-Si el documento tiene 20 recetas, DEBES extraer las 20. No resumas, no te detengas después de los primeros platos. Es obligatorio procesar el archivo completo hasta el final.
+INSTRUCCIÓN CRÍTICA Y OBLIGATORIA (PARA NO SALTARTE NADA):
+Como el documento es largo, DEBES seguir estrictamente estos 2 pasos:
+PASO 1: Primero, abre una etiqueta <analisis> y escribe una lista numerada con el nombre de TODOS los platos que ves en el documento entero, desde la página 1 hasta el final. Asegúrate de llegar hasta el último plato.
+PASO 2: Cierra la etiqueta </analisis> y a continuación, genera el OBJETO JSON con todos los platos que has listado.
 
-Devuelve ÚNICAMENTE un objeto JSON estricto (sin texto adicional).
-Estructura:
+Estructura estricta del JSON:
 {
   "platos": [
     {
@@ -138,7 +140,7 @@ Estructura:
   ]
 }
 
-REGLA DE CONVERSIÓN: Transforma todas las cantidades a números en gramos (gr) o mililitros (ml) en el campo "cantidad_gr". (Ej: 1kg = 1000).`;
+REGLA: En "cantidad_gr" pon siempre el número convertido a gramos o mililitros. Ej: 1kg = 1000.`;
 
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -148,9 +150,9 @@ REGLA DE CONVERSIÓN: Transforma todas las cantidades a números en gramos (gr) 
             'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-            model: 'claude-sonnet-4-6', // Tu modelo avanzado
-            max_tokens: 16000,           // Límite aumentado para permitir listas largas de 20+ platos
-            temperature: 0,              // Temperatura 0 para máxima precisión analítica
+            model: 'claude-sonnet-4-6', // Tu modelo
+            max_tokens: 8192,           // Límite de salida
+            temperature: 0,             // Temperatura 0 para ser metódico y literal
             messages: [{
                 role: 'user',
                 content: [
@@ -169,7 +171,7 @@ REGLA DE CONVERSIÓN: Transforma todas las cantidades a números en gramos (gr) 
     
     const rawText = data.content[0].text;
     
-    // Extracción quirúrgica del JSON entre llaves
+    // MAGIA AQUÍ: Ignoramos la etiqueta <analisis> y cogemos SOLO desde la { hasta la }
     const startIndex = rawText.indexOf('{');
     const endIndex = rawText.lastIndexOf('}');
     
