@@ -24,15 +24,15 @@ export default async function handler(req, res) {
         // 1. Extraer recetas usando Claude
         const recipes = await parseRecipeWithClaude(file_base64, file_type);
         
-        if (!recipes || !recipes.platos) throw new Error('No se detectaron platos en el archivo.');
+        if (!recipes || !recipes.platos) throw new Error('No se detectaron platos.');
 
-        // 2. Cargar inventario de precios
+        // 2. Cargar inventario de precios para el cruce automático
         const { data: inventario } = await supabase.from('precios_proveedor').select('*').eq('restaurante_id', restaurante_id);
         const inv = inventario || [];
 
         let platosGuardados = 0;
 
-        // 3. Guardado en Supabase (Sin user_id para evitar errores)
+        // 3. Procesar y Guardar cada plato
         for (const p of recipes.platos) {
             const ingsProcesados = (p.ingredientes || []).map(i => {
                 const match = buscarMejorCoincidencia(i.n, inv);
@@ -45,8 +45,8 @@ export default async function handler(req, res) {
                     cantidad: cant,
                     unidad: i.u || 'g',
                     precio: pBase,
-                    merma: 0,
-                    peso_neto: cant,
+                    merma: 0,           // <--- CLAVE: Inicializar merma para el frontend
+                    peso_neto: cant,    // <--- CLAVE: Inicializar peso neto
                     coste: Number(coste.toFixed(2))
                 };
             });
@@ -54,9 +54,10 @@ export default async function handler(req, res) {
             const costeRacion = ingsProcesados.reduce((acc, curr) => acc + curr.coste, 0);
             const pCarta = parseFloat(p.pvp) || 0;
 
+            // Guardado (HEMOS QUITADO EL user_id AQUÍ)
             const { error: insErr } = await supabase.from('escandallos').insert({
                 restaurante_id: restaurante_id,
-                nombre_plato: p.nombre,
+                nombre_plato: p.nombre || 'Plato importado',
                 categoria: p.cat || 'Importado',
                 precio_venta: pCarta > 0 ? pCarta : Number((costeRacion / 0.3).toFixed(2)),
                 precio_carta: pCarta,
@@ -80,11 +81,9 @@ async function parseRecipeWithClaude(base64, type) {
     let contentBlock;
 
     if (isTextFile) {
-        // Si es CSV, decodificamos el base64 a texto real para que Claude lo lea perfecto
         const textContent = Buffer.from(base64, 'base64').toString('utf-8');
         contentBlock = { type: "text", text: `DATOS DEL RECETARIO:\n${textContent}` };
     } else {
-        // Para PDF o imágenes (listas cortas)
         contentBlock = { 
             type: type === 'pdf' ? "document" : "image", 
             source: { 
@@ -95,9 +94,9 @@ async function parseRecipeWithClaude(base64, type) {
         };
     }
 
-    const prompt = `Analiza estos datos y extrae TODOS los platos. No resumas. No te detengas.
+    const prompt = `Analiza estos datos y extrae TODOS los platos. No resumas.
 Devuelve SOLO un JSON con claves cortas:
-{"platos": [{"nombre": "...", "cat": "Principal", "pvp": 15.5, "ingredientes": [{"n": "nombre", "q": cantidad_gramos, "u": "ud"}]}]}
+{"platos": [{"nombre": "...", "cat": "Principal", "pvp": 15.5, "ingredientes": [{"n": "nombre", "q": cantidad_num, "u": "g"}]}]}
 Regla: Transforma cantidades a número (gramos o ml).`;
 
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
