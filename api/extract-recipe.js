@@ -79,7 +79,7 @@ export default async function handler(req, res) {
                     };
                 });
 
-                const raciones = parseInt(p.raciones) || 1;
+                const raciones = Math.max(1, Math.round(Math.abs(parseFloat(p.raciones) || 1)));
                 const costeTotal = ingsProcesados.reduce((acc, curr) => acc + curr.coste, 0);
                 const costeRacion = costeTotal / raciones;
                 const pCarta = parseFloat(p.pvp) || 0;
