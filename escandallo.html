@@ -1368,255 +1368,137 @@ function fmt(n){return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximum
 
 
 function calcular(){
-
   const rac=Math.max(parseFloat(document.getElementById('raciones').value)||1,1);
-
   const neto=parseFloat(document.getElementById('margen-neto').value)||20;
-
   const pCarta=parseFloat(document.getElementById('precio-carta').value)||0; 
-
   const sliderFc = document.getElementById('margen-fc');
 
-
-
   let tot=0;
-
   ings.forEach(i=>{
-
     const q=parseFloat(document.getElementById('q'+i.id)?.value)||0;
-
     const p=parseFloat(document.getElementById('p'+i.id)?.value)||0;
-
+    const u=document.getElementById('u'+i.id)?.value||'g'; // <-- CAPTURAMOS LA UNIDAD
+    
     let merma=0;
-
     if(mermasOn)merma=Math.min(parseFloat(document.getElementById('m'+i.id)?.value)||0,99)/100;
+    
+    // 🔥 CORRECCIÓN: Dividimos entre 1000 si la unidad es gramos (g) o mililitros (ml)
+    const factor = (u === 'g' || u === 'ml') ? 1000 : 1;
+    const qBase = q / factor;
 
-    tot+=(merma>0?q/(1-merma):q)*p;
-
+    tot+=(merma>0?qBase/(1-merma):qBase)*p;
   });
-
-
 
   const por=tot/rac;
 
-
-
   if (!sliderFc.hasAttribute('data-target')) sliderFc.setAttribute('data-target', '30');
-
   if (pCarta === 0) sliderFc.setAttribute('data-target', sliderFc.value);
-
   const targetFcPct = parseFloat(sliderFc.getAttribute('data-target')) || 30;
 
-
-
   let fc;
-
   if (pCarta > 0 && por > 0) {
-
     fc = (por / pCarta) * 100;
-
     sliderFc.value = fc;
-
     document.getElementById('val-fc').textContent = fc.toFixed(1) + '%';
-
     document.getElementById('val-fc').style.color = 'var(--accent)';
-
   } else {
-
     fc = parseFloat(sliderFc.value) || 30;
-
     document.getElementById('val-fc').textContent = fc + '%';
-
     document.getElementById('val-fc').style.color = 'var(--text2)';
-
   }
-
   
-
   document.getElementById('val-neto').textContent=neto+'%';
 
-
-
   const pvpMin = targetFcPct > 0 ? por / (targetFcPct / 100) : 0;
-
   const pvpRecomendado = targetFcPct > 0 && neto < 100 ? por / (targetFcPct / 100) / (1 - neto / 100) : 0;
-
   
-
   document.getElementById('m-coste').textContent=fmt(tot);
-
   document.getElementById('m-racion').textContent=fmt(por);
-
   document.getElementById('m-pvp').textContent=fmt(pCarta > 0 ? pCarta : pvpMin);
-
   document.getElementById('m-pvp-sub').textContent=pCarta > 0 ? 'precio actual en carta' : 'cubre ingredientes al '+ targetFcPct.toFixed(0) +'%';
 
-
-
   const mm=document.getElementById('m-fc');
-
   if(por > 0){
-
      mm.textContent=fc.toFixed(1)+'%';
-
      mm.className='metric-value '+(fc<=35?'good':fc<=45?'warn':'bad');
-
   } else {
-
      mm.textContent='—';mm.className='metric-value';
-
   }
-
-
 
   const mNeto=document.getElementById('m-pvp-neto');
-
   const mNetoSub=document.getElementById('m-neto-sub');
-
   if(netoOn&&pvpRecomendado>0){
-
     mNeto.textContent=fmt(pvpRecomendado);
-
     mNeto.className='metric-value gold';
-
     mNetoSub.textContent='+'+neto+'% beneficio neto';
-
     const expl=document.getElementById('precio-explicacion');
-
     expl.style.display='block';
-
     expl.innerHTML=`<strong>Cómo se calcula el precio recomendado:</strong> Tu coste por ración es ${fmt(por)}. Con tu objetivo de food cost del ${targetFcPct.toFixed(1)}% el precio mínimo es ${fmt(pvpMin)}. Añadiendo un ${neto}% de beneficio neto sobre el precio de venta, el precio recomendado objetivo es <strong>${fmt(pvpRecomendado)}</strong>.`;
-
   } else if(!netoOn){
-
     mNeto.textContent='—';mNeto.className='metric-value gold';
-
     mNetoSub.textContent='activa margen neto';
-
     document.getElementById('precio-explicacion').style.display='none';
-
   }
 
-
-
   const act=Array.from(document.querySelectorAll('.alg input:checked')).map(i=>i.closest('.alg').textContent.trim());
-
   document.getElementById('alg-resumen').textContent=act.join(', ');
-
   document.getElementById('alg-list').classList.toggle('visible',act.length>0);
 
-
-
   const auditBox = document.getElementById('auditoria-box');
-
   const auditTitle = document.getElementById('audit-title');
-
   const auditDesc = document.getElementById('audit-desc');
-
   const auditIcon = document.getElementById('audit-icon');
-
   const statusEl = document.getElementById('plato-status');
-
-
 
   if(statusEl) statusEl.style.display = 'none';
 
-
-
   if (por > 0) {
-
     auditBox.style.display = 'flex';
-
     
-
     if (pCarta > 0) {
-
       const targetPvp = (netoOn && pvpRecomendado > 0) ? pvpRecomendado : pvpMin;
-
       const isExcelente = pCarta >= (targetPvp * 0.95);
 
-
-
       if (fc >= 40) { 
-
         auditBox.style.background = 'var(--danger-light)';
-
         auditBox.style.border = '1px solid rgba(139, 26, 26, 0.2)';
-
         auditTitle.style.color = 'var(--danger)';
-
         auditDesc.style.color = 'var(--text2)';
-
         auditIcon.textContent = '🚨';
-
         auditTitle.textContent = 'Alerta: Coste de producto muy elevado';
-
         auditDesc.innerHTML = `Tu coste es del <strong>${fc.toFixed(1)}%</strong>, lo que deja poco margen para cubrir gastos fijos. <br><span style="color:var(--danger); font-size:11px; font-weight:700;">💡 TIP: Sube el precio a ${fmt(targetPvp)}, busca alternativas para ingredientes clave, o revisa el número de raciones.</span>`;
-
       } 
-
       else if (!isExcelente) { 
-
         auditBox.style.background = 'var(--gold-light)';
-
         auditBox.style.border = '1px solid rgba(196,148,58,.3)';
-
         auditTitle.style.color = 'var(--warn)';
-
         auditDesc.style.color = 'var(--text2)';
-
         auditIcon.textContent = '💡';
-
         auditTitle.textContent = 'Plato rentable con potencial de mejora';
-
         auditDesc.innerHTML = `Tienes un buen Food Cost (<strong>${fc.toFixed(1)}%</strong>). Sin embargo, según tu objetivo, este plato tiene potencial para venderse a <strong>${fmt(targetPvp)}</strong>. ¡Súbelo para maximizar tus ganancias!`;
-
       } 
-
       else { 
-
         auditBox.style.background = 'var(--accent-light)';
-
         auditBox.style.border = '1px solid var(--accent-mint)';
-
         auditTitle.style.color = 'var(--accent)';
-
         auditDesc.style.color = 'var(--text2)';
-
         auditIcon.textContent = '🏆';
-
         auditTitle.textContent = '¡Precio ideal alcanzado!';
-
         const extraStr = pCarta > targetPvp ? ` Tienes un colchón extra de <strong>${fmt(pCarta - targetPvp)} por ración</strong> y un ` : ` Tienes un `;
-
         auditDesc.innerHTML = `Estás vendiendo a <strong>${fmt(pCarta)}</strong>, cumpliendo tu objetivo de rentabilidad.${extraStr}Food Cost ideal del <strong>${fc.toFixed(1)}%</strong>. ¡Gran trabajo!`;
-
       }
-
     } else {
-
       auditBox.style.background = 'var(--surface2)';
-
       auditBox.style.border = '1px solid var(--border)';
-
       auditTitle.style.color = 'var(--text2)';
-
       auditDesc.style.color = 'var(--text3)';
-
       auditIcon.textContent = 'ℹ️';
-
       auditTitle.textContent = 'Añade tu precio en carta';
-
       auditDesc.innerHTML = `Introduce tu precio de venta actual arriba para ver la auditoría. El precio sugerido para cubrir un ${targetFcPct.toFixed(1)}% de coste es <strong>${fmt(pvpMin)}</strong>.`;
-
     }
-
   } else {
-
     auditBox.style.display = 'none';
-
   }
-
 }
 
 
