@@ -384,13 +384,32 @@ let restauranteId=null;
 let esPremium = false;
 let extractedProducts = [];
 
-async function init(){
-  const { data: { session }, error } = await sb.auth.getSession();
-  if (error || !session) {
-    window.location.href = '/login';
-    return;
+async function init() {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = '/login'; return; }
+
+    // 1. Petición rápida del restaurante
+    const { data: rest } = await sb.from('restaurantes').select('*').eq('user_id', session.user.id).maybeSingle();
+    
+    if (rest) {
+      restauranteId = rest.id;
+      document.getElementById('restaurante-nombre').textContent = rest.nombre;
+
+      // 2. LA MAGIA: Cargamos platos y precios AL MISMO TIEMPO (en paralelo)
+      // Esto reduce el tiempo de carga a la mitad
+      await Promise.all([
+        fetchEscandallos(),
+        fetchPreciosProveedor()
+      ]);
+    }
+  } catch (err) {
+    console.error("Error en carga inicial:", err);
+  } finally {
+    // 3. Pase lo que pase, quitamos el cargador rápido
+    document.getElementById('auth-loading').style.display = 'none';
+    document.getElementById('app-content').style.display = 'block';
   }
-  await cargarDatos(session);
 }
 
 async function cargarDatos(session){
