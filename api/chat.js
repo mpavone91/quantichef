@@ -146,3 +146,4 @@ FORMATO ESTRICTO:
     return res.status(200).json({ reply: `Perdona Chef, el servidor está saturado. Vuelve a intentarlo.` });
   }
 }
+// Fin de la función handler
