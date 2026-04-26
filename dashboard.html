@@ -384,32 +384,13 @@ let restauranteId=null;
 let esPremium = false;
 let extractedProducts = [];
 
-async function init() {
-  try {
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) { window.location.href = '/login'; return; }
-
-    // 1. Petición rápida del restaurante
-    const { data: rest } = await sb.from('restaurantes').select('*').eq('user_id', session.user.id).maybeSingle();
-    
-    if (rest) {
-      restauranteId = rest.id;
-      document.getElementById('restaurante-nombre').textContent = rest.nombre;
-
-      // 2. LA MAGIA: Cargamos platos y precios AL MISMO TIEMPO (en paralelo)
-      // Esto reduce el tiempo de carga a la mitad
-      await Promise.all([
-        fetchEscandallos(),
-        fetchPreciosProveedor()
-      ]);
-    }
-  } catch (err) {
-    console.error("Error en carga inicial:", err);
-  } finally {
-    // 3. Pase lo que pase, quitamos el cargador rápido
-    document.getElementById('auth-loading').style.display = 'none';
-    document.getElementById('app-content').style.display = 'block';
+async function init(){
+  const { data: { session }, error } = await sb.auth.getSession();
+  if (error || !session) {
+    window.location.href = '/login';
+    return;
   }
+  await cargarDatos(session);
 }
 
 async function cargarDatos(session){
@@ -895,65 +876,65 @@ async function cargarPreciosGuardados(){
   };
 
 const renderPrecio = (p) => `
-    <div class="escandallo-card" style="cursor: default; margin-bottom: 0.625rem;">
-      <div class="card-info">
-        <div class="card-nombre" style="text-transform: capitalize;">${p.ingrediente_normalizado || p.ingrediente}</div>
-        <div style="font-size:11px; color:var(--text3)">${p.updated_at ? 'Actualizado: ' + fmtFecha(p.updated_at) : 'Precio manual'}</div>
+    <div class="precio-card" style="justify-content: space-between;">
+      <div style="flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+        <b style="font-size:13px; color:var(--text)">${p.ingrediente_normalizado || p.ingrediente}</b>
+        ${p.updated_at ? `<span style="font-size:11px;color:var(--text3);margin-left:6px">${fmtFecha(p.updated_at)}</span>` : ''}
       </div>
-      
-      <div class="card-metrics" style="gap: 1.5rem;">
-        <div class="card-metric">
-          <input type="number" step="0.01" value="${p.precio_kg}" 
-                 class="card-metric-val"
-                 style="width: 90px; text-align: right; border: 1px solid transparent; background: none; color: var(--accent); padding: 0; cursor: edit; font-family: 'Fraunces', serif;" 
-                 onchange="actualizarPrecio('${p.id}', this.value)"
-                 onfocus="this.style.borderBottom='1px solid var(--accent)';"
-                 onblur="this.style.border='1px solid transparent';">
-          <div style="font-size:9px; color:var(--text3); text-transform: uppercase; font-weight:700; margin-top:2px;">€ / ${p.unidad}</div>
-        </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <input type="number" step="0.01" value="${p.precio_kg}" 
+               style="width: 75px; text-align: right; padding: 4px 6px; font-size:13px; font-weight: 700; border: 1px solid transparent; background: none; color: var(--accent); border-radius:4px;" 
+               onchange="actualizarPrecio('${p.id}', this.value)"
+               onfocus="this.style.border='1px solid var(--border)'; this.style.background='white';"
+               onblur="this.style.border='1px solid transparent'; this.style.background='none';">
+        <span style="font-size:12px; color:var(--text3); font-weight:600;">€ / ${p.unidad}</span>
+        
+        <button onclick="eliminarPrecio('${p.id}')" 
+                style="background:none; border:none; color:var(--text3); cursor:pointer; font-size:18px; padding:0 5px; margin-left:5px;"
+                onmouseover="this.style.color='var(--danger)'"
+                onmouseout="this.style.color='var(--text3)'">×</button>
       </div>
-
-      <button class="card-del" onclick="eliminarPrecio('${p.id}')" style="margin-left: 10px;">×</button>
     </div>`;
     
-container.innerHTML = `
+ container.innerHTML = `
     <div class="section-title">Mis precios de proveedor</div>
     
-    <div class="card" style="margin-bottom: 1.5rem; border: 1.5px dashed var(--border); background: var(--surface2); padding: 1.2rem;">
-      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px; align-items: end;">
+    <div class="card" style="margin-bottom: 1rem; border: 1.5px dashed var(--border); background: var(--surface2); padding: 1rem;">
+      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; align-items: end;">
         <div class="field">
-          <label style="font-size: 10px; font-weight: 800; color: var(--text3); text-transform:uppercase; display:block; margin-bottom:6px;">Ingrediente</label>
-          <input type="text" id="new-ing-name" placeholder="Ej: Azúcar blanco" style="padding:10px; border-radius:8px; border:1px solid var(--border);">
+          <label style="font-size: 10px; font-weight: 700; color: var(--text3); display:block; margin-bottom:4px;">INGREDIENTE</label>
+          <input type="text" id="new-ing-name" placeholder="Ej: Azúcar blanco" style="padding:8px; font-size:12px;">
         </div>
         <div class="field">
-          <label style="font-size: 10px; font-weight: 800; color: var(--text3); text-transform:uppercase; display:block; margin-bottom:6px;">Precio (€)</label>
-          <input type="number" id="new-ing-price" step="0.01" placeholder="0.00" style="padding:10px; border-radius:8px; border:1px solid var(--border);">
+          <label style="font-size: 10px; font-weight: 700; color: var(--text3); display:block; margin-bottom:4px;">PRECIO (€)</label>
+          <input type="number" id="new-ing-price" step="0.01" placeholder="0.00" style="padding:8px; font-size:12px;">
         </div>
         <div class="field">
-          <label style="font-size: 10px; font-weight: 800; color: var(--text3); text-transform:uppercase; display:block; margin-bottom:6px;">Unidad</label>
-          <select id="new-ing-unit" style="padding:10px; border-radius:8px; height:41px; border:1px solid var(--border); background:white;">
+          <label style="font-size: 10px; font-weight: 700; color: var(--text3); display:block; margin-bottom:4px;">UNIDAD</label>
+          <select id="new-ing-unit" style="padding:8px; font-size:12px; height:35px;">
             <option value="kg">kg</option>
             <option value="l">litro</option>
             <option value="ud">unidad</option>
           </select>
         </div>
-        <button class="btn-fill" onclick="añadirPrecioManual()" style="height: 41px; width: 41px; padding:0; border-radius:10px; font-size:20px; display:flex; align-items:center; justify-content:center;">+</button>
+        <button class="btn-fill" onclick="añadirPrecioManual()" style="height: 35px; padding: 0 15px;">+</button>
       </div>
     </div>
 
-    <div style="display: flex; flex-direction: column;">
-      ${recientes.map(renderPrecio).join('')}
+    <div style="font-size:12px;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
+      <span>${precios.length} precio${precios.length!==1?'s':''} guardado${precios.length!==1?'s':''}</span>
     </div>
-
+    ${recientes.map(renderPrecio).join('')}
     ${resto.length > 0 ? `
-      <div class="precios-all" id="precios-all" style="margin-top: 0;">
+      <div class="precios-all" id="precios-all">
         ${resto.map(renderPrecio).join('')}
       </div>
       <button class="precios-toggle" id="precios-toggle-btn" onclick="togglePrecios()">
-        Ver ${resto.length} precios más ▾
+        Ver ${resto.length} más ▾
       </button>
     ` : ''}
   `;
+}
 
 function togglePrecios(){
   const el = document.getElementById('precios-all');
