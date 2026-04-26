@@ -204,6 +204,7 @@ function addIng(n='',q='',u='g',p='',m=0){
 
 function renderIngs(){
   const c=document.getElementById('ingredientes');
+  // Guardamos valores actuales antes de redibujar
   ings.forEach(i=>{
     const row=document.getElementById('row'+i.id);
     if(row){
@@ -267,6 +268,7 @@ function cargarEscandallo(e){
   
   ings=e.ingredientes.map(i=>({id:Date.now()+Math.random(), n:i.nombre, q:i.cantidad, u:i.unidad, p:i.precio, m:i.merma||0}));
   
+  // Si algún ingrediente traía merma, activamos el switch automáticamente
   if(ings.some(i=>i.m > 0)) {
     document.getElementById('toggle-merma').checked=true;
     mermasOn=true;
@@ -274,6 +276,7 @@ function cargarEscandallo(e){
     document.getElementById('ing-header').innerHTML='<span>Ingrediente</span><span>Útil</span><span>Unidad</span><span>€/Kg</span><span>Merma%</span><span></span>';
   }
 
+  // Cargar alérgenos
   if(e.alergenos){
     document.querySelectorAll('.alg').forEach(l=>{
       if(e.alergenos.includes(l.textContent.trim())){
@@ -324,6 +327,7 @@ async function guardarEscandallo(){
   }
 }
 
+// Inicializar alérgenos
 const algContainer=document.getElementById('alergenos');
 ALGS.forEach(a=>{
   const l=document.createElement('label');
@@ -335,8 +339,5 @@ ALGS.forEach(a=>{
 async function cerrarSesion(){ await sb.auth.signOut(); window.location.href='/login'; }
 initAuth();
 </script>
-
-<script src="/chat-widget.js"></script>
-
 </body>
 </html>
