@@ -9,6 +9,11 @@
 
   gtag('config', 'G-BBXNWHTD8Y');
 </script>
+<!-- PostHog Analytics -->
+<script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_PON_TU_API_KEY_AQUI',{api_host:'https://eu.posthog.com'})
+</script>
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -223,6 +228,27 @@
     .feature-icon svg { width: 28px; height: 28px; color: var(--verde); }
     .feature-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--texto); }
     .feature-card p { font-size: 1rem; color: var(--texto2); line-height: 1.6; }
+
+    /* TESTIMONIOS */
+    .testimonials-section { padding: 8rem 2rem; background: var(--crema-oscura); text-align: center; }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 4rem; max-width: 1100px; margin-left: auto; margin-right: auto; }
+    .testimonial-card { background: var(--blanco); padding: 2.5rem; border-radius: var(--radio-lg); text-align: left; border: 1.5px solid #E8E5DE; }
+    .testimonial-stars { color: var(--dorado); margin-bottom: 1rem; }
+    .testimonial-text { font-size: 1.1rem; color: var(--texto); line-height: 1.6; font-style: italic; margin-bottom: 1.5rem; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .testimonial-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--verde-mint); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--verde); font-size: 18px; flex-shrink: 0; }
+    .testimonial-name { font-weight: 700; color: var(--texto); font-size: 1rem; }
+    .testimonial-role { font-size: 0.85rem; color: var(--texto3); }
+    @media (max-width: 768px) { .testimonials-grid { grid-template-columns: 1fr; } }
+
+    /* TOGGLE PRECIOS */
+    .pricing-toggle-wrapper { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 3rem; }
+    .pricing-toggle-label { font-size: 1rem; font-weight: 600; color: rgba(255,255,255,0.5); cursor: pointer; transition: color 0.3s; }
+    .pricing-toggle-label.active { color: white; }
+    .pricing-toggle { position: relative; width: 64px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 32px; cursor: pointer; transition: background 0.3s; }
+    .pricing-toggle::after { content: ''; position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; background: white; border-radius: 50%; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .pricing-toggle.anual::after { transform: translateX(32px); }
+    .pricing-toggle-badge { background: var(--dorado); color: white; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; margin-left: 8px; }
 
     /* PRICING */
     .pricing-section { background: var(--verde); padding: 8rem 2rem; color: white; text-align: center; }
@@ -439,6 +465,48 @@
   </div>
 </section>
 
+<section class="testimonials-section">
+  <div class="section-inner">
+    <p class="section-tag fade-up">Resultados Reales</p>
+    <h2 class="section-title fade-up">Ellos ya cocinan <em>con beneficio</em></h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card fade-up">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Llevaba años calculando mis costes en un cuaderno. Con QuantiChef me di cuenta que estaba perdiendo dinero en mi plato estrella. Lo ajusté y mi Food Cost bajó un 8%."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">CM</div>
+          <div>
+            <div class="testimonial-name">Carlos Mendoza</div>
+            <div class="testimonial-role">Chef & Propietario, Pizzería Napoli</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-up">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"La cámara de alérgenos y la lectura de facturas me han devuelto mis domingos. En 10 minutos tengo toda la semana escandallada y al día."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">LR</div>
+          <div>
+            <div class="testimonial-name">Laura Ruiz</div>
+            <div class="testimonial-role">Gerente de Operaciones, Grupo Marea</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-up">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Poder crear 'sub-recetas' para mis fondos y salsas es una maravilla. El sistema anida el coste y ahora sé exactamente cuánto me cuesta cada emplatado."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">JG</div>
+          <div>
+            <div class="testimonial-name">Javier Gómez</div>
+            <div class="testimonial-role">Chef Ejecutivo, Restaurante Alma</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="pricing-section" id="precios">
   <div class="pricing-inner">
     <p class="section-tag fade-up" style="color:var(--verde-mint)">Control total</p>
@@ -447,34 +515,26 @@
       Acceso completo a todas las funciones inteligentes desde el primer día.
     </p>
 
-    <div class="pricing-cards">
-      <div class="pricing-card fade-up">
-        <p style="font-size:12px; opacity:0.8; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Plan Flexible</p>
-        <div class="pricing-price">39€<span style="font-size:1rem; font-family:'Plus Jakarta Sans', sans-serif; font-weight:400; opacity:0.7">/mes</span></div>
-        <p style="font-size:14px; color:rgba(255,255,255,0.6); margin-bottom:2rem;">Ideal para controlar el día a día sin ataduras. Cancela cuando quieras.</p>
+    <div class="pricing-toggle-wrapper fade-up">
+      <span class="pricing-toggle-label mensual" onclick="setPricing('mensual')">Mensual</span>
+      <div class="pricing-toggle anual" id="btnTogglePricing" onclick="togglePricing()"></div>
+      <span class="pricing-toggle-label anual active" onclick="setPricing('anual')">Anual <span class="pricing-toggle-badge">Ahorra 119€</span></span>
+    </div>
+
+    <div class="pricing-cards" style="grid-template-columns: 1fr; max-width: 450px;">
+      <div class="pricing-card destacado fade-up" style="transform: none; margin: 0 auto; width: 100%;">
+        <div class="pricing-label" id="pricing-save-badge">Ahorras 119€ al año</div>
+        <p style="font-size:12px; color:var(--texto3); font-weight:800; text-transform:uppercase; letter-spacing:1px;" id="pricing-plan-name">Plan Cocina Rentable</p>
+        <div class="pricing-price" id="pricing-price-val">349€<span style="font-size:1rem; font-family:'Plus Jakarta Sans', sans-serif; font-weight:400; color:var(--texto3)" id="pricing-price-period">/año</span></div>
+        <p style="font-size:14px; color:var(--verde); font-weight:700; margin-bottom:2rem;" id="pricing-desc">El plan favorito de los restaurantes que crecen. (Equivale a 29€/mes)</p>
         
         <ul class="pricing-features">
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Escandallos y escaneos ilimitados</li>
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Lectura OCR de facturas</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Digitalización de PDFs y Excels</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Alertas de rentabilidad</li>
-        </ul>
-        <a href="/login" class="pricing-btn">Empezar ahora</a>
-      </div>
-
-      <div class="pricing-card destacado fade-up">
-        <div class="pricing-label">Ahorras 119€ al año</div>
-        <p style="font-size:12px; color:var(--texto3); font-weight:800; text-transform:uppercase; letter-spacing:1px;">Plan Cocina Rentable</p>
-        <div class="pricing-price">349€<span style="font-size:1rem; font-family:'Plus Jakarta Sans', sans-serif; font-weight:400; color:var(--texto3)">/año</span></div>
-        <p style="font-size:14px; color:var(--verde); font-weight:700; margin-bottom:2rem;">El plan favorito de los restaurantes que crecen. (29€/mes)</p>
-        
-        <ul class="pricing-features">
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Todo el software incluido</li>
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Actualizaciones prioritarias</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Exportación ilimitada de PDF</li>
           <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Soporte personalizado</li>
         </ul>
-        <a href="/login" class="pricing-btn">Activar plan anual</a>
+        <a href="/login" class="pricing-btn">Empezar ahora</a>
       </div>
     </div>
   </div>
@@ -572,6 +632,47 @@
 </div>
 
 <script>
+// TOGGLE PRECIOS
+let isAnual = true;
+function setPricing(plan) {
+  isAnual = plan === 'anual';
+  updatePricingUI();
+}
+function togglePricing() {
+  isAnual = !isAnual;
+  updatePricingUI();
+}
+function updatePricingUI() {
+  const toggleBtn = document.getElementById('btnTogglePricing');
+  const labels = document.querySelectorAll('.pricing-toggle-label');
+  const priceVal = document.getElementById('pricing-price-val');
+  const priceDesc = document.getElementById('pricing-desc');
+  const planName = document.getElementById('pricing-plan-name');
+  const saveBadge = document.getElementById('pricing-save-badge');
+  
+  if (isAnual) {
+    toggleBtn.classList.add('anual');
+    labels[0].classList.remove('active');
+    labels[1].classList.add('active');
+    
+    planName.innerText = "Plan Cocina Rentable";
+    priceVal.innerHTML = '349€<span style="font-size:1rem; font-family:\'Plus Jakarta Sans\', sans-serif; font-weight:400; color:var(--texto3)" id="pricing-price-period">/año</span>';
+    priceDesc.innerText = "El plan favorito de los restaurantes que crecen. (Equivale a 29€/mes)";
+    priceDesc.style.color = "var(--verde)";
+    saveBadge.style.display = "block";
+  } else {
+    toggleBtn.classList.remove('anual');
+    labels[0].classList.add('active');
+    labels[1].classList.remove('active');
+    
+    planName.innerText = "Plan Flexible";
+    priceVal.innerHTML = '39€<span style="font-size:1rem; font-family:\'Plus Jakarta Sans\', sans-serif; font-weight:400; color:var(--texto3)" id="pricing-price-period">/mes</span>';
+    priceDesc.innerText = "Ideal para controlar el día a día sin ataduras. Cancela cuando quieras.";
+    priceDesc.style.color = "var(--texto2)";
+    saveBadge.style.display = "none";
+  }
+}
+
 function toggleFaq(btn){
   const item = btn.closest('.faq-item');
   const isOpen = item.classList.contains('open');
