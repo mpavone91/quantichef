@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 
         // 1. Extraer recetas usando Claude
         const recipes = await parseRecipeWithClaude(file_base64, file_type);
-        
+
         if (!recipes || !recipes.platos || recipes.platos.length === 0) {
             throw new Error('No se detectaron platos en el archivo.');
         }
@@ -55,17 +55,17 @@ export default async function handler(req, res) {
             try {
                 const ingsProcesados = (p.ingredientes || []).map(i => {
                     const match = buscarMejorCoincidencia(i.n, inv);
-                    // Usar precio del proveedor si hay coincidencia, si no usar el del CSV
+                    // Usar precio del proveedor si hay coincidencia, si no usar el del archivo
                     const pBase = match ? parseFloat(match.precio_kg) : (parseFloat(i.p) || 0);
                     const cant = parseFloat(i.q) || 0;
                     const unidad = (i.u || 'g').toLowerCase();
 
-                    // FIX: calcular coste según unidad, no siempre /1000
+                    // Calcular coste según unidad: g y ml dividen entre 1000, el resto precio directo
                     let coste = 0;
                     if (unidad === 'g' || unidad === 'ml') {
                         coste = (cant / 1000) * pBase;
                     } else {
-                        // kg, l, ud, ración — precio directo sin dividir
+                        // kg, l, ud, ración
                         coste = cant * pBase;
                     }
 
@@ -79,15 +79,26 @@ export default async function handler(req, res) {
                     };
                 });
 
-                const raciones = Math.max(1, Math.round(Math.abs(parseFloat(p.raciones) || 1)));
+                // Validación defensiva de raciones:
+                // Si Claude confunde el precio de carta con las raciones, el número será muy alto (>50)
+                // En ese caso lo reseteamos a 1 para evitar errores en Supabase
+                const racionesRaw = Math.max(1, Math.round(Math.abs(parseFloat(p.raciones) || 1)));
+                const raciones = racionesRaw > 50 ? 1 : racionesRaw;
+
                 const costeTotal = ingsProcesados.reduce((acc, curr) => acc + curr.coste, 0);
                 const costeRacion = costeTotal / raciones;
+
+                // pvp es el precio que paga el cliente en carta (€)
                 const pCarta = parseFloat(p.pvp) || 0;
-                const foodCostPct = pCarta > 0
-                    ? Number(((costeRacion / pCarta) * 100).toFixed(2))
+
+                // Validación defensiva de pvp: si es un número absurdo (>500€) probablemente es un error
+                const pCartaSafe = pCarta > 500 ? 0 : pCarta;
+
+                const foodCostPct = pCartaSafe > 0
+                    ? Number(((costeRacion / pCartaSafe) * 100).toFixed(2))
                     : 30;
-                const precioVenta = pCarta > 0
-                    ? pCarta
+                const precioVenta = pCartaSafe > 0
+                    ? pCartaSafe
                     : Number((costeRacion / 0.3).toFixed(2));
 
                 const { error: insErr } = await supabase.from('escandallos').insert({
@@ -96,7 +107,7 @@ export default async function handler(req, res) {
                     categoria: p.cat || 'Importado',
                     raciones: raciones,
                     precio_venta: precioVenta,
-                    precio_carta: pCarta > 0 ? pCarta : null,
+                    precio_carta: pCartaSafe > 0 ? pCartaSafe : null,
                     coste_total: Number(costeTotal.toFixed(4)),
                     coste_racion: Number(costeRacion.toFixed(4)),
                     food_cost_pct: foodCostPct,
@@ -145,42 +156,41 @@ async function parseRecipeWithClaude(base64, type) {
             source: { type: 'base64', media_type: 'application/pdf', data: base64 }
         };
     } else {
+        // imagen (jpg, png, webp...)
         contentBlock = {
             type: 'image',
             source: { type: 'base64', media_type: 'image/jpeg', data: base64 }
         };
     }
 
-    const prompt = `Eres un asistente experto en hostelería. Analiza el siguiente archivo y extrae TODOS los platos con sus ingredientes.
+    const prompt = `Eres un asistente experto en hostelería. Analiza el archivo y extrae TODOS los platos.
 
-El archivo puede venir en CUALQUIER formato: CSV con columnas en cualquier orden o nombre, Excel exportado, texto plano, tabla, lista, PDF escaneado, notas de cocina, etc. Tu trabajo es interpretar la estructura como lo haría un humano, sea cual sea.
+CAMPOS QUE DEBES IDENTIFICAR POR PLATO:
+- "nombre": nombre del plato (texto)
+- "cat": categoría — Entrante, Principal, Postre o Bebida (si no está, infiere por el tipo de plato)
+- "pvp": precio de VENTA AL CLIENTE en carta (lo que paga el comensal, en €). Si no aparece, pon 0
+- "raciones": número de PORCIONES o RACIONES que salen de esta receta. Siempre es un número entero pequeño (1, 2, 4, 10...). NUNCA es un precio ni un gramaje
+- "ingredientes": lista de materias primas con:
+  - "n": nombre del ingrediente
+  - "q": cantidad numérica (solo el número, sin unidad)
+  - "u": unidad — usa solo: g, kg, ml, l, ud, ración
+  - "p": precio de COMPRA al proveedor por kg o por unidad (lo que paga el restaurante, en €). Si no aparece, pon 0
 
-Devuelve SOLO un JSON válido, sin texto adicional ni bloques de código markdown:
-{
-  "platos": [
-    {
-      "nombre": "Nombre del plato",
-      "cat": "Principal",
-      "pvp": 15.5,
-      "raciones": 1,
-      "ingredientes": [
-        {"n": "nombre ingrediente", "q": 200, "u": "g", "p": 4.80},
-        {"n": "otro ingrediente", "q": 1, "u": "ud", "p": 0.28}
-      ]
-    }
-  ]
-}
+REGLAS CRÍTICAS PARA NO CONFUNDIR CAMPOS:
+- "pvp" y "p" son PRECIOS EN EUROS — números con decimales como 14.50
+- "raciones" es una CANTIDAD DE PORCIONES — número entero pequeño como 1, 2, 4, 10
+- "q" es una CANTIDAD DE INGREDIENTE — puede ser 200 (gramos), 1.5 (kg), etc.
+- NUNCA pongas un precio en el campo "raciones"
+- NUNCA pongas un gramaje o cantidad en un campo de precio
+- Si una columna se llama "precio_carta", "pvp", "precio venta" o similar → va en "pvp"
+- Si una columna se llama "raciones", "porciones", "comensales" o similar → va en "raciones"
+- Si un valor no aparece claramente en el archivo, usa el valor por defecto: 0 para precios, 1 para raciones
 
-Reglas de extracción:
-- Extrae todos los platos que encuentres, sin excepción
-- "cat": categoría del plato (Entrante, Principal, Postre, Bebida) — infiere si no está explícita
-- "pvp": precio de venta en carta como número (0 si no aparece)
-- "raciones": número de raciones que salen (1 si no se especifica)
-- "n": nombre del ingrediente tal como aparece
-- "q": cantidad como número (si viene "200g" extrae 200, si viene "1/2" extrae 0.5)
-- "u": unidad normalizada — usa siempre: g, kg, ml, l, ud, ración (infiere si no está clara)
-- "p": precio por kg o por unidad como número (0 si no aparece)
-- Si un dato no existe en el archivo, usa el valor por defecto indicado — NO inventes datos que no estén`;
+El archivo puede venir en CUALQUIER formato: CSV, Excel exportado, texto plano, tabla, lista, PDF, notas de cocina, etc.
+Tu trabajo es interpretar la estructura como lo haría un humano, sea cual sea el formato.
+
+Devuelve SOLO JSON válido sin texto adicional ni bloques de código markdown:
+{"platos":[{"nombre":"...","cat":"Principal","pvp":14.50,"raciones":1,"ingredientes":[{"n":"...","q":200,"u":"g","p":4.80}]}]}`;
 
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
