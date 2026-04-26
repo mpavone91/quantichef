@@ -1725,7 +1725,6 @@ async function addSugeridos(){
   document.querySelectorAll('#sug-list input[type=checkbox]').forEach((cb,i)=>{
     if(cb.checked&&_sugs[i]){
       const s=_sugs[i];let p=s.precio_kg;
-      if(s.unidad==='g')p/=1000;else if(s.unidad==='ml')p/=1000;
       seleccionados.push({n:s.nombre,q:s.cantidad,u:s.unidad,p:p.toFixed(4),m:s.merma||0, prov: s._es_proveedor});
     }
   });
@@ -1810,21 +1809,13 @@ async function handleLabelScan(e) {
 
 
       if (data.ingredientes) {
-
         data.ingredientes.forEach(ing => {
-
           const provMatch = buscarPrecioProveedor(ing.nombre);
-
           let precio = ing.precio || 0;
-
-          if (provMatch) precio = provMatch.precio_kg / (ing.unidad === 'g' || ing.unidad === 'ml' ? 1000 : 1);
-
+          if (provMatch) precio = provMatch.precio_kg;
           addIng(ing.nombre, ing.cantidad, ing.unidad, precio);
-
         });
-
       }
-
 
 
       if (data.alergenos) {
