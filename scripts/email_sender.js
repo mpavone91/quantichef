@@ -75,27 +75,21 @@ async function main() {
                 try {
                     console.log(`  -> Enviando email a: ${lead.name} (${lead.email})`);
                     
-                    /* 
-                    // DESCOMENTAR PARA ENVIAR DE VERDAD
+                    // Envío real
                     const data = await resend.emails.send({
                         from: 'Massimo de QuantiChef <hola@quantichef.com>', // Asegúrate de que este dominio esté verificado en Resend
                         to: lead.email,
                         subject: `Control de costes para ${lead.name}`,
                         html: generateEmailTemplate(lead.name)
                     });
-                    */
                     
-                    // Simulación de envío (Para que puedas probarlo primero)
-                    await new Promise(resolve => setTimeout(resolve, 500)); // Pausa medio segundo
-
                     sentCount++;
                 } catch (error) {
                     console.error(`  [x] Error al enviar a ${lead.email}:`, error.message);
                 }
             }
             
-            console.log(`\n🎉 ¡Campaña finalizada! Se simularon/enviaron ${sentCount} correos exitosamente.`);
-            console.log(`⚠️ NOTA: Actualmente el script está en MODO SIMULACIÓN para evitar accidentes. Abre scripts/email_sender.js y descomenta la línea 75 para enviar los correos de verdad.`);
+            console.log(`\n🎉 ¡Campaña finalizada! Se enviaron ${sentCount} correos exitosamente.`);
         });
 }
 
