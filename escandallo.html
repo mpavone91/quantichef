@@ -1724,7 +1724,9 @@ async function addSugeridos(){
   const seleccionados=[];
   document.querySelectorAll('#sug-list input[type=checkbox]').forEach((cb,i)=>{
     if(cb.checked&&_sugs[i]){
-      const s=_sugs[i];let p=s.precio_kg;
+      const s=_sugs[i];
+      let p=s.precio_kg; 
+      // ELIMINADA LA DIVISIÓN AQUÍ: El precio entra como €/Kg directo a la casilla
       seleccionados.push({n:s.nombre,q:s.cantidad,u:s.unidad,p:p.toFixed(4),m:s.merma||0, prov: s._es_proveedor});
     }
   });
@@ -1812,7 +1814,8 @@ async function handleLabelScan(e) {
         data.ingredientes.forEach(ing => {
           const provMatch = buscarPrecioProveedor(ing.nombre);
           let precio = ing.precio || 0;
-          if (provMatch) precio = provMatch.precio_kg;
+          // ELIMINADA LA DIVISIÓN: Si hay match, usamos el precio bruto del Kilo del proveedor
+          if (provMatch) precio = provMatch.precio_kg; 
           addIng(ing.nombre, ing.cantidad, ing.unidad, precio);
         });
       }
@@ -2079,7 +2082,7 @@ const ingredientesData=ings.map(i=>({
 
     precio_carta: precioCarta,
 
-    food_cost_pct:fc,
+    food_cost_pct:Math.round(fc),
 
     margen_neto_pct:neto,
 
