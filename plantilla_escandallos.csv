@@ -1,0 +1,12 @@
+Plato;Ingrediente;Cantidad Bruta;Unidad;Merma (%);Cantidad Neta;Precio Compra;Unidad Compra;Coste Ingrediente
+Hamburguesa Clásica;Carne de Vacuno Picada;200;g;5%;190;8.50;kg;1.70
+Hamburguesa Clásica;Pan Brioche Artesano;1;ud;0%;1;0.45;ud;0.45
+Hamburguesa Clásica;Queso Cheddar Curado;40;g;0%;40;9.20;kg;0.37
+Hamburguesa Clásica;Lechuga Batavia;30;g;15%;25.5;2.10;kg;0.06
+Hamburguesa Clásica;Tomate Ensálada;40;g;10%;36;1.85;kg;0.07
+Hamburguesa Clásica;Salsa Especial Casa;25;ml;0%;25;4.50;L;0.11
+Ensalada César;Pechuga de Pollo Fresca;150;g;12%;132;6.80;kg;1.02
+Ensalada César;Lechuga Romana;100;g;20%;80;1.90;kg;0.19
+Ensalada César;Salsa César Casera;40;ml;0%;40;5.20;L;0.21
+Ensalada César;Picatostes de Pan;20;g;0%;20;3.50;kg;0.07
+Ensalada César;Queso Parmesano Rallado;15;g;0%;15;18.00;kg;0.27
