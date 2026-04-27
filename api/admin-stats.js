@@ -24,9 +24,9 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // Pequeña capa de seguridad: Pide un password por Query String (ej: ?key=MassimoCEO)
+  // Pequeña capa de seguridad: Pide un password por Query String
   const { key } = req.query;
-  if (key !== 'MassimoCEO') {
+  if (key !== 'Amore1206.') {
     return res.status(401).json({ error: 'No autorizado' });
   }
 
