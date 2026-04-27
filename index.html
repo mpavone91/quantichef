@@ -326,8 +326,54 @@
     .fade-up { opacity: 0; }
     .fade-up.visible { animation: fadeUp .6s ease both; }
 
+    /* MOBILE MENU */
+    .nav-hamburger {
+      display: none;
+      background: none; border: 1.5px solid #DDD9D0;
+      border-radius: 8px; padding: 6px 8px;
+      cursor: pointer; align-items: center; justify-content: center;
+      transition: border-color .2s;
+    }
+    .nav-hamburger:hover { border-color: var(--verde-mint); }
+    .nav-hamburger svg { display: block; }
+
+    .mobile-menu {
+      display: none;
+      position: fixed; top: 60px; left: 0; right: 0;
+      background: rgba(249,247,242,0.98);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(30,77,43,0.10);
+      padding: 1.25rem 1.5rem 1.5rem;
+      z-index: 99;
+      flex-direction: column; gap: 0;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.07);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      display: block; padding: 0.75rem 0;
+      font-size: 15px; font-weight: 500; color: var(--texto2);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      transition: color .2s;
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--verde); }
+    .mobile-menu-btns {
+      display: flex; gap: 8px; margin-top: 1rem;
+    }
+    .mobile-menu-btns .nav-login,
+    .mobile-menu-btns .nav-cta {
+      flex: 1; text-align: center; font-size: 13px;
+    }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { opacity: 0; }
+    .fade-up.visible { animation: fadeUp .6s ease both; }
+
     @media(max-width:768px) {
       .nav-links { display: none; }
+      .nav-btns { display: none; }
+      .nav-hamburger { display: flex; }
       .hero h1 { font-size: 2.8rem; }
       .hero-bullets { flex-direction: column; align-items: center; gap: 12px; }
       .dolor-grid, .steps, .pricing-cards, .faq-grid { grid-template-columns: 1fr; gap: 2rem; }
@@ -365,7 +411,33 @@
     <a href="/auth.html" class="nav-login">Acceder</a>
     <a href="/auth.html" class="nav-cta">Probar gratis</a>
   </div>
+
+  <!-- Hamburguesa solo en móvil -->
+  <button class="nav-hamburger" id="hamburger-btn" aria-label="Abrir menú" onclick="toggleMobileMenu()">
+    <svg id="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--texto2)" stroke-width="2" stroke-linecap="round">
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+    <svg id="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--texto2)" stroke-width="2" stroke-linecap="round" style="display:none">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
 </nav>
+
+<!-- Menú desplegable móvil -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#como-funciona" onclick="closeMobileMenu()">Cómo funciona</a>
+  <a href="#funcionalidades" onclick="closeMobileMenu()">Herramientas</a>
+  <a href="#precios" onclick="closeMobileMenu()">Inversión</a>
+  <a href="/blog.html" onclick="closeMobileMenu()">Blog / Recursos</a>
+  <a href="#faq" onclick="closeMobileMenu()">Dudas</a>
+  <div class="mobile-menu-btns">
+    <a href="/auth.html" class="nav-login">Acceder</a>
+    <a href="/auth.html" class="nav-cta">Probar gratis</a>
+  </div>
+</div>
 
 <section class="hero">
   <div class="hero-eyebrow">
@@ -728,6 +800,31 @@ function acceptCookies() {
 window.addEventListener('load', function() {
   if (!localStorage.getItem('qc_cookies_accepted')) {
     document.getElementById('cookie-banner').style.display = 'flex';
+  }
+});
+// MOBILE MENU
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('icon-open');
+  const iconClose = document.getElementById('icon-close');
+  const isOpen = menu.classList.toggle('open');
+  iconOpen.style.display = isOpen ? 'none' : 'block';
+  iconClose.style.display = isOpen ? 'block' : 'none';
+}
+function closeMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('icon-open');
+  const iconClose = document.getElementById('icon-close');
+  menu.classList.remove('open');
+  iconOpen.style.display = 'block';
+  iconClose.style.display = 'none';
+}
+// Close mobile menu when clicking outside
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('mobile-menu');
+  const btn = document.getElementById('hamburger-btn');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) {
+    closeMobileMenu();
   }
 });
 </script>
