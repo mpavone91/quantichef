@@ -39,7 +39,7 @@ module.exports = async (req, res) => {
 
           <br>
           <p>Un saludo,<br>
-          <strong>Massimo Pavone</strong><br>
+          <strong>Massimo</strong><br>
           CEO de QuantiChef</p>
         </div>
       `
