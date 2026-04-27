@@ -18,6 +18,14 @@ const INPUT_FILE = `leads_${CITY}.csv`;
 const SENT_LOG_FILE = 'sent_emails.txt';
 const BATCH_LIMIT = 8; // Enviará 8 correos cada vez que se ejecute (Aprox 48 al día si corre cada 4 horas)
 
+// Pausa aleatoria para simular comportamiento humano y evitar filtros de spam
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const randomDelay = () => {
+    const ms = Math.floor(Math.random() * (10000 - 3000 + 1)) + 3000; // Entre 3 y 10 segundos
+    console.log(`  ⏳ Esperando ${(ms / 1000).toFixed(1)}s antes del siguiente envío...`);
+    return delay(ms);
+};
+
 // Plantilla de Email en Frío
 function generateEmailTemplate(restaurantName) {
     // Si no hay nombre o es "Desconocido", usamos "equipo"
@@ -91,7 +99,7 @@ async function main() {
                     
                     // Envío real
                     const data = await resend.emails.send({
-                        from: 'Massimo de QuantiChef <hola@quantichef.com>', // Asegúrate de que este dominio esté verificado en Resend
+                        from: 'Massimo de QuantiChef <hola@quantichef.com>',
                         to: lead.email,
                         subject: `Control de costes para ${lead.name}`,
                         html: generateEmailTemplate(lead.name)
@@ -101,6 +109,11 @@ async function main() {
                     fs.appendFileSync(SENT_LOG_FILE, lead.email + '\n');
                     
                     sentCount++;
+
+                    // Esperar un tiempo aleatorio antes del siguiente para no activar filtros de spam
+                    if (sentCount < batch.length) {
+                        await randomDelay();
+                    }
                 } catch (error) {
                     console.error(`  [x] Error al enviar a ${lead.email}:`, error.message);
                 }

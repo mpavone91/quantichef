@@ -266,11 +266,14 @@ sb.auth.getSession().then(async ({ data: { session } }) => {
 });
 
 // Función de envío de email NO bloqueante
-const sendWelcomeEmail = async (email, nombre) => {
+const sendWelcomeEmail = async (email, nombre, token) => {
   try {
     await fetch('/api/send-welcome-email', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
       body: JSON.stringify({ email, nombre })
     });
   } catch (error) {
@@ -476,8 +479,8 @@ async function verificarCodigo() {
     return;
   }
 
-  // DISPARAR EMAIL (Sin await para no bloquear)
-  sendWelcomeEmail(registroData.email, registroData.nombrePersona);
+  // DISPARAR EMAIL (Sin await para no bloquear, pasamos el token para autenticar el endpoint)
+  sendWelcomeEmail(registroData.email, registroData.nombrePersona, session.access_token);
 
   const { error: signInError } = await sb.auth.signInWithPassword({
     email: registroData.email,

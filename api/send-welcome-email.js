@@ -1,12 +1,35 @@
+import { createClient } from '@supabase/supabase-js';
+
+const sb = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // --- SEGURIDAD: Validar JWT de Supabase ---
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'No autorizado' });
+  }
+  const token = authHeader.replace('Bearer ', '');
+  const { data: { user }, error: authError } = await sb.auth.getUser(token);
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Sesión inválida' });
+  }
+
   const { email, nombre } = req.body;
 
-  // Lógica para usar solo el primer nombre y no el del restaurante si es posible
-  // Si no hay nombre, usamos "Chef" por defecto
+  // Verificar que el email del body coincide con el del usuario autenticado
+  // Esto evita que alguien use su propio token para enviar emails a terceros
+  if (!email || email.toLowerCase() !== user.email?.toLowerCase()) {
+    return res.status(403).json({ error: 'Email no permitido' });
+  }
+  // --- FIN SEGURIDAD ---
+
   const firstName = nombre ? nombre.trim().split(' ')[0] : 'Chef';
 
   try {
