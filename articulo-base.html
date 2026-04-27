@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BBXNWHTD8Y"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BBXNWHTD8Y');
+</script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#1E4D2B">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- SEO Básico del Artículo (Modificar en cada post) -->
+<title>Por qué deberías dejar de usar Excel en tu restaurante | QuantiChef</title>
+<meta name="description" content="Descubre el peligro oculto de usar Excel para calcular los escandallos de tu restaurante cuando los precios de los ingredientes cambian cada semana.">
+<link rel="canonical" href="https://quantichef.com/articulo-base.html" />
+
+<!-- Open Graph para Redes Sociales -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://quantichef.com/articulo-base.html">
+<meta property="og:title" content="Por qué deberías dejar de usar Excel en tu restaurante">
+<meta property="og:description" content="Descubre el peligro oculto de usar Excel para calcular escandallos.">
+<meta property="og:image" content="https://quantichef.com/apple-touch-icon.png">
+<meta property="twitter:card" content="summary_large_image">
+
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F9F7F2;--surface:#FFFFFF;--border:#E0DDD6;--text:#1A1916;--text2:#4A4845;--text3:#8A8784;--accent:#1E4D2B;--accent-mid:#2D5A3D;--accent-light:#E8F2EC;--gold:#C4943A;--gold-light:#FFF4E0;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+/* NAV */
+nav{background:var(--surface);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between; border-bottom: 1px solid var(--border);}
+.nav-back{font-size:13px;color:var(--text2);text-decoration:none;display:flex;align-items:center;gap:5px; font-weight: 600;}
+.nav-back:hover{color:var(--accent)}
+
+/* CABECERA DEL ARTÍCULO */
+.article-header { max-width: 800px; margin: 4rem auto 2rem; padding: 0 1.5rem; text-align: center; }
+.article-meta-info { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 13px; color: var(--text3); margin-bottom: 1.5rem; }
+.article-category { background: var(--accent-light); color: var(--accent); padding: 4px 12px; border-radius: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 10px; }
+.article-header h1 { font-family: 'Fraunces', serif; font-size: clamp(2.2rem, 5vw, 3.5rem); color: var(--text); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
+.article-subtitle { font-size: 1.2rem; color: var(--text2); line-height: 1.6; }
+
+/* CONTENIDO DEL ARTÍCULO */
+.article-body { max-width: 700px; margin: 0 auto; padding: 0 1.5rem 4rem; font-size: 1.1rem; line-height: 1.8; color: var(--text2); }
+.article-body p { margin-bottom: 1.5rem; }
+.article-body h2 { font-family: 'Fraunces', serif; font-size: 1.8rem; color: var(--text); margin: 3rem 0 1rem; line-height: 1.2; }
+.article-body h3 { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--text); margin: 2rem 0 1rem; }
+.article-body strong { color: var(--text); }
+.article-body ul { margin: 0 0 1.5rem 1.5rem; }
+.article-body li { margin-bottom: 0.5rem; }
+.article-body blockquote { border-left: 4px solid var(--gold); padding-left: 1.5rem; margin: 2rem 0; font-style: italic; color: var(--text); font-size: 1.3rem; font-family: 'Fraunces', serif; }
+
+/* BANNER UPSELL (Al final del artículo) */
+.article-upsell { max-width: 800px; margin: 0 auto 5rem; padding: 0 1.5rem; }
+.upsell-card { background: var(--accent); border-radius: 16px; padding: 3rem 2rem; text-align: center; color: white; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(30,77,43,0.15); }
+.upsell-card h2 { font-family: 'Fraunces', serif; font-size: 2rem; margin-bottom: 1rem; font-weight: 300; }
+.upsell-card p { font-size: 1.05rem; color: rgba(255,255,255,0.8); margin-bottom: 2rem; max-width: 500px; margin-inline: auto; }
+.btn-upsell { display: inline-block; background: var(--gold); color: white; text-decoration: none; padding: 16px 32px; border-radius: 10px; font-weight: 700; font-size: 15px; transition: transform 0.2s; }
+.btn-upsell:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(196,148,58,0.3); }
+
+/* FOOTER */
+footer{text-align:center;padding:3rem 1.5rem;font-size:12px;color:var(--text3);border-top:1px solid var(--border);}
+footer a{color:var(--text3);text-decoration:none}
+footer a:hover{color:var(--accent)}
+
+@media(max-width:768px){
+  .article-header { margin-top: 3rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/blog.html" class="nav-back">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Volver al Blog
+  </a>
+  <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+    <div style="width:28px;height:28px;background:linear-gradient(135deg, #C4943A 0%, #E6B755 100%);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E4D2B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a1 1 0 0 0 0 2h20a1 1 0 0 0 0-2Z"></path><path d="M4 17a8 8 0 0 1 16 0H4Z"></path><circle cx="12" cy="5" r="1.5"></circle></svg>
+    </div>
+    <span style="font-family:'Fraunces',serif;font-size:16px;color:var(--text);font-weight:600;letter-spacing:-0.02em;">QuantiChef</span>
+  </a>
+</nav>
+
+<article>
+  <header class="article-header">
+    <div class="article-meta-info">
+      <span class="article-category">Gestión</span>
+      <span>Lectura: 4 min</span>
+      <span>Abril 2026</span>
+    </div>
+    <h1>Por qué deberías dejar de usar Excel en tu restaurante</h1>
+    <p class="article-subtitle">Las plantillas de Excel son excelentes para empezar, pero cuando el precio del aceite de oliva cambia cada semana, se convierten en tu peor enemigo.</p>
+  </header>
+
+  <div class="article-body">
+    <p>Todos hemos pasado por ahí. Llegas a casa a las 2 de la mañana después de un turno doble, enciendes el portátil y abres ese documento llamado <code>ESCANDALLOS_FINAL_V3.xlsx</code>. Tienes que actualizar los precios porque ayer el proveedor te subió la carne un 15%.</p>
+    
+    <p>El problema no es que Excel sea una mala herramienta. El problema es que <strong>no fue diseñado para la velocidad a la que se mueve la hostelería hoy en día</strong>.</p>
+
+    <h2>1. El coste de los precios desactualizados</h2>
+    <p>Imagina que tienes una hamburguesa en carta a 14€. Cuando hiciste el escandallo en Excel hace 6 meses, el coste de la carne, el pan brioche, el queso y la guarnición sumaba 4,20€ (un Food Cost perfecto del 30%).</p>
+    
+    <p>Sin embargo, hoy los precios son otros. Si no has tenido tiempo de entrar a tu Excel a modificar línea por línea cada ingrediente con las últimas facturas, esa misma hamburguesa ahora te cuesta 5,60€. Acabas de perder un 10% de margen neto por plato y ni siquiera lo sabes.</p>
+
+    <blockquote>
+      "La ignorancia en hostelería se paga cara. Un plato que crees que te está dando dinero puede ser el responsable de que no llegues a fin de mes."
+    </blockquote>
+
+    <h2>2. Las mermas: el asesino silencioso</h2>
+    <p>Otra trampa clásica del Excel es calcular el coste en base a la cantidad bruta. Si compras un solomillo a 22€/kg, pero al limpiarlo le quitas un 20% de grasa y nervios, <strong>tu coste real es de 27,50€/kg</strong>.</p>
+    
+    <p>Hacer estos cálculos cruzados en una hoja de cálculo para cientos de ingredientes suele derivar en fórmulas rotas (los famosos `#DIV/0!`) y frustración.</p>
+
+    <h2>3. La automatización es la única salida</h2>
+    <p>Los restaurantes que sobreviven a las crisis de inflación no lo hacen subiendo precios a ciegas, lo hacen <strong>digitalizando sus costes</strong>. La clave está en sistemas que puedan leer una factura directamente desde una foto y actualizar automáticamente todos los escandallos que usen esos ingredientes.</p>
+    
+    <ul>
+      <li>Sin picar datos a mano.</li>
+      <li>Con las mermas calculadas automáticamente.</li>
+      <li>Con alertas cuando tu margen de beneficio cae.</li>
+    </ul>
+
+    <p>Si todavía pasas tus domingos peleando con fórmulas de Excel, estás gastando un tiempo que deberías invertir en pensar cómo vender más, o simplemente, en descansar.</p>
+  </div>
+</article>
+
+<div class="article-upsell">
+  <div class="upsell-card">
+    <h2>Deja el Excel en el pasado</h2>
+    <p>Descubre el escandallo inteligente. Sube una foto de tu albarán y deja que QuantiChef cruce los datos, actualice tus costes y proteja tus márgenes automáticamente.</p>
+    <a href="/auth.html" class="btn-upsell">Prueba QuantiChef Gratis</a>
+    <div style="font-size: 12px; margin-top: 1rem; color: rgba(255,255,255,0.6);">Sin tarjeta de crédito. Listo en 2 minutos.</div>
+  </div>
+</div>
+
+<footer>
+  <a href="/">QuantiChef</a> · <a href="/blog.html">Blog</a> · <a href="/contacto.html">Contacto</a> · <a href="/legal.html">Legal y Privacidad</a>
+  <br><span style="margin-top:4px;display:inline-block">© 2026 QuantiChef · Todos los derechos reservados</span>
+</footer>
+
+<script src="/chat-widget.js"></script>
+</body>
+</html>

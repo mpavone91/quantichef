@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BBXNWHTD8Y"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BBXNWHTD8Y');
+</script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#1E4D2B">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- SEO Avanzado -->
+<title>Plantilla Excel de Escandallos (Gratis) | QuantiChef</title>
+<meta name="description" content="Descarga nuestra plantilla de Excel profesional para calcular los escandallos y márgenes de tu restaurante de forma sencilla.">
+<link rel="canonical" href="https://quantichef.com/plantilla-excel.html" />
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://quantichef.com/plantilla-excel.html">
+<meta property="og:title" content="Plantilla Excel de Escandallos (Gratis) | QuantiChef">
+<meta property="og:description" content="Calcula los márgenes reales de tus platos con esta plantilla gratuita para restaurantes.">
+<meta property="og:image" content="https://quantichef.com/apple-touch-icon.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F9F7F2;--surface:#FFFFFF;--border:#E0DDD6;--text:#1A1916;--text2:#4A4845;--text3:#8A8784;--accent:#1E4D2B;--accent-mid:#2D5A3D;--accent-light:#E8F2EC;--gold:#C4943A;--gold-light:#FFF4E0;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+/* NAV */
+nav{background:var(--accent);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.nav-back{font-size:13px;color:rgba(255,255,255,.7);text-decoration:none;display:flex;align-items:center;gap:5px}
+.nav-back:hover{color:#fff}
+
+/* HERO SECTION */
+main { flex: 1; padding: 4rem 1.5rem; display: flex; justify-content: center; align-items: center; }
+.magnet-container { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; max-width: 1000px; width: 100%; align-items: center; }
+
+.magnet-text h1 { font-family: 'Fraunces', serif; font-size: 2.5rem; color: var(--text); margin-bottom: 1rem; line-height: 1.1; letter-spacing: -0.02em; }
+.magnet-text h1 em { color: var(--accent); font-style: italic; }
+.magnet-text p { font-size: 1.1rem; color: var(--text2); line-height: 1.6; margin-bottom: 2rem; }
+.magnet-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 2rem; }
+.magnet-feature { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 14px; color: var(--text); }
+.magnet-feature svg { color: var(--gold); }
+
+/* FORMULARIO */
+.magnet-form-box { background: var(--surface); border-radius: 20px; padding: 2.5rem; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(30,77,43,0.08); position: relative; overflow: hidden; }
+.magnet-form-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--gold), #E6B755); }
+
+.field { margin-bottom: 1.25rem; }
+.field label { display: block; font-size: 11px; font-weight: 800; color: var(--text); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.input-text { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; outline: none; transition: border-color 0.2s; background: #FAFAF8; color: var(--text); }
+.input-text:focus { border-color: var(--accent); background: #fff; }
+
+.btn-submit { width: 100%; background: var(--accent); color: white; border: none; padding: 16px; border-radius: 10px; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+.btn-submit:hover { background: var(--accent-mid); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(30,77,43,0.2); }
+
+.guarantee { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 1rem; font-size: 11px; color: var(--text3); font-weight: 600; }
+
+/* SUCCESS STATE */
+.success-state { display: none; text-align: center; }
+.success-icon { font-size: 3rem; margin-bottom: 1rem; }
+.success-state h2 { font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--accent); margin-bottom: 0.5rem; }
+.success-state p { font-size: 0.95rem; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.5; }
+.btn-download { display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: white; text-decoration: none; padding: 14px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; margin-bottom: 1.5rem; transition: transform 0.2s; }
+.btn-download:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(196,148,58,0.2); }
+.upsell-box { background: var(--accent-light); border: 1px solid var(--accent-mint); padding: 1.5rem; border-radius: 12px; }
+.upsell-box h3 { font-size: 13px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+.upsell-box p { font-size: 12px; color: var(--accent-mid); margin-bottom: 12px; }
+.btn-upsell { display: inline-block; background: var(--surface); color: var(--accent); text-decoration: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; font-size: 12px; border: 1.5px solid var(--accent-mint); transition: all 0.2s; }
+.btn-upsell:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* FOOTER */
+footer{text-align:center;padding:2rem 1.5rem;font-size:12px;color:var(--text3);border-top:1px solid var(--border);}
+footer a{color:var(--text3);text-decoration:none}
+footer a:hover{color:var(--accent)}
+
+@media(max-width:768px){
+  .magnet-container { grid-template-columns: 1fr; gap: 2rem; }
+  .magnet-text h1 { font-size: 2rem; }
+  main { padding: 2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+    <div style="width:32px;height:32px;background:rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a1 1 0 0 0 0 2h20a1 1 0 0 0 0-2Z"></path><path d="M4 17a8 8 0 0 1 16 0H4Z"></path><circle cx="12" cy="5" r="1.5"></circle></svg>
+    </div>
+    <div>
+      <div style="font-family:'Fraunces',Georgia,serif;font-size:18px;color:#fff;font-weight:600;letter-spacing:-0.02em;line-height:1.1">QuantiChef</div>
+    </div>
+  </a>
+  <a href="/" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Volver al inicio
+  </a>
+</nav>
+
+<main>
+  <div class="magnet-container">
+    <div class="magnet-text">
+      <div style="display:inline-block; background:var(--gold-light); color:#9A7326; font-size:11px; font-weight:800; padding:6px 14px; border-radius:20px; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:1rem; border:1px solid rgba(196,148,58,0.3);">Recurso Gratuito</div>
+      <h1>Deja de perder dinero en cada plato. <em>Calcula tus costes reales.</em></h1>
+      <p>Descarga nuestra Plantilla Excel profesional y descubre exactamente cuánto te cuesta elaborar cada receta de tu carta, incluyendo el impacto de las mermas.</p>
+      
+      <ul class="magnet-features">
+        <li class="magnet-feature">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Fórmulas pre-configuradas para calcular el Food Cost
+        </li>
+        <li class="magnet-feature">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Casillas para aplicar mermas de limpieza y cocción
+        </li>
+        <li class="magnet-feature">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Instrucciones fáciles para restaurantes principiantes
+        </li>
+      </ul>
+    </div>
+
+    <div class="magnet-form-box">
+      <div id="form-area">
+        <h2 style="font-size:1.2rem; color:var(--text); margin-bottom:0.5rem; font-weight:700;">¿A dónde te enviamos la plantilla?</h2>
+        <p style="font-size:0.9rem; color:var(--text2); margin-bottom:1.5rem;">Déjanos tus datos para desbloquear la descarga instantánea.</p>
+        
+        <form onsubmit="descargarPlantilla(event)">
+          <div class="field">
+            <label>Nombre de tu restaurante</label>
+            <input type="text" id="lead_name" class="input-text" placeholder="Restaurante La Plaza" required>
+          </div>
+          <div class="field">
+            <label>Tu email profesional</label>
+            <input type="email" id="lead_email" class="input-text" placeholder="tu@email.com" required>
+          </div>
+          <button type="submit" id="btn-submit" class="btn-submit">¡Quiero la plantilla gratis!</button>
+        </form>
+        <div class="guarantee">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          100% Gratis. Cero spam garantizado.
+        </div>
+      </div>
+
+      <div id="success-area" class="success-state">
+        <div class="success-icon">📩</div>
+        <h2>¡Plantilla enviada!</h2>
+        <p>Revisa tu bandeja de entrada (y la carpeta de spam por si acaso). Te acabamos de enviar el Excel.</p>
+        
+        <div class="upsell-box" style="margin-top: 2rem;">
+          <h3>¿Cansado de picar datos a mano?</h3>
+          <p>Con QuantiChef, no tienes que usar Excel. Sube las fotos de tus albaranes y el sistema te hace los escandallos solos.</p>
+          <a href="/auth.html" class="btn-upsell">Probar QuantiChef Gratis (3 días)</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <a href="/">QuantiChef</a> · <a href="/">Inicio</a> · <a href="/legal.html">Privacidad</a>
+  <br><span style="margin-top:4px;display:inline-block">© 2026 QuantiChef · Todos los derechos reservados</span>
+</footer>
+
+<script>
+async function descargarPlantilla(e) {
+  e.preventDefault();
+  
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerText = "Enviando email...";
+  
+  const email = document.getElementById('lead_email').value;
+  const nombre = document.getElementById('lead_name').value;
+  
+  try {
+    // Llamar a nuestro endpoint para que envíe el correo con Resend
+    const res = await fetch('/api/send-lead-magnet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, nombre })
+    });
+    
+    if(!res.ok) throw new Error("Error API");
+  } catch (err) {
+    console.log("Error silencioso al enviar correo:", err);
+  }
+
+  // Cambio de vista
+  document.getElementById('form-area').style.display = 'none';
+  document.getElementById('success-area').style.display = 'block';
+}
+</script>
+<script src="/chat-widget.js"></script>
+</body>
+</html>
