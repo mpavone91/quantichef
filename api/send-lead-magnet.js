@@ -2,12 +2,40 @@ const { Resend } = require('resend');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Orígenes permitidos para llamar a este endpoint
+const ALLOWED_ORIGINS = [
+  'https://quantichef.com',
+  'https://www.quantichef.com',
+  'http://localhost:3000',
+  'http://localhost:5500'
+];
+
 module.exports = async (req, res) => {
+  // --- CORS estricto ---
+  const origin = req.headers.origin;
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Preflight OPTIONS
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { email, nombre } = req.body;
+  const { email, nombre, _honey } = req.body;
+
+  // --- HONEYPOT: Si viene relleno, es un bot. Lo ignoramos silenciosamente ---
+  if (_honey) {
+    // Le devolvemos éxito para engañar al bot, pero NO enviamos nada
+    console.warn(`[Honeypot] Bot bloqueado: ${email}`);
+    return res.status(200).json({ ok: true });
+  }
 
   if (!email || !nombre) {
     return res.status(400).json({ error: 'Missing email or name' });
@@ -51,3 +79,4 @@ module.exports = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+

@@ -28,7 +28,15 @@
 <meta property="og:url" content="https://quantichef.com/plantilla-excel.html">
 <meta property="og:title" content="Plantilla Excel de Escandallos (Gratis) | QuantiChef">
 <meta property="og:description" content="Calcula los márgenes reales de tus platos con esta plantilla gratuita para restaurantes.">
-<meta property="og:image" content="https://quantichef.com/apple-touch-icon.png">
+<meta property="og:image" content="https://quantichef.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Plantilla Excel de Escandallos (Gratis) | QuantiChef">
+<meta name="twitter:description" content="Calcula los márgenes reales de tus platos con esta plantilla gratuita para restaurantes.">
+<meta name="twitter:image" content="https://quantichef.com/og-image.png">
 
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -146,6 +154,8 @@ footer a:hover{color:var(--accent)}
             <input type="email" id="lead_email" class="input-text" placeholder="tu@email.com" required>
           </div>
           <button type="submit" id="btn-submit" class="btn-submit">¡Quiero la plantilla gratis!</button>
+          <!-- HONEYPOT: campo trampa para bots (invisible para humanos) -->
+          <input type="text" id="lead_honey" name="lead_honey" autocomplete="off" style="display:none;position:absolute;left:-9999px;" tabindex="-1" aria-hidden="true">
         </form>
         <div class="guarantee">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -183,13 +193,14 @@ async function descargarPlantilla(e) {
   
   const email = document.getElementById('lead_email').value;
   const nombre = document.getElementById('lead_name').value;
+  const honey = document.getElementById('lead_honey').value;
   
   try {
     // Llamar a nuestro endpoint para que envíe el correo con Resend
     const res = await fetch('/api/send-lead-magnet', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, nombre })
+      body: JSON.stringify({ email, nombre, _honey: honey })
     });
     
     if(!res.ok) throw new Error("Error API");
