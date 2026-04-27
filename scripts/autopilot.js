@@ -19,10 +19,9 @@ function runEmailSender() {
 // Ejecutar la primera vez inmediatamente
 runEmailSender();
 
-// Programar para que se ejecute cada 24 horas (86400000 milisegundos)
-// Si quieres que se ejecute cada 12 horas, pon: 12 * 60 * 60 * 1000
-const INTERVALO_MS = 24 * 60 * 60 * 1000; 
+// Programar para que se ejecute cada 4 horas (14400000 milisegundos)
+const INTERVALO_MS = 4 * 60 * 60 * 1000; 
 
 setInterval(runEmailSender, INTERVALO_MS);
 
-console.log("⏰ Temporizador activado. Siguiente lote en 24 horas.");
+console.log("⏰ Temporizador activado. Siguiente lote en 4 horas.");

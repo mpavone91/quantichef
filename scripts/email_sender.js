@@ -15,7 +15,8 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // Configuración
 const CITY = 'Madrid';
 const INPUT_FILE = `leads_${CITY}.csv`;
-const DAILY_LIMIT = 50; // Para evitar caer en spam
+const SENT_LOG_FILE = 'sent_emails.txt';
+const BATCH_LIMIT = 8; // Enviará 8 correos cada vez que se ejecute (Aprox 48 al día si corre cada 4 horas)
 
 // Plantilla de Email en Frío
 function generateEmailTemplate(restaurantName) {
@@ -48,26 +49,39 @@ async function main() {
         return;
     }
 
+    // Cargar historial de enviados
+    let sentHistory = [];
+    if (fs.existsSync(SENT_LOG_FILE)) {
+        sentHistory = fs.readFileSync(SENT_LOG_FILE, 'utf8').split('\n').map(e => e.trim());
+    }
+
     fs.createReadStream(INPUT_FILE)
         .pipe(csv())
         .on('data', (row) => {
-            // Filtrar los que no tienen correo
             if (row.EMAIL && row.EMAIL !== 'No encontrado') {
-                // Algunos pueden tener varios correos separados por coma, cogemos el primero
                 const firstEmail = row.EMAIL.split(',')[0].trim();
-                leads.push({
-                    name: row.NOMBRE,
-                    email: firstEmail,
-                    website: row.WEB
-                });
+                
+                // Solo añadir a la cola si NO se le ha enviado antes
+                if (!sentHistory.includes(firstEmail)) {
+                    leads.push({
+                        name: row.NOMBRE,
+                        email: firstEmail,
+                        website: row.WEB
+                    });
+                }
             }
         })
         .on('end', async () => {
-            console.log(`✅ Se encontraron ${leads.length} restaurantes con correo válido.`);
+            console.log(`✅ Quedan ${leads.length} restaurantes nuevos por contactar en la lista.`);
             
+            if (leads.length === 0) {
+                console.log(`Todos los restaurantes actuales ya han sido contactados. Ejecuta el lead_generator para buscar más.`);
+                return;
+            }
+
             // Limitamos para no ser marcados como SPAM
-            const batch = leads.slice(0, DAILY_LIMIT);
-            console.log(`📧 Preparando el envío de ${batch.length} correos (Límite diario de seguridad)...`);
+            const batch = leads.slice(0, BATCH_LIMIT);
+            console.log(`📧 Preparando el envío de ${batch.length} correos para este lote...`);
 
             let sentCount = 0;
 
@@ -83,13 +97,16 @@ async function main() {
                         html: generateEmailTemplate(lead.name)
                     });
                     
+                    // Registrar como enviado para no repetir
+                    fs.appendFileSync(SENT_LOG_FILE, lead.email + '\n');
+                    
                     sentCount++;
                 } catch (error) {
                     console.error(`  [x] Error al enviar a ${lead.email}:`, error.message);
                 }
             }
             
-            console.log(`\n🎉 ¡Campaña finalizada! Se enviaron ${sentCount} correos exitosamente.`);
+            console.log(`\n🎉 ¡Lote finalizado! Se enviaron ${sentCount} correos exitosamente.`);
         });
 }
 

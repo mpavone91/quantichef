@@ -5,7 +5,7 @@ const path = require('path');
 
 // Configuración inicial
 const CITY = 'Madrid';
-const LIMIT = 10; // Para la primera prueba extraeremos solo 10. Luego puedes subirlo a 100 o 500.
+const LIMIT = 200; // Incrementado a 200 para conseguir una buena base de datos
 
 // Configurar el archivo CSV de salida
 const outputPath = path.join(__dirname, `../leads_${CITY}.csv`);
