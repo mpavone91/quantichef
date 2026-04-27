@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CEO Dashboard | QuantiChef</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #1A1916;
+      --surface: #24221D;
+      --surface-light: #2D2A24;
+      --text: #F9F7F2;
+      --text-muted: #8A8784;
+      --accent: #C4943A; /* Dorado */
+      --accent-mint: #3D7A54; /* Verde */
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(196, 148, 58, 0.08), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(61, 122, 84, 0.08), transparent 25%);
+    }
+
+    /* Auth Overlay */
+    #authOverlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(26, 25, 22, 0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: opacity 0.5s ease;
+    }
+
+    .auth-box {
+      background: var(--surface);
+      padding: 3rem;
+      border-radius: 20px;
+      border: 1px solid rgba(196, 148, 58, 0.2);
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .auth-box h2 {
+      font-family: 'Fraunces', serif;
+      margin-top: 0;
+      color: var(--accent);
+    }
+
+    .auth-box input {
+      background: var(--surface-light);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-top: 10px;
+      outline: none;
+      font-size: 16px;
+      width: 200px;
+      text-align: center;
+    }
+
+    .auth-box input:focus {
+      border-color: var(--accent);
+    }
+
+    /* Dashboard Layout */
+    .dashboard-container {
+      width: 100%;
+      max-width: 1100px;
+      padding: 3rem 2rem;
+      box-sizing: border-box;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .header h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    .header .subtitle {
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .metric-card {
+      background: rgba(36, 34, 29, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 2rem;
+      transition: transform 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(196, 148, 58, 0.3);
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-mint));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .metric-card:hover::before {
+      opacity: 1;
+    }
+
+    .metric-title {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-value {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin: 0;
+      color: white;
+      font-family: 'Fraunces', serif;
+    }
+
+    .metric-value.green {
+      color: #4CAF50;
+    }
+
+    /* PostHog section */
+    .posthog-section {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 2rem;
+      border: 1px solid rgba(255,255,255,0.05);
+      text-align: center;
+    }
+
+    .posthog-section h2 {
+      font-family: 'Fraunces', serif;
+      margin-top: 0;
+    }
+
+    .btn-posthog {
+      display: inline-block;
+      background: var(--text);
+      color: var(--bg);
+      padding: 12px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 1rem;
+      transition: opacity 0.2s;
+    }
+
+    .btn-posthog:hover {
+      opacity: 0.9;
+    }
+
+    .loader {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 1s ease-in-out infinite;
+      margin: 20px auto 0;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Auth Screen -->
+  <div id="authOverlay">
+    <div class="auth-box">
+      <h2>CEO Access</h2>
+      <p style="color: var(--text-muted); font-size: 14px;">Ingresa la clave maestra para ver las métricas</p>
+      <input type="password" id="passInput" placeholder="Contraseña..." autofocus>
+      <div class="loader" id="authLoader"></div>
+      <p id="errorMsg" style="color: #ff5252; font-size: 13px; display: none; margin-top: 15px;">Clave incorrecta</p>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dashboard-container" id="dashboard">
+    <header class="header">
+      <div>
+        <div class="subtitle">Mando de Control</div>
+        <h1>Métricas de QuantiChef</h1>
+      </div>
+      <img src="/apple-touch-icon.png" width="50" style="border-radius: 12px; border: 1px solid rgba(196,148,58,0.3);">
+    </header>
+
+    <div class="metrics-grid">
+      <!-- MRR -->
+      <div class="metric-card">
+        <div class="metric-title">Monthly Recurring Revenue (MRR)</div>
+        <p class="metric-value green" id="valMRR">€0</p>
+      </div>
+      
+      <!-- Usuarios Registrados -->
+      <div class="metric-card">
+        <div class="metric-title">Restaurantes Registrados</div>
+        <p class="metric-value" id="valUsers">0</p>
+      </div>
+
+      <!-- Usuarios de Pago -->
+      <div class="metric-card">
+        <div class="metric-title">Clientes PRO (Activos)</div>
+        <p class="metric-value" id="valPro">0</p>
+      </div>
+    </div>
+
+    <!-- Acceso rápido a Analítica Avanzada -->
+    <div class="posthog-section">
+      <h2>Analítica de Comportamiento</h2>
+      <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">
+        Para ver grabaciones de pantalla de los usuarios, mapas de calor, origen del tráfico y conversión del landing page, usa tu panel de PostHog.
+      </p>
+      <a href="https://app.posthog.com" target="_blank" class="btn-posthog">Abrir PostHog →</a>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('passInput');
+    const overlay = document.getElementById('authOverlay');
+    const dashboard = document.getElementById('dashboard');
+    const loader = document.getElementById('authLoader');
+    const errorMsg = document.getElementById('errorMsg');
+
+    input.addEventListener('keypress', async function(e) {
+      if (e.key === 'Enter') {
+        const val = input.value;
+        if(val === 'MassimoCEO') {
+          // Iniciar carga
+          loader.style.display = 'block';
+          errorMsg.style.display = 'none';
+
+          try {
+            // Intentamos cargar los datos del backend
+            const res = await fetch(`/api/admin-stats?key=${val}`);
+            if(!res.ok) throw new Error('No autorizado');
+            const data = await res.json();
+
+            // Poner los datos en el HTML
+            document.getElementById('valMRR').innerText = `€${data.metrics.mrr_euros.toFixed(2)}`;
+            document.getElementById('valUsers').innerText = data.metrics.total_usuarios;
+            document.getElementById('valPro').innerText = data.metrics.usuarios_pro;
+
+            // Ocultar Auth y mostrar Dashboard
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+              overlay.style.display = 'none';
+              dashboard.style.opacity = '1';
+            }, 500);
+          } catch(err) {
+            loader.style.display = 'none';
+            errorMsg.style.display = 'block';
+            errorMsg.innerText = "Error cargando métricas de la base de datos. (¿Estás corriendo el entorno local?)";
+          }
+        } else {
+          errorMsg.style.display = 'block';
+          input.value = '';
+        }
+      }
+    });
+  </script>
+</body>
+</html>
