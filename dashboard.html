@@ -165,6 +165,11 @@
     .precio-card > div:first-child { width: 100%; margin-bottom: 5px; }
     .precio-card > div:last-child { width: 100%; justify-content: space-between; }
   }
+  
+  /* --- MODALES Y VENTANAS EMERGENTES --- */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px); }
+  .modal-overlay.visible { display:flex; }
+  .modal { background:var(--surface); border-radius:16px; padding:2.5rem 2rem; max-width:420px; width:100%; text-align:center; animation:fadeIn .2s ease; position:relative; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
 </style>
 </head>
 <body>
