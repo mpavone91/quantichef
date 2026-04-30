@@ -21,7 +21,7 @@
 <style>
   :root {
     --sidebar-width: 250px;
-    --bg: #F9FAFB; /* Blanco roto más tech */
+    --bg: #F9FAFB;
     --surface: #FFFFFF;
     --surface2: #F3F4F6;
     --border: #E5E7EB;
@@ -63,7 +63,6 @@
   .view-section.active { display: block; }
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-  /* --- ESTILOS DE COMPONENTES HEREDADOS --- */
   .btn-suscripcion-nav { display:none; color:var(--text2); border:1px solid var(--border); background:var(--surface); padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition: all .2s; }
   .btn-suscripcion-nav:hover { background: var(--surface2); border-color: var(--text3); }
   .nav-logout{color:var(--danger);cursor:pointer;background:var(--danger-light);border:none;border-radius:8px;display:flex;align-items:center;padding:6px 12px;font-size:12px;font-weight:600;}
@@ -93,11 +92,13 @@
   .pro-banner{background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap}
   .pro-badge{display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px}
 
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:2rem}
-  .stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02);}
-  .stat-label{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:.4rem}
-  .stat-value{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:300;color:var(--text)}
-  .stat-value.green{color:var(--accent)}
+  .dashboard-kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 2rem; }
+  .kpi-card { background: linear-gradient(to bottom right, #ffffff, #fafaf8); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;}
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(30,77,43,0.06); border-color: var(--accent-mint); }
+  .kpi-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .kpi-content { flex: 1; min-width: 0; }
+  .kpi-label { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kpi-value { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 300; color: var(--text); }
 
   .section-title{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:8px; justify-content: space-between;}
   .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
@@ -145,25 +146,11 @@
 
   .review-wrap { margin-bottom: 2rem; }
   .review-card { background: var(--surface); border: 1px solid var(--accent-mint); border-radius: 12px; padding: 1.5rem; }
-  
-  /* ── DASHBOARD KPIS ── */
-  .dashboard-kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 2rem; }
-  .kpi-card { background: linear-gradient(to bottom right, #ffffff, #fafaf8); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;}
-  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(30,77,43,0.06); border-color: var(--accent-mint); }
-  .kpi-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .kpi-content { flex: 1; min-width: 0; }
-  .kpi-label { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .kpi-value { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 300; color: var(--text); }
 
   /* ── STOCK MODULE ── */
   .almacen-subtabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:1.5rem}
   .almacen-subtab-btn{flex:1;padding:9px 12px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--text3);border-radius:8px;transition:all .2s}
   .almacen-subtab-btn.active{background:var(--accent);color:white;box-shadow:0 2px 6px rgba(30,77,43,.25)}
-
-  .stock-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
-  .stock-kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-  .stock-kpi-label{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:.3rem}
-  .stock-kpi-val{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300}
 
   .stock-item{background:linear-gradient(to bottom right, #ffffff, #fafaf8);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.02);transition:all .2s}
   .stock-item:hover{border-color:var(--accent-mint);transform:translateY(-2px);box-shadow:0 6px 16px rgba(30,77,43,.06)}
@@ -193,39 +180,52 @@
   .review-table td{padding:6px 6px;border-bottom:1px solid var(--border)}
   .review-table tr:last-child td{border-bottom:none}
 
-  /* MÓVIL */
+  /* --- MODALES Y VENTANAS EMERGENTES --- */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px); }
+  .modal-overlay.visible { display:flex; }
+  .modal { background:var(--surface); border-radius:16px; padding:2.5rem 2rem; max-width:420px; width:100%; text-align:center; animation:fadeIn .2s ease; position:relative; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
+
+  /* MÓVIL (Versión Premium sin conflictos) */
   @media (max-width: 768px) {
     body { flex-direction: column; }
-    .sidebar { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; flex-direction: row; padding: 0 10px; z-index: 100; border-top: 1px solid rgba(255,255,255,0.1); justify-content: space-around; }
+    
+    /* Nav Inferior Flotante (Bottom Nav) */
+    .sidebar { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; flex-direction: row; padding: 0 10px; z-index: 100; border-top: 1px solid rgba(0,0,0,0.05); justify-content: space-around; background: var(--surface); box-shadow: 0 -4px 20px rgba(0,0,0,0.04); }
     .sidebar-header, .nav-item span, .sidebar-footer { display: none; }
     .nav-menu { flex-direction: row; width: 100%; justify-content: space-around; align-items: center; padding: 0; }
-    .nav-item { padding: 12px; margin: 0; border-radius: 12px; }
-    .nav-item.active { box-shadow: inset 0 -3px 0 var(--gold); background: rgba(255,255,255,0.1); }
-    .main-content { height: calc(100vh - 70px); padding-bottom: 20px; }
-    .top-bar { padding: 1rem; }
-    .view-section { padding: 1.5rem 1rem; }
+    .nav-item { padding: 14px; margin: 0; border-radius: 14px; color: var(--text3); }
+    .nav-item.active { box-shadow: none; background: var(--accent-light); color: var(--accent); }
+    
+    /* Espacio vital para que no tape el contenido */
+    .main-content { height: 100vh; padding-bottom: 100px; }
+    .top-bar { padding: 1rem; border-bottom: none; }
+    .view-section { padding: 1rem; }
+    
+    /* Ajustes de Grids */
     .actions-grid { grid-template-columns: 1fr; gap: 10px; }
     .stats .stat:last-child { grid-column: 1 / -1; }
     .rank-bar-wrap { display: none; }
-    .precio-card { flex-wrap: wrap; }
-    .precio-card > div:first-child { width: 100%; margin-bottom: 5px; }
+    
+    /* Tarjetas de precios y stock */
+    .precio-card { flex-wrap: wrap; padding: 1rem; }
+    .precio-card > div:first-child { width: 100%; margin-bottom: 8px; }
     .precio-card > div:last-child { width: 100%; justify-content: space-between; }
-    .stock-kpis{grid-template-columns:1fr 1fr}
-    .stock-kpis .stock-kpi:last-child{grid-column:1/-1}
+    
+    /* Formulario de añadir stock móvil */
+    .new-stock-grid { display: flex !important; flex-direction: column; gap: 12px !important; }
+    .new-stock-grid > div { width: 100%; }
+    .new-stock-grid > button { width: 100%; height: 48px !important; margin-top: 5px; font-size: 15px;}
+    
+    /* Cabeceras adaptables (Para el botón del TPV) */
+    .section-title-mobile-col { flex-direction: column !important; align-items: flex-start !important; gap: 12px; }
+    .section-title-mobile-col button { width: 100%; justify-content: center; padding: 12px !important; font-size: 14px !important; }
+
     #tpv-review-body { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom:10px; }
-    .new-stock-grid { grid-template-columns: 1fr 1fr !important; }
-    .new-stock-grid > input:first-child { grid-column: 1 / -1; }
-    .new-stock-grid > button { grid-column: 1 / -1; }
     .dashboard-kpi-grid { grid-template-columns: 1fr 1fr; gap:10px; }
     .kpi-card { padding: 1rem; flex-direction: column; align-items: flex-start; gap: 8px; }
     .kpi-icon { width: 36px; height: 36px; border-radius: 10px; }
     .kpi-value { font-size: 1.4rem; }
   }
-  
-  /* --- MODALES Y VENTANAS EMERGENTES --- */
-  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px); }
-  .modal-overlay.visible { display:flex; }
-  .modal { background:var(--surface); border-radius:16px; padding:2.5rem 2rem; max-width:420px; width:100%; text-align:center; animation:fadeIn .2s ease; position:relative; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
 </style>
 </head>
 <body>
@@ -283,7 +283,27 @@
       <section id="view-inicio" class="view-section active">
         <div class="welcome">
           <h1 class="welcome-title">Hola, <em>Chef</em> 👋</h1>
-          <p class="welcome-sub">Resumen de rentabilidad y existencias.</p>
+          <p class="welcome-sub">¿Qué necesitas marchar hoy?</p>
+          
+          <div class="actions-grid">
+            <div class="action-card ac-gray" onclick="nuevoEscandallo()">
+              <div class="action-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+              <div class="action-title">+ Escandallo Individual</div>
+              <div class="action-sub">Crea un plato paso a paso.</div>
+            </div>
+            <div class="action-card ac-green" onclick="document.getElementById('file-input').click()">
+              <div class="action-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+              <div class="action-title">Sube tu albarán</div>
+              <div class="action-sub">Actualiza precios automáticamente.</div>
+              <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleFileUpload(event)" style="display:none">
+            </div>
+            <div class="action-card ac-gold" onclick="abrirSubidaRecetas()">
+              <div class="action-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+              <div class="action-title">Digitalizar Recetas <span id="dash-upsell-lock" style="font-size:11px;">🔒</span></div>
+              <div class="action-sub">Sube tu recetario Excel/CSV.</div>
+              <input type="file" id="file-input-recetas" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv" onchange="handleRecetasUpload(event)" style="display:none">
+            </div>
+          </div>
         </div>
 
         <div class="plan-banner" id="plan-banner" style="display:none">
@@ -361,7 +381,7 @@
       </section>
 
       <section id="view-platos" class="view-section">
-        <div class="section-title" style="justify-content: space-between; margin-bottom:1rem;">
+        <div class="section-title" style="justify-content: space-between; margin-bottom:1.5rem;">
           <div style="display:flex; align-items:center; gap:8px;">
              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
              Catálogo de Escandallos
@@ -386,7 +406,6 @@
 
       <section id="view-precios" class="view-section">
 
-        <!-- Revisión albarán (se muestra encima de todo cuando hay una extracción pendiente) -->
         <div class="review-wrap" id="review-wrap" style="display:none;">
           <div class="review-card">
             <h3 class="review-title">Revisa los precios del Albarán</h3>
@@ -404,7 +423,6 @@
           </div>
         </div>
 
-        <!-- Sub-pestañas -->
         <div class="almacen-subtabs">
           <button class="almacen-subtab-btn active" id="subtab-existencias" onclick="switchAlmacenTab('existencias', this)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:5px"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
@@ -416,16 +434,13 @@
           </button>
         </div>
 
-        <!-- ── TAB: EXISTENCIAS ── -->
         <div id="almacen-view-existencias">
 
-          <!-- Loading TPV -->
           <div class="tpv-loading" id="tpv-loading">
             <div class="spinner"></div>
             <span style="color:var(--gold);font-weight:600;font-size:14px;">Analizando ticket de ventas...</span>
           </div>
 
-          <!-- Revisión ventas TPV -->
           <div class="tpv-review" id="tpv-review">
             <h3 style="font-family:'Fraunces',serif;font-weight:600;margin-bottom:.4rem;">Ventas del día detectadas</h3>
             <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Revisa los platos y raciones. Al confirmar, se descuentan del stock automáticamente.</p>
@@ -436,36 +451,17 @@
             </div>
           </div>
 
-          <!-- KPIs de stock -->
-          <div class="stock-kpis" id="stock-kpis" style="display:none">
-            <div class="stock-kpi">
-              <div class="stock-kpi-label">Valor del Almacén</div>
-              <div class="stock-kpi-val" id="stock-kpi-valor" style="color:var(--accent)">—</div>
-            </div>
-            <div class="stock-kpi">
-              <div class="stock-kpi-label">Ingredientes</div>
-              <div class="stock-kpi-val" id="stock-kpi-items">—</div>
-            </div>
-            <div class="stock-kpi">
-              <div class="stock-kpi-label">Alertas de Stock</div>
-              <div class="stock-kpi-val" id="stock-kpi-alertas" style="color:var(--danger)">—</div>
-            </div>
-          </div>
-
-          <!-- Cabecera con botón TPV -->
-          <div class="section-title" style="justify-content:space-between;margin-bottom:1rem;">
+          <div class="section-title section-title-mobile-col" style="justify-content:space-between; margin-bottom:1.5rem;">
             <div style="display:flex;align-items:center;gap:8px;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-              Stock Actual
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              STOCK ACTUAL
             </div>
-            <button onclick="document.getElementById('file-tpv').click()" style="font-size:12px;font-weight:700;background:var(--gold);color:white;border:none;padding:7px 13px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(196,148,58,.35);">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            <button onclick="abrirModalVentas()" style="font-size:12px;font-weight:700;background:var(--gold);color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(196,148,58,.25); transition: transform 0.2s;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
               Registrar Ventas (TPV)
             </button>
-            <input type="file" id="file-tpv" accept=".pdf,.png,.jpg,.jpeg,.webp" onchange="handleTPVUpload(event)" style="display:none">
           </div>
 
-          <!-- Lista de stock -->
           <div id="stock-lista">
             <div style="padding:3rem;text-align:center;color:var(--text3);border:1.5px dashed var(--border);border-radius:12px;background:white;">
               <div style="font-size:2rem;margin-bottom:.5rem;">📦</div>
@@ -474,7 +470,6 @@
             </div>
           </div>
 
-          <!-- Añadir ingrediente al stock manualmente -->
           <div style="margin-top:1.5rem;border:1px solid var(--border);background:linear-gradient(to bottom, #ffffff, #fcfcfc);padding:1.5rem;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.03)">
             <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;">+ Añadir artículo manualmente</div>
             <div class="new-stock-grid" style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:12px;align-items:end;">
@@ -500,7 +495,6 @@
 
         </div>
 
-        <!-- ── TAB: PRECIOS DE COMPRA ── -->
         <div id="almacen-view-precios" style="display:none;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:10px; background:var(--surface); padding:1rem; border-radius:12px; border:1px solid var(--border);">
             <div>
@@ -511,7 +505,6 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               Subir Albarán
             </button>
-            <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleFileUpload(event)" style="display:none">
           </div>
 
           <div id="precios-guardados"></div>
@@ -538,7 +531,6 @@
     </div>
   </div>
 
-  <!-- Modal: Ajuste rápido de stock -->
   <div class="modal-overlay" id="modal-ajuste">
     <div style="background:var(--surface);border-radius:16px;padding:2rem;max-width:380px;width:100%;box-shadow:0 10px 25px rgba(0,0,0,.1);animation:fadeIn .2s ease;">
       <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:1.2rem;margin-bottom:.3rem;" id="ajuste-nombre-titulo">Ajuste de Stock</h3>
@@ -565,6 +557,48 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="modal-ventas">
+    <div class="modal" style="max-width:500px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h3 style="margin:0;">Descontar Ventas (TPV)</h3>
+        <button onclick="cerrarModalVentas()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);">&times;</button>
+      </div>
+      
+      <div style="background:var(--accent-light); padding:1rem; border-radius:10px; border:1px solid var(--accent-mint); margin-bottom:1.5rem; text-align:left;">
+        <p style="font-size:12px; color:var(--accent-mid); margin:0;">
+          <strong>Sube un ticket de caja (Z)</strong> o escribe cuántas raciones has vendido de cada plato hoy. Descontaremos automáticamente las cantidades brutas (merma incluida) de tu almacén.
+        </p>
+      </div>
+  
+      <div style="margin-bottom:1.5rem;">
+        <button class="btn-outline" style="width:100%; padding:12px; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="document.getElementById('file-ticket').click()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Subir Ticket o Cierre de Caja (Foto)
+        </button>
+        <input type="file" id="file-ticket" accept="image/*,.pdf" style="display:none" onchange="procesarTicket(event)">
+        
+        <div id="ticket-loading" style="display:none; align-items:center; justify-content:center; gap:10px; margin-top:1rem; font-size:13px; color:var(--accent);">
+          <div class="spinner-sm"></div> Procesando ticket con IA...
+        </div>
+      </div>
+  
+      <div style="text-align:center; margin:1rem 0; font-size:12px; color:var(--text3); font-weight:600; text-transform:uppercase;">o añade ventas manualmente</div>
+  
+      <div style="text-align:left; margin-bottom:1rem;">
+        <label style="font-size:11px; font-weight:700; color:var(--text3); display:block; margin-bottom:6px;">PLATO VENDIDO</label>
+        <select id="select-plato-venta" class="form-input" style="margin-bottom:10px; padding:10px;"></select>
+        <div style="display:flex; gap:10px;">
+          <input type="number" id="input-raciones-venta" class="form-input" placeholder="Raciones..." style="padding:10px; flex:1;" min="1" value="1">
+          <button class="btn-fill" onclick="addVentaManual()" style="padding:10px 20px;">Añadir</button>
+        </div>
+      </div>
+  
+      <div id="lista-ventas-manuales" style="margin-bottom:1.5rem; text-align:left; max-height:150px; overflow-y:auto;"></div>
+  
+      <button class="btn-fill" style="width:100%; padding:14px; font-size:15px; background:var(--text); color:white;" id="btn-procesar-ventas" onclick="procesarVentasManuales()">Actualizar Almacén</button>
+    </div>
+  </div>
+
 <script>
 // LÓGICA DE PESTAÑAS (SIDEBAR)
 function switchTab(tabId, element) {
@@ -576,12 +610,10 @@ function switchTab(tabId, element) {
 
   const titles = { inicio: 'Panel de Control', platos: 'Catálogo de Platos', precios: 'Gestión de Almacén' };
   document.getElementById('top-bar-title').textContent = titles[tabId];
-  
-  // Cerrar modo borrado si cambias de pestaña
   if(modoBorradoActual) cerrarModoBorrado();
 }
 
-// INICIALIZACIÓN SUPABASE (SIN CAMBIOS)
+// INICIALIZACIÓN SUPABASE
 const SUPABASE_URL='https://ilzntryzijdfnntwuthp.supabase.co';
 const SUPABASE_KEY='sb_publishable_qXyYLpM1403nu66tczLNCA_0s5EE3Re';
 const {createClient}=supabase;
@@ -628,7 +660,6 @@ async function cargarDatos(session){
     renderLista(escandallos);
     initRanking(escandallos, esPremium);
 
-    // Merma teórica calculada desde escandallos
     const { mermaEuros } = calcularMermaStats(escandallos);
     if (mermaEuros > 0) {
       document.getElementById('dash-val-merma').textContent = fmtEuro(mermaEuros);
@@ -705,7 +736,7 @@ function renderLista(lista){
   }
 }
 
-// ── SISTEMA DE BORRADO (COMPARTIDO) ──
+// ── SISTEMA DE BORRADO ──
 let modoBorradoActual = null;
 function toggleModoBorrado(tipo) {
   if (modoBorradoActual === tipo) { cerrarModoBorrado(); return; }
@@ -870,22 +901,20 @@ async function actualizarPrecio(id, nuevoPrecio) { await sb.from('precios_provee
 async function añadirPrecioManual() {
   const n = document.getElementById('new-ing-name').value.trim(), p = document.getElementById('new-ing-price').value, u = document.getElementById('new-ing-unit').value;
   if (!n || !p) { alert('Indica nombre y precio'); return; }
-  await sb.from('precios_proveedor').insert({ restaurante_id: restauranteId, ingrediente: n, ingrediente_normalizado: n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(), precio_kg: parseFloat(p), unidad: u, updated_at: new Date().toISOString() });
+  await sb.from('precios_proveedor').insert({ restaurante_id: restauranteId, ingrediente: n, ingrediente_normalizado: normalizarNombre(n), precio_kg: parseFloat(p), unidad: u, updated_at: new Date().toISOString() });
   location.reload();
 }
 
-// ── EXTRACCIONES Y ALBARANES (IGUAL) ──
+// ── EXTRACCIONES Y ALBARANES ──
 function abrirSubidaRecetas() { if (!esPremium) { window.location.href = '/precios'; return; } document.getElementById('file-input-recetas').click(); }
 async function handleRecetasUpload(e){ if(e.target.files.length > 0) processRecetasFile(e.target.files[0]); }
-async function processRecetasFile(file) { /* Lógica de recetas actual intacta... asume lo de la demo previa */ }
+async function processRecetasFile(file) { }
 
 async function handleFileUpload(e){ if(e.target.files.length > 0) processFile(e.target.files[0]); }
 async function processFile(file){
   document.getElementById('extract-loading').style.display='flex';
   document.getElementById('prov-msg').style.display='none';
   document.getElementById('review-wrap').style.display='none';
-  
-  // AL SUBIR UN ALBARÁN, CAMBIAMOS AUTOMÁTICAMENTE A LA PESTAÑA DE ALMACÉN PARA QUE LO VEA
   switchTab('precios', document.querySelectorAll('.nav-item')[2]); 
 
   const reader = new FileReader(); reader.readAsDataURL(file);
@@ -920,7 +949,6 @@ async function guardarPrecios(){
     const { data: { session } } = await sb.auth.getSession();
     await fetch('/api/extract', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer ' + (session?.access_token||'')}, body:JSON.stringify({mode:'save_prices', restaurante_id:restauranteId, productos:extractedProducts}) });
 
-    // Actualizar inventario_stock para los que tienen cantidad recibida
     const conCantidad = extractedProducts.filter(p => p.cantidad && parseFloat(p.cantidad) > 0);
     for (const p of conCantidad) {
       const norm = normalizarNombre(p.nombre);
@@ -931,12 +959,11 @@ async function guardarPrecios(){
         await sb.from('inventario_stock').insert({ restaurante_id: restauranteId, nombre_ingrediente: p.nombre, nombre_normalizado: norm, cantidad_actual: parseFloat(p.cantidad), unidad_medida: p.unidad || 'kg', ultimo_precio_compra: parseFloat(p.precio) });
       }
     }
-
     window.location.reload();
   } catch(err) { alert("Error al guardar"); btn.textContent = 'Guardar en almacén'; btn.disabled = false; }
 }
 
-async function cargarAlertas(){ /* Código de alertas actual */ }
+async function cargarAlertas(){ }
 function cerrarStatus() { document.getElementById('modal-status').classList.remove('visible'); }
 async function abrirPortalCliente(){ const { data: { session } } = await sb.auth.getSession(); const res = await fetch('/api/stripe-portal', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+(session?.access_token||'')}, body:JSON.stringify({}) }); const data = await res.json(); if(data.url) window.location.href = data.url; }
 
@@ -961,7 +988,6 @@ function switchAlmacenTab(tab, btn) {
   document.getElementById('almacen-view-precios').style.display = tab === 'precios' ? 'block' : 'none';
 }
 
-// Merma teórica calculada desde los escandallos
 function calcularMermaStats(escandallos) {
   let mermaEuros = 0, costeBruto = 0;
   (escandallos || []).forEach(esc => {
@@ -983,7 +1009,6 @@ function calcularMermaStats(escandallos) {
   return { mermaEuros, mermaPct: costeBruto > 0 ? (mermaEuros / costeBruto) * 100 : 0 };
 }
 
-// ── CARGA Y RENDER DE STOCK ──
 async function cargarStock() {
   if (!restauranteId) return;
   const { data } = await sb.from('inventario_stock').select('*').eq('restaurante_id', restauranteId).order('nombre_ingrediente', { ascending: true });
@@ -996,19 +1021,17 @@ function renderStock(stock) {
   if (!container) return;
 
   if (!stock || stock.length === 0) {
-    container.innerHTML = `<div style="padding:3rem;text-align:center;color:var(--text3);border:1.5px dashed var(--border);border-radius:12px;"><div style="font-size:2rem;margin-bottom:.5rem;">📦</div><div style="font-weight:600;margin-bottom:.4rem;">Sin existencias registradas</div><div style="font-size:13px;">Sube un albarán y rellena las cantidades recibidas para trackear tu inventario.</div></div>`;
+    container.innerHTML = `<div style="padding:3rem;text-align:center;color:var(--text3);border:1.5px dashed var(--border);border-radius:12px;background:white;"><div style="font-size:2rem;margin-bottom:.5rem;">📦</div><div style="font-weight:600;margin-bottom:.4rem;">Sin existencias registradas</div><div style="font-size:13px;">Añade un ingrediente manualmente o sube un albarán.</div></div>`;
     if (document.getElementById('stock-kpis')) document.getElementById('stock-kpis').style.display = 'none';
     return;
   }
 
-  // Calcular KPIs
   let valorTotal = 0, bajoCount = 0;
   stock.forEach(s => {
     if (s.ultimo_precio_compra && s.cantidad_actual > 0) valorTotal += s.cantidad_actual * s.ultimo_precio_compra;
     if (s.stock_minimo > 0 && s.cantidad_actual <= s.stock_minimo) bajoCount++;
   });
 
-  // Actualizar KPIs del tab Existencias
   if (document.getElementById('stock-kpis')) {
     document.getElementById('stock-kpis').style.display = 'grid';
     document.getElementById('stock-kpi-valor').textContent = fmtEuro(valorTotal);
@@ -1018,13 +1041,9 @@ function renderStock(stock) {
     alertasEl.style.color = bajoCount > 0 ? 'var(--danger)' : 'var(--accent)';
   }
 
-  // Actualizar KPIs del Panel de Control
   const dashValAlmacen = document.getElementById('dash-val-almacen');
-  if (dashValAlmacen && valorTotal > 0) {
-    dashValAlmacen.textContent = fmtEuro(valorTotal);
-  }
+  if (dashValAlmacen && valorTotal > 0) dashValAlmacen.textContent = fmtEuro(valorTotal);
 
-  // Render de items
   container.innerHTML = stock.map(s => {
     const tieneMin = s.stock_minimo > 0;
     const pct = tieneMin ? Math.min(Math.round((s.cantidad_actual / s.stock_minimo) * 100), 200) : 100;
@@ -1052,7 +1071,6 @@ function renderStock(stock) {
   }).join('');
 }
 
-// ── AJUSTE RÁPIDO ──
 function abrirAjusteStock(id, nombre, cantidadActual, unidad) {
   document.getElementById('ajuste-stock-id').value = id;
   document.getElementById('ajuste-nombre-titulo').textContent = nombre;
@@ -1084,7 +1102,6 @@ async function guardarAjusteStock() {
   renderStock(stockData);
 }
 
-// ── AÑADIR STOCK MANUALMENTE ──
 async function añadirStockManual() {
   const nombre = document.getElementById('new-stock-name').value.trim();
   const cantidad = parseFloat(document.getElementById('new-stock-qty').value) || 0;
@@ -1107,123 +1124,94 @@ async function añadirStockManual() {
   await cargarStock();
 }
 
-// ── DESCUENTO DE STOCK POR VENTA (ESCANDALLOS) ──
-async function descontarStockPorPlato(escandalloId, raciones) {
-  const { data: esc } = await sb.from('escandallos').select('ingredientes').eq('id', escandalloId).single();
-  if (!esc) return;
-  let ings = esc.ingredientes;
-  if (typeof ings === 'string') { try { ings = JSON.parse(ings); } catch(e) { return; } }
-  if (!ings || !ings.length) return;
+let ventasAProcesar = [];
 
-  for (const ing of ings) {
-    const merma = Math.min(parseFloat(ing.m) || 0, 99) / 100;
-    let cantBase = parseFloat(ing.q) || 0;
-    // Normalizar a unidad base (kg/l)
-    if (ing.u === 'g' || ing.u === 'ml') cantBase /= 1000;
-    const cantBruta = merma > 0 ? (cantBase / (1 - merma)) * raciones : cantBase * raciones;
-
-    const norm = normalizarNombre(ing.n);
-    const item = stockData.find(s => s.nombre_normalizado === norm);
-    if (!item) continue;
-
-    const nuevaCantidad = Math.max(0, item.cantidad_actual - cantBruta);
-    await sb.from('inventario_stock').update({ cantidad_actual: nuevaCantidad, updated_at: new Date().toISOString() }).eq('id', item.id);
-    item.cantidad_actual = nuevaCantidad;
-  }
-}
-
-// ── TPV: SUBIR TICKET DE VENTAS ──
-async function handleTPVUpload(e) {
-  if (!e.target.files.length) return;
-  const file = e.target.files[0];
-  e.target.value = '';
-
-  switchTab('precios', document.querySelectorAll('.nav-item')[2]);
-  switchAlmacenTab('existencias', document.getElementById('subtab-existencias'));
-  document.getElementById('tpv-loading').style.display = 'flex';
-  document.getElementById('tpv-review').style.display = 'none';
-
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = async () => {
-    try {
-      const { data: { session } } = await sb.auth.getSession();
-      const resp = await fetch('/api/stock-tpv', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (session?.access_token || '') },
-        body: JSON.stringify({ file_base64: reader.result.split(',')[1], file_type: file.name.split('.').pop().toLowerCase() })
-      });
-      const data = await resp.json();
-      document.getElementById('tpv-loading').style.display = 'none';
-      if (!resp.ok || !data.ventas) { alert(data.error || 'No se pudieron detectar ventas en el ticket'); return; }
-      renderTPVReview(data.ventas);
-    } catch(err) {
-      document.getElementById('tpv-loading').style.display = 'none';
-      alert('Error de conexión al procesar el ticket TPV');
-    }
-  };
-}
-
-function renderTPVReview(ventas) {
-  tpvVentasData = ventas;
-  document.getElementById('tpv-review-body').innerHTML = ventas.map((v, i) => `
-    <div style="display:grid;grid-template-columns:2fr auto;gap:10px;align-items:center;padding:.75rem 1rem;background:var(--surface2);border-radius:8px;">
-      <div>
-        <div style="font-weight:600;font-size:13px;">${v.nombre_plato}</div>
-        <div style="font-size:11px;color:var(--text3)">Ajusta las raciones si es necesario</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <input type="number" min="0" step="1" value="${v.raciones}" style="width:60px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;text-align:center;font-weight:700;font-family:'Fraunces',serif;font-size:1rem;" onchange="tpvVentasData[${i}].raciones=parseInt(this.value)||0">
-        <span style="font-size:12px;color:var(--text3)">raciones</span>
-      </div>
-    </div>`).join('');
-  document.getElementById('tpv-review').style.display = 'block';
-}
-
-function cancelarTPV() {
-  document.getElementById('tpv-review').style.display = 'none';
-  tpvVentasData = [];
-}
-
-async function confirmarVentasTPV() {
-  if (!tpvVentasData.length) return;
-  const btn = document.querySelector('#tpv-review button[onclick="confirmarVentasTPV()"]');
-  if (btn) { btn.textContent = 'Descontando...'; btn.disabled = true; }
-
-  const { data: escandallosList } = await sb.from('escandallos').select('id,nombre_plato').eq('restaurante_id', restauranteId);
-  let procesados = 0, noEncontrados = [];
-
-  for (const venta of tpvVentasData) {
-    if (!venta.raciones || venta.raciones <= 0) continue;
-    const normVenta = normalizarNombre(venta.nombre_plato);
-    const esc = (escandallosList || []).find(e => {
-      const normEsc = normalizarNombre(e.nombre_plato);
-      return normEsc === normVenta || normEsc.includes(normVenta) || normVenta.includes(normEsc);
+function abrirModalVentas() {
+  ventasAProcesar = [];
+  renderVentasManuales();
+  document.getElementById('modal-ventas').classList.add('visible');
+  
+  const selectPlato = document.getElementById('select-plato-venta');
+  if (rankingData && selectPlato.options.length === 0) {
+    rankingData.forEach(e => {
+      const opt = document.createElement('option');
+      opt.value = e.id;
+      opt.textContent = e.nombre_plato;
+      opt.dataset.nombre = e.nombre_plato;
+      selectPlato.appendChild(opt);
     });
-    if (esc) { await descontarStockPorPlato(esc.id, venta.raciones); procesados++; }
-    else noEncontrados.push(venta.nombre_plato);
   }
-
-  document.getElementById('tpv-review').style.display = 'none';
-  tpvVentasData = [];
-  renderStock(stockData);
-
-  const msg = procesados > 0
-    ? `Stock actualizado: ${procesados} plato${procesados>1?'s':''} descontados correctamente.` + (noEncontrados.length ? ` No se encontraron escandallos para: ${noEncontrados.join(', ')}.` : '')
-    : 'No se encontraron escandallos coincidentes. Comprueba que los nombres del ticket coinciden con tus recetas.';
-  mostrarStatus(procesados > 0 ? '✓' : '⚠', procesados > 0 ? 'Stock actualizado' : 'Sin coincidencias', msg, procesados > 0 ? 'var(--accent-light)' : 'var(--gold-light)', procesados > 0 ? 'var(--accent)' : 'var(--gold)');
 }
 
-function mostrarStatus(icono, titulo, mensaje, bgColor, color) {
-  document.getElementById('status-icon').innerHTML = `<span style="font-size:22px">${icono}</span>`;
-  document.getElementById('status-icon').style.background = bgColor;
-  document.getElementById('status-title').textContent = titulo;
-  document.getElementById('status-title').style.color = color;
-  document.getElementById('status-message').textContent = mensaje;
-  document.getElementById('modal-status').classList.add('visible');
+function cerrarModalVentas() { document.getElementById('modal-ventas').classList.remove('visible'); }
+
+function addVentaManual() {
+  const sel = document.getElementById('select-plato-venta');
+  if (!sel.value) return;
+  const nombre = sel.options[sel.selectedIndex].dataset.nombre;
+  const cant = parseInt(document.getElementById('input-raciones-venta').value) || 1;
+  
+  const existing = ventasAProcesar.find(v => v.id === sel.value);
+  if (existing) existing.cantidad += cant;
+  else ventasAProcesar.push({ id: sel.value, nombre, cantidad: cant });
+  
+  document.getElementById('input-raciones-venta').value = 1;
+  renderVentasManuales();
 }
 
-init();
+function renderVentasManuales() {
+  const div = document.getElementById('lista-ventas-manuales');
+  if (ventasAProcesar.length === 0) {
+    div.innerHTML = '<div style="font-size:12px; color:var(--text3); text-align:center;">No has añadido ventas manuales.</div>';
+    return;
+  }
+  div.innerHTML = ventasAProcesar.map((v, i) => `
+    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface2); padding:8px 12px; border-radius:6px; margin-bottom:4px; font-size:13px; font-weight:600;">
+      <div>${v.cantidad}x <span style="font-weight:400">${v.nombre}</span></div>
+      <button onclick="ventasAProcesar.splice(${i}, 1); renderVentasManuales()" style="background:none; border:none; color:var(--danger); cursor:pointer;">&times;</button>
+    </div>
+  `).join('');
+}
+
+async function procesarVentasManuales() {
+  if (ventasAProcesar.length === 0) { alert("Añade algún plato vendido primero."); return; }
+  const btn = document.getElementById('btn-procesar-ventas');
+  btn.innerHTML = '<span class="spinner-sm" style="border-top-color:white;"></span> Procesando...';
+  btn.disabled = true;
+  
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const payload = { ventas: ventasAProcesar, restaurante_id: restauranteId };
+    const { data, error } = await sb.rpc('descontar_stock_ventas', payload);
+    
+    if (error && error.code === 'PGRST202') {
+      alert("Para que funcione, ejecuta el código SQL en Supabase para crear la función descontar_stock_ventas.");
+    } else if (error) {
+      throw error;
+    } else {
+      cerrarModalVentas();
+      mostrarStatus("✓", "Stock Descontado", "Las raciones se han descontado de tu inventario.", "var(--accent-light)", "var(--accent)");
+      cargarStock();
+    }
+  } catch(e) {
+    alert("Error al descontar stock: " + e.message);
+  } finally {
+    btn.innerHTML = 'Actualizar Almacén';
+    btn.disabled = false;
+  }
+}
+
+async function handleTPVUpload(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  e.target.value = '';
+  const loading = document.getElementById('ticket-loading');
+  if(loading) loading.style.display = 'flex';
+  setTimeout(() => {
+    if(loading) loading.style.display = 'none';
+    alert("Función IA de TPV en desarrollo. Para la fase 1, añade las ventas manualmente.");
+  }, 2000);
+}
 </script>
 </body>
 </html>
