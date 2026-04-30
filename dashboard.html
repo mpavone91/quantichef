@@ -63,6 +63,11 @@
   .view-section.active { display: block; }
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
+  /* --- ESTILOS DE COMPONENTES HEREDADOS --- */
+  .btn-outline { background: white; border: 1px solid var(--border); color: var(--text2); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+  .btn-outline:hover { border-color: var(--accent-mint); color: var(--accent); background: var(--surface2); }
+  .btn-fill { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; transition: background 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+  .btn-fill:hover { background: var(--accent-mid); }
   .btn-suscripcion-nav { display:none; color:var(--text2); border:1px solid var(--border); background:var(--surface); padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition: all .2s; }
   .btn-suscripcion-nav:hover { background: var(--surface2); border-color: var(--text3); }
   .nav-logout{color:var(--danger);cursor:pointer;background:var(--danger-light);border:none;border-radius:8px;display:flex;align-items:center;padding:6px 12px;font-size:12px;font-weight:600;}
@@ -73,20 +78,10 @@
   .spinner-sm{width:16px;height:16px;border:2px solid rgba(30,77,43,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  .welcome{margin-bottom:2rem}
+  .welcome{margin-bottom:1.5rem}
   .welcome-title{font-family:'Fraunces',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:300;letter-spacing:-.02em;color:var(--text);line-height:1.2}
   .welcome-title em{font-style:italic;color:var(--accent)}
-  .welcome-sub{font-size:.95rem;color:var(--text2);margin-top:.5rem;margin-bottom:1.5rem}
-
-  .actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 2rem; }
-  .action-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-align: left; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-  .action-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.06); border-color: var(--accent-mint); }
-  .action-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
-  .action-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; display:flex; align-items:center; gap:6px;}
-  .action-sub { font-size: 12px; color: var(--text2); line-height: 1.4; }
-  .ac-green .action-icon { background: var(--accent-light); color: var(--accent); }
-  .ac-gold .action-icon { background: var(--gold-light); color: var(--gold); }
-  .ac-gray .action-icon { background: var(--gray-light); color: var(--text2); }
+  .welcome-sub{font-size:.95rem;color:var(--text2);margin-top:.3rem;margin-bottom:1.5rem}
 
   .plan-banner{background:var(--gold-light);border:1px solid rgba(196,148,58,.25);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
   .pro-banner{background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap}
@@ -140,14 +135,13 @@
   .ranking-all.visible { display: block; border-top:1px solid var(--border); }
   .ranking-toggle-btn { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; background: none; border: none; padding: 12px; width: 100%; display: block; border-top: 1px solid var(--border); }
 
-  /* PRECIOS */
+  /* PRECIOS & ALMACÉN */
   .precio-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem;display:flex;align-items:center;gap:10px;margin-bottom:6px; box-shadow: 0 1px 2px rgba(0,0,0,0.01);}
   .precio-checkbox { display:none; margin-right:5px; }
 
   .review-wrap { margin-bottom: 2rem; }
   .review-card { background: var(--surface); border: 1px solid var(--accent-mint); border-radius: 12px; padding: 1.5rem; }
 
-  /* ── STOCK MODULE ── */
   .almacen-subtabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:1.5rem}
   .almacen-subtab-btn{flex:1;padding:9px 12px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--text3);border-radius:8px;transition:all .2s}
   .almacen-subtab-btn.active{background:var(--accent);color:white;box-shadow:0 2px 6px rgba(30,77,43,.25)}
@@ -199,7 +193,6 @@
     .top-bar { padding: 1rem; border-bottom: none; }
     .view-section { padding: 1rem; }
     
-    .actions-grid { grid-template-columns: 1fr; gap: 10px; }
     .rank-bar-wrap { display: none; }
     
     .precio-card { flex-wrap: wrap; padding: 1rem; }
@@ -274,54 +267,9 @@
     <div id="app" style="display:none">
       
       <section id="view-inicio" class="view-section active">
-        <div class="welcome">
-          <h1 class="welcome-title">Hola, <em>Chef</em> 👋</h1>
-          <p class="welcome-sub">¿Qué necesitas marchar hoy?</p>
-          
-          <div class="actions-grid">
-            <div class="action-card ac-gray" onclick="nuevoEscandallo()">
-              <div class="action-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-              <div class="action-title">+ Escandallo Individual</div>
-              <div class="action-sub">Crea un plato paso a paso.</div>
-            </div>
-            <div class="action-card ac-green" onclick="document.getElementById('file-input').click()">
-              <div class="action-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
-              <div class="action-title">Sube tu albarán</div>
-              <div class="action-sub">Actualiza precios automáticamente.</div>
-              <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleFileUpload(event)" style="display:none">
-            </div>
-            <div class="action-card ac-gold" onclick="abrirSubidaRecetas()">
-              <div class="action-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
-              <div class="action-title">Digitalizar Recetas <span id="dash-upsell-lock" style="font-size:11px;">🔒</span></div>
-              <div class="action-sub">Sube tu recetario Excel/CSV.</div>
-              <input type="file" id="file-input-recetas" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv" onchange="handleRecetasUpload(event)" style="display:none">
-            </div>
-          </div>
-        </div>
-
-        <div class="plan-banner" id="plan-banner" style="display:none">
-          <p>Estás en <strong>prueba gratuita</strong>. Pásate al Pro para tener alertas e importación ilimitada.</p>
-          <a href="/precios" style="background:var(--gold); color:white; padding:8px 16px; border-radius:7px; text-decoration:none; font-size:13px; font-weight:700">Planes</a>
-        </div>
-        <div class="pro-banner" id="pro-banner" style="display:none">
-          <div class="pro-badge">Plan Pro Activo</div>
-        </div>
-        
-        <div class="extract-loading" id="extract-loading" style="display:none; background:var(--accent-light); padding:1rem; border-radius:10px; margin-bottom:1rem; align-items:center; gap:10px;">
-          <div class="spinner"></div><span id="loading-text-dynamic" style="color:var(--accent); font-weight:600; font-size:14px;">Procesando...</span>
-        </div>
-        <div class="prov-msg" id="prov-msg" style="margin-bottom:1.5rem; display:none; padding:12px; border-radius:8px; font-weight:500; font-size:13px;"></div>
-
-        <div class="alertas-section" id="alertas-section" style="display:none">
-          <div class="section-title">Alertas del Mercado</div>
-          <div class="alertas-panel">
-            <div class="alertas-header">
-              <span style="font-size:18px">🚨</span>
-              <div style="flex:1"><div style="font-size:14px; font-weight:700; color:#991B1B">Se han detectado subidas de precio</div></div>
-              <button onclick="marcarTodasVistas()" style="font-size:12px; background:none; border:1px solid rgba(220,38,38,.3); padding:5px 10px; border-radius:6px; cursor:pointer; color:#991B1B">Marcar vistas</button>
-            </div>
-            <div id="alertas-lista"></div>
-          </div>
+        <div class="welcome" style="margin-bottom: 1.5rem;">
+          <h1 class="welcome-title">Hola, <em id="chef-name">Chef</em> 👋</h1>
+          <p class="welcome-sub" style="font-size: 13px;">Aquí tienes el estado actual de tu rentabilidad.</p>
         </div>
 
         <div class="dashboard-kpi-grid" id="dashboard-kpis" style="display:none">
@@ -355,6 +303,31 @@
           </div>
         </div>
 
+        <div class="plan-banner" id="plan-banner" style="display:none">
+          <p>Estás en <strong>prueba gratuita</strong>. Pásate al Pro para tener alertas e importación ilimitada.</p>
+          <a href="/precios" style="background:var(--gold); color:white; padding:8px 16px; border-radius:7px; text-decoration:none; font-size:13px; font-weight:700">Planes</a>
+        </div>
+        <div class="pro-banner" id="pro-banner" style="display:none">
+          <div class="pro-badge">Plan Pro Activo</div>
+        </div>
+        
+        <div class="extract-loading" id="extract-loading" style="display:none; background:var(--accent-light); padding:1rem; border-radius:10px; margin-bottom:1rem; align-items:center; gap:10px;">
+          <div class="spinner"></div><span id="loading-text-dynamic" style="color:var(--accent); font-weight:600; font-size:14px;">Procesando...</span>
+        </div>
+        <div class="prov-msg" id="prov-msg" style="margin-bottom:1.5rem; display:none; padding:12px; border-radius:8px; font-weight:500; font-size:13px;"></div>
+
+        <div class="alertas-section" id="alertas-section" style="display:none">
+          <div class="section-title">Alertas del Mercado</div>
+          <div class="alertas-panel">
+            <div class="alertas-header">
+              <span style="font-size:18px">🚨</span>
+              <div style="flex:1"><div style="font-size:14px; font-weight:700; color:#991B1B">Se han detectado subidas de precio</div></div>
+              <button onclick="marcarTodasVistas()" style="font-size:12px; background:none; border:1px solid rgba(220,38,38,.3); padding:5px 10px; border-radius:6px; cursor:pointer; color:#991B1B">Marcar vistas</button>
+            </div>
+            <div id="alertas-lista"></div>
+          </div>
+        </div>
+
         <div id="ranking-section" style="display:none">
           <div class="section-title">Ranking de Rentabilidad</div>
           <div class="ranking-card">
@@ -382,14 +355,14 @@
           <button id="btn-toggle-borrado" onclick="toggleModoBorrado('escandallos')" style="font-size:12px; font-weight:600; color:var(--text2); background:white; border:1px solid var(--border); padding:6px 12px; border-radius:8px; cursor:pointer; transition:all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">Seleccionar varios</button>
         </div>
         
-        <div style="display:flex; gap:10px; margin-bottom:1.5rem; flex-wrap:wrap;">
-          <button class="btn-fill" onclick="nuevoEscandallo()" style="display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Crear Escandallo
+        <div style="display:flex; gap:8px; margin-bottom:1.5rem; flex-wrap:wrap;">
+          <button class="btn-fill" onclick="nuevoEscandallo()" style="font-size:12px; padding:8px 14px; border-radius:8px; display:flex; align-items:center; gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nuevo Plato
           </button>
-          <button class="btn-outline" onclick="abrirSubidaRecetas()" style="display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Subir Excel/CSV <span id="dash-upsell-lock" style="font-size:10px;margin-left:4px;">🔒</span>
+          <button class="btn-outline" onclick="abrirSubidaRecetas()" style="font-size:12px; padding:8px 14px; border-radius:8px; display:flex; align-items:center; gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Importar Excel/CSV <span id="dash-upsell-lock" style="font-size:10px;margin-left:4px;">🔒</span>
           </button>
           <input type="file" id="file-input-recetas" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv" onchange="handleRecetasUpload(event)" style="display:none">
         </div>
@@ -449,10 +422,19 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
               STOCK ACTUAL
             </div>
-            <button onclick="abrirModalVentas()" style="font-size:12px;font-weight:700;background:var(--gold);color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(196,148,58,.25); transition: transform 0.2s;">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-              Registrar Ventas (TPV)
-            </button>
+            
+            <div style="display:flex; gap:8px;">
+              <button onclick="document.getElementById('file-input').click()" style="font-size:12px;font-weight:600;background:white;color:var(--text2);border:1px solid var(--border);padding:8px 12px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Albarán
+              </button>
+              <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleFileUpload(event)" style="display:none">
+
+              <button onclick="abrirModalVentas()" style="font-size:12px;font-weight:700;background:var(--gold);color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(196,148,58,.25);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                Restar TPV
+              </button>
+            </div>
           </div>
 
           <div id="stock-lista">
@@ -489,17 +471,6 @@
         </div>
 
         <div id="almacen-view-precios" style="display:none;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:10px; background:var(--surface); padding:1rem; border-radius:12px; border:1px solid var(--border);">
-            <div>
-              <div style="font-weight:700; color:var(--text); font-size:14px; margin-bottom:4px;">Albaranes y Facturas</div>
-              <p style="font-size:12px;color:var(--text2);margin:0;">Sube tu albarán para actualizar los precios automáticamente con IA.</p>
-            </div>
-            <button class="btn-fill" onclick="document.getElementById('file-input').click()" style="display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;background:var(--accent);color:white;border:none;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              Subir Albarán
-            </button>
-          </div>
-
           <div id="precios-guardados"></div>
         </div>
 
@@ -640,7 +611,6 @@ async function cargarDatos(session){
   document.getElementById('pro-banner').style.display = esPremium ? 'flex' : 'none';
   document.getElementById('plan-banner').style.display = esPremium ? 'none' : 'flex';
   document.getElementById('btn-suscripcion-nav').style.display = esPremium ? 'inline-block' : 'none';
-  if (document.getElementById('dash-upsell-lock')) { document.getElementById('dash-upsell-lock').style.display = esPremium ? 'none' : 'inline'; }
   
   const {data:escandallos} = await sb.from('escandallos').select('*').eq('restaurante_id', rest.id).order('updated_at', {ascending:false});
     
