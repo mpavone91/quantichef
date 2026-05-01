@@ -1357,44 +1357,49 @@ async function handleStockUpload(e) {
   
   const loading = document.getElementById('loading');
   if(loading) {
-    loading.innerHTML = '<div class="spinner"></div>Analizando documento de stock con IA...';
+    loading.innerHTML = '<div class="spinner"></div><div style="display:flex;flex-direction:column;gap:5px;"><span>Estamos leyendo tu documento, puede tomar unos minutos...</span></div>';
     loading.style.display = 'flex';
   }
 
   try {
     const reader = new FileReader();
     reader.onload = async (ev) => {
-      const base64 = ev.target.result.split(',')[1];
-      let ext = file.name.split('.').pop().toLowerCase();
-      if(ext === 'jpg') ext = 'jpeg';
+      try {
+        const base64 = ev.target.result.split(',')[1];
+        let ext = file.name.split('.').pop().toLowerCase();
+        if(ext === 'jpg') ext = 'jpeg';
 
-      const res = await fetch('/api/extract-stock', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + (await sb.auth.getSession()).data.session.access_token
-        },
-        body: JSON.stringify({
-          file_base64: base64,
-          file_type: ext,
-          file_name: file.name
-        })
-      });
+        const res = await fetch('/api/extract-stock', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + (await sb.auth.getSession()).data.session.access_token
+          },
+          body: JSON.stringify({
+            file_base64: base64,
+            file_type: ext,
+            file_name: file.name
+          })
+        });
 
-      const data = await res.json();
-      if(loading) loading.style.display = 'none';
-      e.target.value = '';
+        const data = await res.json();
+        if(loading) loading.style.display = 'none';
+        e.target.value = '';
 
-      if(data.error) {
-        alert("Error de IA: " + data.error);
-        return;
-      }
+        if(data.error) {
+          alert("Error de IA: " + data.error);
+          return;
+        }
 
-      if(data.items && data.items.length > 0) {
-        stockExtraidoGlobal = data.items;
-        abrirModalVerificacionStock(data.items);
-      } else {
-        alert("No se detectaron artículos de inventario en el documento.");
+        if(data.items && data.items.length > 0) {
+          stockExtraidoGlobal = data.items;
+          abrirModalVerificacionStock(data.items);
+        } else {
+          alert("No se detectaron artículos de inventario en el documento.");
+        }
+      } catch (innerErr) {
+        if(loading) loading.style.display = 'none';
+        alert("Error de conexión al procesar el archivo.");
       }
     };
     reader.readAsDataURL(file);
