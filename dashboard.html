@@ -107,11 +107,10 @@
   .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
   .escandallos-grid{display:flex;flex-direction:column;gap:.625rem}
-  .escandallo-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;display:flex;align-items:center;gap:1.5rem;transition:all .2s;cursor:pointer;}
+  .escandallo-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;display:flex;align-items:center;gap:1.5rem;transition:all .2s;cursor:pointer;}
   .escandallo-card:hover{border-color:var(--accent-mint);box-shadow:0 4px 12px rgba(30,77,43,.05)}
-  .ecn-img { width: 80px; height: 60px; border-radius: 8px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); }
   .card-info { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 6px; }
-  .card-nombre { font-weight: 700; font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
+  .card-nombre { font-weight: 700; font-size: 15px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
   .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
   .card-tag { font-size: 10px; font-weight: 600; padding: 3px 8px; background: #9CA3AF; color: white; border-radius: 12px; }
   .card-metrics { display: flex; gap: 2rem; flex-shrink: 0; align-items: center; }
@@ -192,7 +191,7 @@
   .modal-overlay.visible { display:flex; }
   .modal { background:var(--surface); border-radius:16px; padding:2.5rem 2rem; max-width:420px; width:100%; text-align:center; animation:fadeIn .2s ease; position:relative; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
 
-  /* MÓVIL (Versión Premium sin conflictos) */
+  /* MÓVIL (Versión Premium) */
   @media (max-width: 768px) {
     body { flex-direction: column; }
     
@@ -208,6 +207,13 @@
     .view-section { padding: 1rem; }
     
     .rank-bar-wrap { display: none; }
+    
+    /* Escandallos Responsive sin Scroll */
+    .escandallo-card { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 1rem; }
+    .card-metrics { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .card-metric { text-align: left; background: var(--surface2); padding: 8px; border-radius: 8px; }
+    .card-del { position: absolute; top: 1rem; right: 1rem; }
+    .escandallo-card { position: relative; }
     
     .precio-card { flex-wrap: wrap; padding: 1rem; }
     .precio-card > div:first-child { width: 100%; margin-bottom: 8px; }
@@ -247,7 +253,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         <span>Panel de Control</span>
       </a>
-      <a class="nav-item disabled" title="Próximamente">
+      <a class="nav-item disabled" title="Próximamente" onclick="return false;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
         <span>Ventas</span>
       </a>
@@ -261,11 +267,11 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         <span>Documentos</span>
       </a>
-      <a class="nav-item disabled" title="Próximamente">
+      <a class="nav-item disabled" title="Próximamente" onclick="return false;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
         <span>Conciliación</span>
       </a>
-      <a class="nav-item disabled" title="Próximamente">
+      <a class="nav-item disabled" title="Próximamente" onclick="return false;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span>Personal</span>
       </a>
@@ -275,11 +281,11 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
         <span>Productos</span>
       </a>
-      <a class="nav-item disabled" title="Próximamente">
+      <a class="nav-item disabled" title="Próximamente" onclick="return false;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>
         <span>Proveedores</span>
       </a>
-      <a class="nav-item disabled" title="Próximamente">
+      <a class="nav-item disabled" title="Próximamente" onclick="return false;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         <span>Incidencias</span>
       </a>
@@ -287,7 +293,7 @@
     
     <div class="limit-widget" id="limit-widget" style="display:none;">
       <div class="limit-header">
-        <span>Documentos</span>
+        <span>Documentos Mensuales</span>
         <span id="limit-text">0 / 50</span>
       </div>
       <div class="limit-bar-bg">
@@ -733,7 +739,6 @@ function renderLista(lista){
     const card = document.createElement('div'); card.className = 'escandallo-card';
     card.innerHTML = `
       <div class="card-checkbox"><input type="checkbox" class="bulk-cb-escandallo" value="${e.id}"></div>
-      <div class="ecn-img">🍲</div>
       <div class="card-info">
         <div class="card-nombre">${e.nombre_plato}</div>
         <div class="card-tags">${tags}</div>
