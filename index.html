@@ -574,8 +574,8 @@
     <span class="hero-eyebrow-dot"></span>
     Sin tarjeta. 3 días gratis. Sin letra pequeña.
   </div>
-  <h1>¿Sabes cuánto te cuesta <em>realmente</em> cada plato?</h1>
-  <p class="hero-sub">La mayoría de restaurantes trabajan con márgenes que no cuadran porque los precios cambian y los escandallos no. QuantiChef lo cruza todo solo — tú solo cocinas.</p>
+  <h1>Controla el coste de tus platos y <em>el valor de tu almacén</em> en tiempo real.</h1>
+  <p class="hero-sub">El software todo-en-uno para restaurantes: digitaliza tus escandallos, cruza tus facturas de compra y descuenta el stock de tus ventas automáticamente.</p>
   
   <div class="hero-cta-wrap">
     <a href="/auth.html" class="btn-primary">
@@ -681,9 +681,9 @@
     <h2 class="section-title fade-up">Diseñado para la vida <em>dentro de una cocina</em></h2>
     <div class="features-grid">
       <div class="feature-card fade-up">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></div>
-        <h3>Sub-recetas y Producciones</h3>
-        <p>¿Haces tu propia masa o salsa base? Escandállala una vez y úsala como ingrediente en otros platos. El coste se anida solo.</p>
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+        <h3>Gestión de Stock Inteligente</h3>
+        <p>Conecta tus ventas (TPV) con tu inventario. Sube un albarán para actualizar precios y descuenta las raciones vendidas con un clic. Sabrás siempre cuánto dinero tienes inmovilizado en la cámara.</p>
       </div>
       <div class="feature-card fade-up">
         <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
@@ -760,21 +760,39 @@
       <span class="pricing-toggle-label anual active" onclick="setPricing('anual')">Anual <span class="pricing-toggle-badge">Ahorra 119€</span></span>
     </div>
 
-    <div class="pricing-cards" style="grid-template-columns: 1fr; max-width: 450px;">
-      <div class="pricing-card destacado fade-up" style="transform: none; margin: 0 auto; width: 100%;">
-        <div class="pricing-label" id="pricing-save-badge">Ahorras 119€ al año</div>
-        <p style="font-size:12px; color:var(--texto3); font-weight:800; text-transform:uppercase; letter-spacing:1px;" id="pricing-plan-name">Plan Cocina Rentable</p>
-        <div class="pricing-price" id="pricing-price-val">349€<span style="font-size:1rem; font-family:'Plus Jakarta Sans', sans-serif; font-weight:400; color:var(--texto3)" id="pricing-price-period">/año</span></div>
-        <p style="font-size:14px; color:var(--verde); font-weight:700; margin-bottom:2rem;" id="pricing-desc">El plan favorito de los restaurantes que crecen. (Equivale a 29€/mes)</p>
+    <div class="pricing-cards" style="grid-template-columns: 1fr 1fr; max-width: 900px;">
+      
+      <!-- PLAN BÁSICO -->
+      <div class="pricing-card fade-up" style="transform: none; margin: 0; width: 100%;">
+        <p style="font-size:12px; color:var(--texto3); font-weight:800; text-transform:uppercase; letter-spacing:1px;" id="pricing-plan-name-basic">Plan Básico</p>
+        <div class="pricing-price"><span id="pricing-price-val-basic">490€</span><span style="font-size:1rem; font-family:'Plus Jakarta Sans', sans-serif; font-weight:400; color:var(--texto3)" id="pricing-price-period-basic">/año</span></div>
+        <p style="font-size:14px; color:var(--texto2); font-weight:500; margin-bottom:2rem;" id="pricing-desc-basic">Ideal para estandarizar recetas y controlar tus márgenes teóricos. (Equivale a 49€/mes)</p>
         
         <ul class="pricing-features">
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Escandallos y escaneos ilimitados</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Lectura OCR de facturas</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Actualizaciones prioritarias</li>
-          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Soporte personalizado</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Escandallos y recetas ilimitadas</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Escaneos de alérgenos ilimitados</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Hasta 50 facturas/mes en OCR</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span style="color:rgba(255,255,255,0.4);text-decoration:line-through">Auditor de Stock Inteligente</span></li>
         </ul>
-        <a href="/login" class="pricing-btn">Empezar ahora</a>
+        <a href="/login" class="pricing-btn">Empezar con Básico</a>
       </div>
+
+      <!-- PLAN PRO -->
+      <div class="pricing-card destacado fade-up" style="transform: scale(1.05); margin: 0; width: 100%;">
+        <div class="pricing-label" id="pricing-save-badge">Recomendado</div>
+        <p style="font-size:12px; color:var(--texto3); font-weight:800; text-transform:uppercase; letter-spacing:1px;" id="pricing-plan-name-pro">Plan Pro</p>
+        <div class="pricing-price"><span id="pricing-price-val-pro">790€</span><span style="font-size:1rem; font-family:'Plus Jakarta Sans', sans-serif; font-weight:400; color:var(--texto3)" id="pricing-price-period-pro">/año</span></div>
+        <p style="font-size:14px; color:var(--verde); font-weight:700; margin-bottom:2rem;" id="pricing-desc-pro">El ecosistema completo para restaurantes que buscan rentabilidad total. (Equivale a 79€/mes)</p>
+        
+        <ul class="pricing-features">
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Todo lo del Plan Básico</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Módulo de Stock Inteligente</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Integración de ventas (TPV)</li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Hasta 150 facturas/mes en OCR</li>
+        </ul>
+        <a href="/login" class="pricing-btn">Empezar con Pro</a>
+      </div>
+
     </div>
   </div>
 </section>
@@ -886,9 +904,14 @@ function togglePricing() {
 function updatePricingUI() {
   const toggleBtn = document.getElementById('btnTogglePricing');
   const labels = document.querySelectorAll('.pricing-toggle-label');
-  const priceVal = document.getElementById('pricing-price-val');
-  const priceDesc = document.getElementById('pricing-desc');
-  const planName = document.getElementById('pricing-plan-name');
+  
+  const valBasic = document.getElementById('pricing-price-val-basic');
+  const periodBasic = document.getElementById('pricing-price-period-basic');
+  const descBasic = document.getElementById('pricing-desc-basic');
+  
+  const valPro = document.getElementById('pricing-price-val-pro');
+  const periodPro = document.getElementById('pricing-price-period-pro');
+  const descPro = document.getElementById('pricing-desc-pro');
   const saveBadge = document.getElementById('pricing-save-badge');
   
   if (isAnual) {
@@ -896,21 +919,27 @@ function updatePricingUI() {
     labels[0].classList.remove('active');
     labels[1].classList.add('active');
     
-    planName.innerText = "Plan Cocina Rentable";
-    priceVal.innerHTML = '349€<span style="font-size:1rem; font-family:\'Plus Jakarta Sans\', sans-serif; font-weight:400; color:var(--texto3)" id="pricing-price-period">/año</span>';
-    priceDesc.innerText = "El plan favorito de los restaurantes que crecen. (Equivale a 29€/mes)";
-    priceDesc.style.color = "var(--verde)";
-    saveBadge.style.display = "block";
+    valBasic.innerText = '490€';
+    periodBasic.innerText = '/año';
+    descBasic.innerText = "Ideal para estandarizar recetas y controlar tus márgenes teóricos. (Equivale a 49€/mes)";
+    
+    valPro.innerText = '790€';
+    periodPro.innerText = '/año';
+    descPro.innerText = "El ecosistema completo para restaurantes que buscan rentabilidad total. (Equivale a 79€/mes)";
+    if(saveBadge) { saveBadge.style.display = "block"; saveBadge.innerText = "Recomendado"; }
   } else {
     toggleBtn.classList.remove('anual');
     labels[0].classList.add('active');
     labels[1].classList.remove('active');
     
-    planName.innerText = "Plan Flexible";
-    priceVal.innerHTML = '39€<span style="font-size:1rem; font-family:\'Plus Jakarta Sans\', sans-serif; font-weight:400; color:var(--texto3)" id="pricing-price-period">/mes</span>';
-    priceDesc.innerText = "Ideal para controlar el día a día sin ataduras. Cancela cuando quieras.";
-    priceDesc.style.color = "var(--texto2)";
-    saveBadge.style.display = "none";
+    valBasic.innerText = '49€';
+    periodBasic.innerText = '/mes';
+    descBasic.innerText = "Facturación mes a mes. Cancela sin compromiso en cualquier momento.";
+    
+    valPro.innerText = '79€';
+    periodPro.innerText = '/mes';
+    descPro.innerText = "Facturación mes a mes. Cancela sin compromiso en cualquier momento.";
+    if(saveBadge) saveBadge.style.display = "none";
   }
 }
 
