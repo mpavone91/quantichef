@@ -47,11 +47,19 @@
   .sidebar { width: var(--sidebar-width); background: var(--accent); color: white; display: flex; flex-direction: column; flex-shrink: 0; transition: all 0.3s; z-index: 50; }
   .sidebar-header { padding: 1.5rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
   .nav-logo-icon{width:32px;height:32px;background:linear-gradient(135deg, var(--gold) 0%, #E6B755 100%);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
-  .nav-menu { flex: 1; padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 4px; }
+  .nav-menu { flex: 1; padding: 1rem 1rem; display: flex; flex-direction: column; gap: 4px; overflow-y: auto;}
+  .nav-group { margin-top: 1rem; margin-bottom: 0.2rem; padding: 0 14px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.05em; }
   .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; cursor: pointer; transition: 0.2s; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; font-weight: 600; }
   .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.15); color: white; }
   .nav-item.active { box-shadow: inset 3px 0 0 var(--gold); }
+  .nav-item.disabled { opacity: 0.5; cursor: not-allowed; }
+  .nav-item.disabled:hover { background: none; color: rgba(255,255,255,0.7); }
   .nav-item svg { width: 20px; height: 20px; opacity: 0.9; }
+  
+  .limit-widget { background: rgba(0,0,0,0.15); border-radius: 10px; padding: 12px; margin: 0 1rem 1rem 1rem; border: 1px solid rgba(255,255,255,0.05); }
+  .limit-header { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 6px; }
+  .limit-bar-bg { height: 6px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden; }
+  .limit-bar-fill { height: 100%; background: var(--gold); border-radius: 999px; transition: width 0.3s; }
   .sidebar-footer { padding: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); }
   
   .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: var(--bg); position: relative; }
@@ -103,13 +111,18 @@
   .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
   .escandallos-grid{display:flex;flex-direction:column;gap:.625rem}
-  .escandallo-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:1rem;transition:all .2s;cursor:pointer;}
+  .escandallo-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;display:flex;align-items:center;gap:1.5rem;transition:all .2s;cursor:pointer;}
   .escandallo-card:hover{border-color:var(--accent-mint);box-shadow:0 4px 12px rgba(30,77,43,.05)}
-  .card-info{flex:1;min-width:0}
-  .card-nombre{font-weight:600;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .card-metrics{display:flex;gap:.75rem;flex-shrink:0}
-  .card-metric{text-align:right}
-  .card-metric-val{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:300}
+  .ecn-img { width: 80px; height: 60px; border-radius: 8px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); }
+  .card-info { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 6px; }
+  .card-nombre { font-weight: 700; font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
+  .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .card-tag { font-size: 10px; font-weight: 600; padding: 3px 8px; background: #9CA3AF; color: white; border-radius: 12px; }
+  .card-metrics { display: flex; gap: 2rem; flex-shrink: 0; align-items: center; }
+  .card-metric { display: flex; flex-direction: column; text-align: left; }
+  .card-metric-label { font-size: 10px; color: var(--text3); font-weight: 600; margin-bottom: 4px; }
+  .card-metric-val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); }
+  .card-metric-val.green { color: var(--accent); }
   .card-del{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
   .card-del:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
   .card-checkbox { display:none; margin-right:5px; }
@@ -167,11 +180,11 @@
 
   .stock-item{background:linear-gradient(to bottom right, #ffffff, #fafaf8);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.02);transition:all .2s}
   .stock-item:hover{border-color:var(--accent-mint);transform:translateY(-2px);box-shadow:0 6px 16px rgba(30,77,43,.06)}
-  .stock-item.alerta{border-left:4px solid var(--danger);background:linear-gradient(to bottom right, #fff, #FEF2F2);box-shadow:0 2px 8px rgba(220,38,38,.05)}
+  .stock-item.alerta{border-left:4px solid var(--danger);background:linear-gradient(to bottom right, #fff, #FEF2F2);box-shadow:0 4px 12px rgba(220,38,38,.1)}
   .stock-item-top{display:flex;align-items:center;gap:8px;margin-bottom:.8rem}
   .stock-item-nombre{flex:1;font-weight:700;font-size:15px;color:var(--text)}
-  .s-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px}
-  .s-badge.bajo{background:rgba(220,38,38,.12);color:var(--danger)}
+  .s-badge{font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:0.02em;}
+  .s-badge.bajo{background:var(--danger);color:white;box-shadow:0 2px 6px rgba(220,38,38,.3)}
   .s-badge.warn{background:#FFF3E0;color:#8B5E00}
   .s-badge.ok{background:var(--accent-light);color:var(--accent)}
   .stock-bar-bg{height:6px;border-radius:999px;background:var(--surface2);overflow:hidden;margin-bottom:.6rem}
@@ -242,19 +255,58 @@
     </div>
 
     <nav class="nav-menu">
+      <div class="nav-group">Negocio</div>
       <a class="nav-item active" onclick="switchTab('inicio', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         <span>Panel de Control</span>
       </a>
+      <a class="nav-item disabled" title="Próximamente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        <span>Ventas</span>
+      </a>
       <a class="nav-item" onclick="switchTab('platos', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        <span>Mis Escandallos</span>
+        <span>Escandallos</span>
       </a>
-      <a class="nav-item" onclick="switchTab('precios', this)">
+
+      <div class="nav-group" style="margin-top:1.5rem">Gastos</div>
+      <a class="nav-item" onclick="switchTab('precios', this); switchAlmacenTab('precios', document.getElementById('subtab-precios'))">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span>Documentos</span>
+      </a>
+      <a class="nav-item disabled" title="Próximamente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span>Conciliación</span>
+      </a>
+      <a class="nav-item disabled" title="Próximamente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Personal</span>
+      </a>
+
+      <div class="nav-group" style="margin-top:1.5rem">Compras</div>
+      <a class="nav-item" onclick="switchTab('precios', this); switchAlmacenTab('existencias', document.getElementById('subtab-existencias'))">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        <span>Productos</span>
+      </a>
+      <a class="nav-item disabled" title="Próximamente">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>
-        <span>Almacén / Precios</span>
+        <span>Proveedores</span>
+      </a>
+      <a class="nav-item disabled" title="Próximamente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>Incidencias</span>
       </a>
     </nav>
+    
+    <div class="limit-widget" id="limit-widget" style="display:none;">
+      <div class="limit-header">
+        <span>Documentos</span>
+        <span id="limit-text">0 / 50</span>
+      </div>
+      <div class="limit-bar-bg">
+        <div class="limit-bar-fill" id="limit-bar"></div>
+      </div>
+    </div>
     
     <div class="sidebar-footer">
       <button class="nav-logout" onclick="cerrarSesion()">
@@ -617,6 +669,15 @@ async function cargarDatos(session){
   document.getElementById('btn-suscripcion-nav').style.display = esPremium ? 'inline-block' : 'none';
   if (document.getElementById('dash-upsell-lock')) { document.getElementById('dash-upsell-lock').style.display = esPremium ? 'none' : 'inline'; }
   
+  // Widget de límites (Simulado por ahora)
+  const maxDocs = esPremium ? 150 : 50;
+  const currDocs = Math.floor(Math.random() * (maxDocs * 0.8)); // Simulación realista
+  const pctDocs = (currDocs / maxDocs) * 100;
+  document.getElementById('limit-widget').style.display = 'block';
+  document.getElementById('limit-text').textContent = `${currDocs} / ${maxDocs}`;
+  document.getElementById('limit-bar').style.width = `${pctDocs}%`;
+  if (pctDocs > 80) document.getElementById('limit-bar').style.background = 'var(--danger)';
+
   const {data:escandallos} = await sb.from('escandallos').select('*').eq('restaurante_id', rest.id).order('updated_at', {ascending:false});
     
   document.getElementById('loading').style.display = 'none';
@@ -672,16 +733,21 @@ function renderLista(lista){
   const createCard = (e) => {
     const fcCard = (parseFloat(e.precio_carta) > 0 && parseFloat(e.coste_racion) > 0) ? ((e.coste_racion / e.precio_carta) * 100).toFixed(1) : (e.food_cost_pct || 0);
     const precioMostrar = parseFloat(e.precio_carta) > 0 ? e.precio_carta : e.precio_venta;
+    const beneficio = parseFloat(precioMostrar) - parseFloat(e.coste_racion);
+    const tags = (e.categoria || 'Sin clasificar').split(',').map(t => `<span class="card-tag">${t.trim()}</span>`).join('');
     const card = document.createElement('div'); card.className = 'escandallo-card';
     card.innerHTML = `
       <div class="card-checkbox"><input type="checkbox" class="bulk-cb-escandallo" value="${e.id}"></div>
+      <div class="ecn-img">🍲</div>
       <div class="card-info">
         <div class="card-nombre">${e.nombre_plato}</div>
-        <div style="font-size:12px; color:var(--text3)">${e.categoria||'S/C'} · FC ${fcCard}%</div>
+        <div class="card-tags">${tags}</div>
       </div>
       <div class="card-metrics">
-        <div class="card-metric"><div class="card-metric-val">${fmt(e.coste_racion)}</div><div style="font-size:9px; color:var(--text3)">coste</div></div>
-        <div class="card-metric"><div class="card-metric-val" style="color:var(--accent)">${fmt(precioMostrar)}</div><div style="font-size:9px; color:var(--text3)">venta</div></div>
+        <div class="card-metric"><div class="card-metric-label">Coste plato</div><div class="card-metric-val">${fmt(e.coste_racion)}</div></div>
+        <div class="card-metric"><div class="card-metric-label">Precio venta</div><div class="card-metric-val">${fmt(precioMostrar)}</div></div>
+        <div class="card-metric"><div class="card-metric-label">Beneficio</div><div class="card-metric-val">${beneficio > 0 ? fmt(beneficio) : '0,00€'}</div></div>
+        <div class="card-metric"><div class="card-metric-label">Margen</div><div class="card-metric-val">${fcCard > 0 ? (100 - fcCard).toFixed(0) : '0'} %</div></div>
       </div>
       <button class="card-del" onclick="eliminarUnico('${e.id}', 'escandallo', event)">×</button>
     `;
@@ -1167,14 +1233,14 @@ async function handleTPVUpload(e) {
 function renderTPVReview(ventas) {
   tpvVentasData = ventas;
   document.getElementById('tpv-review-body').innerHTML = ventas.map((v, i) => `
-    <div style="display:grid;grid-template-columns:2fr auto;gap:10px;align-items:center;padding:.75rem 1rem;background:var(--surface2);border-radius:8px;">
+    <div style="display:grid;grid-template-columns:2fr auto;gap:10px;align-items:center;padding:1rem;background:white;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 4px rgba(0,0,0,0.02);margin-bottom:8px;transition:all 0.2s;">
       <div>
-        <div style="font-weight:600;font-size:13px;">${v.nombre_plato}</div>
-        <div style="font-size:11px;color:var(--text3)">Ajusta las raciones si es necesario</div>
+        <div style="font-weight:700;font-size:14px;color:var(--text);margin-bottom:4px;">${v.nombre_plato}</div>
+        <div style="font-size:11px;color:var(--text3);font-weight:500;">Ajusta las raciones si es necesario</div>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <input type="number" min="0" step="1" value="${v.raciones}" style="width:60px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;text-align:center;font-weight:700;font-family:'Fraunces',serif;font-size:1rem;" onchange="tpvVentasData[${i}].raciones=parseInt(this.value)||0">
-        <span style="font-size:12px;color:var(--text3)">raciones</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <input type="number" min="0" step="1" value="${v.raciones}" style="width:70px;padding:8px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-weight:700;font-family:'Fraunces',serif;font-size:1.1rem;color:var(--accent);" onchange="tpvVentasData[${i}].raciones=parseInt(this.value)||0">
+        <span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;">raciones</span>
       </div>
     </div>`).join('');
   document.getElementById('tpv-review').style.display = 'block';
