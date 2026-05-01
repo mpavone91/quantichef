@@ -220,7 +220,7 @@ Devuelve SOLO JSON válido sin texto adicional ni bloques de código markdown:
         },
         body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
-            max_tokens: 4096,
+            max_tokens: 8192,
             temperature: 0,
             messages: [{
                 role: 'user',
@@ -239,13 +239,28 @@ Devuelve SOLO JSON válido sin texto adicional ni bloques de código markdown:
 
     // Extracción robusta del JSON aunque venga con texto alrededor
     const firstBrace = raw.indexOf('{');
-    const lastBrace = raw.lastIndexOf('}');
-    if (firstBrace === -1 || lastBrace === -1) {
-        throw new Error('Claude no devolvió JSON válido');
+    if (firstBrace === -1) throw new Error('Claude no devolvió JSON válido');
+
+    let jsonStr = raw.substring(firstBrace);
+    const lastBrace = jsonStr.lastIndexOf('}');
+
+    // Si el JSON está truncado (sin cierre), intentar reparar
+    if (lastBrace === -1 || data.stop_reason === 'max_tokens') {
+        // Cortar en el último objeto completo que termina con }]},  o  }]}
+        const lastCompleteObj = jsonStr.lastIndexOf('}');
+        if (lastCompleteObj === -1) throw new Error('Respuesta demasiado truncada para recuperar');
+        // Cerrar arrays y objeto raíz abiertos
+        jsonStr = jsonStr.substring(0, lastCompleteObj + 1);
+        // Contar cuántos [ y ] hay para saber cuántos falta cerrar
+        const opens = (jsonStr.match(/\[/g) || []).length;
+        const closes = (jsonStr.match(/\]/g) || []).length;
+        for (let i = 0; i < opens - closes; i++) jsonStr += ']';
+        jsonStr += '}';
+    } else {
+        jsonStr = jsonStr.substring(0, lastBrace + 1);
     }
 
-    const clean = raw.substring(firstBrace, lastBrace + 1);
-    return JSON.parse(clean);
+    return JSON.parse(jsonStr);
 }
 
 function buscarMejorCoincidencia(nombre, inventario) {

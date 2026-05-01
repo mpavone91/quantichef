@@ -208,6 +208,39 @@
   .review-table td{padding:6px 6px;border-bottom:1px solid var(--border)}
   .review-table tr:last-child td{border-bottom:none}
 
+  /* ── MI DESPENSA ── */
+  .despensa-table-wrap { background:white; border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.04); margin-bottom:1.5rem; }
+  .despensa-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .despensa-table thead th { background:var(--surface2); padding:12px 14px; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text3); text-align:left; border-bottom:1px solid var(--border); }
+  .despensa-table tbody tr { border-bottom:1px solid var(--border); transition:background .15s; }
+  .despensa-table tbody tr:last-child { border-bottom:none; }
+  .despensa-table tbody tr:hover { background:var(--surface2); }
+  .despensa-table td { padding:13px 14px; vertical-align:middle; }
+  .despensa-nombre { font-weight:700; font-size:14px; color:var(--text); }
+  .despensa-nombre small { display:block; font-size:11px; font-weight:400; color:var(--text3); margin-top:2px; }
+  .despensa-inline-input { width:75px; border:1px solid var(--border); border-radius:7px; padding:5px 8px; font-size:13px; font-family:inherit; background:var(--surface2); text-align:right; transition:all .15s; }
+  .despensa-inline-input:focus { outline:none; border-color:var(--accent); background:white; box-shadow:0 0 0 3px rgba(30,77,43,.08); }
+  .despensa-status { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; }
+  .despensa-status.ok { background:var(--accent-light); color:var(--accent); }
+  .despensa-status.bajo { background:var(--danger-light); color:var(--danger); }
+  .despensa-status.agotado { background:#F3F4F6; color:var(--text3); }
+  .despensa-valor { font-family:'Fraunces',serif; font-size:1.1rem; font-weight:300; color:var(--text); }
+  .despensa-footer { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--surface2); border-top:1px solid var(--border); flex-wrap:wrap; gap:10px; }
+  .despensa-totales { display:flex; gap:2rem; }
+  .despensa-total-item { text-align:right; }
+  .despensa-total-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--text3); }
+  .despensa-total-val { font-family:'Fraunces',serif; font-size:1.4rem; font-weight:300; color:var(--text); }
+  .despensa-total-val.red { color:var(--danger); }
+  .btn-merma-row { font-size:11px; font-weight:700; padding:5px 10px; border:1.5px solid var(--border); border-radius:7px; background:white; color:var(--text3); cursor:pointer; transition:all .15s; white-space:nowrap; }
+  .btn-merma-row:hover { border-color:var(--danger); color:var(--danger); background:var(--danger-light); }
+  .merma-modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9000; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px); }
+  .merma-modal-overlay.visible { display:flex; }
+  .merma-modal { background:white; border-radius:20px; padding:2rem; max-width:400px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.15); }
+  .despensa-search { width:100%; padding:11px 14px 11px 38px; border:1.5px solid var(--border); border-radius:10px; font-size:13px; font-family:inherit; background:white; transition:all .2s; }
+  .despensa-search:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(30,77,43,.08); }
+  .despensa-search-wrap { position:relative; margin-bottom:1.5rem; }
+  .despensa-search-wrap svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none; }
+
   /* --- MODALES Y VENTANAS EMERGENTES --- */
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px); }
   .modal-overlay.visible { display:flex; }
@@ -293,21 +326,16 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         <span>Panel de Control</span>
       </a>
+      <div class="nav-group" style="margin-top:1.5rem">Menú</div>
       <a class="nav-item" onclick="switchTab('platos', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        <span>Escandallos</span>
+        <span>Mis Recetas</span>
       </a>
 
-      <div class="nav-group" style="margin-top:1.5rem">Inventario</div>
-      <a class="nav-item" onclick="switchTab('stock', this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        <span>Stock</span>
-      </a>
-
-      <div class="nav-group" style="margin-top:1.5rem">Compras</div>
-      <a class="nav-item" onclick="switchTab('precios', this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <span>Facturas / Albaranes</span>
+      <div class="nav-group" style="margin-top:1.5rem">Cocina</div>
+      <a class="nav-item" onclick="switchTab('despensa', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span>Mi Despensa</span>
       </a>
     </nav>
     
@@ -598,8 +626,153 @@
 
       </section>
 
+      <!-- ── MI DESPENSA ── -->
+      <section id="view-despensa" class="view-section">
+
+        <div class="action-bar">
+          <button class="btn-action-primary" onclick="abrirEntrega()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Recibir Entrega
+          </button>
+          <button class="btn-action-secondary" onclick="abrirMermaManual()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Registrar Merma
+          </button>
+          <button class="btn-action-gold" onclick="abrirModalVentas()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+            Descontar Ventas (TPV)
+          </button>
+          <input type="file" id="upload-entrega" accept=".pdf,image/*,.csv" style="display:none" onchange="procesarEntrega(event)">
+        </div>
+
+        <!-- Buscador -->
+        <div class="despensa-search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="despensa-search" id="despensa-buscar" placeholder="Buscar ingrediente..." oninput="filtrarDespensa(this.value)">
+        </div>
+
+        <!-- Tabla principal -->
+        <div class="despensa-table-wrap">
+          <table class="despensa-table">
+            <thead>
+              <tr>
+                <th>Ingrediente</th>
+                <th>Cantidad actual</th>
+                <th>Precio / unidad</th>
+                <th>Valor</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="despensa-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--text3)">Cargando...</td></tr>
+            </tbody>
+          </table>
+          <div class="despensa-footer">
+            <div style="font-size:12px;color:var(--text3);font-weight:600" id="despensa-count">0 ingredientes</div>
+            <div class="despensa-totales">
+              <div class="despensa-total-item">
+                <div class="despensa-total-label">Merma del mes</div>
+                <div class="despensa-total-val red" id="despensa-total-merma">—</div>
+              </div>
+              <div class="despensa-total-item">
+                <div class="despensa-total-label">Valor Total Despensa</div>
+                <div class="despensa-total-val" id="despensa-total-valor">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Añadir ingrediente manual -->
+        <div style="background:white;border:1px solid var(--border);border-radius:14px;padding:1.25rem;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Añadir ingrediente manualmente
+          </div>
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:10px;align-items:end;">
+            <div>
+              <label style="font-size:10px;font-weight:700;color:var(--text3);display:block;margin-bottom:5px;">INGREDIENTE</label>
+              <input type="text" id="desp-new-nombre" placeholder="Ej: Harina de trigo" class="form-input" style="padding:10px;border-radius:9px;">
+            </div>
+            <div>
+              <label style="font-size:10px;font-weight:700;color:var(--text3);display:block;margin-bottom:5px;">CANTIDAD</label>
+              <input type="number" id="desp-new-cantidad" step="0.01" placeholder="0" class="form-input" style="padding:10px;border-radius:9px;">
+            </div>
+            <div>
+              <label style="font-size:10px;font-weight:700;color:var(--text3);display:block;margin-bottom:5px;">UNIDAD</label>
+              <select id="desp-new-unidad" class="form-input" style="padding:10px;border-radius:9px;height:43px;"><option>kg</option><option>l</option><option>ud</option><option>g</option><option>ml</option></select>
+            </div>
+            <div>
+              <label style="font-size:10px;font-weight:700;color:var(--text3);display:block;margin-bottom:5px;">PRECIO / UNIDAD</label>
+              <input type="number" id="desp-new-precio" step="0.01" placeholder="0.00" class="form-input" style="padding:10px;border-radius:9px;">
+            </div>
+            <button class="btn-action-sm green" onclick="añadirDespensaManual()" style="height:43px;padding:0 16px;">Añadir</button>
+          </div>
+        </div>
+
+      </section>
+
     </div>
   </main>
+
+  <!-- ── MODAL REGISTRAR MERMA ── -->
+  <div class="merma-modal-overlay" id="merma-modal">
+    <div class="merma-modal">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+        <div>
+          <div style="font-family:'Fraunces',serif;font-size:1.3rem;font-weight:500;">Registrar Merma</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;">Anota una pérdida o deterioro</div>
+        </div>
+        <button onclick="cerrarMermaModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;">×</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--text3);display:block;margin-bottom:6px;">INGREDIENTE</label>
+          <select id="merma-ingrediente" class="form-input" style="padding:11px;border-radius:9px;width:100%;"><option value="">Selecciona un ingrediente...</option></select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <label style="font-size:10px;font-weight:700;color:var(--text3);display:block;margin-bottom:6px;">CANTIDAD PERDIDA</label>
+            <input type="number" id="merma-cantidad" step="0.01" placeholder="0.00" class="form-input" style="padding:11px;border-radius:9px;width:100%;">
+          </div>
+          <div>
+            <label style="font-size:10px;font-weight:700;color:var(--text3);display:block;margin-bottom:6px;">MOTIVO</label>
+            <select id="merma-motivo" class="form-input" style="padding:11px;border-radius:9px;width:100%;height:46px;">
+              <option>Caducidad</option>
+              <option>Rotura / Accidente</option>
+              <option>Preparación</option>
+              <option>Devolución</option>
+              <option>Otro</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-action-primary" onclick="confirmarMerma()" style="width:100%;margin-top:4px;">Registrar Pérdida</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL REVISIÓN ENTREGA (albarán) ── -->
+  <div class="merma-modal-overlay" id="entrega-modal">
+    <div class="merma-modal" style="max-width:600px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+        <div>
+          <div style="font-family:'Fraunces',serif;font-size:1.2rem;font-weight:500;">Revisar Entrega</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;">Ajusta y confirma para actualizar tu despensa</div>
+        </div>
+        <button onclick="cerrarEntregaModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;">×</button>
+      </div>
+      <div style="overflow-x:auto;max-height:350px;overflow-y:auto;">
+        <table class="review-table" style="min-width:480px;">
+          <thead><tr><th>Ingrediente</th><th>Cantidad</th><th>Unidad</th><th>€/Unidad</th><th></th></tr></thead>
+          <tbody id="entrega-review-body"></tbody>
+        </table>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1.2rem;">
+        <button onclick="cerrarEntregaModal()" style="padding:10px 16px;border:1px solid var(--border);background:white;border-radius:9px;cursor:pointer;font-weight:600;">Cancelar</button>
+        <button class="btn-action-primary" onclick="confirmarEntrega()" style="padding:10px 20px;">Guardar en Despensa</button>
+      </div>
+    </div>
+  </div>
 
   <div id="bulk-delete-bar" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--text); color:white; padding:12px 24px; border-radius:12px; z-index:100; align-items:center; gap:15px; box-shadow:0 8px 32px rgba(0,0,0,0.25);">
     <span id="bulk-count" style="font-size:13px; font-weight:600; white-space:nowrap;">0 seleccionados</span>
@@ -690,13 +863,21 @@
 function switchTab(tabId, element) {
   document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-  
   document.getElementById('view-' + tabId).classList.add('active');
-  element.classList.add('active');
+  if (element) element.classList.add('active');
 
-  const titles = { inicio: 'Panel de Control', platos: 'Catálogo de Platos', precios: 'Gestión de Almacén' };
-  document.getElementById('top-bar-title').textContent = titles[tabId];
-  if(modoBorradoActual) cerrarModoBorrado();
+  const titles = {
+    inicio: 'Panel de Control',
+    platos: 'Mis Recetas',
+    despensa: 'Mi Despensa',
+    precios: 'Facturas y Albaranes',
+    stock: 'Inventario'
+  };
+  document.getElementById('top-bar-title').textContent = titles[tabId] || tabId;
+  if (modoBorradoActual) cerrarModoBorrado();
+
+  // Cargar datos según pestaña
+  if (tabId === 'despensa') cargarDespensa();
 }
 
 // INICIALIZACIÓN SUPABASE
@@ -713,6 +894,7 @@ async function init(){
   const { data: { session }, error } = await sb.auth.getSession();
   if (error || !session) { window.location.href = '/login'; return; }
   await cargarDatos(session);
+  cargarDespensa(); // pre-cargar despensa para KPIs del panel
 }
 
 async function cargarDatos(session){
@@ -1694,6 +1876,209 @@ function showAILoading(msg) {
 function hideAILoading() {
   const el = document.getElementById('global-ai-loading');
   if (el) el.classList.remove('visible');
+}
+</script>
+
+<script>
+// ══════════════════════════════════════════════
+//  MI DESPENSA — Módulo completo
+// ══════════════════════════════════════════════
+let despensaData = [];
+let entregaProductos = [];
+
+async function cargarDespensa() {
+  if (!restauranteId) return;
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const resp = await fetch('/api/despensa', {
+      headers: { 'Authorization': 'Bearer ' + session.access_token }
+    });
+    const json = await resp.json();
+    despensaData = json.items || [];
+    renderDespensa(despensaData);
+    // Sincronizar KPIs del panel principal
+    const valEl = document.getElementById('dash-val-almacen');
+    if (valEl) valEl.textContent = json.valorTotal > 0 ? fmt(json.valorTotal) : '0,00€';
+    const ingEl = document.getElementById('dash-val-ingredientes');
+    if (ingEl) ingEl.textContent = despensaData.length;
+    const mermaEl = document.getElementById('dash-val-merma');
+    if (mermaEl && json.mermaTotal > 0) mermaEl.textContent = fmt(json.mermaTotal);
+  } catch(e) { console.error('Error cargando despensa:', e); }
+}
+
+function renderDespensa(items) {
+  const tbody = document.getElementById('despensa-tbody');
+  if (!tbody) return;
+  const countEl = document.getElementById('despensa-count');
+  const valorEl = document.getElementById('despensa-total-valor');
+  const mermaEl2 = document.getElementById('despensa-total-merma');
+
+  if (!items.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--text3);">
+      <div style="font-size:2rem;margin-bottom:.5rem;">🧺</div>
+      <div style="font-weight:600;margin-bottom:.4rem;">Tu despensa está vacía</div>
+      <div style="font-size:13px;">Sube un albarán con "Recibir Entrega" o añade ingredientes manualmente.</div>
+    </td></tr>`;
+    if (countEl) countEl.textContent = '0 ingredientes';
+    if (valorEl) valorEl.textContent = '0,00€';
+    return;
+  }
+
+  let valorTotal = 0, mermaTotal = 0;
+  tbody.innerHTML = items.map(item => {
+    const valor = (item.cantidad_actual || 0) * (item.precio_por_unidad || 0);
+    mermaTotal += (item.merma_acumulada || 0) * (item.precio_por_unidad || 0);
+    valorTotal += valor;
+    let sc = 'ok', st = '✓ OK';
+    if (!item.cantidad_actual || item.cantidad_actual <= 0) { sc='agotado'; st='● Agotado'; }
+    else if (item.stock_minimo > 0 && item.cantidad_actual <= item.stock_minimo) { sc='bajo'; st='▼ Bajo'; }
+    const ult = item.ultima_actualizacion
+      ? new Date(item.ultima_actualizacion).toLocaleDateString('es-ES',{day:'numeric',month:'short'}) : '';
+    return `<tr>
+      <td><div class="despensa-nombre">${item.nombre}<small>${ult?'Actualizado el '+ult:''}</small></div></td>
+      <td>
+        <input class="despensa-inline-input" type="number" step="0.01"
+          value="${(item.cantidad_actual||0).toFixed(2)}"
+          onchange="ajustarDespensa('${item.id}','cantidad_actual',this.value)">
+        <span style="font-size:11px;color:var(--text3);margin-left:3px;">${item.unidad}</span>
+      </td>
+      <td>
+        <input class="despensa-inline-input" type="number" step="0.01"
+          value="${(item.precio_por_unidad||0).toFixed(2)}"
+          onchange="ajustarDespensa('${item.id}','precio_por_unidad',this.value)">
+        <span style="font-size:11px;color:var(--text3);margin-left:2px;">€/${item.unidad}</span>
+      </td>
+      <td><span class="despensa-valor">${valor>0?fmt(valor):'<span style="color:var(--text3)">—</span>'}</span></td>
+      <td><span class="despensa-status ${sc}">${st}</span></td>
+      <td><button class="btn-merma-row" onclick="abrirMermaParaItem('${item.id}')">Merma</button></td>
+    </tr>`;
+  }).join('');
+  if (countEl) countEl.textContent = `${items.length} ingredientes`;
+  if (valorEl) valorEl.textContent = fmt(valorTotal);
+  if (mermaEl2) mermaEl2.textContent = mermaTotal > 0 ? fmt(mermaTotal) : '—';
+}
+
+function filtrarDespensa(q) {
+  const ql = q.toLowerCase();
+  renderDespensa(ql ? despensaData.filter(i => i.nombre.toLowerCase().includes(ql)) : despensaData);
+}
+
+async function ajustarDespensa(id, campo, valor) {
+  const { data: { session } } = await sb.auth.getSession();
+  await fetch('/api/despensa', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+    body: JSON.stringify({ mode:'ajuste_manual', id, [campo]: valor })
+  });
+  const item = despensaData.find(i => i.id === id);
+  if (item) { item[campo] = parseFloat(valor); renderDespensa(despensaData); }
+}
+
+async function añadirDespensaManual() {
+  const nombre = document.getElementById('desp-new-nombre').value.trim();
+  const cantidad = parseFloat(document.getElementById('desp-new-cantidad').value)||0;
+  const unidad = document.getElementById('desp-new-unidad').value;
+  const precio = parseFloat(document.getElementById('desp-new-precio').value)||0;
+  if (!nombre) { alert('Escribe el nombre del ingrediente'); return; }
+  const { data: { session } } = await sb.auth.getSession();
+  await fetch('/api/despensa', {
+    method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+    body: JSON.stringify({ mode:'confirmar_entrega', productos:[{nombre,cantidad,unidad,precio}] })
+  });
+  document.getElementById('desp-new-nombre').value='';
+  document.getElementById('desp-new-cantidad').value='';
+  document.getElementById('desp-new-precio').value='';
+  await cargarDespensa();
+}
+
+// ── MERMA ─────────────────────────────────────────
+function abrirMermaManual() {
+  const sel = document.getElementById('merma-ingrediente');
+  sel.innerHTML = '<option value="">Selecciona...</option>' +
+    despensaData.map(i => `<option value="${i.nombre_normalizado}">${i.nombre} (${(i.cantidad_actual||0).toFixed(2)} ${i.unidad})</option>`).join('');
+  document.getElementById('merma-cantidad').value='';
+  document.getElementById('merma-modal').classList.add('visible');
+}
+function abrirMermaParaItem(id) {
+  const item = despensaData.find(i=>i.id===id);
+  if(!item) return;
+  const sel = document.getElementById('merma-ingrediente');
+  sel.innerHTML = '<option value="">Selecciona...</option>' +
+    despensaData.map(i=>`<option value="${i.nombre_normalizado}" ${i.id===id?'selected':''}>${i.nombre} (${(i.cantidad_actual||0).toFixed(2)} ${i.unidad})</option>`).join('');
+  document.getElementById('merma-cantidad').value='';
+  document.getElementById('merma-modal').classList.add('visible');
+}
+function cerrarMermaModal() { document.getElementById('merma-modal').classList.remove('visible'); }
+async function confirmarMerma() {
+  const norm = document.getElementById('merma-ingrediente').value;
+  const cantidad = parseFloat(document.getElementById('merma-cantidad').value);
+  if (!norm) { alert('Selecciona un ingrediente'); return; }
+  if (!cantidad || cantidad<=0) { alert('Indica la cantidad perdida'); return; }
+  const { data: { session } } = await sb.auth.getSession();
+  const resp = await fetch('/api/despensa', {
+    method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+    body: JSON.stringify({ mode:'registrar_merma', nombre_normalizado:norm, cantidad_merma:cantidad })
+  });
+  const data = await resp.json();
+  cerrarMermaModal();
+  if (data.success) await cargarDespensa();
+  else alert(data.error||'Error al registrar merma');
+}
+
+// ── RECIBIR ENTREGA ────────────────────────────────
+function abrirEntrega() { document.getElementById('upload-entrega').click(); }
+function cerrarEntregaModal() {
+  document.getElementById('entrega-modal').classList.remove('visible');
+  entregaProductos=[];
+}
+async function procesarEntrega(e) {
+  const file = e.target.files[0]; if(!file) return; e.target.value='';
+  showAILoading('Analizando tu albarán...<br>Extrayendo ingredientes y precios.');
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async () => {
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      const resp = await fetch('/api/despensa', {
+        method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+        body: JSON.stringify({ mode:'recibir_entrega', file_base64:reader.result.split(',')[1], file_type:file.name.split('.').pop() })
+      });
+      const data = await resp.json();
+      hideAILoading();
+      if (!resp.ok || !data.productos?.length) { alert(data.error||'No se encontraron productos.'); return; }
+      entregaProductos = data.productos;
+      mostrarRevisionEntrega(entregaProductos);
+    } catch(err) { hideAILoading(); alert('Error al procesar: '+err.message); }
+  };
+}
+function mostrarRevisionEntrega(productos) {
+  const tbody = document.getElementById('entrega-review-body');
+  tbody.innerHTML = productos.map((p,i)=>`<tr>
+    <td><input class="form-input" style="padding:6px 8px;width:100%;font-size:12px;"
+      value="${(p.nombre||'').replace(/"/g,'&quot;')}" onchange="entregaProductos[${i}].nombre=this.value"></td>
+    <td><input type="number" step="0.01" class="form-input" style="padding:6px;width:72px;font-size:12px;"
+      value="${p.cantidad||0}" onchange="entregaProductos[${i}].cantidad=this.value"></td>
+    <td><select class="form-input" style="padding:6px;font-size:12px;height:34px;" onchange="entregaProductos[${i}].unidad=this.value">
+      ${['kg','l','ud','g','ml'].map(u=>`<option ${u===p.unidad?'selected':''}>${u}</option>`).join('')}
+    </select></td>
+    <td><input type="number" step="0.01" class="form-input" style="padding:6px;width:72px;font-size:12px;"
+      value="${p.precio||0}" onchange="entregaProductos[${i}].precio=this.value"></td>
+    <td><button class="card-del" style="margin:0 auto"
+      onclick="entregaProductos.splice(${i},1);mostrarRevisionEntrega(entregaProductos)">×</button></td>
+  </tr>`).join('');
+  document.getElementById('entrega-modal').classList.add('visible');
+}
+async function confirmarEntrega() {
+  if (!entregaProductos.length) return;
+  const { data: { session } } = await sb.auth.getSession();
+  const resp = await fetch('/api/despensa', {
+    method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+    body: JSON.stringify({ mode:'confirmar_entrega', productos:entregaProductos })
+  });
+  const data = await resp.json();
+  cerrarEntregaModal();
+  if (data.success) { await cargarDespensa(); }
+  else alert(data.error||'Error al guardar');
 }
 </script>
 
