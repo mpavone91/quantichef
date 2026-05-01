@@ -50,12 +50,16 @@ export default async function handler(req, res) {
       return res.status(200).json(result);
     }
 
-    // ── VERIFICACIÓN DE LÍMITES PARA EXTRACCIÓN ───────────────────
-    const limit = rest.plan === 'pro' ? 150 : 50;
+    // ── VERIFICACIÓN DE LÍMITES PARA EXTRACCIÓN ──────────────────
+    const isTrial = rest.plan === 'trial' || !rest.plan;
+    const limit = rest.plan === 'pro' ? 150 : rest.plan === 'basic' ? 50 : 1;
     const docsSubidos = rest.documentos_subidos || 0;
 
     if (docsSubidos >= limit) {
-      return res.status(403).json({ error: `Has alcanzado el límite de documentos (${limit}). Por favor, actualiza tu plan.` });
+      const msg = isTrial
+        ? 'Has usado tu documento gratuito. \u00a1Desbloquea m\u00e1s con un plan! \ud83d\ude80'
+        : `Has alcanzado el l\u00edmite de documentos (${limit}). Por favor, actualiza tu plan.`;
+      return res.status(403).json({ error: msg, upgrade: true });
     }
 
     // ── MODO EXTRACCIÓN (FACTURAS O ETIQUETAS) ───────────────────
@@ -188,7 +192,19 @@ export default async function handler(req, res) {
         raw: raw_text
       });
     }
-    // Incrementar contador si todo fue bien (y no es un error de formato de Anthropic)
+    // Truncar a 5 productos para plan trial/free
+    if (isTrial && parsed.productos && parsed.productos.length > 5) {
+      parsed.productos = parsed.productos.slice(0, 5);
+      parsed.truncado = true;
+      parsed.mensaje_limite = 'Plan gratuito: se muestran 5 productos m\u00e1ximo. Actualiza tu plan para ver todos.';
+    }
+    if (isTrial && parsed.platos && parsed.platos.length > 5) {
+      parsed.platos = parsed.platos.slice(0, 5);
+      parsed.truncado = true;
+      parsed.mensaje_limite = 'Plan gratuito: se muestran 5 platos m\u00e1ximo. Actualiza tu plan para ver todos.';
+    }
+
+    // Incrementar contador si todo fue bien
     await supabase.from('restaurantes').update({ documentos_subidos: docsSubidos + 1 }).eq('id', rest.id);
 
     return res.status(200).json(parsed);

@@ -33,15 +33,24 @@ export default async function handler(req, res) {
 
         if (restErr || !rest) return res.status(403).json({ error: 'Restaurante no encontrado o sin permisos' });
 
-        // --- VERIFICACIÓN DE SEGURIDAD (LÍMITE TRIAL) ---
-        if (rest.plan !== 'pro') {
-            const { count } = await supabase
-                .from('escandallos')
-                .select('id', { count: 'exact', head: true })
-                .eq('restaurante_id', restaurante_id);
-            
-            if ((count || 0) >= 5) {
-                return res.status(403).json({ error: 'Has alcanzado el límite de 5 escandallos gratis. Hazte PRO para generar recetas ilimitadas.' });
+        // --- VERIFICACIÓN DE LÍMITES POR PLAN ---
+        const isTrial = rest.plan === 'trial' || !rest.plan;
+        const isPaid = rest.plan === 'pro' || rest.plan === 'basic';
+
+        if (isTrial) {
+            // Trial: 1 doc max con 5 platos
+            const docsSubidos = rest.documentos_subidos || 0;
+            if (docsSubidos >= 1) {
+                return res.status(403).json({
+                    error: 'Has usado tu importación gratuita. ¡Actualiza tu plan para importar más recetarios! 🚀',
+                    upgrade: true
+                });
+            }
+        } else {
+            const limit = rest.plan === 'pro' ? 150 : 50;
+            const docsSubidos = rest.documentos_subidos || 0;
+            if (docsSubidos >= limit) {
+                return res.status(403).json({ error: `Límite de documentos alcanzado (${limit}). Actualiza tu plan.` });
             }
         }
         // ------------------------------------------------
@@ -51,6 +60,11 @@ export default async function handler(req, res) {
 
         if (!recipes || !recipes.platos || recipes.platos.length === 0) {
             throw new Error('No se detectaron platos en el archivo.');
+        }
+
+        // Truncar a 5 platos para plan trial
+        if (isTrial && recipes.platos.length > 5) {
+            recipes.platos = recipes.platos.slice(0, 5);
         }
 
         // 2. Cargar inventario de precios del proveedor

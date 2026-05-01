@@ -26,9 +26,10 @@ export default async function handler(req, res) {
     if (authError || !user) return res.status(401).json({ error: 'Sesión inválida o caducada' });
 
     // Restaurante — usar el cliente admin
-    const { data: rest } = await sb.from('restaurantes').select('id').eq('user_id', user.id).maybeSingle();
+    const { data: rest } = await sb.from('restaurantes').select('id, plan, documentos_subidos').eq('user_id', user.id).maybeSingle();
     if (!rest) return res.status(404).json({ error: 'Restaurante no encontrado' });
     const restaurante_id = rest.id;
+    const isTrial = rest.plan === 'trial' || !rest.plan;
 
   // ── GET: listar despensa ──────────────────────────────────────────────
   if (req.method === 'GET') {
@@ -54,6 +55,16 @@ export default async function handler(req, res) {
 
   // ── POST mode=recibir_entrega: procesar albarán ──────────────────────
   if (mode === 'recibir_entrega') {
+    // Verificar límite de documentos
+    const docsSubidos = rest.documentos_subidos || 0;
+    const limit = rest.plan === 'pro' ? 150 : rest.plan === 'basic' ? 50 : 1;
+    if (docsSubidos >= limit) {
+      const msg = isTrial
+        ? 'Has usado tu documento gratuito de despensa. ¡Actualiza para seguir recibiendo entregas! 🚀'
+        : `Límite de documentos alcanzado (${limit}). Actualiza tu plan.`;
+      return res.status(403).json({ error: msg, upgrade: true });
+    }
+
     const { file_base64, file_type } = req.body;
     if (!file_base64) return res.status(400).json({ error: 'Falta el archivo' });
 
@@ -119,7 +130,19 @@ REGLAS:
       if (first === -1) return res.status(422).json({ error: 'La IA no pudo leer el documento' });
 
       const parsed = JSON.parse(raw.substring(first, last + 1));
-      return res.json({ success: true, productos: parsed.productos || [] });
+      let productos = parsed.productos || [];
+
+      // Truncar a 5 productos para trial
+      let mensaje_limite = null;
+      if (isTrial && productos.length > 5) {
+        productos = productos.slice(0, 5);
+        mensaje_limite = 'Plan gratuito: se muestran 5 productos máximo. Actualiza tu plan para ver todos.';
+      }
+
+      // Incrementar contador de documentos
+      await sb.from('restaurantes').update({ documentos_subidos: (rest.documentos_subidos || 0) + 1 }).eq('id', rest.id);
+
+      return res.json({ success: true, productos, mensaje_limite });
 
     } catch (err) {
       return res.status(500).json({ error: 'Error de IA: ' + err.message });

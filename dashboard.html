@@ -909,23 +909,24 @@ async function cargarDatos(session){
   if(!rest){ document.getElementById('loading').innerHTML = '<p style="text-align:center; padding:2rem;">Error al cargar. Recarga la página.</p>'; return; }
 
   restauranteId = rest.id;
-  esPremium = rest.plan === 'pro';
+  esPremium = rest.plan === 'pro' || rest.plan === 'basic';
+  const esTrial = rest.plan === 'trial' || !rest.plan;
   
   document.getElementById('nav-restaurante').textContent = '📍 ' + rest.nombre;
-  document.getElementById('banner-trial').style.display = rest.plan === 'trial' ? 'flex' : 'none';
+  document.getElementById('banner-trial').style.display = esTrial ? 'flex' : 'none';
   document.getElementById('banner-basic').style.display = rest.plan === 'basic' ? 'flex' : 'none';
   document.getElementById('banner-pro').style.display = rest.plan === 'pro' ? 'flex' : 'none';
   document.getElementById('btn-suscripcion-nav').style.display = (rest.plan === 'pro' || rest.plan === 'basic') ? 'inline-block' : 'none';
   if (esPremium && document.getElementById('dash-upsell-lock')) document.getElementById('dash-upsell-lock').style.display = 'none';
   
-  // Widget de límites (Conectado a BD)
-  const maxDocs = esPremium ? 150 : 50;
+  // Widget de límites
+  const maxDocs = rest.plan === 'pro' ? 150 : rest.plan === 'basic' ? 50 : 1;
   const currDocs = rest.documentos_subidos || 0;
   const pctDocs = Math.min((currDocs / maxDocs) * 100, 100);
   document.getElementById('limit-widget').style.display = 'block';
-  document.getElementById('limit-text').textContent = `${currDocs} / ${maxDocs}`;
+  document.getElementById('limit-text').textContent = esTrial ? `${currDocs} / ${maxDocs} (Plan gratuito)` : `${currDocs} / ${maxDocs}`;
   document.getElementById('limit-bar').style.width = `${pctDocs}%`;
-  if (pctDocs > 80) document.getElementById('limit-bar').style.background = 'var(--danger)';
+  if (pctDocs >= 100) document.getElementById('limit-bar').style.background = 'var(--danger)';
 
   const {data:escandallos} = await sb.from('escandallos').select('*').eq('restaurante_id', rest.id).order('updated_at', {ascending:false});
     
