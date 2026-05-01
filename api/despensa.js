@@ -1,6 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
-const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+// Admin client para operaciones de datos
+const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+// Auth client para verificar el token del usuario
+const sbAuth = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
 function normalizarNombre(n) {
   return (n || '').toLowerCase()
@@ -14,14 +17,18 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // Auth
-  const token = (req.headers.authorization || '').replace('Bearer ', '');
-  const { data: { user }, error: authError } = await sb.auth.getUser(token);
-  if (authError || !user) return res.status(401).json({ error: 'No autorizado' });
+  try {
+    // Auth — usar el cliente ANON para verificar el token
+    const token = (req.headers.authorization || '').replace('Bearer ', '');
+    if (!token) return res.status(401).json({ error: 'No autorizado' });
 
-  const { data: rest } = await sb.from('restaurantes').select('id').eq('user_id', user.id).maybeSingle();
-  if (!rest) return res.status(404).json({ error: 'Restaurante no encontrado' });
-  const restaurante_id = rest.id;
+    const { data: { user }, error: authError } = await sbAuth.auth.getUser(token);
+    if (authError || !user) return res.status(401).json({ error: 'Sesión inválida o caducada' });
+
+    // Restaurante — usar el cliente admin
+    const { data: rest } = await sb.from('restaurantes').select('id').eq('user_id', user.id).maybeSingle();
+    if (!rest) return res.status(404).json({ error: 'Restaurante no encontrado' });
+    const restaurante_id = rest.id;
 
   // ── GET: listar despensa ──────────────────────────────────────────────
   if (req.method === 'GET') {
@@ -265,4 +272,9 @@ REGLAS:
   }
 
   return res.status(400).json({ error: 'Modo desconocido: ' + mode });
+
+  } catch (err) {
+    console.error('[despensa] Error inesperado:', err);
+    return res.status(500).json({ error: 'Error interno: ' + err.message });
+  }
 }
