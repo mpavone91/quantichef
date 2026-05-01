@@ -1,8 +1,6 @@
-import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 function normalizarNombre(n) {
   return (n || '').toLowerCase()
@@ -87,13 +85,28 @@ REGLAS:
       : [contentBlock, { type: 'text', text: prompt }];
 
     try {
-      const response = await anthropic.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2048,
-        messages: [{ role: 'user', content: messageContent }]
+      const aiResp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 2048,
+          temperature: 0,
+          messages: [{ role: 'user', content: messageContent }]
+        })
       });
 
-      const raw = response.content[0]?.text || '';
+      if (!aiResp.ok) {
+        const errData = await aiResp.json();
+        return res.status(500).json({ error: 'Error de IA: ' + (errData.error?.message || aiResp.status) });
+      }
+
+      const aiData = await aiResp.json();
+      const raw = aiData.content?.[0]?.text || '';
       const first = raw.indexOf('{');
       const last = raw.lastIndexOf('}');
       if (first === -1) return res.status(422).json({ error: 'La IA no pudo leer el documento' });
