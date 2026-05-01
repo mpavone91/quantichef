@@ -1,4 +1,5 @@
 {
+  "outputDirectory": ".",
   "rewrites": [
     { "source": "/dashboard", "destination": "/dashboard.html" },
     { "source": "/escandallo", "destination": "/escandallo.html" },
