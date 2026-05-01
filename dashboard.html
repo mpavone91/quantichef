@@ -198,7 +198,8 @@
     
     .sidebar { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; flex-direction: row; padding: 0 10px; z-index: 100; border-top: 1px solid rgba(0,0,0,0.05); justify-content: space-around; background: var(--surface); box-shadow: 0 -4px 20px rgba(0,0,0,0.04); }
     .sidebar-header, .nav-item span, .sidebar-footer { display: none; }
-    .nav-menu { flex-direction: row; width: 100%; justify-content: space-around; align-items: center; padding: 0; }
+    .nav-group, .limit-widget, .nav-item.disabled { display: none !important; }
+    .nav-menu { flex-direction: row; width: 100%; justify-content: space-around; align-items: center; padding: 0; overflow-y: hidden; }
     .nav-item { padding: 14px; margin: 0; border-radius: 14px; color: var(--text3); }
     .nav-item.active { box-shadow: none; background: var(--accent-light); color: var(--accent); }
     
@@ -648,7 +649,7 @@ async function init(){
 async function cargarDatos(session){
   let rest = null; let intentos = 0; const maxIntentos = 5;
   while (!rest && intentos < maxIntentos) {
-    const { data } = await sb.from('restaurantes').select('id,nombre,plan').eq('user_id', session.user.id).maybeSingle();
+    const { data } = await sb.from('restaurantes').select('id,nombre,plan,documentos_subidos').eq('user_id', session.user.id).maybeSingle();
     if (data) { rest = data; break; }
     intentos++;
     if (intentos < maxIntentos) await new Promise(r => setTimeout(r, 800 * intentos));
@@ -664,10 +665,10 @@ async function cargarDatos(session){
   document.getElementById('plan-banner').style.display = esPremium ? 'none' : 'flex';
   document.getElementById('btn-suscripcion-nav').style.display = esPremium ? 'inline-block' : 'none';
   
-  // Widget de límites (Simulado por ahora)
+  // Widget de límites (Conectado a BD)
   const maxDocs = esPremium ? 150 : 50;
-  const currDocs = Math.floor(Math.random() * (maxDocs * 0.8)); // Simulación realista
-  const pctDocs = (currDocs / maxDocs) * 100;
+  const currDocs = rest.documentos_subidos || 0;
+  const pctDocs = Math.min((currDocs / maxDocs) * 100, 100);
   document.getElementById('limit-widget').style.display = 'block';
   document.getElementById('limit-text').textContent = `${currDocs} / ${maxDocs}`;
   document.getElementById('limit-bar').style.width = `${pctDocs}%`;
@@ -1156,92 +1157,6 @@ async function añadirStockManual() {
 
 let ventasAProcesar = [];
 
-<<<<<<< HEAD
-  for (const ing of ings) {
-    const merma = Math.min(parseFloat(ing.m) || 0, 99) / 100;
-    let cantBase = parseFloat(ing.q) || 0;
-    // Normalizar a unidad base (kg/l)
-    if (ing.u === 'g' || ing.u === 'ml') cantBase /= 1000;
-    const cantBruta = merma > 0 ? (cantBase / (1 - merma)) * raciones : cantBase * raciones;
-
-    const norm = normalizarNombre(ing.n);
-    const item = stockData.find(s => s.nombre_normalizado === norm);
-    if (!item) continue;
-
-    const nuevaCantidad = Math.max(0, item.cantidad_actual - cantBruta);
-    await sb.from('inventario_stock').update({ cantidad_actual: nuevaCantidad, updated_at: new Date().toISOString() }).eq('id', item.id);
-    item.cantidad_actual = nuevaCantidad;
-  }
-}
-
-// ── TPV: SUBIR TICKET DE VENTAS ──
-async function handleTPVUpload(e) {
-  if (!e.target.files.length) return;
-  const file = e.target.files[0];
-  e.target.value = '';
-
-  switchTab('precios', document.querySelectorAll('.nav-item')[2]);
-  switchAlmacenTab('existencias', document.getElementById('subtab-existencias'));
-  document.getElementById('tpv-loading').style.display = 'flex';
-  document.getElementById('tpv-review').style.display = 'none';
-
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = async () => {
-    try {
-      const { data: { session } } = await sb.auth.getSession();
-      const resp = await fetch('/api/stock-tpv', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (session?.access_token || '') },
-        body: JSON.stringify({ file_base64: reader.result.split(',')[1], file_type: file.name.split('.').pop().toLowerCase() })
-      });
-      const data = await resp.json();
-      document.getElementById('tpv-loading').style.display = 'none';
-      if (!resp.ok || !data.ventas) { alert(data.error || 'No se pudieron detectar ventas en el ticket'); return; }
-      renderTPVReview(data.ventas);
-    } catch(err) {
-      document.getElementById('tpv-loading').style.display = 'none';
-      alert('Error de conexión al procesar el ticket TPV');
-    }
-  };
-}
-
-function renderTPVReview(ventas) {
-  tpvVentasData = ventas;
-  document.getElementById('tpv-review-body').innerHTML = ventas.map((v, i) => `
-    <div style="display:grid;grid-template-columns:2fr auto;gap:10px;align-items:center;padding:1rem;background:white;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 4px rgba(0,0,0,0.02);margin-bottom:8px;transition:all 0.2s;">
-      <div>
-        <div style="font-weight:700;font-size:14px;color:var(--text);margin-bottom:4px;">${v.nombre_plato}</div>
-        <div style="font-size:11px;color:var(--text3);font-weight:500;">Ajusta las raciones si es necesario</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <input type="number" min="0" step="1" value="${v.raciones}" style="width:70px;padding:8px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-weight:700;font-family:'Fraunces',serif;font-size:1.1rem;color:var(--accent);" onchange="tpvVentasData[${i}].raciones=parseInt(this.value)||0">
-        <span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;">raciones</span>
-      </div>
-    </div>`).join('');
-  document.getElementById('tpv-review').style.display = 'block';
-}
-
-function cancelarTPV() {
-  document.getElementById('tpv-review').style.display = 'none';
-  tpvVentasData = [];
-}
-
-async function confirmarVentasTPV() {
-  if (!tpvVentasData.length) return;
-  const btn = document.querySelector('#tpv-review button[onclick="confirmarVentasTPV()"]');
-  if (btn) { btn.textContent = 'Descontando...'; btn.disabled = true; }
-
-  const { data: escandallosList } = await sb.from('escandallos').select('id,nombre_plato').eq('restaurante_id', restauranteId);
-  let procesados = 0, noEncontrados = [];
-
-  for (const venta of tpvVentasData) {
-    if (!venta.raciones || venta.raciones <= 0) continue;
-    const normVenta = normalizarNombre(venta.nombre_plato);
-    const esc = (escandallosList || []).find(e => {
-      const normEsc = normalizarNombre(e.nombre_plato);
-      return normEsc === normVenta || normEsc.includes(normVenta) || normVenta.includes(normEsc);
-=======
 function abrirModalVentas() {
   ventasAProcesar = [];
   renderVentasManuales();
@@ -1255,7 +1170,6 @@ function abrirModalVentas() {
       opt.textContent = e.nombre_plato;
       opt.dataset.nombre = e.nombre_plato;
       selectPlato.appendChild(opt);
->>>>>>> 7cbc37f2dc4bac24740fa2b4df50714b1172820a
     });
   }
 }
