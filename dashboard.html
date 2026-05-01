@@ -121,6 +121,10 @@
   .card-del{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
   .card-del:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
   .card-checkbox { display:none; margin-right:5px; }
+  
+  /* GRID MANUAL STOCK (Escritorio) */
+  .new-stock-grid { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px; align-items: end; }
+  .new-stock-grid-row { display: contents; }
 
   /* RANKING */
   .ranking-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02);}
@@ -482,22 +486,32 @@
           </div>
         </div>
 
+        <!-- NUEVO PANEL DE ACCIONES DE STOCK -->
+        <div style="display:flex; gap:16px; margin-bottom:1.5rem; flex-wrap:wrap;">
+          <button onclick="document.getElementById('upload-stock').click()" style="flex:1; min-width:200px; display:flex; align-items:center; justify-content:center; gap:10px; background:white; color:var(--text); border:1px solid var(--border); padding:16px; border-radius:12px; cursor:pointer; font-weight:700; font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,0.02); transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)';" onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text)';">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Subir Documento (Albarán / Inventario)
+          </button>
+          <input type="file" id="upload-stock" accept=".pdf,image/*,.csv" style="display:none" onchange="handleStockUpload(event)">
+          
+          <button onclick="abrirModalVentas()" style="flex:1; min-width:200px; display:flex; align-items:center; justify-content:center; gap:10px; background:var(--gold); color:white; border:none; padding:16px; border-radius:12px; cursor:pointer; font-weight:700; font-size:14px; box-shadow:0 4px 12px rgba(196,148,58,.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            Descontar Ventas (TPV)
+          </button>
+        </div>
+
         <div class="section-title section-title-mobile-col" style="justify-content:space-between; margin-bottom:1.5rem;">
           <div style="display:flex;align-items:center;gap:8px;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            STOCK ACTUAL
+            INVENTARIO ACTUAL
           </div>
-          <button onclick="abrirModalVentas()" style="font-size:13px;font-weight:700;background:var(--gold);color:white;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(196,148,58,.25);">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-            Descontar Ventas (TPV)
-          </button>
         </div>
 
         <div id="stock-lista">
           <div style="padding:3rem;text-align:center;color:var(--text3);border:1.5px dashed var(--border);border-radius:12px;background:white;">
             <div style="font-size:2rem;margin-bottom:.5rem;">📦</div>
             <div style="font-weight:600;margin-bottom:.4rem;">Sin stock registrado</div>
-            <div style="font-size:13px;">Sube un albarán y rellena las <em>cantidades recibidas</em> para trackear tu inventario.</div>
+            <div style="font-size:13px;">Sube un documento de inventario o añade artículos manualmente.</div>
           </div>
         </div>
 
@@ -506,28 +520,26 @@
              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
              Añadir artículo manualmente
           </div>
-          <div class="new-stock-grid" style="display:flex; flex-wrap:wrap; gap:16px;">
-            <div style="flex:1; min-width:200px;">
+          <div class="new-stock-grid">
+            <div>
               <label style="font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:6px;">NOMBRE DEL ARTÍCULO</label>
-              <input type="text" id="new-stock-name" placeholder="Ej: Harina de trigo" class="form-input" style="padding:12px;border-radius:10px;">
+              <input type="text" id="new-stock-name" placeholder="Ej: Harina de trigo" class="form-input" style="padding:12px;border-radius:10px; height:45px;">
             </div>
-            <div class="new-stock-grid-row" style="flex:1; min-width:100px; display:flex; gap:16px;">
+            <div class="new-stock-grid-row" style="display:flex; gap:12px;">
               <div style="flex:1;">
-                <label style="font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:6px;">CANT. INICIAL</label>
-                <input type="number" id="new-stock-qty" step="0.01" placeholder="0.00" class="form-input" style="padding:12px;border-radius:10px;">
+                <label style="font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:6px;">CANTIDAD</label>
+                <input type="number" id="new-stock-qty" step="0.01" placeholder="0.00" class="form-input" style="padding:12px;border-radius:10px; height:45px;">
               </div>
               <div style="flex:1;">
                 <label style="font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:6px;">UNIDAD</label>
                 <select id="new-stock-unit" class="form-input" style="padding:12px;border-radius:10px;height:45px;"><option value="kg">kg</option><option value="l">litros</option><option value="ud">uds</option></select>
               </div>
             </div>
-            <div style="flex:1; min-width:150px;">
+            <div>
               <label style="font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:6px;">ALERTA MÍNIMO</label>
-              <input type="number" id="new-stock-min" step="0.01" placeholder="Ej: 5.0" class="form-input" style="padding:12px;border-radius:10px;">
+              <input type="number" id="new-stock-min" step="0.01" placeholder="Ej: 5.0" class="form-input" style="padding:12px;border-radius:10px; height:45px;">
             </div>
-          </div>
-          <div style="margin-top:16px; text-align:right;">
-             <button class="btn-fill" onclick="añadirStockManual()" style="height:45px;padding:0 24px;border-radius:10px; font-weight:600; box-shadow:0 4px 12px rgba(30,77,43,.2);">Añadir al Stock</button>
+            <button class="btn-fill" onclick="añadirStockManual()" style="height:45px;padding:0 24px;border-radius:10px; font-weight:600; box-shadow:0 4px 12px rgba(30,77,43,.2);">Añadir al Stock</button>
           </div>
         </div>
 
@@ -1318,19 +1330,183 @@ async function procesarVentasManuales() {
   }
 }
 
-async function handleTPVUpload(e) {
+// ── OCR DE INVENTARIO CON ANTHROPIC ──
+let stockExtraidoGlobal = [];
+
+async function handleStockUpload(e) {
   const file = e.target.files[0];
   if(!file) return;
-  e.target.value = '';
-  const loading = document.getElementById('ticket-loading');
-  if(loading) loading.style.display = 'flex';
-  setTimeout(() => {
+  
+  const loading = document.getElementById('loading');
+  if(loading) {
+    loading.innerHTML = '<div class="spinner"></div>Analizando documento de stock con IA...';
+    loading.style.display = 'flex';
+  }
+
+  try {
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const base64 = ev.target.result.split(',')[1];
+      let ext = file.name.split('.').pop().toLowerCase();
+      if(ext === 'jpg') ext = 'jpeg';
+
+      const res = await fetch('/api/extract-stock', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + (await sb.auth.getSession()).data.session.access_token
+        },
+        body: JSON.stringify({
+          file_base64: base64,
+          file_type: ext,
+          file_name: file.name
+        })
+      });
+
+      const data = await res.json();
+      if(loading) loading.style.display = 'none';
+      e.target.value = '';
+
+      if(data.error) {
+        alert("Error de IA: " + data.error);
+        return;
+      }
+
+      if(data.items && data.items.length > 0) {
+        stockExtraidoGlobal = data.items;
+        abrirModalVerificacionStock(data.items);
+      } else {
+        alert("No se detectaron artículos de inventario en el documento.");
+      }
+    };
+    reader.readAsDataURL(file);
+  } catch(err) {
     if(loading) loading.style.display = 'none';
-    alert("Función IA de TPV en desarrollo. Para la fase 1, añade las ventas manualmente.");
-  }, 2000);
+    alert("Error de subida: " + err.message);
+  }
+}
+
+function abrirModalVerificacionStock(items) {
+  const tbody = document.getElementById('tbody-verificacion-stock');
+  tbody.innerHTML = items.map((item, i) => `
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:10px;"><input type="text" id="verif-nombre-${i}" value="${item.ingrediente_normalizado || item.nombre}" style="width:100%; border:1px solid var(--border); padding:6px; border-radius:6px; font-size:12px;"></td>
+      <td style="padding:10px;"><input type="number" step="0.01" id="verif-qty-${i}" value="${item.cantidad}" style="width:100%; border:1px solid var(--border); padding:6px; border-radius:6px; font-size:12px; text-align:right;"></td>
+      <td style="padding:10px;"><input type="text" id="verif-unit-${i}" value="${item.unidad}" style="width:100%; border:1px solid var(--border); padding:6px; border-radius:6px; font-size:12px;"></td>
+      <td style="padding:10px; text-align:center;"><button onclick="this.closest('tr').remove()" style="background:none; border:none; color:var(--danger); cursor:pointer;">✖</button></td>
+    </tr>
+  `).join('');
+  
+  document.getElementById('modal-verificacion-stock').classList.add('visible');
+}
+
+async function confirmarStockExtraido() {
+  const btn = document.getElementById('btn-confirm-stock');
+  btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Guardando...';
+  btn.disabled = true;
+
+  try {
+    const rows = document.querySelectorAll('#tbody-verificacion-stock tr');
+    const itemsAGuardar = [];
+    
+    rows.forEach((tr, i) => {
+      const nombreInput = tr.querySelector(`input[id^="verif-nombre-"]`);
+      const qtyInput = tr.querySelector(`input[id^="verif-qty-"]`);
+      const unitInput = tr.querySelector(`input[id^="verif-unit-"]`);
+      
+      if(nombreInput && qtyInput && unitInput) {
+        itemsAGuardar.push({
+          nombre: nombreInput.value.trim(),
+          cantidad: parseFloat(qtyInput.value) || 0,
+          unidad: unitInput.value.trim().toLowerCase()
+        });
+      }
+    });
+
+    if(itemsAGuardar.length === 0) {
+      alert("No hay artículos para guardar.");
+      btn.innerHTML = 'Confirmar y Añadir a Stock';
+      btn.disabled = false;
+      return;
+    }
+
+    // Insertar/actualizar en DB (Lógica similar a añadirStockManual, pero iterativa)
+    // Para simplificar, hacemos un bucle. En producción se usaría un UPSERT masivo o RPC.
+    let count = 0;
+    for(const item of itemsAGuardar) {
+      const norm = normalizarNombre(item.nombre);
+      const { data: existente } = await sb.from('inventario_stock').select('*').eq('restaurante_id', restauranteId).eq('nombre_normalizado', norm).single();
+      
+      if (existente) {
+        await sb.from('inventario_stock').update({
+          cantidad_actual: existente.cantidad_actual + item.cantidad,
+          updated_at: new Date().toISOString()
+        }).eq('id', existente.id);
+      } else {
+        await sb.from('inventario_stock').insert({
+          restaurante_id: restauranteId,
+          nombre_ingrediente: item.nombre,
+          nombre_normalizado: norm,
+          cantidad_actual: item.cantidad,
+          unidad_medida: item.unidad,
+          stock_minimo: 0,
+          updated_at: new Date().toISOString()
+        });
+      }
+      count++;
+    }
+
+    document.getElementById('modal-verificacion-stock').classList.remove('visible');
+    
+    // Mostrar mensaje de éxito
+    document.getElementById('status-icon').innerHTML = `<span style="font-size:22px">✓</span>`;
+    document.getElementById('status-icon').style.background = 'var(--accent-light)';
+    document.getElementById('status-title').textContent = "Stock Actualizado";
+    document.getElementById('status-title').style.color = 'var(--accent)';
+    document.getElementById('status-message').textContent = `Se han añadido ${count} artículos a tu almacén desde el documento.`;
+    document.getElementById('modal-status').classList.add('visible');
+    
+    cargarStock();
+
+  } catch(e) {
+    alert("Error al guardar stock: " + e.message);
+  } finally {
+    btn.innerHTML = 'Confirmar y Añadir a Stock';
+    btn.disabled = false;
+  }
 }
 
 init();
 </script>
+
+<!-- MODAL VERIFICACIÓN STOCK OCR -->
+<div class="modal-overlay" id="modal-verificacion-stock" onclick="this.classList.remove('visible')">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:600px; padding:2rem;">
+    <h3 style="margin-bottom:8px;">Verificación de Inventario IA</h3>
+    <p style="font-size:13px; color:var(--text3); margin-bottom:1.5rem; line-height:1.5;">Revisa las cantidades extraídas del documento antes de sumarlas al stock actual.</p>
+    
+    <div style="max-height:300px; overflow-y:auto; margin-bottom:1.5rem; text-align:left;">
+      <table style="width:100%; border-collapse:collapse; font-size:13px;">
+        <thead>
+          <tr style="background:var(--surface2); border-bottom:1px solid var(--border); text-align:left;">
+            <th style="padding:10px; font-weight:700; color:var(--text3);">Ingrediente</th>
+            <th style="padding:10px; font-weight:700; color:var(--text3); text-align:right;">Cant. Nueva</th>
+            <th style="padding:10px; font-weight:700; color:var(--text3);">Unidad</th>
+            <th style="padding:10px;"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody-verificacion-stock">
+          <!-- Dinámico -->
+        </tbody>
+      </table>
+    </div>
+    
+    <div style="display:flex; gap:12px; justify-content:flex-end;">
+      <button onclick="document.getElementById('modal-verificacion-stock').classList.remove('visible')" style="padding:10px 16px; background:none; border:1px solid var(--border); border-radius:8px; cursor:pointer; font-weight:600; color:var(--text2);">Cancelar</button>
+      <button id="btn-confirm-stock" onclick="confirmarStockExtraido()" style="padding:10px 20px; background:var(--accent); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:700; display:flex; align-items:center; gap:8px;">Confirmar y Añadir a Stock</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
