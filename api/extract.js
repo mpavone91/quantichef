@@ -145,6 +145,14 @@ export default async function handler(req, res) {
       }`;
     }
 
+    // Si el content_block es de tipo texto (CSV/TXT), fusionamos todo en un solo bloque
+    let messageContent;
+    if (content_block.type === 'text') {
+      messageContent = [{ type: 'text', text: content_block.text + '\n\n' + promptDinamico }];
+    } else {
+      messageContent = [content_block, { type: 'text', text: promptDinamico }];
+    }
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -153,17 +161,11 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 8192,
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 4096,
         messages: [{
           role: 'user',
-          content: [
-            content_block,
-            {
-              type: 'text',
-              text: promptDinamico
-            }
-          ]
+          content: messageContent
         }]
       })
     });

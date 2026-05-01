@@ -88,26 +88,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Formato no soportado.' });
     }
 
-    // Seleccionamos el Prompt según de dónde venga la foto
-    let promptDinamico = "";
-
-    if (isLabelScan) {
-      // PROMPT PARA ESCANEAR RECETAS / ETIQUETAS (Desde el escandallo)
-      promptDinamico = `Eres un asistente experto para chefs profesionales. 
-      Te voy a pasar una foto de una receta escrita, una etiqueta de un producto o una ficha técnica. 
-      Tu trabajo es:
-      1. Extraer los ingredientes con su cantidad y unidad. (Si no hay cantidad, pon 0 y unidad "ud").
-      2. Detectar los alérgenos presentes. Opciones válidas estrictas: "Gluten", "Crustáceos", "Huevos", "Pescado", "Cacahuetes", "Soja", "Lácteos", "Frutos secos", "Apio", "Mostaza", "Sésamo", "Sulfitos", "Altramuces", "Moluscos".
-      
-      Devuelve ÚNICAMENTE un JSON válido con esta estructura estricta y sin texto fuera del JSON:
-      {
-        "ingredientes": [
-          { "nombre": "Harina de trigo", "cantidad": 500, "unidad": "g" }
-        ],
-        "alergenos": ["Gluten"]
-      }`;
-      // PROMPT PARA ALBARANES / LISTAS DE STOCK (Desde el Dashboard - Inventario)
-      promptDinamico = `Eres un asistente experto en logística de restaurantes. Analiza este documento (lista de inventario, albarán de entrega o recuento de stock) y extrae TODOS los productos alimentarios con sus cantidades y unidades actuales.
+    // PROMPT PARA INVENTARIO / STOCK
+    const promptDinamico = `Eres un asistente experto en logística de restaurantes. Analiza este documento (lista de inventario, albarán de entrega o recuento de stock) y extrae TODOS los productos alimentarios con sus cantidades y unidades actuales.
 
       Para cada producto, devuelve:
       - nombre: el nombre del producto tal como aparece
@@ -131,6 +113,14 @@ export default async function handler(req, res) {
           }
         ]
       }`;
+
+    // Si el content_block es de tipo texto (CSV/TXT), fusionamos todo en un solo bloque de texto
+    // para evitar enviar dos bloques de tipo 'text' que confunden a la API
+    let messageContent;
+    if (content_block.type === 'text') {
+      messageContent = [{ type: 'text', text: content_block.text + '\n\n' + promptDinamico }];
+    } else {
+      messageContent = [content_block, { type: 'text', text: promptDinamico }];
     }
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -141,17 +131,11 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 8192,
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 4096,
         messages: [{
           role: 'user',
-          content: [
-            content_block,
-            {
-              type: 'text',
-              text: promptDinamico
-            }
-          ]
+          content: messageContent
         }]
       })
     });

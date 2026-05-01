@@ -977,7 +977,53 @@ async function añadirPrecioManual() {
 // ── EXTRACCIONES Y ALBARANES ──
 function abrirSubidaRecetas() { if (!esPremium) { window.location.href = '/precios'; return; } document.getElementById('file-input-recetas').click(); }
 async function handleRecetasUpload(e){ if(e.target.files.length > 0) processRecetasFile(e.target.files[0]); }
-async function processRecetasFile(file) { }
+async function processRecetasFile(file) {
+  const loading = document.getElementById('extract-loading');
+  const loadingText = document.getElementById('loading-text-dynamic');
+  if(loading) { loading.style.display = 'flex'; }
+  if(loadingText) { loadingText.textContent = 'Estamos leyendo tu recetario, puede tomar unos minutos...'; }
+
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async () => {
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      const base64 = reader.result.split(',')[1];
+      const ext = file.name.split('.').pop().toLowerCase();
+
+      const resp = await fetch('/api/extract-recipe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + (session?.access_token || '')
+        },
+        body: JSON.stringify({
+          file_base64: base64,
+          file_type: ext,
+          restaurante_id: restauranteId
+        })
+      });
+
+      const data = await resp.json();
+      if(loading) loading.style.display = 'none';
+
+      if (!resp.ok) {
+        alert(data.error || 'Error al procesar el recetario');
+        return;
+      }
+
+      if (data.success) {
+        alert(`✅ ¡Listo! Se importaron ${data.cantidad} platos correctamente.${data.errores ? '\n⚠️ Errores en: ' + data.errores.join(', ') : ''}`);
+        location.reload();
+      } else {
+        alert(data.error || 'No se pudieron importar los platos.');
+      }
+    } catch(err) {
+      if(loading) loading.style.display = 'none';
+      alert('Error de conexión al importar recetas.');
+    }
+  };
+}
 
 async function handleFileUpload(e){ if(e.target.files.length > 0) processFile(e.target.files[0]); }
 async function processFile(file){

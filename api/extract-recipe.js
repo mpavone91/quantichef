@@ -203,6 +203,13 @@ Tu trabajo es interpretar la estructura como lo haría un humano, sea cual sea e
 
 Devuelve SOLO JSON válido sin texto adicional ni bloques de código markdown:
 {"platos":[{"nombre":"...","cat":"Principal","pvp":14.50,"raciones":1,"ingredientes":[{"n":"...","q":200,"u":"g","p":4.80}]}]}`;
+    // Si es un archivo de texto (CSV), fusionar el contenido y el prompt en un solo bloque
+    let messageContent;
+    if (contentBlock.type === 'text') {
+        messageContent = [{ type: 'text', text: contentBlock.text + '\n\n' + prompt }];
+    } else {
+        messageContent = [contentBlock, { type: 'text', text: prompt }];
+    }
 
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -212,15 +219,12 @@ Devuelve SOLO JSON válido sin texto adicional ni bloques de código markdown:
             'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-            model: 'claude-sonnet-4-6',
-            max_tokens: 8192,
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 4096,
             temperature: 0,
             messages: [{
                 role: 'user',
-                content: [
-                    contentBlock,
-                    { type: 'text', text: prompt }
-                ]
+                content: messageContent
             }]
         })
     });
