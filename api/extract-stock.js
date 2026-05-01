@@ -141,8 +141,8 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001', // He puesto el modelo real de Haiku para evitar fallos de API
-        max_tokens: 4096,
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: 8192,
         messages: [{
           role: 'user',
           content: [
@@ -168,11 +168,12 @@ export default async function handler(req, res) {
     let parsed;
     try {
       parsed = JSON.parse(clean_text);
-    } catch {
+    } catch (e) {
       return res.status(200).json({
         error: 'No se pudo interpretar el documento. Asegúrate de que es un albarán, receta o etiqueta legible.',
         raw: raw_text
       });
+    }
     // Incrementar contador si todo fue bien (y no es un error de formato de Anthropic)
     await supabase.from('restaurantes').update({ documentos_subidos: docsSubidos + 1 }).eq('id', rest.id);
 
