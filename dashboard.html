@@ -97,13 +97,29 @@
   .pro-banner{background:var(--accent-light);border:1px solid var(--accent-mint);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap}
   .pro-badge{display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px}
 
-  .dashboard-kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 2rem; }
-  .kpi-card { background: linear-gradient(to bottom right, #ffffff, #fafaf8); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;}
-  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(30,77,43,0.06); border-color: var(--accent-mint); }
-  .kpi-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  /* ── KPI GRID (siempre visible, 6 métricas) ── */
+  .dashboard-kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 2rem; }
+  .kpi-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem 1.4rem; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; position: relative; overflow: hidden; }
+  .kpi-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0) 60%, rgba(30,77,43,0.03) 100%); pointer-events: none; }
+  .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(30,77,43,0.08); border-color: var(--accent-mint); }
+  .kpi-icon { width: 46px; height: 46px; border-radius: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .kpi-content { flex: 1; min-width: 0; }
-  .kpi-label { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .kpi-value { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 300; color: var(--text); }
+  .kpi-label { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kpi-value { font-family: 'Fraunces', serif; font-size: 1.55rem; font-weight: 300; color: var(--text); line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+  /* ── BOTONES DE ACCIÓN PREMIUM (universales) ── */
+  .action-bar { display: flex; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .btn-action-primary { flex: 1; min-width: 180px; display: flex; align-items: center; justify-content: center; gap: 9px; background: var(--accent); color: white; border: none; padding: 13px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; box-shadow: 0 4px 14px rgba(30,77,43,.25); transition: all 0.2s; letter-spacing: 0.01em; }
+  .btn-action-primary:hover { background: var(--accent-mid); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(30,77,43,.3); }
+  .btn-action-secondary { flex: 1; min-width: 180px; display: flex; align-items: center; justify-content: center; gap: 9px; background: white; color: var(--text); border: 1.5px solid var(--border); padding: 13px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s; letter-spacing: 0.01em; }
+  .btn-action-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(30,77,43,.08); }
+  .btn-action-gold { flex: 1; min-width: 180px; display: flex; align-items: center; justify-content: center; gap: 9px; background: linear-gradient(135deg, var(--gold) 0%, #D4A542 100%); color: white; border: none; padding: 13px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; box-shadow: 0 4px 14px rgba(196,148,58,.35); transition: all 0.2s; }
+  .btn-action-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(196,148,58,.4); }
+  .btn-action-sm { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 9px; cursor: pointer; font-weight: 700; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s; border: 1.5px solid var(--border); background: white; color: var(--text); }
+  .btn-action-sm:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-action-sm.green { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 3px 10px rgba(30,77,43,.2); }
+  .btn-action-sm.green:hover { background: var(--accent-mid); }
 
   .section-title{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:8px; justify-content: space-between;}
   .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
@@ -240,10 +256,13 @@
     .section-title-mobile-col button { width: 100%; justify-content: center; padding: 12px !important; font-size: 14px !important; }
 
     #tpv-review-body { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom:10px; }
-    .dashboard-kpi-grid { grid-template-columns: 1fr 1fr; gap:10px; }
-    .kpi-card { padding: 1rem; flex-direction: column; align-items: flex-start; gap: 8px; }
-    .kpi-icon { width: 36px; height: 36px; border-radius: 10px; }
-    .kpi-value { font-size: 1.4rem; }
+    .dashboard-kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .kpi-card { padding: 1rem; gap: 10px; }
+    .kpi-icon { width: 38px; height: 38px; border-radius: 10px; }
+    .kpi-value { font-size: 1.35rem; }
+    .kpi-sub { display: none; }
+    .action-bar { flex-direction: column; }
+    .btn-action-primary, .btn-action-secondary, .btn-action-gold { min-width: unset; width: 100%; }
   }
 </style>
 </head>
@@ -333,12 +352,13 @@
           <p class="welcome-sub" style="font-size: 13px;">Aquí tienes el estado actual de tu rentabilidad.</p>
         </div>
 
-        <div class="dashboard-kpi-grid" id="dashboard-kpis" style="display:none">
-          <div class="kpi-card" onclick="switchTab('precios', document.querySelectorAll('.nav-item')[2]); switchAlmacenTab('existencias', document.getElementById('subtab-existencias'));">
-            <div class="kpi-icon" style="background:var(--accent-light);color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
+        <div class="dashboard-kpi-grid" id="dashboard-kpis">
+          <div class="kpi-card" onclick="switchTab('stock', document.querySelectorAll('.nav-item')[2])">
+            <div class="kpi-icon" style="background:var(--accent-light);color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
             <div class="kpi-content">
-              <div class="kpi-label">Valor de Almacén</div>
+              <div class="kpi-label">Valor de Stock</div>
               <div class="kpi-value" id="dash-val-almacen">—</div>
+              <div class="kpi-sub">en almacén</div>
             </div>
           </div>
           <div class="kpi-card">
@@ -346,6 +366,7 @@
             <div class="kpi-content">
               <div class="kpi-label">Mermas / Pérdidas</div>
               <div class="kpi-value" id="dash-val-merma">—</div>
+              <div class="kpi-sub">estimadas</div>
             </div>
           </div>
           <div class="kpi-card">
@@ -353,13 +374,31 @@
             <div class="kpi-content">
               <div class="kpi-label">Food Cost Medio</div>
               <div class="kpi-value" id="dash-val-fc">—</div>
+              <div class="kpi-sub">sobre precio de venta</div>
             </div>
           </div>
-          <div class="kpi-card" onclick="switchTab('platos', document.querySelectorAll('.nav-item')[1]);">
+          <div class="kpi-card" onclick="switchTab('platos', document.querySelectorAll('.nav-item')[1])">
             <div class="kpi-icon" style="background:var(--surface2);color:var(--text)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
             <div class="kpi-content">
-              <div class="kpi-label">Platos Activos</div>
-              <div class="kpi-value" id="dash-val-platos">—</div>
+              <div class="kpi-label">Platos / Escandallos</div>
+              <div class="kpi-value" id="dash-val-platos">0</div>
+              <div class="kpi-sub">en tu catálogo</div>
+            </div>
+          </div>
+          <div class="kpi-card" onclick="switchTab('stock', document.querySelectorAll('.nav-item')[2])">
+            <div class="kpi-icon" style="background:#EDE9FE;color:#7C3AED"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+            <div class="kpi-content">
+              <div class="kpi-label">Ingredientes</div>
+              <div class="kpi-value" id="dash-val-ingredientes">0</div>
+              <div class="kpi-sub">en inventario</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:#ECFDF5;color:#059669"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+            <div class="kpi-content">
+              <div class="kpi-label">Margen Medio</div>
+              <div class="kpi-value" id="dash-val-margen">—</div>
+              <div class="kpi-sub">sobre precio de venta</div>
             </div>
           </div>
         </div>
@@ -426,14 +465,14 @@
           <button id="btn-toggle-borrado" onclick="toggleModoBorrado('escandallos')" style="font-size:12px; font-weight:600; color:var(--text2); background:white; border:1px solid var(--border); padding:6px 12px; border-radius:8px; cursor:pointer; transition:all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">Seleccionar varios</button>
         </div>
         
-        <div style="display:flex; gap:8px; margin-bottom:1.5rem; flex-wrap:wrap;">
-          <button class="btn-fill" onclick="nuevoEscandallo()" style="font-size:12px; padding:8px 14px; border-radius:8px; display:flex; align-items:center; gap:6px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <div class="action-bar">
+          <button class="btn-action-primary" onclick="nuevoEscandallo()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Nuevo Plato
           </button>
-          <button class="btn-outline" onclick="abrirSubidaRecetas()" style="font-size:12px; padding:8px 14px; border-radius:8px; display:flex; align-items:center; gap:6px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Importar Excel/CSV <span id="dash-upsell-lock" style="font-size:10px;margin-left:4px;">🔒</span>
+          <button class="btn-action-secondary" onclick="abrirSubidaRecetas()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Importar Recetario <span id="dash-upsell-lock" style="font-size:10px;margin-left:4px;">🔒</span>
           </button>
           <input type="file" id="file-input-recetas" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv" onchange="handleRecetasUpload(event)" style="display:none">
         </div>
@@ -448,13 +487,13 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             FACTURAS Y ALBARANES
           </div>
-          <div style="display:flex; gap:8px;">
-            <button onclick="document.getElementById('file-input').click()" style="font-size:13px;font-weight:700;background:var(--accent);color:white;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(30,77,43,.25);">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              Subir Albarán
-            </button>
-            <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleFileUpload(event)" style="display:none">
-          </div>
+        <div class="action-bar">
+          <button class="btn-action-primary" onclick="document.getElementById('file-input').click()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Subir Albarán / Factura
+          </button>
+          <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleFileUpload(event)" style="display:none">
+        </div>
         </div>
 
         <div class="review-wrap" id="review-wrap" style="display:none;">
@@ -494,16 +533,14 @@
           </div>
         </div>
 
-        <!-- NUEVO PANEL DE ACCIONES DE STOCK -->
-        <div style="display:flex; gap:16px; margin-bottom:1.5rem; flex-wrap:wrap;">
-          <button onclick="document.getElementById('upload-stock').click()" style="flex:1; min-width:200px; display:flex; align-items:center; justify-content:center; gap:10px; background:white; color:var(--text); border:1px solid var(--border); padding:16px; border-radius:12px; cursor:pointer; font-weight:700; font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,0.02); transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)';" onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text)';">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div class="action-bar">
+          <button class="btn-action-secondary" onclick="document.getElementById('upload-stock').click()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             Subir Documento (Albarán / Inventario)
           </button>
           <input type="file" id="upload-stock" accept=".pdf,image/*,.csv" style="display:none" onchange="handleStockUpload(event)">
-          
-          <button onclick="abrirModalVentas()" style="flex:1; min-width:200px; display:flex; align-items:center; justify-content:center; gap:10px; background:var(--gold); color:white; border:none; padding:16px; border-radius:12px; cursor:pointer; font-weight:700; font-size:14px; box-shadow:0 4px 12px rgba(196,148,58,.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          <button class="btn-action-gold" onclick="abrirModalVentas()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
             Descontar Ventas (TPV)
           </button>
         </div>
@@ -740,18 +777,21 @@ function fmt(n){return Number(n).toLocaleString('es-ES',{minimumFractionDigits:2
 
 // RENDERIZADO DE STATS Y LISTA DE ESCANDALLOS
 function renderStats(lista){
-  document.getElementById('dash-val-platos').textContent = lista.length;
+  document.getElementById('dash-val-platos').textContent = lista.length || 0;
   const conPrecioReal = lista.filter(e => parseFloat(e.precio_carta) > 0 && parseFloat(e.coste_racion) > 0);
   const statFcEl = document.getElementById('dash-val-fc');
+  const statMargenEl = document.getElementById('dash-val-margen');
 
   if (conPrecioReal.length > 0) {
     const costeTotal = conPrecioReal.reduce((acc, e) => acc + parseFloat(e.coste_racion), 0);
     const ventaTotal = conPrecioReal.reduce((acc, e) => acc + parseFloat(e.precio_carta), 0);
     const fcMedioReal = (costeTotal / ventaTotal) * 100;
     statFcEl.textContent = fcMedioReal.toFixed(1) + '%';
+    if (statMargenEl) statMargenEl.textContent = (100 - fcMedioReal).toFixed(1) + '%';
   } else {
     const fcs = lista.filter(e => e.food_cost_pct > 0).map(e => e.food_cost_pct);
     statFcEl.textContent = fcs.length > 0 ? (fcs.reduce((a,b) => a+b, 0) / fcs.length).toFixed(1) + '%' : '—';
+    if (statMargenEl) statMargenEl.textContent = '—';
   }
 }
 
@@ -1158,7 +1198,9 @@ function renderStock(stock) {
   }
 
   const dashValAlmacen = document.getElementById('dash-val-almacen');
-  if (dashValAlmacen && valorTotal > 0) dashValAlmacen.textContent = fmt(valorTotal);
+  if (dashValAlmacen) dashValAlmacen.textContent = valorTotal > 0 ? fmt(valorTotal) : '0,00€';
+  const dashValIngredientes = document.getElementById('dash-val-ingredientes');
+  if (dashValIngredientes) dashValIngredientes.textContent = stock.length;
 
   container.innerHTML = stock.map(s => {
     const tieneMin = s.stock_minimo > 0;
