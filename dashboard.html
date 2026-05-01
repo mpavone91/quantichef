@@ -213,6 +213,14 @@
   .modal-overlay.visible { display:flex; }
   .modal { background:var(--surface); border-radius:16px; padding:2.5rem 2rem; max-width:420px; width:100%; text-align:center; animation:fadeIn .2s ease; position:relative; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
 
+  /* --- OVERLAY GLOBAL DE CARGA IA --- */
+  #global-ai-loading { display:none; position:fixed; inset:0; background:rgba(255,255,255,0.85); backdrop-filter:blur(6px); z-index:8888; align-items:center; justify-content:center; flex-direction:column; gap:16px; }
+  #global-ai-loading.visible { display:flex; }
+  .global-loading-box { background:white; border:1px solid var(--accent-mint); border-radius:20px; padding:2rem 2.5rem; text-align:center; box-shadow:0 20px 60px rgba(30,77,43,0.12); max-width:340px; }
+  .global-loading-spinner { width:44px; height:44px; border:3px solid var(--accent-light); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 1rem; }
+  .global-loading-title { font-family:'Fraunces',serif; font-size:1.15rem; font-weight:500; color:var(--text); margin-bottom:6px; }
+  .global-loading-sub { font-size:13px; color:var(--text3); line-height:1.5; }
+
   /* MÓVIL (Versión Premium) */
   @media (max-width: 768px) {
     body { flex-direction: column; }
@@ -1018,10 +1026,7 @@ async function añadirPrecioManual() {
 function abrirSubidaRecetas() { if (!esPremium) { window.location.href = '/precios'; return; } document.getElementById('file-input-recetas').click(); }
 async function handleRecetasUpload(e){ if(e.target.files.length > 0) processRecetasFile(e.target.files[0]); }
 async function processRecetasFile(file) {
-  const loading = document.getElementById('extract-loading');
-  const loadingText = document.getElementById('loading-text-dynamic');
-  if(loading) { loading.style.display = 'flex'; }
-  if(loadingText) { loadingText.textContent = 'Estamos leyendo tu recetario, puede tomar unos minutos...'; }
+  showAILoading('Analizando tu recetario...<br>Esto puede tardar hasta 1 minuto.');
 
   const reader = new FileReader();
   reader.readAsDataURL(file);
@@ -1045,7 +1050,7 @@ async function processRecetasFile(file) {
       });
 
       const data = await resp.json();
-      if(loading) loading.style.display = 'none';
+      hideAILoading();
 
       if (!resp.ok) {
         alert(data.error || 'Error al procesar el recetario');
@@ -1059,18 +1064,17 @@ async function processRecetasFile(file) {
         alert(data.error || 'No se pudieron importar los platos.');
       }
     } catch(err) {
-      if(loading) loading.style.display = 'none';
-      alert('Error de conexión al importar recetas.');
+      hideAILoading();
+      alert('Error de conexión al importar recetas: ' + err.message);
     }
   };
 }
 
 async function handleFileUpload(e){ if(e.target.files.length > 0) processFile(e.target.files[0]); }
 async function processFile(file){
-  document.getElementById('extract-loading').style.display='flex';
+  showAILoading('Analizando tu albarán o factura...<br>Extrayendo precios de ingredientes.');
   document.getElementById('prov-msg').style.display='none';
   document.getElementById('review-wrap').style.display='none';
-  switchTab('precios', document.querySelectorAll('.nav-item')[2]); 
 
   const reader = new FileReader(); reader.readAsDataURL(file);
   reader.onload = async () => {
@@ -1078,10 +1082,12 @@ async function processFile(file){
       const { data: { session } } = await sb.auth.getSession();
       const resp = await fetch('/api/extract', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+ (session?.access_token || '')}, body:JSON.stringify({file_base64:reader.result.split(',')[1], file_type:file.name.split('.').pop()}) });
       const data = await resp.json();
-      document.getElementById('extract-loading').style.display='none';
+      hideAILoading();
       if (!resp.ok) { alert(data.error); return; }
       if (data.productos) renderReviewTable(data.productos);
-    } catch(err) { document.getElementById('extract-loading').style.display='none'; alert('Error de conexión'); }
+      // Navegar a la pestaña de precios solo cuando ya hay resultado
+      switchTab('precios', document.querySelectorAll('.nav-item')[2]);
+    } catch(err) { hideAILoading(); alert('Error de conexión'); }
   };
 }
 function renderReviewTable(prods){
@@ -1442,12 +1448,8 @@ let stockExtraidoGlobal = [];
 async function handleStockUpload(e) {
   const file = e.target.files[0];
   if(!file) return;
-  
-  const loading = document.getElementById('loading');
-  if(loading) {
-    loading.innerHTML = '<div class="spinner"></div><div style="display:flex;flex-direction:column;gap:5px;"><span>Estamos leyendo tu documento, puede tomar unos minutos...</span></div>';
-    loading.style.display = 'flex';
-  }
+
+  showAILoading('Analizando tu inventario o albarán...<br>Extrayendo cantidades de ingredientes.');
 
   try {
     const reader = new FileReader();
@@ -1471,7 +1473,7 @@ async function handleStockUpload(e) {
         });
 
         const data = await res.json();
-        if(loading) loading.style.display = 'none';
+        hideAILoading();
         e.target.value = '';
 
         if(data.error) {
@@ -1486,13 +1488,13 @@ async function handleStockUpload(e) {
           alert("No se detectaron artículos de inventario en el documento.");
         }
       } catch (innerErr) {
-        if(loading) loading.style.display = 'none';
+        hideAILoading();
         alert("Error de conexión al procesar el archivo.");
       }
     };
     reader.readAsDataURL(file);
   } catch(err) {
-    if(loading) loading.style.display = 'none';
+    hideAILoading();
     alert("Error de subida: " + err.message);
   }
 }
@@ -1672,6 +1674,28 @@ init();
     </div>
   </div>
 </div>
+
+<!-- ── OVERLAY GLOBAL DE CARGA IA ── -->
+<div id="global-ai-loading">
+  <div class="global-loading-box">
+    <div class="global-loading-spinner"></div>
+    <div class="global-loading-title">La IA está leyendo tu documento</div>
+    <div class="global-loading-sub" id="global-loading-msg">Estamos extrayendo la información.<br>Puede tomar hasta 1 minuto.</div>
+  </div>
+</div>
+
+<script>
+function showAILoading(msg) {
+  const el = document.getElementById('global-ai-loading');
+  const msgEl = document.getElementById('global-loading-msg');
+  if (msgEl && msg) msgEl.innerHTML = msg;
+  if (el) el.classList.add('visible');
+}
+function hideAILoading() {
+  const el = document.getElementById('global-ai-loading');
+  if (el) el.classList.remove('visible');
+}
+</script>
 
 </body>
 </html>
