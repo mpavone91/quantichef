@@ -21,6 +21,88 @@
 <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
 <style>
+/* ─ Driver.js — Estilo Corporativo QuantiChef ─ */
+.driver-popover {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  border-radius: 16px !important;
+  border: none !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18) !important;
+  max-width: 340px !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+.driver-popover-title {
+  font-family: 'Fraunces', serif !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: #1a2e1a !important;
+  background: #f0f7f0 !important;
+  padding: 1.1rem 1.25rem 0.85rem !important;
+  border-bottom: 1px solid #d4e8d4 !important;
+  margin: 0 !important;
+}
+.driver-popover-description {
+  font-size: 13.5px !important;
+  color: #374151 !important;
+  line-height: 1.6 !important;
+  padding: 1rem 1.25rem !important;
+}
+.driver-popover-footer {
+  padding: 0.75rem 1.25rem !important;
+  background: #fafafa !important;
+  border-top: 1px solid #f0f0f0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+.driver-popover-progress-text {
+  font-size: 11px !important;
+  color: #9CA3AF !important;
+  font-weight: 600 !important;
+}
+.driver-popover-prev-btn {
+  background: transparent !important;
+  border: 1px solid #d1d5db !important;
+  color: #6b7280 !important;
+  border-radius: 8px !important;
+  padding: 6px 14px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+}
+.driver-popover-next-btn {
+  background: #2D6A4F !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 7px 16px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+}
+.driver-popover-next-btn:hover { background: #1e4d2b !important; }
+.driver-popover-close-btn {
+  position: absolute !important;
+  top: 10px !important;
+  right: 12px !important;
+  background: transparent !important;
+  border: none !important;
+  font-size: 18px !important;
+  color: #9CA3AF !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  transition: color 0.2s !important;
+}
+.driver-popover-close-btn:hover { color: #374151 !important; }
+.driver-overlay { background: rgba(0,0,0,0.55) !important; }
+</style>
+<style>
   :root {
     --sidebar-width: 250px;
     --bg: #F9FAFB;
@@ -383,9 +465,15 @@
     <div id="app" style="display:none">
       
       <section id="view-inicio" class="view-section active">
-        <div class="welcome" style="margin-bottom: 1.5rem;">
-          <h1 class="welcome-title">Hola, <em id="chef-name">Chef</em> 👋</h1>
-          <p class="welcome-sub" style="font-size: 13px;">Aquí tienes el estado actual de tu rentabilidad.</p>
+        <div class="welcome" style="margin-bottom: 1.5rem; display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+          <div>
+            <h1 class="welcome-title">Hola, <em id="chef-name">Chef</em> 👋</h1>
+            <p class="welcome-sub" style="font-size: 13px;">Aquí tienes el estado actual de tu rentabilidad.</p>
+          </div>
+          <button onclick="iniciarTourOnboarding()" style="flex-shrink:0; display:flex; align-items:center; gap:6px; padding:8px 14px; background:var(--surface); border:1px solid var(--border); border-radius:10px; cursor:pointer; font-family:inherit; font-size:12px; font-weight:600; color:var(--text2); transition:all .2s; box-shadow:0 1px 3px rgba(0,0,0,.06);" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Ver Tour
+          </button>
         </div>
 
         <div class="dashboard-kpi-grid" id="dashboard-kpis">
@@ -1715,7 +1803,8 @@ function iniciarTourOnboarding() {
     doneBtnText: '¡A cocinar! 🍳',
     progressText: 'Paso {{current}} de {{total}}',
     allowClose: true,
-    overlayColor: 'rgba(0,0,0,0.6)',
+    showButtons: ['next', 'previous', 'close'],
+    overlayColor: 'rgba(0,0,0,0.55)',
     steps: [
       {
         popover: {
