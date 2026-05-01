@@ -689,6 +689,7 @@ async function cargarDatos(session){
   document.getElementById('banner-basic').style.display = rest.plan === 'basic' ? 'flex' : 'none';
   document.getElementById('banner-pro').style.display = rest.plan === 'pro' ? 'flex' : 'none';
   document.getElementById('btn-suscripcion-nav').style.display = (rest.plan === 'pro' || rest.plan === 'basic') ? 'inline-block' : 'none';
+  if (esPremium && document.getElementById('dash-upsell-lock')) document.getElementById('dash-upsell-lock').style.display = 'none';
   
   // Widget de límites (Conectado a BD)
   const maxDocs = esPremium ? 150 : 50;

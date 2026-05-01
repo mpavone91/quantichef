@@ -3,3 +3,5 @@ node_modules
 *.csv
 !plantilla_escandallos.csv
 .DS_Store
+
+.vercel
