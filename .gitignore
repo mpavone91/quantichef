@@ -2,8 +2,7 @@ node_modules
 .env
 *.csv
 !plantilla_escandallos.csv
-!public/plantilla-recetario.csv
-!public/plantilla-despensa.csv
+!public/*.csv
 .DS_Store
 
 .vercel
