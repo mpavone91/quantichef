@@ -1,5 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
 const supabaseAuth = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
@@ -19,6 +24,17 @@ export default async function handler(req, res) {
 
   const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
   if (authError || !user) return res.status(401).json({ error: 'Sesión inválida o caducada' });
+
+  // ── VERIFICACIÓN DE LÍMITES ──────────────────────────────────
+  const { data: rest } = await supabase.from('restaurantes').select('id, plan, documentos_subidos').eq('user_id', user.id).single();
+  if (!rest) return res.status(403).json({ error: 'Restaurante no encontrado' });
+
+  const limit = rest.plan === 'pro' ? 150 : 50;
+  const docsSubidos = rest.documentos_subidos || 0;
+
+  if (docsSubidos >= limit) {
+    return res.status(403).json({ error: `Has alcanzado el límite de documentos (${limit}). Por favor, actualiza tu plan.` });
+  }
 
   const { file_base64, file_type } = req.body;
   if (!file_base64 || !file_type) return res.status(400).json({ error: 'Falta el archivo' });
@@ -81,6 +97,9 @@ Responde SOLO con un JSON válido, sin markdown, sin backticks:
     if (!parsed.ventas || !Array.isArray(parsed.ventas)) {
       return res.status(422).json({ error: 'No se detectaron platos vendidos en el documento.' });
     }
+
+    // Incrementar el contador si todo ha ido bien
+    await supabase.from('restaurantes').update({ documentos_subidos: docsSubidos + 1 }).eq('id', rest.id);
 
     return res.status(200).json({ ventas: parsed.ventas, fecha: parsed.fecha || null });
   } catch (err) {

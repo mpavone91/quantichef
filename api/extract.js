@@ -30,35 +30,32 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Sesión inválida o caducada' });
   }
 
-  // --- NUEVA VERIFICACIÓN DE SEGURIDAD (LÍMITE FACTURAS) ---
+  // ── OBTENCIÓN DEL RESTAURANTE ──────────────────────────────────
   // Utilizamos supabase (admin client) para obtener los datos del restaurante
-  const { data: rest } = await supabase.from('restaurantes').select('id, plan').eq('user_id', user.id).single();
+  const { data: rest } = await supabase.from('restaurantes').select('id, plan, documentos_subidos').eq('user_id', user.id).single();
   
   if (!rest) {
     return res.status(403).json({ error: 'Restaurante no encontrado' });
   }
 
-  if (rest.plan !== 'pro') {
-    // Para trial, límite de 1 extracción (si ya hay precios guardados, significa que ya extrajo y guardó al menos 1 vez)
-    const { count } = await supabase.from('precios_proveedor').select('id', { count: 'exact', head: true }).eq('restaurante_id', rest.id);
-    if ((count || 0) > 0) {
-      return res.status(403).json({ error: 'Ya has utilizado tu extracción de prueba. Hazte PRO para escanear facturas ilimitadas.' });
-    }
-  }
-  // ---------------------------------------------------------
-
-
   try {
-    const { file_base64, file_type, file_name, mode } = req.body;
+    const { file_base64, file_type, file_name, mode, productos, restaurante_id } = req.body;
 
     // ── MODO GUARDAR PRECIOS ─────────────────────────────────────
     if (mode === 'save_prices') {
-      const { productos, restaurante_id } = req.body;
       if (!productos || !restaurante_id) {
         return res.status(400).json({ error: 'Faltan datos para guardar' });
       }
       const result = await guardarYCompararPrecios(productos, restaurante_id);
       return res.status(200).json(result);
+    }
+
+    // ── VERIFICACIÓN DE LÍMITES PARA EXTRACCIÓN ───────────────────
+    const limit = rest.plan === 'pro' ? 150 : 50;
+    const docsSubidos = rest.documentos_subidos || 0;
+
+    if (docsSubidos >= limit) {
+      return res.status(403).json({ error: `Has alcanzado el límite de documentos (${limit}). Por favor, actualiza tu plan.` });
     }
 
     // ── MODO EXTRACCIÓN (FACTURAS O ETIQUETAS) ───────────────────
@@ -188,7 +185,8 @@ export default async function handler(req, res) {
         error: 'No se pudo interpretar el documento. Asegúrate de que es un albarán, receta o etiqueta legible.',
         raw: raw_text
       });
-    }
+    // Incrementar contador si todo fue bien (y no es un error de formato de Anthropic)
+    await supabase.from('restaurantes').update({ documentos_subidos: docsSubidos + 1 }).eq('id', rest.id);
 
     return res.status(200).json(parsed);
 
