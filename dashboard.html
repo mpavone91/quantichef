@@ -253,41 +253,21 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         <span>Panel de Control</span>
       </a>
-      <a class="nav-item disabled" title="Próximamente" onclick="return false;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-        <span>Ventas</span>
-      </a>
       <a class="nav-item" onclick="switchTab('platos', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         <span>Escandallos</span>
       </a>
 
-      <div class="nav-group" style="margin-top:1.5rem">Gastos</div>
-      <a class="nav-item" onclick="switchTab('precios', this); switchAlmacenTab('precios', document.getElementById('subtab-precios'))">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <span>Documentos</span>
-      </a>
-      <a class="nav-item disabled" title="Próximamente" onclick="return false;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <span>Conciliación</span>
-      </a>
-      <a class="nav-item disabled" title="Próximamente" onclick="return false;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span>Personal</span>
+      <div class="nav-group" style="margin-top:1.5rem">Inventario</div>
+      <a class="nav-item" onclick="switchTab('stock', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        <span>Stock</span>
       </a>
 
       <div class="nav-group" style="margin-top:1.5rem">Compras</div>
-      <a class="nav-item" onclick="switchTab('precios', this); switchAlmacenTab('existencias', document.getElementById('subtab-existencias'))">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        <span>Productos</span>
-      </a>
-      <a class="nav-item disabled" title="Próximamente" onclick="return false;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>
-        <span>Proveedores</span>
-      </a>
-      <a class="nav-item disabled" title="Próximamente" onclick="return false;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <span>Incidencias</span>
+      <a class="nav-item" onclick="switchTab('precios', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span>Facturas / Albaranes</span>
       </a>
     </nav>
     
@@ -362,11 +342,15 @@
           </div>
         </div>
 
-        <div class="plan-banner" id="plan-banner" style="display:none">
-          <p>Estás en <strong>prueba gratuita</strong>. Pásate al Pro para tener alertas e importación ilimitada.</p>
-          <a href="/precios" style="background:var(--gold); color:white; padding:8px 16px; border-radius:7px; text-decoration:none; font-size:13px; font-weight:700">Planes</a>
+        <div class="plan-banner" id="banner-trial" style="display:none">
+          <p>Estás en <strong>prueba gratuita</strong>. Elige un plan para trackear tu rentabilidad sin límites.</p>
+          <a href="/precios" style="background:var(--gold); color:white; padding:8px 16px; border-radius:7px; text-decoration:none; font-size:13px; font-weight:700">Ver Planes</a>
         </div>
-        <div class="pro-banner" id="pro-banner" style="display:none">
+        <div class="pro-banner" id="banner-basic" style="display:none; background:var(--surface2); border:1px solid var(--border);">
+          <div class="pro-badge" style="background:var(--text3);">Plan Básico Activo</div>
+          <a href="/precios" style="margin-left:auto; font-size:12px; font-weight:600; color:var(--accent); text-decoration:none;">⭐ Mejorar a Pro</a>
+        </div>
+        <div class="pro-banner" id="banner-pro" style="display:none">
           <div class="pro-badge">Plan Pro Activo</div>
         </div>
         
@@ -430,6 +414,20 @@
       </section>
 
       <section id="view-precios" class="view-section">
+        
+        <div class="section-title section-title-mobile-col" style="justify-content:space-between; margin-bottom:1.5rem;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            FACTURAS Y ALBARANES
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button onclick="document.getElementById('file-input').click()" style="font-size:13px;font-weight:700;background:var(--accent);color:white;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(30,77,43,.25);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Subir Albarán
+            </button>
+            <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleFileUpload(event)" style="display:none">
+          </div>
+        </div>
 
         <div class="review-wrap" id="review-wrap" style="display:none;">
           <div class="review-card">
@@ -448,89 +446,73 @@
           </div>
         </div>
 
-        <div class="almacen-subtabs">
-          <button class="almacen-subtab-btn active" id="subtab-existencias" onclick="switchAlmacenTab('existencias', this)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:5px"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            Existencias
-          </button>
-          <button class="almacen-subtab-btn" id="subtab-precios" onclick="switchAlmacenTab('precios', this)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:5px"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>
-            Precios de Compra
+        <div id="precios-guardados"></div>
+      </section>
+
+      <section id="view-stock" class="view-section">
+        
+        <div class="tpv-loading" id="tpv-loading">
+          <div class="spinner"></div>
+          <span style="color:var(--gold);font-weight:600;font-size:14px;">Analizando ticket de ventas...</span>
+        </div>
+
+        <div class="tpv-review" id="tpv-review">
+          <h3 style="font-family:'Fraunces',serif;font-weight:600;margin-bottom:.4rem;">Ventas del día detectadas</h3>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Revisa los platos y raciones. Al confirmar, se descuentan del stock automáticamente.</p>
+          <div id="tpv-review-body" style="display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;"></div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onclick="cancelarTPV()" style="padding:10px;border:1px solid var(--border);background:white;border-radius:8px;cursor:pointer;font-weight:600;">Cancelar</button>
+            <button onclick="confirmarVentasTPV()" style="padding:10px 20px;background:var(--accent);color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;">Descontar del Stock</button>
+          </div>
+        </div>
+
+        <div class="section-title section-title-mobile-col" style="justify-content:space-between; margin-bottom:1.5rem;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            STOCK ACTUAL
+          </div>
+          <button onclick="abrirModalVentas()" style="font-size:13px;font-weight:700;background:var(--gold);color:white;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(196,148,58,.25);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            Descontar Ventas (TPV)
           </button>
         </div>
 
-        <div id="almacen-view-existencias">
-
-          <div class="tpv-loading" id="tpv-loading">
-            <div class="spinner"></div>
-            <span style="color:var(--gold);font-weight:600;font-size:14px;">Analizando ticket de ventas...</span>
+        <div id="stock-lista">
+          <div style="padding:3rem;text-align:center;color:var(--text3);border:1.5px dashed var(--border);border-radius:12px;background:white;">
+            <div style="font-size:2rem;margin-bottom:.5rem;">📦</div>
+            <div style="font-weight:600;margin-bottom:.4rem;">Sin stock registrado</div>
+            <div style="font-size:13px;">Sube un albarán y rellena las <em>cantidades recibidas</em> para trackear tu inventario.</div>
           </div>
-
-          <div class="tpv-review" id="tpv-review">
-            <h3 style="font-family:'Fraunces',serif;font-weight:600;margin-bottom:.4rem;">Ventas del día detectadas</h3>
-            <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Revisa los platos y raciones. Al confirmar, se descuentan del stock automáticamente.</p>
-            <div id="tpv-review-body" style="display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;"></div>
-            <div style="display:flex;gap:10px;justify-content:flex-end;">
-              <button onclick="cancelarTPV()" style="padding:10px;border:1px solid var(--border);background:white;border-radius:8px;cursor:pointer;font-weight:600;">Cancelar</button>
-              <button onclick="confirmarVentasTPV()" style="padding:10px 20px;background:var(--accent);color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;">Descontar del Stock</button>
-            </div>
-          </div>
-
-          <div class="section-title section-title-mobile-col" style="justify-content:space-between; margin-bottom:1.5rem;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-              STOCK ACTUAL
-            </div>
-            
-            <div style="display:flex; gap:8px;">
-              <button onclick="document.getElementById('file-input').click()" style="font-size:12px;font-weight:600;background:white;color:var(--text2);border:1px solid var(--border);padding:8px 12px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                Albarán
-              </button>
-              <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx" onchange="handleFileUpload(event)" style="display:none">
-
-              <button onclick="abrirModalVentas()" style="font-size:12px;font-weight:700;background:var(--gold);color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(196,148,58,.25);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-                Restar TPV
-              </button>
-            </div>
-          </div>
-
-          <div id="stock-lista">
-            <div style="padding:3rem;text-align:center;color:var(--text3);border:1.5px dashed var(--border);border-radius:12px;background:white;">
-              <div style="font-size:2rem;margin-bottom:.5rem;">📦</div>
-              <div style="font-weight:600;margin-bottom:.4rem;">Sin stock registrado</div>
-              <div style="font-size:13px;">Sube un albarán y rellena las <em>cantidades recibidas</em> para trackear tu inventario.</div>
-            </div>
-          </div>
-
-          <div style="margin-top:1.5rem;border:1px solid var(--border);background:linear-gradient(to bottom, #ffffff, #fcfcfc);padding:1.5rem;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.03)">
-            <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;">+ Añadir artículo manualmente</div>
-            <div class="new-stock-grid" style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:12px;align-items:end;">
-              <div>
-                <label style="font-size:10px;font-weight:700;color:var(--text3);display:block;margin-bottom:4px;">NOMBRE</label>
-                <input type="text" id="new-stock-name" placeholder="Ej: Harina de trigo" class="form-input" style="padding:10px 12px;border-radius:8px;">
-              </div>
-              <div>
-                <label style="font-size:10px;font-weight:700;color:var(--text3);display:block;margin-bottom:4px;">CANTIDAD</label>
-                <input type="number" id="new-stock-qty" step="0.01" placeholder="0.00" class="form-input" style="padding:10px 12px;border-radius:8px;">
-              </div>
-              <div>
-                <label style="font-size:10px;font-weight:700;color:var(--text3);display:block;margin-bottom:4px;">UNIDAD</label>
-                <select id="new-stock-unit" class="form-input" style="padding:10px 12px;border-radius:8px;height:42px;"><option value="kg">kg</option><option value="l">litros</option><option value="ud">uds</option></select>
-              </div>
-              <div>
-                <label style="font-size:10px;font-weight:700;color:var(--text3);display:block;margin-bottom:4px;">ALERTA</label>
-                <input type="number" id="new-stock-min" step="0.01" placeholder="Mínimo" class="form-input" style="padding:10px 12px;border-radius:8px;">
-              </div>
-              <button class="btn-fill" onclick="añadirStockManual()" style="height:42px;padding:0 20px;border-radius:8px;box-shadow:0 2px 6px rgba(30,77,43,.2)">Añadir</button>
-            </div>
-          </div>
-
         </div>
 
-        <div id="almacen-view-precios" style="display:none;">
-          <div id="precios-guardados"></div>
+        <div style="margin-top:2rem;border:1px solid var(--border);background:var(--surface);padding:1.5rem;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.02);">
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+             Añadir artículo manualmente
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:16px;">
+            <div style="flex:1; min-width:200px;">
+              <label style="font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:6px;">NOMBRE DEL ARTÍCULO</label>
+              <input type="text" id="new-stock-name" placeholder="Ej: Harina de trigo" class="form-input" style="padding:12px;border-radius:10px;">
+            </div>
+            <div style="flex:1; min-width:100px; display:flex; gap:16px;">
+              <div style="flex:1;">
+                <label style="font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:6px;">CANT. INICIAL</label>
+                <input type="number" id="new-stock-qty" step="0.01" placeholder="0.00" class="form-input" style="padding:12px;border-radius:10px;">
+              </div>
+              <div style="flex:1;">
+                <label style="font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:6px;">UNIDAD</label>
+                <select id="new-stock-unit" class="form-input" style="padding:12px;border-radius:10px;height:45px;"><option value="kg">kg</option><option value="l">litros</option><option value="ud">uds</option></select>
+              </div>
+            </div>
+            <div style="flex:1; min-width:150px;">
+              <label style="font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:6px;">ALERTA MÍNIMO</label>
+              <input type="number" id="new-stock-min" step="0.01" placeholder="Ej: 5.0" class="form-input" style="padding:12px;border-radius:10px;">
+            </div>
+          </div>
+          <div style="margin-top:16px; text-align:right;">
+             <button class="btn-fill" onclick="añadirStockManual()" style="height:45px;padding:0 24px;border-radius:10px; font-weight:600; box-shadow:0 4px 12px rgba(30,77,43,.2);">Añadir al Stock</button>
+          </div>
         </div>
 
       </section>
@@ -667,9 +649,10 @@ async function cargarDatos(session){
   esPremium = rest.plan === 'pro';
   
   document.getElementById('nav-restaurante').textContent = '📍 ' + rest.nombre;
-  document.getElementById('pro-banner').style.display = esPremium ? 'flex' : 'none';
-  document.getElementById('plan-banner').style.display = esPremium ? 'none' : 'flex';
-  document.getElementById('btn-suscripcion-nav').style.display = esPremium ? 'inline-block' : 'none';
+  document.getElementById('banner-trial').style.display = rest.plan === 'trial' ? 'flex' : 'none';
+  document.getElementById('banner-basic').style.display = rest.plan === 'basic' ? 'flex' : 'none';
+  document.getElementById('banner-pro').style.display = rest.plan === 'pro' ? 'flex' : 'none';
+  document.getElementById('btn-suscripcion-nav').style.display = (rest.plan === 'pro' || rest.plan === 'basic') ? 'inline-block' : 'none';
   
   // Widget de límites (Conectado a BD)
   const maxDocs = esPremium ? 150 : 50;
@@ -1091,17 +1074,32 @@ function renderStock(stock) {
     const nombreEsc = (s.nombre_ingrediente || '').replace(/'/g, "\\'");
 
     return `
-      <div class="stock-item ${alertaClass}">
-        <div class="stock-item-top">
-          <div class="stock-item-nombre">${s.nombre_ingrediente}</div>
-          ${badgeText ? `<span class="s-badge ${badgeClass}">${badgeText}</span>` : ''}
+      <div class="escandallo-card" style="margin-bottom:12px; cursor:default; border-left: 4px solid ${pct < 50 ? 'var(--danger)' : pct < 100 ? 'var(--gold)' : 'var(--accent)'}; padding: 1.2rem;">
+        <div class="card-info" style="flex:1.5;">
+          <div class="card-nombre">${s.nombre_ingrediente}</div>
+          <div class="card-tags" style="margin-top:6px;">
+            <span class="card-tag" style="background:rgba(0,0,0,0.05); color:var(--text2)">${s.unidad_medida.toUpperCase()}</span>
+            ${badgeText ? `<span class="card-tag" style="background:${pct < 50 ? 'var(--danger)' : 'var(--gold)'}; color:white;">${badgeText}</span>` : ''}
+          </div>
         </div>
-        ${tieneMin ? `<div class="stock-bar-bg"><div class="stock-bar-fill ${colorClass}" style="width:${Math.min(pct,100)}%"></div></div>` : ''}
-        <div class="stock-item-foot">
-          <span class="stock-qty">${s.cantidad_actual.toFixed(2)} <span style="font-size:11px;color:var(--text3)">${s.unidad_medida}</span></span>
-          ${tieneMin ? `<span>/ mín. ${s.stock_minimo} ${s.unidad_medida}</span>` : ''}
-          ${valor !== null ? `<span class="stock-valor-tag">≈ ${fmt(valor)}</span>` : ''}
-          <button class="btn-ajuste" onclick="abrirAjusteStock('${s.id}','${nombreEsc}',${s.cantidad_actual},'${s.unidad_medida}')">✏ Ajuste</button>
+        
+        <div class="card-metrics" style="flex:2.5;">
+          <div class="card-metric">
+            <div class="card-metric-label">Cantidad Actual</div>
+            <div class="card-metric-val" style="color: ${pct < 50 ? 'var(--danger)' : 'var(--text)'}">${parseFloat(s.cantidad_actual).toFixed(2)}</div>
+          </div>
+          <div class="card-metric">
+            <div class="card-metric-label">Mínimo</div>
+            <div class="card-metric-val">${s.stock_minimo > 0 ? parseFloat(s.stock_minimo).toFixed(2) : '-'}</div>
+          </div>
+          <div class="card-metric">
+            <div class="card-metric-label">Valor del Stock</div>
+            <div class="card-metric-val green">${valor !== null ? fmt(valor) : '-'}</div>
+          </div>
+        </div>
+
+        <div style="margin-left:auto;">
+          <button onclick="abrirAjusteStock('${s.id}','${nombreEsc}',${s.cantidad_actual},'${s.unidad_medida}')" style="padding:8px 14px; border-radius:8px; font-size:12px; font-weight:700; height:auto; box-shadow:none; background:white; color:var(--text); border:1px solid var(--border); cursor:pointer;">✏ Ajustar</button>
         </div>
       </div>`;
   }).join('');

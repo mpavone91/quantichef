@@ -9,8 +9,10 @@ const supabase = createClient(
 );
 
 const PRICE_IDS_VALIDOS = [
-  'price_1TNhYqQ2tw1TGl0PZBWpbvjZ', // mensual 39€
-  'price_1TNhY8Q2tw1TGl0PpCFivavL', // anual 349€
+  'price_1TSCI6Q2tw1TGl0PIDHauclO', // Básico mensual 49€
+  'price_1TSCJtQ2tw1TGl0PS4ciWCQn', // Básico anual 490€
+  'price_1TSCKUQ2tw1TGl0PChEw4CWj', // Pro mensual 79€
+  'price_1TSCL1Q2tw1TGl0Ppb7tlYda', // Pro anual 790€
 ];
 
 export default async function handler(req, res) {
@@ -47,8 +49,8 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'No se encontró el perfil del restaurante' });
     }
 
-    if (restaurante.plan === 'pro') {
-      return res.status(400).json({ error: 'Ya tienes un plan activo' });
+    if (restaurante.plan === 'pro' || restaurante.plan === 'basic') {
+      return res.status(400).json({ error: 'Ya tienes un plan activo. Usa el botón "Mi Suscripción" en el dashboard para gestionar tu plan.' });
     }
 
     // CONFIGURACIÓN DE SESIÓN PREMIUM

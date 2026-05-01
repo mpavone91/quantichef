@@ -124,41 +124,46 @@
   <h1 class="page-title">Recuperas la cuota con el <em>primer plato que corrijas</em></h1>
   <p class="page-sub">Todas las funcionalidades incluidas. Una licencia por restaurante.<br>Sin contratos ocultos. Cancela cuando quieras.</p>
 
+  <div style="text-align:center; margin-bottom: 2rem;">
+    <div style="display:inline-flex; background:rgba(0,0,0,0.05); border-radius:12px; padding:4px;">
+      <button id="toggle-mensual" style="padding:10px 20px; border-radius:8px; border:none; background:none; cursor:pointer; font-weight:600; color:var(--text2); transition:all 0.2s;" onclick="setPeriod('mensual')">Mensual</button>
+      <button id="toggle-anual" style="padding:10px 20px; border-radius:8px; border:none; background:var(--surface); box-shadow:0 2px 8px rgba(0,0,0,0.1); cursor:pointer; font-weight:700; color:var(--accent); transition:all 0.2s;" onclick="setPeriod('anual')">Anual (Ahorras 2 meses)</button>
+    </div>
+  </div>
+
   <div class="plans">
     <div class="plan-card">
-      <div class="plan-name">Pago Mensual</div>
+      <div class="plan-name">Plan Básico</div>
       <div class="plan-price-block">
-        <div class="plan-price">39<span style="font-size:1.2rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;color:var(--text3)">€/mes</span></div>
-        <div class="plan-period">Sin permanencia · cancela cuando quieras</div>
+        <div class="plan-price" id="price-basic">490<span style="font-size:1.2rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;color:var(--text3)">€/año</span></div>
+        <div class="plan-period" id="period-basic" style="font-weight:600; color:var(--accent-mid);">Ahorras 98€ al año</div>
       </div>
       <ul class="plan-features">
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>50 documentos / mes (IA)</li>
         <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Escandallos y mermas ilimitados</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Lectura de albaranes (Foto/PDF)</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Análisis de precios en cascada</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Análisis de precios y stock</li>
         <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Alertas de pérdida de margen</li>
         <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Exportación a PDF</li>
       </ul>
-      <button class="btn-plan secondary" onclick="checkout('price_1TNhYqQ2tw1TGl0PZBWpbvjZ', this)" id="btn-mensual">Activar plan mensual</button>
+      <button class="btn-plan secondary" onclick="checkoutBasic(this)" id="btn-basic">Elegir Básico</button>
     </div>
 
     <div class="plan-card destacado">
-      <div class="plan-label">3 meses gratis</div>
-      <div class="plan-name">Pago Anual</div>
+      <div class="plan-label">Recomendado</div>
+      <div class="plan-name">Plan Pro</div>
       <div class="plan-price-block">
-        <div class="plan-price">349<span style="font-size:1.2rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;color:var(--accent)">€/año</span></div>
-        <div class="plan-period">Equivale a 29€/mes</div>
-        <span class="plan-saving">✦ Ahorras 119€ al año</span>
+        <div class="plan-price" id="price-pro">790<span style="font-size:1.2rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;color:var(--accent)">€/año</span></div>
+        <div class="plan-period" id="period-pro" style="font-weight:600; color:var(--accent-mid);">Equivale a 65,83€/mes</div>
+        <span class="plan-saving" id="saving-pro">✦ Ahorras 158€ al año</span>
       </div>
       <ul class="plan-features">
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Escandallos y mermas ilimitados</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Lectura de albaranes (Foto/PDF)</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Análisis de precios en cascada</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Alertas de pérdida de margen</li>
-        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Exportación a PDF</li>
+        <li class="plan-feature" style="font-weight:700;color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>150 documentos / mes (IA)</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Todo lo incluido en Básico</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Módulo de Stock Completo</li>
+        <li class="plan-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Descuento por Ventas (TPV)</li>
         <li class="plan-feature" style="font-weight:700;color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Soporte prioritario por email</li>
-        <li class="plan-feature" style="font-weight:700;color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Acceso anticipado al Módulo Stock</li>
       </ul>
-      <button class="btn-plan primary" onclick="checkout('price_1TNhY8Q2tw1TGl0PpCFivavL', this)" id="btn-anual">Activar plan anual</button>
+      <button class="btn-plan primary" onclick="checkoutPro(this)" id="btn-pro">Elegir Pro</button>
     </div>
   </div>
 
@@ -231,6 +236,36 @@ sb.auth.onAuthStateChange(async (event,session)=>{
   }
 });
 
+let isAnual = true;
+
+function setPeriod(period) {
+  isAnual = period === 'anual';
+  document.getElementById('toggle-anual').style.background = isAnual ? 'var(--surface)' : 'none';
+  document.getElementById('toggle-anual').style.boxShadow = isAnual ? '0 2px 8px rgba(0,0,0,0.1)' : 'none';
+  document.getElementById('toggle-anual').style.color = isAnual ? 'var(--accent)' : 'var(--text2)';
+  
+  document.getElementById('toggle-mensual').style.background = !isAnual ? 'var(--surface)' : 'none';
+  document.getElementById('toggle-mensual').style.boxShadow = !isAnual ? '0 2px 8px rgba(0,0,0,0.1)' : 'none';
+  document.getElementById('toggle-mensual').style.color = !isAnual ? 'var(--accent)' : 'var(--text2)';
+  
+  document.getElementById('price-basic').innerHTML = isAnual ? '490<span style="font-size:1.2rem;font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:400;color:var(--text3)">€/año</span>' : '49<span style="font-size:1.2rem;font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:400;color:var(--text3)">€/mes</span>';
+  document.getElementById('period-basic').innerHTML = isAnual ? 'Ahorras 98€ al año' : 'Sin permanencia · cancela cuando quieras';
+  
+  document.getElementById('price-pro').innerHTML = isAnual ? '790<span style="font-size:1.2rem;font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:400;color:var(--accent)">€/año</span>' : '79<span style="font-size:1.2rem;font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:400;color:var(--accent)">€/mes</span>';
+  document.getElementById('period-pro').innerHTML = isAnual ? 'Equivale a 65,83€/mes' : 'Sin permanencia · cancela cuando quieras';
+  document.getElementById('saving-pro').style.display = isAnual ? 'inline-block' : 'none';
+}
+
+function checkoutBasic(btn) {
+  const priceId = isAnual ? 'price_1TSCJtQ2tw1TGl0PS4ciWCQn' : 'price_1TSCI6Q2tw1TGl0PIDHauclO';
+  checkout(priceId, btn);
+}
+
+function checkoutPro(btn) {
+  const priceId = isAnual ? 'price_1TSCL1Q2tw1TGl0Ppb7tlYda' : 'price_1TSCKUQ2tw1TGl0PChEw4CWj';
+  checkout(priceId, btn);
+}
+
 async function checkout(priceId, btn){
   if(!currentUser){window.location.href='/login';return;}
   const originalText=btn.textContent;
@@ -258,7 +293,7 @@ async function checkout(priceId, btn){
       throw new Error(data.error||'Error al crear sesión de pago');
     }
   }catch(err){
-    alert('Error al conectar con el sistema de pago. Inténtalo de nuevo.');
+    alert(err.message || 'Error al conectar con el sistema de pago. Inténtalo de nuevo.');
     btn.disabled=false;
     btn.textContent=originalText;
   }

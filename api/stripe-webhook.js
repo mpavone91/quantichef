@@ -69,11 +69,26 @@ export default async function handler(req, res) {
           break;
         }
 
+        let planLevel = 'basic';
+        let planNombreParaEmail = 'Plan Básico';
+        if (subscriptionId) {
+          try {
+            const sub = await stripe.subscriptions.retrieve(subscriptionId);
+            const priceId = sub.items.data[0].price.id;
+            if (priceId === 'price_1TSCKUQ2tw1TGl0PChEw4CWj' || priceId === 'price_1TSCL1Q2tw1TGl0Ppb7tlYda') {
+              planLevel = 'pro';
+              planNombreParaEmail = 'Plan Pro';
+            }
+          } catch (e) {
+            console.error('No se pudo recuperar la suscripción de Stripe', e);
+          }
+        }
+
         // Actualizamos y recuperamos el nombre para el email en un solo paso
         const { data: restUpdated, error } = await supabase
           .from('restaurantes')
           .update({
-            plan: 'pro',
+            plan: planLevel,
             stripe_customer_id: stripeCustomerId || null,
             stripe_subscription_id: subscriptionId || null,
             plan_activated_at: new Date().toISOString()
@@ -97,7 +112,7 @@ export default async function handler(req, res) {
               body: JSON.stringify({
                 email: customerEmail,
                 nombre: restUpdated.nombre,
-                planNombre: 'Plan Cocina Rentable'
+                planNombre: planNombreParaEmail
               })
             });
           } catch (mailErr) {
@@ -136,6 +151,13 @@ export default async function handler(req, res) {
         const subscription = event.data.object;
         const customerId = subscription.customer;
         const status = subscription.status;
+        let planLevel = 'basic';
+        try {
+          const priceId = subscription.items.data[0].price.id;
+          if (priceId === 'price_1TSCKUQ2tw1TGl0PChEw4CWj' || priceId === 'price_1TSCL1Q2tw1TGl0Ppb7tlYda') {
+            planLevel = 'pro';
+          }
+        } catch(e) {}
 
         const { data: rest } = await supabase
           .from('restaurantes')
@@ -150,8 +172,8 @@ export default async function handler(req, res) {
           console.log(`Plan suspendido (${status}) para restaurante ${rest.id}`);
         }
         else if (status === 'active') {
-          await supabase.from('restaurantes').update({ plan: 'pro' }).eq('id', rest.id);
-          console.log(`Plan reactivado para restaurante ${rest.id}`);
+          await supabase.from('restaurantes').update({ plan: planLevel }).eq('id', rest.id);
+          console.log(`Plan reactivado (${planLevel}) para restaurante ${rest.id}`);
         }
         break;
       }
