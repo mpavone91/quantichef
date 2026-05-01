@@ -18,6 +18,8 @@
 <title>QuantiChef — Mi cocina</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
 <style>
   :root {
     --sidebar-width: 250px;
@@ -366,12 +368,18 @@
           <p>Estás en <strong>prueba gratuita</strong>. Elige un plan para trackear tu rentabilidad sin límites.</p>
           <a href="/precios" style="background:var(--gold); color:white; padding:8px 16px; border-radius:7px; text-decoration:none; font-size:13px; font-weight:700">Ver Planes</a>
         </div>
-        <div class="pro-banner" id="banner-basic" style="display:none; background:var(--surface2); border:1px solid var(--border);">
-          <div class="pro-badge" style="background:var(--text3);">Plan Básico Activo</div>
-          <a href="/precios" style="margin-left:auto; font-size:12px; font-weight:600; color:var(--accent); text-decoration:none;">⭐ Mejorar a Pro</a>
+        
+        <div id="banner-basic" style="display:none; background:var(--surface2); border:1px solid var(--border); padding:1rem; border-radius:10px; align-items:center; gap:10px; margin-bottom:1.5rem; justify-content:space-between; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <div style="font-size:10px; font-weight:700; background:var(--text3); color:white; padding:3px 8px; border-radius:12px; text-transform:uppercase;">Plan Básico Activo</div>
+            <span style="font-size:13px; font-weight:600; color:var(--text);">🚀 ¿Necesitas subir más documentos o facturas? Pásate al Plan PRO</span>
+          </div>
+          <a href="/precios" style="background:var(--accent); color:white; padding:8px 16px; border-radius:7px; text-decoration:none; font-size:12px; font-weight:700; white-space:nowrap;">Mejorar a PRO</a>
         </div>
-        <div class="pro-banner" id="banner-pro" style="display:none">
-          <div class="pro-badge">Plan Pro Activo</div>
+        
+        <div id="banner-pro" style="display:none; background:var(--surface); border:1px solid var(--gold); padding:1rem; border-radius:10px; align-items:center; gap:10px; margin-bottom:1.5rem;">
+          <div style="font-size:10px; font-weight:700; background:linear-gradient(135deg, var(--gold) 0%, #E6B755 100%); color:white; padding:3px 8px; border-radius:12px; text-transform:uppercase; box-shadow:0 2px 4px rgba(196,148,58,.3);">Plan PRO Activado</div>
+          <span style="font-size:13px; font-weight:600; color:var(--text);">¡Disfruta de QuantiChef sin límites! Todas las extracciones de IA están habilitadas.</span>
         </div>
         
         <div class="extract-loading" id="extract-loading" style="display:none; background:var(--accent-light); padding:1rem; border-radius:10px; margin-bottom:1rem; align-items:center; gap:10px;">
@@ -710,7 +718,16 @@ async function cargarDatos(session){
     const { count: preciosCount } = await sb.from('precios_proveedor').select('id', { count: 'exact', head: true }).eq('restaurante_id', rest.id);
     if(preciosCount === 0 && document.getElementById('aviso-estimados')) document.getElementById('aviso-estimados').style.display = 'flex';
   } else {
-    document.getElementById('lista-escandallos').innerHTML = '<div style="padding:3rem; text-align:center; color:var(--text3); border:1.5px dashed var(--border); border-radius:12px;">Aún no tienes platos. Crea uno o importa tus recetas.</div>';
+    document.getElementById('lista-escandallos').innerHTML = '<div style="padding:3rem; text-align:center; color:var(--text3); border:1.5px dashed var(--border); border-radius:12px;">Aún no tienes platos. Crea uno o importa tus recetas. <button onclick="iniciarTourOnboarding()" style="margin-top:1rem; display:block; margin-left:auto; margin-right:auto; padding:8px 16px; background:var(--gold); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600;">Ver Tour de Ayuda</button></div>';
+    
+    // Si no hay escandallos, comprobamos si tampoco hay stock ni precios para lanzar el tour.
+    const { count: preciosCount } = await sb.from('precios_proveedor').select('id', { count: 'exact', head: true }).eq('restaurante_id', rest.id);
+    const { count: stockCount } = await sb.from('inventario_stock').select('id', { count: 'exact', head: true }).eq('restaurante_id', rest.id);
+    
+    if(preciosCount === 0 && stockCount === 0 && !localStorage.getItem('quantichef_tour_visto')) {
+      // Retrasar el tour un poco para que termine de cargar la UI
+      setTimeout(() => iniciarTourOnboarding(), 500);
+    }
   }
 
   await cargarAlertas();
@@ -1398,6 +1415,60 @@ function abrirModalVerificacionStock(items) {
   `).join('');
   
   document.getElementById('modal-verificacion-stock').classList.add('visible');
+}
+
+// ── TOUR DE ONBOARDING CON DRIVER.JS ──
+function iniciarTourOnboarding() {
+  localStorage.setItem('quantichef_tour_visto', 'true');
+  
+  // Asegurarnos de estar en el dashboard de inicio (Resumen)
+  switchTab('platos', document.querySelectorAll('.nav-item')[0]);
+
+  const driver = window.driver.js.driver;
+  const tour = driver({
+    showProgress: true,
+    nextBtnText: 'Siguiente &rarr;',
+    prevBtnText: '&larr; Atrás',
+    doneBtnText: '¡Entendido!',
+    progressText: 'Paso {{current}} de {{total}}',
+    allowClose: false,
+    steps: [
+      {
+        element: document.querySelectorAll('.nav-item')[3], // Precios Proveedor
+        popover: {
+          title: '1. Facturas y Proveedores',
+          description: 'Sube aquí el listado de precios de tu proveedor o una factura. Nuestra IA extraerá los precios para tener tus costes de receta siempre actualizados.',
+          side: "right", align: 'start'
+        }
+      },
+      {
+        element: document.querySelectorAll('.nav-item')[2], // Stock
+        popover: {
+          title: '2. Inventario y Stock',
+          description: 'Sube aquí tu lista de compras o inventario actual. Así el sistema sabrá exactamente qué cantidades tienes en tu almacén en todo momento.',
+          side: "right", align: 'start'
+        }
+      },
+      {
+        element: document.querySelectorAll('.nav-item')[1], // Escandallos (o el botón de crear si lo hubiera, pero el nav es más seguro)
+        popover: {
+          title: '3. Escandallos y Platos',
+          description: 'Añade tus platos plato por plato. Crearemos tus escandallos calculando el coste real basado en los precios de los proveedores que subiste en el paso 1.',
+          side: "right", align: 'start'
+        }
+      },
+      {
+        element: document.querySelectorAll('.nav-item')[2], // Volvemos a apuntar a Stock, luego explicamos el TPV
+        popover: {
+          title: '4. Cierre del Día (TPV)',
+          description: 'Al cerrar el día, vuelve a la sección de Inventario y usa "Descontar Ventas (TPV)". Al subir tu resumen de ventas, restaremos automáticamente las raciones vendidas de tu almacén.',
+          side: "right", align: 'start'
+        }
+      }
+    ]
+  });
+
+  tour.drive();
 }
 
 async function confirmarStockExtraido() {
