@@ -649,7 +649,7 @@ async function init(){
 async function cargarDatos(session){
   let rest = null; let intentos = 0; const maxIntentos = 5;
   while (!rest && intentos < maxIntentos) {
-    const { data } = await sb.from('restaurantes').select('id,nombre,plan,documentos_subidos').eq('user_id', session.user.id).maybeSingle();
+    const { data } = await sb.from('restaurantes').select('*').eq('user_id', session.user.id).maybeSingle();
     if (data) { rest = data; break; }
     intentos++;
     if (intentos < maxIntentos) await new Promise(r => setTimeout(r, 800 * intentos));
