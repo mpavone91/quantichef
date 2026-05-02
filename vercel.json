@@ -7,7 +7,8 @@
     { "source": "/precios", "destination": "/precios.html" },
     { "source": "/legal", "destination": "/legal.html" },
     { "source": "/contacto", "destination": "/contacto.html" },
-    { "source": "/prospector", "destination": "/prospector.html" }
+    { "source": "/prospector", "destination": "/prospector.html" },
+    { "source": "/campaign", "destination": "/campaign.html" }
   ],
   "crons": [
     {

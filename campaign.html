@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QuantiChef — Campaign Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#F9FAFB;--surface:#fff;--surface2:#F3F4F6;--border:#E5E7EB;--text:#111827;--text2:#6B7280;--text3:#9CA3AF;--accent:#2D6A4F;--gold:#C4943A;--danger:#DC2626; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    .page{max-width:1100px;margin:0 auto;padding:2rem 1.5rem;}
+    h1{font-family:'Fraunces',serif;font-size:1.8rem;margin-bottom:.4rem;}
+    h1 span{color:var(--accent);}
+    .sub{font-size:13px;color:var(--text2);margin-bottom:2rem;}
+    
+    /* KPI CARDS */
+    .kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;margin-bottom:2rem;}
+    .kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;}
+    .kpi-num{font-size:2rem;font-weight:800;color:var(--text);}
+    .kpi-label{font-size:12px;color:var(--text2);font-weight:600;margin-top:4px;}
+    .kpi-rate{font-size:11px;color:var(--accent);font-weight:700;margin-top:2px;}
+
+    /* CONTROLES */
+    .controls{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;}
+    .form-group{display:flex;flex-direction:column;gap:5px;}
+    .form-label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;}
+    select,input[type=number]{border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--text);}
+    .btn{padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:all .2s;display:flex;align-items:center;gap:6px;}
+    .btn-primary{background:var(--accent);color:white;}
+    .btn-primary:hover{background:#1e4d2b;}
+    .btn-primary:disabled{opacity:.6;cursor:not-allowed;}
+    .btn-secondary{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+    
+    /* TABLA */
+    .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+    .table-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}
+    .table-title{font-weight:700;font-size:14px;}
+    table{width:100%;border-collapse:collapse;}
+    th{background:var(--surface2);padding:10px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);}
+    td{padding:10px 16px;font-size:13px;border-bottom:1px solid var(--border);}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:#FAFAFA;}
+    .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;}
+    .badge-A{background:#D1FAE5;color:#065F46;}
+    .badge-B{background:#DBEAFE;color:#1E40AF;}
+    .badge-C{background:#F3F4F6;color:#6B7280;}
+    .estado-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;}
+    .e-pendiente{background:#FEF3C7;color:#92400E;}
+    .e-enviado{background:#DBEAFE;color:#1E40AF;}
+    .e-abierto{background:#D1FAE5;color:#065F46;}
+    .e-cliqueado{background:#EDE9FE;color:#5B21B6;}
+    .e-respondio{background:#ECFDF5;color:#047857;}
+    .e-baja{background:#FEE2E2;color:#991B1B;}
+    
+    .log{background:#1a1a2e;color:#a8ff78;font-family:'Courier New',monospace;font-size:12px;padding:1rem;border-radius:8px;max-height:200px;overflow-y:auto;margin-top:1rem;white-space:pre-wrap;}
+    .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .paginacion{display:flex;gap:8px;padding:1rem;justify-content:center;}
+    .btn-page{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;font-weight:600;}
+    .btn-page.active{background:var(--accent);color:white;border-color:var(--accent);}
+  </style>
+</head>
+<body>
+<div class="page">
+  <div style="margin-bottom:.5rem"><a href="/dashboard" style="font-size:13px;color:var(--text2);text-decoration:none;">← Volver al Dashboard</a></div>
+  <h1>📧 Campaign <span>Manager</span></h1>
+  <p class="sub">Envío segmentado · Tracking de aperturas y clics · CRM de leads</p>
+
+  <!-- KPIs -->
+  <div class="kpis" id="kpis">
+    <div class="kpi"><div class="kpi-num" id="k-total">—</div><div class="kpi-label">Total leads</div></div>
+    <div class="kpi"><div class="kpi-num" id="k-pendiente">—</div><div class="kpi-label">Pendientes</div></div>
+    <div class="kpi"><div class="kpi-num" id="k-enviado" style="color:#1D4ED8">—</div><div class="kpi-label">Enviados</div></div>
+    <div class="kpi"><div class="kpi-num" id="k-abierto" style="color:#065F46">—</div><div class="kpi-label">Abrieron</div><div class="kpi-rate" id="r-abierto"></div></div>
+    <div class="kpi"><div class="kpi-num" id="k-cliqueado" style="color:#5B21B6">—</div><div class="kpi-label">Cliquearon</div><div class="kpi-rate" id="r-cliqueado"></div></div>
+    <div class="kpi"><div class="kpi-num" id="k-respondio" style="color:var(--gold)">—</div><div class="kpi-label">Respondieron</div></div>
+    <div class="kpi"><div class="kpi-num" id="k-baja" style="color:var(--danger)">—</div><div class="kpi-label">Bajas</div></div>
+  </div>
+
+  <!-- CONTROLES DE ENVÍO -->
+  <div class="controls">
+    <div class="form-group">
+      <label class="form-label">Segmento</label>
+      <select id="sel-segmento">
+        <option value="todos">Todos</option>
+        <option value="A">A — Propietarios/CEOs (mayor prioridad)</option>
+        <option value="B">B — F&B / Operaciones</option>
+        <option value="C">C — Otros (menor prioridad)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Emails por lote</label>
+      <input type="number" id="inp-cantidad" value="50" min="1" max="100" style="width:100px;">
+    </div>
+    <button class="btn btn-primary" id="btn-enviar" onclick="enviarLote()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      Enviar lote
+    </button>
+    <button class="btn btn-secondary" onclick="cargarStats()">↻ Actualizar stats</button>
+  </div>
+
+  <!-- LOG DE ENVÍO -->
+  <div id="log-wrap" style="display:none">
+    <div class="log" id="log-area"></div>
+  </div>
+
+  <!-- FILTROS TABLA -->
+  <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center;">
+    <span style="font-size:13px;font-weight:600;color:var(--text2);">Filtrar por estado:</span>
+    <button class="btn-page active" onclick="filtrarEstado('', this)">Todos</button>
+    <button class="btn-page" onclick="filtrarEstado('pendiente', this)">Pendientes</button>
+    <button class="btn-page" onclick="filtrarEstado('enviado', this)">Enviados</button>
+    <button class="btn-page" onclick="filtrarEstado('abierto', this)">Abrieron</button>
+    <button class="btn-page" onclick="filtrarEstado('cliqueado', this)">Cliquearon</button>
+    <button class="btn-page" onclick="filtrarEstado('baja', this)">Bajas</button>
+    <select id="sel-filtro-seg" onchange="filtrarSegmento(this.value)" style="margin-left:8px;border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit;background:var(--bg);">
+      <option value="">Todos los segmentos</option>
+      <option value="A">Segmento A</option>
+      <option value="B">Segmento B</option>
+      <option value="C">Segmento C</option>
+    </select>
+  </div>
+
+  <!-- TABLA CONTACTOS -->
+  <div class="table-wrap">
+    <div class="table-header">
+      <span class="table-title" id="tabla-titulo">Contactos</span>
+      <span style="font-size:12px;color:var(--text3);" id="tabla-count"></span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr><th>Nombre</th><th>Empresa</th><th>Cargo</th><th>Seg.</th><th>Estado</th><th>Email</th></tr>
+        </thead>
+        <tbody id="tabla-body">
+          <tr><td colspan="6" style="text-align:center;color:var(--text3);padding:2rem;">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="paginacion" id="paginacion"></div>
+  </div>
+</div>
+
+<script>
+const ADMIN_KEY = prompt('Clave de administrador:') || '';
+let paginaActual = 0;
+let filtroEstado = '';
+let filtroSegmento = '';
+const POR_PAGINA = 50;
+
+async function api(body) {
+  const resp = await fetch('/api/campaign', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
+    body: JSON.stringify(body)
+  });
+  return resp.json();
+}
+
+async function apiGet(params) {
+  const q = new URLSearchParams(params).toString();
+  const resp = await fetch(`/api/campaign?${q}`, { headers: { 'x-admin-key': ADMIN_KEY } });
+  return resp.json();
+}
+
+async function cargarStats() {
+  const s = await api({ mode: 'stats' });
+  document.getElementById('k-total').textContent = s.total ?? '—';
+  document.getElementById('k-pendiente').textContent = s.pendiente ?? 0;
+  document.getElementById('k-enviado').textContent = s.enviado ?? 0;
+  document.getElementById('k-abierto').textContent = s.abierto ?? 0;
+  document.getElementById('k-cliqueado').textContent = s.cliqueado ?? 0;
+  document.getElementById('k-respondio').textContent = s.respondio ?? 0;
+  document.getElementById('k-baja').textContent = s.baja ?? 0;
+  const totalEnv = (s.enviado || 0) + (s.abierto || 0) + (s.cliqueado || 0) + (s.respondio || 0);
+  if (totalEnv > 0) {
+    document.getElementById('r-abierto').textContent = Math.round(((s.abierto || 0) / totalEnv) * 100) + '% open rate';
+    document.getElementById('r-cliqueado').textContent = Math.round(((s.cliqueado || 0) / totalEnv) * 100) + '% CTR';
+  }
+}
+
+async function cargarTabla() {
+  const params = { mode: 'list', page: paginaActual, limit: POR_PAGINA };
+  if (filtroEstado) params.estado = filtroEstado;
+  if (filtroSegmento) params.segmento = filtroSegmento;
+
+  const { contactos } = await api(params);
+  const tbody = document.getElementById('tabla-body');
+  
+  if (!contactos?.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:2rem;">No hay contactos</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = contactos.map(c => `
+    <tr>
+      <td><strong>${c.nombre} ${c.apellidos || ''}</strong></td>
+      <td>${c.empresa}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)">${c.cargo}</td>
+      <td><span class="badge badge-${c.segmento}">${c.segmento}</span></td>
+      <td><span class="estado-badge e-${c.estado}">${estadoTexto(c.estado)}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${c.email}</td>
+    </tr>`).join('');
+
+  document.getElementById('tabla-count').textContent = `${contactos.length} mostrados`;
+  
+  // Paginación
+  const pg = document.getElementById('paginacion');
+  pg.innerHTML = '';
+  if (paginaActual > 0) {
+    const prev = document.createElement('button');
+    prev.className = 'btn-page';
+    prev.textContent = '← Anterior';
+    prev.onclick = () => { paginaActual--; cargarTabla(); };
+    pg.appendChild(prev);
+  }
+  if (contactos.length === POR_PAGINA) {
+    const next = document.createElement('button');
+    next.className = 'btn-page';
+    next.textContent = 'Siguiente →';
+    next.onclick = () => { paginaActual++; cargarTabla(); };
+    pg.appendChild(next);
+  }
+}
+
+function estadoTexto(e) {
+  return { pendiente:'⏳ Pendiente', enviado:'📤 Enviado', abierto:'👁 Abrió', cliqueado:'🖱 Cliqueó', respondio:'💬 Respondió', baja:'🚫 Baja' }[e] || e;
+}
+
+function filtrarEstado(estado, btn) {
+  filtroEstado = estado;
+  paginaActual = 0;
+  document.querySelectorAll('.btn-page').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  cargarTabla();
+}
+
+function filtrarSegmento(seg) {
+  filtroSegmento = seg;
+  paginaActual = 0;
+  cargarTabla();
+}
+
+async function enviarLote() {
+  const segmento = document.getElementById('sel-segmento').value;
+  const cantidad = parseInt(document.getElementById('inp-cantidad').value) || 50;
+  
+  if (!confirm(`¿Enviar hasta ${cantidad} emails al segmento "${segmento}"?`)) return;
+  
+  const btn = document.getElementById('btn-enviar');
+  btn.innerHTML = '<div class="spinner"></div> Enviando...';
+  btn.disabled = true;
+  
+  const logWrap = document.getElementById('log-wrap');
+  const logArea = document.getElementById('log-area');
+  logWrap.style.display = 'block';
+  logArea.textContent = `> Iniciando envío de ${cantidad} emails (segmento: ${segmento})\n`;
+  
+  const data = await api({ mode: 'enviar_lote', segmento, cantidad });
+  
+  logArea.textContent += `> Enviados: ${data.enviados} ✅  |  Fallidos: ${data.fallidos || 0} ❌\n`;
+  if (data.detalle) {
+    data.detalle.forEach(r => {
+      logArea.textContent += `  ${r.ok ? '✓' : '✗'} ${r.email}${r.error ? ' — ' + r.error : ''}\n`;
+    });
+  }
+  logArea.scrollTop = logArea.scrollHeight;
+  
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Enviar lote';
+  btn.disabled = false;
+  
+  cargarStats();
+  cargarTabla();
+}
+
+// Inicializar
+cargarStats();
+cargarTabla();
+</script>
+</body>
+</html>
