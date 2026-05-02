@@ -157,11 +157,14 @@
         </div>
       </div>
       <div class="editor-right">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Vista Previa</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Vista Previa Real del Email</div>
         <div style="background:#f0f0f0;border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--text2);">
-          <strong>Asunto:</strong> <span id="preview-asunto"></span>
+          <strong>Asunto:</strong> <span id="preview-asunto" style="color:var(--text)">—</span>
         </div>
-        <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:16px;min-height:350px;" id="preview-body"></div>
+        <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;background:white;">
+          <iframe id="preview-iframe" style="width:100%;min-height:480px;border:none;display:block;" srcdoc="<p style='color:#aaa;padding:2rem;font-family:sans-serif;font-size:13px;'>Escribe algo para ver la vista previa...</p>"></iframe>
+        </div>
+        <p style="font-size:11px;color:var(--text3);margin-top:8px;">📧 Así se verá exactamente en el email del destinatario (con datos de ejemplo: "Fernando" de "Restaurante Ejemplo")</p>
       </div>
     </div>
   </div>
@@ -278,20 +281,43 @@ function setEditorTab(seg, btn) {
   cargarEditorTab(seg);
 }
 
-function cargarEditorTab(seg) {
+async function cargarEditorTab(seg) {
   const t = getTemplates()[seg] || TEMPLATES_DEFAULT[seg];
   document.getElementById('ed-asunto').value = t.asunto;
   document.getElementById('ed-html').value = t.html;
-  actualizarPreview();
+  // Si el template tiene contenido, mostrar preview via API para ver el diseño real
+  try {
+    const templates = {}; templates[seg] = t;
+    const data = await api({ mode: 'preview', segmento: seg, templates });
+    document.getElementById('preview-asunto').textContent = data.asunto || '—';
+    document.getElementById('preview-iframe').srcdoc = data.html || '';
+  } catch { actualizarPreview(); }
 }
 
+let previewTimeout = null;
 function actualizarPreview() {
-  const asunto = document.getElementById('ed-asunto').value
-    .replace('{nombre}','Fernando').replace('{empresa}','Restaurante Ejemplo').replace('{cargo}','Propietario');
-  const html = document.getElementById('ed-html').value
-    .replace(/{nombre}/g,'Fernando').replace(/{empresa}/g,'Restaurante Ejemplo').replace(/{cargo}/g,'Propietario');
-  document.getElementById('preview-asunto').textContent = asunto;
-  document.getElementById('preview-body').innerHTML = html;
+  clearTimeout(previewTimeout);
+  previewTimeout = setTimeout(async () => {
+    try {
+      const templates = {};
+      templates[editorTabActual] = {
+        asunto: document.getElementById('ed-asunto').value,
+        html: document.getElementById('ed-html').value
+      };
+      const data = await api({ mode: 'preview', segmento: editorTabActual, templates });
+      document.getElementById('preview-asunto').textContent = data.asunto || '—';
+      const iframe = document.getElementById('preview-iframe');
+      iframe.srcdoc = data.html || '';
+    } catch(e) {
+      // fallback a preview local simple
+      const asunto = document.getElementById('ed-asunto').value
+        .replace(/{nombre}/g,'Fernando').replace(/{empresa}/g,'Restaurante Ejemplo').replace(/{cargo}/g,'Propietario');
+      document.getElementById('preview-asunto').textContent = asunto;
+      const html = document.getElementById('ed-html').value
+        .replace(/{nombre}/g,'Fernando').replace(/{empresa}/g,'Restaurante Ejemplo').replace(/{cargo}/g,'Propietario');
+      document.getElementById('preview-iframe').srcdoc = html;
+    }
+  }, 600); // debounce 600ms
 }
 
 function guardarEnMemoria() {
