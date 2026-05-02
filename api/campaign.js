@@ -6,15 +6,34 @@ const RESEND_KEY = process.env.RESEND_API_KEY;
 const BASE_URL = 'https://www.quantichef.com';
 
 // ── Templates por segmento ────────────────────────────────────────────────────
-function getTemplate(segmento, contacto) {
-  const nombre = contacto.nombre;
-  const empresa = contacto.empresa;
-  const trackOpen = `${BASE_URL}/api/track?type=open&id=${contacto.id}&t=${Date.now()}`;
-  const linkWeb = `${BASE_URL}/api/track?type=click&id=${contacto.id}&dest=${encodeURIComponent(BASE_URL)}`;
-  const linkDemo = `${BASE_URL}/api/track?type=click&id=${contacto.id}&dest=${encodeURIComponent('https://cal.com/quantichef/demo')}`;
+function getTemplate(segmento, contacto, customTemplates) {
+  const nombre = contacto.nombre || 'Chef';
+  const empresa = contacto.empresa || 'tu restaurante';
+  const cargo = contacto.cargo || '';
+
+  const trackOpen = `${BASE_URL}/api/track?type=open&id=${contacto.id}`;
   const linkBaja = `${BASE_URL}/api/track?type=unsub&id=${contacto.id}`;
 
+  // Si hay template personalizado del editor, usarlo
+  const custom = customTemplates?.[segmento];
+  if (custom?.asunto && custom?.html) {
+    const asunto = custom.asunto
+      .replace(/{nombre}/g, nombre).replace(/{empresa}/g, empresa).replace(/{cargo}/g, cargo);
+    const cuerpo = custom.html
+      .replace(/{nombre}/g, nombre).replace(/{empresa}/g, empresa).replace(/{cargo}/g, cargo);
+    // Envolver links con tracking
+    const htmlFinal = wrapLinks(cuerpo, contacto.id) +
+      `<img src="${trackOpen}" width="1" height="1" style="display:none" alt="">` +
+      `<p style="font-size:11px;color:#aaa;margin-top:20px;"><a href="${linkBaja}" style="color:#aaa;">Darme de baja</a></p>`;
+    return { asunto, html: htmlFinal };
+  }
+
+  // Fallback: template por defecto (hardcoded)
   const pixel = `<img src="${trackOpen}" width="1" height="1" style="display:none" alt="">`;
+  const footerBaja = `<hr style="border:none;border-top:1px solid #eee;margin:24px 0;"><p style="font-size:11px;color:#aaa;">Si no quieres recibir más emails, <a href="${linkBaja}" style="color:#aaa;">pulsa aquí para darte de baja</a>.</p>`;
+
+  const linkWeb = `${BASE_URL}/api/track?type=click&id=${contacto.id}&dest=${encodeURIComponent(BASE_URL)}`;
+  const linkDemo = `${BASE_URL}/api/track?type=click&id=${contacto.id}&dest=${encodeURIComponent('https://cal.com/quantichef/demo')}`;
 
   if (segmento === 'A') {
     // PROPIETARIOS / OWNERS
@@ -80,6 +99,16 @@ function getTemplate(segmento, contacto) {
   };
 }
 
+// Envuelve hrefs en links de tracking
+function wrapLinks(html, contactId) {
+  return html.replace(/href="(https?://[^"]+)"/g, (match, url) => {
+    // No envolver links de baja que ya están trackeados
+    if (url.includes('/api/track')) return match;
+    const tracked = `${BASE_URL}/api/track?type=click&id=${contactId}&dest=${encodeURIComponent(url)}`;
+    return `href="${tracked}"`;
+  });
+}
+
 export default async function handler(req, res) {
   // Auth básica por header secreto (solo para uso interno)
   if (req.headers['x-admin-key'] !== process.env.ADMIN_SECRET_KEY) {
@@ -117,7 +146,7 @@ export default async function handler(req, res) {
 
   // ── Enviar lote de emails ─────────────────────────────────────────────────
   if (mode === 'enviar_lote') {
-    const { segmento, cantidad = 50 } = req.body;
+    const { segmento, cantidad = 50, templates: customTemplates } = req.body;
     
     let q = sb.from('campana_contactos')
       .select('*')
@@ -132,7 +161,7 @@ export default async function handler(req, res) {
     const resultados = [];
     for (const contacto of contactos) {
       try {
-        const template = getTemplate(contacto.segmento, contacto);
+        const template = getTemplate(contacto.segmento, contacto, customTemplates);
         
         const resp = await fetch('https://api.resend.com/emails', {
           method: 'POST',
