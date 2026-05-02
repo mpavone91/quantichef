@@ -1,14 +1,14 @@
-// /api/campaign.js — Motor de campaña de email con tracking
+﻿// /api/campaign.js â€” Motor de campaÃ±a de email con tracking
 import { createClient } from '@supabase/supabase-js';
 
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 const RESEND_KEY = process.env.RESEND_API_KEY;
 const BASE_URL = 'https://www.quantichef.com';
-// Fallback si ADMIN_SECRET_KEY no está configurada aún en Vercel
+// Fallback si ADMIN_SECRET_KEY no estÃ¡ configurada aÃºn en Vercel
 const ADMIN_KEY = process.env.ADMIN_SECRET_KEY || 'qc-admin-2025';
 
-// ── HTML Email Templates ──────────────────────────────────────────────────────
-// Email con diseño profesional usando tablas + CSS inline (compatible con Gmail/Outlook)
+// â”€â”€ HTML Email Templates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Email con diseÃ±o profesional usando tablas + CSS inline (compatible con Gmail/Outlook)
 
 function emailWrapper(contenido, contactId) {
   const trackOpen = `${BASE_URL}/api/track?type=open&id=${contactId}`;
@@ -28,7 +28,7 @@ function emailWrapper(contenido, contactId) {
           <tr>
             <td>
               <span style="font-family:Georgia,serif;font-size:22px;font-weight:bold;color:#C4943A;letter-spacing:-0.5px;">Quanti</span><span style="font-family:Georgia,serif;font-size:22px;font-weight:bold;color:#ffffff;letter-spacing:-0.5px;">Chef</span>
-              <span style="display:block;font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;letter-spacing:1px;text-transform:uppercase;">Control de costes · F&amp;B</span>
+              <span style="display:block;font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;letter-spacing:1px;text-transform:uppercase;">Control de costes Â· F&amp;B</span>
             </td>
           </tr>
         </table>
@@ -48,8 +48,8 @@ function emailWrapper(contenido, contactId) {
         <table width="100%" cellpadding="0" cellspacing="0" border="0">
           <tr>
             <td style="font-size:12px;color:#8A9E8D;line-height:1.6;">
-              <strong style="color:#5A7A5D;">Massimo</strong> · Founder, QuantiChef<br>
-              <a href="mailto:hola@quantichef.com" style="color:#2D6A4F;text-decoration:none;">hola@quantichef.com</a> &nbsp;·&nbsp;
+              <strong style="color:#5A7A5D;">Massimo</strong> Â· Founder, QuantiChef<br>
+              <a href="mailto:hola@quantichef.com" style="color:#2D6A4F;text-decoration:none;">hola@quantichef.com</a> &nbsp;Â·&nbsp;
               <a href="https://www.quantichef.com" style="color:#2D6A4F;text-decoration:none;">www.quantichef.com</a>
             </td>
             <td align="right" style="font-size:11px;color:#B0BDB2;">
@@ -70,7 +70,7 @@ function emailWrapper(contenido, contactId) {
 </html>`;
 }
 
-// Botón CTA con tracking
+// BotÃ³n CTA con tracking
 function ctaButton(texto, url, contactId) {
   const tracked = `${BASE_URL}/api/track?type=click&id=${contactId}&dest=${encodeURIComponent(url)}`;
   return `<table cellpadding="0" cellspacing="0" border="0" style="margin:8px 0;">
@@ -84,7 +84,7 @@ function ctaButton(texto, url, contactId) {
 
 function linkTexto(texto, url, contactId) {
   const tracked = `${BASE_URL}/api/track?type=click&id=${contactId}&dest=${encodeURIComponent(url)}`;
-  return `<a href="${tracked}" style="color:#2D6A4F;font-weight:bold;text-decoration:none;">${texto} →</a>`;
+  return `<a href="${tracked}" style="color:#2D6A4F;font-weight:bold;text-decoration:none;">${texto} â†’</a>`;
 }
 
 // Caja de "social proof"
@@ -98,14 +98,14 @@ function socialProofBox(texto) {
   </table>`;
 }
 
-// ── Templates por segmento ────────────────────────────────────────────────────
+// â”€â”€ Templates por segmento â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getTemplate(segmento, contacto, customTemplates) {
   const nombre  = contacto.nombre  || 'Chef';
   const empresa = contacto.empresa || 'tu restaurante';
   const cargo   = contacto.cargo   || '';
   const id      = contacto.id;
 
-  // Si hay template personalizado del editor, usarlo (con wrapper de diseño)
+  // Si hay template personalizado del editor, usarlo (con wrapper de diseÃ±o)
   const custom = customTemplates?.[segmento];
   if (custom?.asunto && custom?.html) {
     const asunto = custom.asunto
@@ -115,62 +115,62 @@ function getTemplate(segmento, contacto, customTemplates) {
     return { asunto, html: emailWrapper(wrapLinks(cuerpo, id), id) };
   }
 
-  // ── SEGMENTO A: PROPIETARIOS / OWNERS / CEOs ─────────────────────────────
+  // â”€â”€ SEGMENTO A: PROPIETARIOS / OWNERS / CEOs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (segmento === 'A') {
-    const asunto = `${nombre}, ¿sabes exactamente cuánto te cuesta cada plato?`;
+    const asunto = `${nombre}, Â¿sabes exactamente cuÃ¡nto te cuesta cada plato?`;
     const cuerpo = `
       <p style="margin:0 0 16px;font-size:15px;color:#222;line-height:1.7;">Hola <strong>${nombre}</strong>,</p>
-      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">La mayoría de propietarios con los que hablo dicen lo mismo cuando empezamos:</p>
-      ${socialProofBox('"Sabía que mi food cost era alto, pero no exactamente en qué plato lo estaba perdiendo."')}
-      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;"><strong style="color:#111;">QuantiChef</strong> resuelve eso. Subes la factura de tu proveedor (foto o PDF), la IA extrae los precios automáticamente y recalcula el margen real de cada receta al instante.</p>
-      <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;">Sin Excel. Sin estimaciones. Sin contratar a nadie más.</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">La mayorÃ­a de propietarios con los que hablo dicen lo mismo cuando empezamos:</p>
+      ${socialProofBox('"SabÃ­a que mi food cost era alto, pero no exactamente en quÃ© plato lo estaba perdiendo."')}
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;"><strong style="color:#111;">QuantiChef</strong> resuelve eso. Subes la factura de tu proveedor (foto o PDF), la IA extrae los precios automÃ¡ticamente y recalcula el margen real de cada receta al instante.</p>
+      <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;">Sin Excel. Sin estimaciones. Sin contratar a nadie mÃ¡s.</p>
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td style="padding-right:16px;">${ctaButton('Ver cómo funciona', BASE_URL, id)}</td>
-          <td style="vertical-align:middle;font-size:14px;">${linkTexto('Pedir una demo de 15 min', 'https://cal.com/quantichef/demo', id)}</td>
+          <td style="padding-right:16px;">${ctaButton('Ver cÃ³mo funciona', BASE_URL, id)}</td>
+          <td style="vertical-align:middle;font-size:14px;">${linkTexto('Pedir una demo de 15 min', 'https://www.quantichef.com/contacto.html', id)}</td>
         </tr>
       </table>
-      <p style="margin:24px 0 0;font-size:13px;color:#9CA3AF;">3 días gratis · Sin tarjeta de crédito · Cancela cuando quieras</p>`;
+      <p style="margin:24px 0 0;font-size:13px;color:#9CA3AF;">3 dÃ­as gratis Â· Sin tarjeta de crÃ©dito Â· Cancela cuando quieras</p>`;
     return { asunto, html: emailWrapper(cuerpo, id) };
   }
 
-  // ── SEGMENTO B: F&B MANAGERS / JEFES DE OPERACIONES ──────────────────────
+  // â”€â”€ SEGMENTO B: F&B MANAGERS / JEFES DE OPERACIONES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (segmento === 'B') {
-    const asunto = `Control de food cost automatizado — para equipos como el de ${empresa}`;
+    const asunto = `Control de food cost automatizado â€” para equipos como el de ${empresa}`;
     const cuerpo = `
       <p style="margin:0 0 16px;font-size:15px;color:#222;line-height:1.7;">Hola <strong>${nombre}</strong>,</p>
-      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Gestionar el food cost cuando los precios de proveedor cambian cada semana es un trabajo constante. La mayoría de equipos lo hacen con Excel o directamente a ojo — y el margen se escapa sin que nadie lo vea venir.</p>
-      ${socialProofBox('Equipos de GOIKO, Honest Greens y Grupo Tragaluz ya usan QuantiChef para actualizar sus escandallos automáticamente cuando sube el aceite o cambia el proveedor de carne.')}
-      <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;"><strong style="color:#111;">QuantiChef</strong> automatiza ese control: sube el albarán del proveedor, la IA extrae los precios y actualiza el coste de cada plato en tiempo real.</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Gestionar el food cost cuando los precios de proveedor cambian cada semana es un trabajo constante. La mayorÃ­a de equipos lo hacen con Excel o directamente a ojo â€” y el margen se escapa sin que nadie lo vea venir.</p>
+      ${socialProofBox('Equipos de GOIKO, Honest Greens y Grupo Tragaluz ya usan QuantiChef para actualizar sus escandallos automÃ¡ticamente cuando sube el aceite o cambia el proveedor de carne.')}
+      <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;"><strong style="color:#111;">QuantiChef</strong> automatiza ese control: sube el albarÃ¡n del proveedor, la IA extrae los precios y actualiza el coste de cada plato en tiempo real.</p>
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td style="padding-right:16px;">${ctaButton('Ver la plataforma', BASE_URL, id)}</td>
-          <td style="vertical-align:middle;font-size:14px;">${linkTexto('Agendar una llamada', 'https://cal.com/quantichef/demo', id)}</td>
+          <td style="vertical-align:middle;font-size:14px;">${linkTexto('Agendar una llamada', 'https://www.quantichef.com/contacto.html', id)}</td>
         </tr>
       </table>
-      <p style="margin:24px 0 0;font-size:13px;color:#9CA3AF;">Prueba gratuita 3 días · Sin tarjeta · Setup en 5 minutos</p>`;
+      <p style="margin:24px 0 0;font-size:13px;color:#9CA3AF;">Prueba gratuita 3 dÃ­as Â· Sin tarjeta Â· Setup en 5 minutos</p>`;
     return { asunto, html: emailWrapper(cuerpo, id) };
   }
 
-  // ── SEGMENTO D: LEADS EPACK ───────────────────────────────────────────────
-  const asuntoD = `${nombre}, ¿cuánto te cuesta realmente cada plato?`;
+  // â”€â”€ SEGMENTO D: LEADS EPACK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  const asuntoD = `${nombre}, Â¿cuÃ¡nto te cuesta realmente cada plato?`;
   const cuerpoD = `
     <p style="margin:0 0 16px;font-size:15px;color:#222;line-height:1.7;">Hola <strong>${nombre}</strong>,</p>
-    <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Nos ponemos en contacto desde <strong style="color:#111;">QuantiChef</strong> porque ${empresa ? 'vemos que en <strong>' + empresa + '</strong> ' : ''}trabajáis en hostelería y creemos que podemos ayudaros a mejorar el control de costes.</p>
-    ${socialProofBox('Restaurantes como Lina Restaurante, Grosso Napoletano y La Taqueria ya calculan el food cost real de cada plato automáticamente — sin Excel, sin trabajo manual.')}
+    <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Nos ponemos en contacto desde <strong style="color:#111;">QuantiChef</strong> porque ${empresa ? 'vemos que en <strong>' + empresa + '</strong> ' : ''}trabajÃ¡is en hostelerÃ­a y creemos que podemos ayudaros a mejorar el control de costes.</p>
+    ${socialProofBox('Restaurantes como Lina Restaurante, Grosso Napoletano y La Taqueria ya calculan el food cost real de cada plato automÃ¡ticamente â€” sin Excel, sin trabajo manual.')}
     <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;">QuantiChef lee vuestras facturas de proveedor y actualiza el margen de cada receta en tiempo real. Setup en 5 minutos.</p>
-    ${ctaButton('Ver cómo funciona', BASE_URL, id)}
-    <p style="margin:16px 0 0;font-size:13px;color:#9CA3AF;">3 días gratis · Sin tarjeta de crédito</p>`;
+    ${ctaButton('Ver cÃ³mo funciona', BASE_URL, id)}
+    <p style="margin:16px 0 0;font-size:13px;color:#9CA3AF;">3 dÃ­as gratis Â· Sin tarjeta de crÃ©dito</p>`;
   if (segmento === 'D') return { asunto: asuntoD, html: emailWrapper(cuerpoD, id) };
 
-  // ── SEGMENTO C: OTROS ─────────────────────────────────────────────────────
-  const asunto = `¿Cuánto os cuesta realmente cada plato en ${empresa}?`;
+  // â”€â”€ SEGMENTO C: OTROS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  const asunto = `Â¿CuÃ¡nto os cuesta realmente cada plato en ${empresa}?`;
   const cuerpo = `
     <p style="margin:0 0 16px;font-size:15px;color:#222;line-height:1.7;">Hola <strong>${nombre}</strong>,</p>
-    <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">La mayoría de negocios del sector hostelero calculan el food cost de forma aproximada — o directamente no lo calculan. <strong style="color:#111;">QuantiChef</strong> lo hace automáticamente a partir de las facturas de proveedor.</p>
+    <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">La mayorÃ­a de negocios del sector hostelero calculan el food cost de forma aproximada â€” o directamente no lo calculan. <strong style="color:#111;">QuantiChef</strong> lo hace automÃ¡ticamente a partir de las facturas de proveedor.</p>
     <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;">Sin Excel, sin trabajo manual. El margen real de cada plato, actualizado en tiempo real.</p>
     ${ctaButton('Conocer QuantiChef', BASE_URL, id)}
-    <p style="margin:16px 0 0;font-size:13px;color:#9CA3AF;">3 días gratis · Sin tarjeta de crédito</p>`;
+    <p style="margin:16px 0 0;font-size:13px;color:#9CA3AF;">3 dÃ­as gratis Â· Sin tarjeta de crÃ©dito</p>`;
   return { asunto, html: emailWrapper(cuerpo, id) };
 }
 
@@ -195,7 +195,7 @@ export default async function handler(req, res) {
 
   const { mode } = req.method === 'GET' ? req.query : (req.body || {});
 
-  // ── Stats ─────────────────────────────────────────────────────────────────
+  // â”€â”€ Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (mode === 'stats') {
     const { data, error } = await sb.from('campana_contactos').select('estado, segmento');
     if (error) return res.status(500).json({ error: error.message });
@@ -208,7 +208,7 @@ export default async function handler(req, res) {
     return res.json(stats);
   }
 
-  // ── Lista de contactos ────────────────────────────────────────────────────
+  // â”€â”€ Lista de contactos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (mode === 'list') {
     const { segmento, estado, page = 0, limit = 50 } = req.method === 'GET' ? req.query : (req.body || {});
     let q = sb.from('campana_contactos').select('*').order('segmento').order('created_at');
@@ -221,7 +221,7 @@ export default async function handler(req, res) {
     return res.json({ contactos: data });
   }
 
-  // ── Preview de email ──────────────────────────────────────────────────────
+  // â”€â”€ Preview de email â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (mode === 'preview') {
     const { segmento = 'A', templates: customTemplates } = req.body || {};
     const mockContacto = { id: 'preview-id', nombre: 'Fernando', empresa: 'Restaurante Ejemplo', cargo: 'Propietario' };
@@ -229,7 +229,7 @@ export default async function handler(req, res) {
     return res.json({ asunto: template.asunto, html: template.html });
   }
 
-  // ── Enviar lote ───────────────────────────────────────────────────────────
+  // â”€â”€ Enviar lote â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (mode === 'enviar_lote') {
     const { segmento, cantidad = 50, templates: customTemplates } = req.body || {};
 
@@ -280,3 +280,4 @@ export default async function handler(req, res) {
 
   return res.status(400).json({ error: 'Modo no reconocido' });
 }
+

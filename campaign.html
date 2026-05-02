@@ -152,9 +152,10 @@
           <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;">Cuerpo HTML del email</div>
           <textarea class="template-area" id="ed-html" oninput="actualizarPreview()"></textarea>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="guardarTemplate()" style="font-size:12px;padding:8px 16px;">💾 Guardar cambios</button>
-          <button class="btn btn-secondary" onclick="restaurarTemplate()" style="font-size:12px;padding:8px 16px;">↺ Restaurar original</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-primary" onclick="guardarTemplate(this)" style="font-size:12px;padding:8px 16px;">&#128190; Guardar cambios</button>
+          <button class="btn btn-secondary" onclick="restaurarTemplate()" style="font-size:12px;padding:8px 16px;">&#8634; Restaurar original</button>
+          <span id="saved-badge" style="display:none;font-size:11px;background:#D1FAE5;color:#065F46;padding:4px 10px;border-radius:20px;font-weight:700;">&#10003; Guardado</span>
         </div>
         <div style="background:#FEF3C7;border-radius:8px;padding:10px 12px;font-size:12px;color:#92400E;">
           <strong>💡 Variables disponibles:</strong> usa <code>{nombre}</code>, <code>{empresa}</code>, <code>{cargo}</code> en el texto — se reemplazan automáticamente al enviar.
@@ -230,7 +231,7 @@ const TEMPLATES_DEFAULT = {
   <p>Sin Excel. Sin estimaciones. Sin contratar a nadie.</p>
   <p style="margin:24px 0;">
     <a href="https://www.quantichef.com" style="background:#2D6A4F;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;margin-right:10px;">Ver cómo funciona</a>
-    <a href="https://cal.com/quantichef/demo" style="color:#2D6A4F;font-weight:bold;">Pedir demo de 15 min →</a>
+    <a href="https://www.quantichef.com/contacto.html" style="color:#2D6A4F;font-weight:bold;">Pedir demo de 15 min →</a>
   </p>
   <p style="font-size:13px;color:#666;">3 días gratis, sin tarjeta de crédito.</p>
   <p>Un saludo,<br><strong>Massimo</strong><br>Founder, QuantiChef<br><a href="mailto:hola@quantichef.com" style="color:#2D6A4F;">hola@quantichef.com</a></p>
@@ -244,7 +245,7 @@ const TEMPLATES_DEFAULT = {
   <p>QuantiChef automatiza ese control: <strong>sube el albarán del proveedor (foto o PDF), la IA extrae los precios y actualiza el coste de cada plato en tiempo real.</strong> Equipos de grupos como GOIKO, Honest Greens o Grupo Tragaluz ya trabajan así.</p>
   <p style="margin:24px 0;">
     <a href="https://www.quantichef.com" style="background:#2D6A4F;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;margin-right:10px;">Ver la plataforma</a>
-    <a href="https://cal.com/quantichef/demo" style="color:#2D6A4F;font-weight:bold;">Agendar una llamada →</a>
+    <a href="https://www.quantichef.com/contacto.html" style="color:#2D6A4F;font-weight:bold;">Agendar una llamada →</a>
   </p>
   <p style="font-size:13px;color:#666;">Prueba gratuita 3 días · Sin tarjeta · Setup en 5 minutos</p>
   <p>Saludos,<br><strong>Massimo</strong><br>Founder, QuantiChef</p>
@@ -348,11 +349,15 @@ function guardarEnMemoria() {
   localStorage.setItem('qc_templates', JSON.stringify(templates));
 }
 
-function guardarTemplate() {
-  guardarEnMemoria();
-  const btn = event.target;
-  btn.textContent = '✅ Guardado';
-  setTimeout(() => btn.textContent = '💾 Guardar cambios', 1500);
+function guardarTemplate(btn) {
+  try {
+    guardarEnMemoria();
+    if (btn) { btn.textContent = 'Guardado OK'; setTimeout(() => btn.textContent = 'Guardar cambios', 2000); }
+    const badge = document.getElementById('saved-badge');
+    if (badge) { badge.style.display = 'inline'; setTimeout(() => badge.style.display = 'none', 3000); }
+  } catch(e) {
+    alert('Error al guardar: ' + e.message);
+  }
 }
 
 function restaurarTemplate() {
