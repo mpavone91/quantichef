@@ -46,6 +46,7 @@
     .badge-A{background:#D1FAE5;color:#065F46;}
     .badge-B{background:#DBEAFE;color:#1E40AF;}
     .badge-C{background:#F3F4F6;color:#6B7280;}
+    .badge-D{background:#FEF3C7;color:#92400E;}
     .estado-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;}
     .e-pendiente{background:#FEF3C7;color:#92400E;}
     .e-enviado{background:#DBEAFE;color:#1E40AF;}
@@ -92,6 +93,7 @@
     <div class="kpi"><div class="kpi-num" id="k-cliqueado" style="color:#5B21B6">—</div><div class="kpi-label">Cliquearon</div><div class="kpi-rate" id="r-cliqueado"></div></div>
     <div class="kpi"><div class="kpi-num" id="k-respondio" style="color:var(--gold)">—</div><div class="kpi-label">Respondieron</div></div>
     <div class="kpi"><div class="kpi-num" id="k-baja" style="color:var(--danger)">—</div><div class="kpi-label">Bajas</div></div>
+    <div class="kpi" style="border-color:#C4943A33;"><div class="kpi-num" id="k-D" style="color:var(--gold)">—</div><div class="kpi-label">Seg. D ePack</div></div>
   </div>
 
   <!-- CONTROLES DE ENVÍO -->
@@ -103,6 +105,7 @@
         <option value="A">A — Propietarios/CEOs (mayor prioridad)</option>
         <option value="B">B — F&B / Operaciones</option>
         <option value="C">C — Otros (menor prioridad)</option>
+        <option value="D">D — Leads ePack 📸</option>
       </select>
     </div>
     <div class="form-group">
@@ -139,6 +142,7 @@
           <button class="editor-tab active" onclick="setEditorTab('A',this)">Seg. A — Propietarios</button>
           <button class="editor-tab" onclick="setEditorTab('B',this)">Seg. B — F&B Ops</button>
           <button class="editor-tab" onclick="setEditorTab('C',this)">Seg. C — Otros</button>
+          <button class="editor-tab" onclick="setEditorTab('D',this)">Seg. D — ePack 📸</button>
         </div>
         <div>
           <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Asunto del email</div>
@@ -183,6 +187,7 @@
       <option value="A">Segmento A</option>
       <option value="B">Segmento B</option>
       <option value="C">Segmento C</option>
+      <option value="D">Segmento D (ePack)</option>
     </select>
   </div>
 
@@ -254,6 +259,20 @@ const TEMPLATES_DEFAULT = {
     <a href="https://www.quantichef.com" style="background:#2D6A4F;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;">Conocer QuantiChef</a>
   </p>
   <p style="font-size:13px;color:#666;">3 días gratis, sin tarjeta.</p>
+  <p>Saludos,<br><strong>Massimo</strong><br><a href="mailto:hola@quantichef.com" style="color:#2D6A4F;">hola@quantichef.com</a></p>
+</div>`
+  },
+  D: {
+    asunto: '{nombre}, ¿cuánto te cuesta realmente cada plato?',
+    html: `<div style="font-family:Arial,sans-serif;max-width:560px;color:#222;line-height:1.6;font-size:15px;">
+  <p>Hola {nombre},</p>
+  <p>Nos ponemos en contacto desde <strong>QuantiChef</strong> porque vemos que en <strong>{empresa}</strong> trabajáis en hostelería y creemos que podemos ayudaros a mejorar el control de costes de vuestra cocina.</p>
+  <p>Restaurantes como <strong>Lina Restaurante, Grosso Napoletano y La Taqueria</strong> ya calculan el food cost real de cada plato automáticamente — sin Excel, sin trabajo manual.</p>
+  <p>QuantiChef lee vuestras facturas de proveedor y actualiza el margen de cada receta en tiempo real. Setup en 5 minutos.</p>
+  <p style="margin:24px 0;">
+    <a href="https://www.quantichef.com" style="background:#2D6A4F;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;">Ver cómo funciona</a>
+  </p>
+  <p style="font-size:13px;color:#666;">3 días gratis · Sin tarjeta de crédito</p>
   <p>Saludos,<br><strong>Massimo</strong><br><a href="mailto:hola@quantichef.com" style="color:#2D6A4F;">hola@quantichef.com</a></p>
 </div>`
   }
@@ -368,6 +387,8 @@ async function cargarStats() {
   document.getElementById('k-cliqueado').textContent = s.cliqueado ?? 0;
   document.getElementById('k-respondio').textContent = s.respondio ?? 0;
   document.getElementById('k-baja').textContent = s.baja ?? 0;
+  const kD = document.getElementById('k-D');
+  if (kD) kD.textContent = s.D ?? 0;
   const totalEnv = (s.enviado || 0) + (s.abierto || 0) + (s.cliqueado || 0) + (s.respondio || 0);
   if (totalEnv > 0) {
     document.getElementById('r-abierto').textContent = Math.round(((s.abierto || 0) / totalEnv) * 100) + '% open rate';

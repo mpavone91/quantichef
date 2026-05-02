@@ -152,6 +152,17 @@ function getTemplate(segmento, contacto, customTemplates) {
     return { asunto, html: emailWrapper(cuerpo, id) };
   }
 
+  // ── SEGMENTO D: LEADS EPACK ───────────────────────────────────────────────
+  const asuntoD = `${nombre}, ¿cuánto te cuesta realmente cada plato?`;
+  const cuerpoD = `
+    <p style="margin:0 0 16px;font-size:15px;color:#222;line-height:1.7;">Hola <strong>${nombre}</strong>,</p>
+    <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Nos ponemos en contacto desde <strong style="color:#111;">QuantiChef</strong> porque ${empresa ? 'vemos que en <strong>' + empresa + '</strong> ' : ''}trabajáis en hostelería y creemos que podemos ayudaros a mejorar el control de costes.</p>
+    ${socialProofBox('Restaurantes como Lina Restaurante, Grosso Napoletano y La Taqueria ya calculan el food cost real de cada plato automáticamente — sin Excel, sin trabajo manual.')}
+    <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;">QuantiChef lee vuestras facturas de proveedor y actualiza el margen de cada receta en tiempo real. Setup en 5 minutos.</p>
+    ${ctaButton('Ver cómo funciona', BASE_URL, id)}
+    <p style="margin:16px 0 0;font-size:13px;color:#9CA3AF;">3 días gratis · Sin tarjeta de crédito</p>`;
+  if (segmento === 'D') return { asunto: asuntoD, html: emailWrapper(cuerpoD, id) };
+
   // ── SEGMENTO C: OTROS ─────────────────────────────────────────────────────
   const asunto = `¿Cuánto os cuesta realmente cada plato en ${empresa}?`;
   const cuerpo = `
@@ -188,7 +199,7 @@ export default async function handler(req, res) {
   if (mode === 'stats') {
     const { data, error } = await sb.from('campana_contactos').select('estado, segmento');
     if (error) return res.status(500).json({ error: error.message });
-    const stats = { total: 0, pendiente: 0, enviado: 0, abierto: 0, cliqueado: 0, respondio: 0, baja: 0, A: 0, B: 0, C: 0 };
+    const stats = { total: 0, pendiente: 0, enviado: 0, abierto: 0, cliqueado: 0, respondio: 0, baja: 0, A: 0, B: 0, C: 0, D: 0 };
     for (const r of data || []) {
       stats.total++;
       stats[r.estado] = (stats[r.estado] || 0) + 1;
