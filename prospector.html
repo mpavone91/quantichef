@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QuantiChef — Agente de Prospección</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    :root {
+      --bg: #F9FAFB; --surface: #fff; --surface2: #F3F4F6;
+      --border: #E5E7EB; --text: #111827; --text2: #6B7280; --text3: #9CA3AF;
+      --accent: #2D6A4F; --accent-light: #ECFDF5; --gold: #C4943A;
+      --danger: #DC2626; --danger-light: #FEF2F2;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* LAYOUT */
+    .page { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .page-title { font-family: 'Fraunces', serif; font-size: 1.8rem; color: var(--text); }
+    .page-title span { color: var(--accent); }
+    .back-link { font-size: 13px; color: var(--text2); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+    .back-link:hover { color: var(--accent); }
+
+    /* SEARCH PANEL */
+    .search-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
+    .search-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end; }
+    @media (max-width: 640px) { .search-grid { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label { font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; }
+    .form-input, .form-select { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 14px; font-family: inherit; background: var(--bg); color: var(--text); transition: border-color .2s; }
+    .form-input:focus, .form-select:focus { outline: none; border-color: var(--accent); }
+    .btn-primary { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 11px 20px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .btn-primary:hover { background: #1e4d2b; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    /* STATS BAR */
+    .stats-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .stat-pill { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 600; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+    .stat-pill .stat-num { font-size: 16px; font-weight: 700; color: var(--text); }
+
+    /* TABS */
+    .tabs { display: flex; gap: 4px; margin-bottom: 1.5rem; background: var(--surface2); padding: 4px; border-radius: 10px; width: fit-content; }
+    .tab { padding: 8px 16px; border: none; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; background: transparent; color: var(--text2); transition: all .15s; }
+    .tab.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+
+    /* RESULTS GRID */
+    .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1rem; }
+    .lead-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: all .2s; }
+    .lead-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(45,106,79,.08); }
+    .lead-img { width: 100%; height: 140px; object-fit: cover; background: var(--surface2); }
+    .lead-img-placeholder { width: 100%; height: 140px; background: linear-gradient(135deg, #e8f4e8, #d4e8d4); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+    .lead-body { padding: 1rem; }
+    .lead-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+    .lead-nombre { font-weight: 700; font-size: 15px; line-height: 1.3; }
+    .lead-score { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: white; }
+    .score-high { background: #059669; }
+    .score-mid { background: var(--gold); }
+    .score-low { background: #9CA3AF; }
+    .lead-meta { font-size: 12px; color: var(--text2); margin-bottom: 10px; display: flex; flex-direction: column; gap: 3px; }
+    .lead-cats { font-size: 11px; font-weight: 600; color: var(--accent); background: var(--accent-light); padding: 3px 8px; border-radius: 12px; display: inline-block; margin-bottom: 8px; }
+    .lead-estado { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; display: inline-block; }
+    .estado-nuevo { background: #EFF6FF; color: #1D4ED8; }
+    .estado-contactado { background: #FEF3C7; color: #92400E; }
+    .estado-respondio { background: #ECFDF5; color: #065F46; }
+    .estado-demo { background: #F3E8FF; color: #6D28D9; }
+    .estado-cliente { background: #D1FAE5; color: #064E3B; }
+    .estado-descartado { background: var(--surface2); color: var(--text3); }
+    .lead-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .btn-sm { padding: 6px 12px; border-radius: 7px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-family: inherit; transition: all .15s; color: var(--text2); }
+    .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm.primary { background: var(--accent); color: white; border-color: var(--accent); }
+    .btn-sm.primary:hover { background: #1e4d2b; }
+    .spinner { width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* MODAL EMAIL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity .2s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: var(--surface); border-radius: 16px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 64px rgba(0,0,0,.2); }
+    .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .modal-title { font-family: 'Fraunces', serif; font-size: 1.1rem; }
+    .modal-close { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--text2); }
+    .modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+    .email-field { display: flex; flex-direction: column; gap: 6px; }
+    .email-label { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; }
+    .email-input { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 13px; font-family: inherit; resize: vertical; line-height: 1.5; }
+    .email-input:focus { outline: none; border-color: var(--accent); }
+    .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text3); }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+    .empty-state h3 { font-size: 1.1rem; font-weight: 600; color: var(--text2); margin-bottom: .5rem; }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div style="margin-bottom:.5rem"><a href="/dashboard" class="back-link">← Volver al Dashboard</a></div>
+      <h1 class="page-title">Agente de <span>Prospección</span> 🎯</h1>
+      <p style="font-size:13px;color:var(--text2);margin-top:4px">Encuentra restaurantes, cualifícalos con IA y genera outreach personalizado</p>
+    </div>
+    <div id="stats-bar" class="stats-bar" style="display:none"></div>
+  </div>
+
+  <!-- PANEL DE BÚSQUEDA -->
+  <div class="search-panel">
+    <div class="search-grid">
+      <div class="form-group">
+        <label class="form-label">Ciudad</label>
+        <input id="input-ciudad" class="form-input" type="text" placeholder="Ej: Barcelona, Madrid, Valencia..." value="Barcelona"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipo de restaurante</label>
+        <select id="select-tipo" class="form-select">
+          <option value="restaurants">Todos los restaurantes</option>
+          <option value="italian">Italiana</option>
+          <option value="spanish">Española / Tapas</option>
+          <option value="mediterranean">Mediterránea</option>
+          <option value="japanese,sushi">Japonesa / Sushi</option>
+          <option value="french">Francesa</option>
+          <option value="steakhouses">Carnes / Parrilla</option>
+          <option value="seafood">Mariscos / Pescado</option>
+          <option value="vegetarian">Vegetariana</option>
+          <option value="pizza">Pizzería</option>
+          <option value="bars,gastropubs">Bar / Gastropub</option>
+        </select>
+      </div>
+      <button id="btn-buscar" class="btn-primary" onclick="buscarRestaurantes()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Buscar
+      </button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('busqueda', this)">Resultados</button>
+    <button class="tab" onclick="setTab('guardados', this)">Mis Leads <span id="badge-leads" style="display:none"></span></button>
+  </div>
+
+  <!-- SECCIÓN RESULTADOS -->
+  <div id="section-busqueda">
+    <div id="results-container">
+      <div class="empty-state">
+        <div class="icon">🔍</div>
+        <h3>Listo para buscar</h3>
+        <p style="font-size:13px">Introduce una ciudad y pulsa Buscar para encontrar restaurantes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN LEADS GUARDADOS -->
+  <div id="section-guardados" style="display:none">
+    <div id="leads-container">
+      <div class="empty-state"><div class="icon">📋</div><h3>Aún no tienes leads guardados</h3></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EMAIL -->
+<div class="modal-overlay" id="modal-email">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-restaurante-nombre">Email para —</div>
+      <button class="modal-close" onclick="cerrarModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="email-field">
+        <div class="email-label">Asunto</div>
+        <input id="modal-asunto" class="email-input" type="text"/>
+      </div>
+      <div class="email-field">
+        <div class="email-label">Cuerpo del email</div>
+        <textarea id="modal-email-body" class="email-input" rows="10"></textarea>
+      </div>
+      <div style="font-size:12px;color:var(--text3)">💡 Edita libremente antes de copiar o guardar</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="copiarEmail()">📋 Copiar</button>
+      <button class="btn-sm primary" onclick="guardarYContactar()">Guardar y marcar como contactado</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://ilzntryzijdfnntwuthp.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlsem50cnl6aWpkZm5udHd1dGhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2OTU1NjMsImV4cCI6MjA2MTI3MTU2M30.I3Y7PYe1FCf2yCVjv4O1S-ZYGwN-d7XRkbA8VzRWLLc';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let resultadosBusqueda = [];
+let leadActual = null;
+
+async function getToken() {
+  const { data: { session } } = await sb.auth.getSession();
+  return session?.access_token;
+}
+
+async function buscarRestaurantes() {
+  const ciudad = document.getElementById('input-ciudad').value.trim();
+  const tipo = document.getElementById('select-tipo').value;
+  if (!ciudad) return alert('Introduce una ciudad');
+
+  const btn = document.getElementById('btn-buscar');
+  btn.innerHTML = '<div class="spinner"></div> Buscando...';
+  btn.disabled = true;
+
+  document.getElementById('results-container').innerHTML = `
+    <div class="empty-state"><div class="icon">⏳</div><h3>Buscando restaurantes en ${ciudad}...</h3></div>`;
+
+  try {
+    const token = await getToken();
+    const resp = await fetch('/api/prospect', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ mode: 'buscar', ciudad, tipo_cocina: tipo, limite: 20 })
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+
+    resultadosBusqueda = data.restaurantes;
+    renderResultados(resultadosBusqueda);
+  } catch (e) {
+    document.getElementById('results-container').innerHTML =
+      `<div class="empty-state"><div class="icon">❌</div><h3>Error: ${e.message}</h3></div>`;
+  } finally {
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Buscar';
+    btn.disabled = false;
+  }
+}
+
+function renderResultados(lista) {
+  if (!lista.length) {
+    document.getElementById('results-container').innerHTML =
+      '<div class="empty-state"><div class="icon">🤷</div><h3>No se encontraron restaurantes</h3></div>';
+    return;
+  }
+
+  document.getElementById('results-container').innerHTML =
+    `<p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">${lista.length} restaurantes encontrados — haz clic en "Cualificar" para que la IA los puntúe y genere el email</p>
+    <div class="results-grid">${lista.map(renderCard).join('')}</div>`;
+}
+
+function renderCard(r, idx) {
+  const scoreClass = !r.score ? '' : r.score >= 7 ? 'score-high' : r.score >= 5 ? 'score-mid' : 'score-low';
+  const scoreEl = r.score
+    ? `<div class="lead-score ${scoreClass}">${r.score}</div>`
+    : '';
+  const estadoClass = `estado-${r.estado || 'nuevo'}`;
+  const img = r.imagen
+    ? `<img class="lead-img" src="${r.imagen}" alt="${r.nombre}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=lead-img-placeholder>🍽️</div>'">`
+    : `<div class="lead-img-placeholder">🍽️</div>`;
+
+  return `<div class="lead-card" id="card-${idx}">
+    ${img}
+    <div class="lead-body">
+      <div class="lead-top">
+        <div class="lead-nombre">${r.nombre}</div>
+        ${scoreEl}
+      </div>
+      ${r.categorias ? `<div class="lead-cats">${r.categorias}</div>` : ''}
+      <div class="lead-meta">
+        <span>📍 ${r.direccion}</span>
+        <span>⭐ ${r.rating} · ${r.num_reviews} reseñas ${r.precio ? '· ' + r.precio : ''}</span>
+        ${r.telefono ? `<span>📞 ${r.telefono}</span>` : ''}
+      </div>
+      <span class="lead-estado ${estadoClass}">${estadoTexto(r.estado)}</span>
+      <div class="lead-actions">
+        ${!r.score
+          ? `<button class="btn-sm primary" onclick="cualificar(${idx})">✨ Cualificar con IA</button>`
+          : `<button class="btn-sm primary" onclick="verEmail(${idx})">📧 Ver Email</button>`
+        }
+        ${r.razon_score ? `<button class="btn-sm" onclick="verRazon(${idx})" title="${r.razon_score}">ℹ️ Ver análisis</button>` : ''}
+        <a href="${r.url_yelp}" target="_blank" class="btn-sm" style="text-decoration:none">Ver en Yelp</a>
+      </div>
+    </div>
+  </div>`;
+}
+
+function estadoTexto(estado) {
+  const map = { nuevo: '🆕 Nuevo', contactado: '📤 Contactado', respondio: '💬 Respondió', demo: '📅 Demo', cliente: '🎉 Cliente', descartado: '🗑️ Descartado' };
+  return map[estado] || estado || '🆕 Nuevo';
+}
+
+async function cualificar(idx) {
+  const r = resultadosBusqueda[idx];
+  const card = document.getElementById(`card-${idx}`);
+  const btn = card.querySelector('.btn-sm.primary');
+  btn.innerHTML = '<div class="spinner" style="border-top-color:white;width:14px;height:14px;border-width:2px;"></div> Analizando...';
+  btn.disabled = true;
+
+  try {
+    const token = await getToken();
+    const resp = await fetch('/api/prospect', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ mode: 'cualificar', restaurante: r })
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+
+    resultadosBusqueda[idx] = { ...r, score: data.score, razon_score: data.razon_score, asunto: data.asunto, email_outreach: data.email };
+    // Re-render solo esa card
+    card.outerHTML = renderCard(resultadosBusqueda[idx], idx);
+  } catch (e) {
+    btn.innerHTML = '✨ Cualificar con IA';
+    btn.disabled = false;
+    alert('Error: ' + e.message);
+  }
+}
+
+function verEmail(idx) {
+  const r = resultadosBusqueda[idx];
+  leadActual = { idx };
+  document.getElementById('modal-restaurante-nombre').textContent = `Email para ${r.nombre}`;
+  document.getElementById('modal-asunto').value = r.asunto || '';
+  document.getElementById('modal-email-body').value = r.email_outreach || '';
+  document.getElementById('modal-email').classList.add('open');
+}
+
+function verRazon(idx) {
+  const r = resultadosBusqueda[idx];
+  alert(`Análisis IA:\n\nPuntuación: ${r.score}/10\n\n${r.razon_score}`);
+}
+
+function cerrarModal() {
+  document.getElementById('modal-email').classList.remove('open');
+  leadActual = null;
+}
+
+function copiarEmail() {
+  const asunto = document.getElementById('modal-asunto').value;
+  const cuerpo = document.getElementById('modal-email-body').value;
+  navigator.clipboard.writeText(`Asunto: ${asunto}\n\n${cuerpo}`);
+  const btn = document.querySelector('.modal-footer .btn-sm');
+  btn.textContent = '✅ Copiado!';
+  setTimeout(() => btn.textContent = '📋 Copiar', 2000);
+}
+
+async function guardarYContactar() {
+  if (!leadActual) return;
+  const r = resultadosBusqueda[leadActual.idx];
+  const asunto = document.getElementById('modal-asunto').value;
+  const emailBody = document.getElementById('modal-email-body').value;
+
+  const lead = { ...r, asunto, email_outreach: emailBody, estado: 'contactado' };
+  const token = await getToken();
+  await fetch('/api/prospect', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ mode: 'guardar_lead', lead })
+  });
+
+  resultadosBusqueda[leadActual.idx].estado = 'contactado';
+  cerrarModal();
+  const card = document.getElementById(`card-${leadActual.idx}`);
+  if (card) card.outerHTML = renderCard(resultadosBusqueda[leadActual.idx], leadActual.idx);
+}
+
+async function setTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('section-busqueda').style.display = tab === 'busqueda' ? 'block' : 'none';
+  document.getElementById('section-guardados').style.display = tab === 'guardados' ? 'block' : 'none';
+  if (tab === 'guardados') cargarLeadsGuardados();
+}
+
+async function cargarLeadsGuardados() {
+  const token = await getToken();
+  const resp = await fetch('/api/prospect?mode=get_leads', {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  const data = await resp.json();
+  const leads = data.leads || [];
+  const badge = document.getElementById('badge-leads');
+  if (leads.length) { badge.textContent = leads.length; badge.style.display = 'inline'; }
+
+  if (!leads.length) {
+    document.getElementById('leads-container').innerHTML =
+      '<div class="empty-state"><div class="icon">📋</div><h3>Aún no tienes leads guardados</h3><p style="font-size:13px">Cualifica restaurantes y guárdalos aquí.</p></div>';
+    return;
+  }
+  document.getElementById('leads-container').innerHTML =
+    `<div class="results-grid">${leads.map((r, i) => renderCard(r, i)).join('')}</div>`;
+}
+
+// Verificar sesión al cargar
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '/login'; return; }
+})();
+</script>
+</body>
+</html>
